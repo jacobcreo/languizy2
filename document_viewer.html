@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplified Firestore Document Viewer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Simplified Document Viewer</a>
+    </nav>
+    
+    <div class="container mt-5">
+        <h2>Firestore Document Viewer</h2>
+        <div class="form-group">
+            <label for="collection-select">Select Collection</label>
+            <select id="collection-select" class="form-control">
+                <option value="users">users</option>
+                <option value="questions">questions</option>
+                <option value="courses">courses</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="document-select">Select Document</label>
+            <select id="document-select" class="form-control"></select>
+        </div>
+        <button id="view-document" class="btn btn-primary">View Document</button>
+        <pre id="document-output" class="mt-4 p-3 bg-light border"></pre>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    
+    <script>
+        const db = firebase.firestore();
+
+        async function fetchDocument(path) {
+            const docRef = db.doc(path);
+            const doc = await docRef.get();
+
+            if (!doc.exists) {
+                console.log(`Document ${path} does not exist`);
+                return null;
+            }
+
+            const data = doc.data();
+            return {
+                _id: doc.id,
+                _path: path,
+                ...data,
+                _hasSubcollections: await checkForSubcollections(path)
+            };
+        }
+
+        async function checkForSubcollections(path) {
+            const collectionRef = db.collection(`${path}/dummySubcollection`);
+            try {
+                await collectionRef.limit(1).get();
+                return true;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function viewDocument() {
+            const collectionId = $('#collection-select').val();
+            const documentId = $('#document-select').val();
+
+            if (!collectionId || !documentId) {
+                alert('Please select both a collection and a document.');
+                return;
+            }
+
+            try {
+                const data = await fetchDocument(`${collectionId}/${documentId}`);
+                $('#document-output').text(JSON.stringify(data, null, 2));
+            } catch (error) {
+                console.error('Error fetching document:', error);
+                $('#document-output').text('Error fetching document data: ' + error.message);
+            }
+        }
+
+        function loadDocuments() {
+            var collectionId = $('#collection-select').val();
+            db.collection(collectionId).get().then(snapshot => {
+                $('#document-select').empty();
+                snapshot.forEach(doc => {
+                    $('#document-select').append(`<option value="${doc.id}">${doc.id}</option>`);
+                });
+            }).catch(error => {
+                console.error('Error fetching documents:', error);
+            });
+        }
+
+        $(document).ready(function () {
+            $('#collection-select').change(loadDocuments);
+            $('#view-document').click(viewDocument);
+            loadDocuments();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!-- course_selection.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio Upload Test</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">LanguageApp</a>
+    <button class="btn btn-outline-danger ml-auto" onclick="logout()">Logout</button>
+  </nav>
+  <!-- Main Content -->
+  <div class="container">
+    <button id="play-audio">Play Audio</button>
+    <audio id="audio-player" controls></audio>
+
+  </div>
+  <!-- Firebase and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+  <!-- Custom JS -->
+  <script>
+    $('#play-audio').on('click', function() {
+        const textToConvert = 'Das Hund ist im Park.';
+        const language = 'de-DE'; // Example: Change based on user's choice
+        const voice = 'Vicki'; // Example: Change based on user's choice
+
+        var filename = "285LG39UsBS85z81RFmU";
+        
+        // var language = "de";
+
+
+        $.ajax({
+            url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
+            type: 'GET',
+            data: { 
+                filename: filename,
+                text: textToConvert,
+                language: language,
+                voice: voice
+            },
+            success: function(response) {
+                const audioUrl = JSON.parse(response).url;
+                $('#audio-player').attr('src', audioUrl);
+                $('#audio-player')[0].play();
+            },
+            error: function(error) {
+                console.error('Error fetching audio:', error);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

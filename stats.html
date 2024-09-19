@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Language Learning Stats</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="stats.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/course_selection.html">LanguageApp</a>
+      <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Your Statistics</h2>
+      <select id="courseSelector" class="form-select w-auto" onchange="filterByCourse()">
+        <option value="all">All Courses</option>
+        <!-- Options will be dynamically loaded here -->
+      </select>
+    </div>
+    
+    <!-- Data Boxes Row -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-success h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-calendar-day fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Day Joined</h5>
+              <p id="dayJoined" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-info h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-user-clock fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Current Streak</h5>
+              <p id="currentStreak" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-warning h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-trophy fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Longest Streak</h5>
+              <p id="longestStreak" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Data Boxes Row -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-primary h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-calendar-check fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Total Days Practiced</h5>
+              <p id="totalDaysPracticed" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-secondary h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-chart-line fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Average Score</h5>
+              <p id="averageScore" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-danger h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-exclamation-triangle fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Total Wrong Answers</h5>
+              <p id="totalWrongAnswers" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Answers Over Time</h5>
+            <canvas id="answersOverTimeChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Accuracy</h5>
+            <canvas id="accuracyChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Heatmap Row -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Daily Practice Heatmap</h5>
+            <div id="heatmapContainer" class="d-flex flex-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cumulative Score Row -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Cumulative Score Over Time</h5>
+            <canvas id="cumulativeScoreChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question Difficulty Breakdown Row -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Questions by Difficulty Level</h5>
+            <canvas id="difficultyLevelChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase and External Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom JavaScript -->
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="stats.js"></script>
+</body>
+</html>

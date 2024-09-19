@@ -1,0 +1,194 @@
+body {
+    background-color: #f8f9fa;
+    
+  }
+  
+  .navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .container h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .table thead th {
+    text-align: center;
+  }
+  
+  .table tbody td {
+    text-align: center;
+  }
+  
+  .accuracy-bar {
+    display: inline-block;
+    width: 100px;
+    height: 10px;
+    background-color: lightgrey;
+    border-radius: 5px;
+    position: relative;
+  }
+  
+  .accuracy-bar-fill {
+    height: 100%;
+    background-color: #28a745;
+    border-radius: 5px;
+  }
+/* Responsive Cards Styling */
+.card-title {
+    font-weight: bold;
+  }
+  
+  .accuracy-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    position: relative;
+  }
+  
+  .accuracy-bar-fill {
+    height: 100%;
+    background-color: #28a745;
+    border-radius: 5px;
+  }
+  
+  /* Ensure cards layout stays responsive and aligned in a single line */
+#statsCards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  #statsCards .col-md-3 {
+    flex: 0 0 24%; /* Make sure all cards fit in one line on large screens */
+    max-width: 24%;
+  }
+  
+  @media (max-width: 768px) {
+    #statsCards .col-md-3 {
+      flex: 0 0 48%; /* Two cards in one row on smaller screens */
+      max-width: 48%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    #statsCards .col-md-3 {
+      flex: 0 0 100%; /* One card per row on extra small screens */
+      max-width: 100%;
+    }
+  }
+  
+  /* Table Hover Effect */
+  .table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+  }
+
+  /* General DataTables Styling */
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+}
+
+.dataTables_wrapper .dataTables_length {
+    float: left;
+    margin-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_info {
+    float: left;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #6c757d; /* Muted gray text */
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    float: right;
+    margin-top: 10px;
+}
+
+/* Search Box Styling */
+.dataTables_filter label {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #343a40;
+}
+
+.dataTables_filter input {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 6px;
+    margin-left: 5px;
+    font-size: 0.95rem;
+    width: 200px;
+}
+
+/* Entries Selector Styling */
+.dataTables_length label {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #343a40;
+}
+
+.dataTables_length select {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 4px;
+    font-size: 0.95rem;
+}
+
+/* Pagination Styling */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #007bff;
+    border: none;
+    background-color: transparent;
+    padding: 4px 10px;
+    margin: 0 2px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    color: #6c757d;
+}
+
+/* Table Row Hover */
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Align Search Bar and Pagination Responsively */
+@media (max-width: 768px) {
+    .dataTables_wrapper .dataTables_filter {
+        text-align: left;
+        float: none;
+        margin-top: 10px;
+    }
+
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_info,
+    .dataTables_wrapper .dataTables_paginate {
+        float: none;
+        text-align: center;
+    }
+
+    .dataTables_wrapper .dataTables_paginate {
+        margin-top: 15px;
+    }
+}
+
+  

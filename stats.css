@@ -1,0 +1,48 @@
+/* stats.css */
+
+/* Custom Styles for Heatmap */
+.heatmap-day {
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  
+  
+  .heatmap-day:hover {
+    opacity: 0.8;
+  }
+  
+  /* Optional: Additional Styling Enhancements */
+  
+  /* Card Titles */
+  .card-title {
+    font-weight: bold;
+  }
+  
+  /* Heatmap Container */
+  #heatmapContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .heatmap-day {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .card-body {
+      padding: 1rem;
+    }
+  }
+
+
+#courseSelector {
+    min-width: 200px;
+}
+
+  
