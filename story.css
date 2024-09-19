@@ -1,0 +1,74 @@
+/* General Page Styles */
+body {
+    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .navbar {
+    margin-bottom: 20px;
+  }
+  
+  h2, h4 {
+    color: #333;
+    text-align: center;
+  }
+  
+  #storyText {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  #storyImage {
+    max-height: 400px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  button {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  #testSection {
+    margin-top: 40px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  #testFeedback {
+    margin-top: 20px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  #testResults {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .btn {
+    font-size: 16px;
+  }
+  
+  .form-check-label {
+    font-size: 16px;
+  }
+  
+  .form-check-input {
+    margin-right: 10px;
+  }
+  
