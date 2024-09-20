@@ -51,16 +51,18 @@ async function loadStories(user) {
 
     let storiesAvailable = false;
     storiesSnapshot.forEach(doc => {
-      const storyData = doc.data();
-      if (storyData.wordsRequired <= maxFrequencySeen) {
-        storiesAvailable = true;
-        console.log(`Story pulled: ${storyData.storyTitle} (Words required: ${storyData.wordsRequired})`);
-        const storyCard = createStoryCard(storyData);
-        storiesList.appendChild(storyCard);
-      } else {
-        console.log(`Story skipped: ${storyData.storyTitle} (Words required: ${storyData.wordsRequired})`);
-      }
-    });
+        const storyData = doc.data();
+        const storyId = doc.id; // Retrieve the document ID
+      
+        if (storyData.wordsRequired <= maxFrequencySeen) {
+          storiesAvailable = true;
+          console.log(`Story pulled: ${storyData.storyTitle} (Words required: ${storyData.wordsRequired})`);
+          const storyCard = createStoryCard(storyData, storyId); // Pass the storyId as the second argument
+          storiesList.appendChild(storyCard);
+        } else {
+          console.log(`Story skipped: ${storyData.storyTitle} (Words required: ${storyData.wordsRequired})`);
+        }
+      });
 
     if (!storiesAvailable) {
       displayPracticeMoreCard();
@@ -87,24 +89,25 @@ async function getMaxFrequency(userDocRef, courseId) {
 }
 
 // Create a Story Card Element
-function createStoryCard(storyData) {
-  const cardDiv = document.createElement('div');
-  cardDiv.className = 'col-md-4 mb-4';
-
-  const cardHTML = `
-    <div class="card h-100">
-      <img src="assets/images/${storyData.image || 'default_story_image.jpg'}" class="card-img-top" alt="Story Image">
-      <div class="card-body">
-        <h5 class="card-title">${storyData.storyTitle}</h5>
-        <p class="card-text">Words required: ${storyData.wordsRequired}</p>
-        <a href="/story.html?storyId=${storyData.id}" class="btn btn-primary">Read Story</a>
+function createStoryCard(storyData, storyId) {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'col-md-4 mb-4';
+  
+    const cardHTML = `
+      <div class="card h-100">
+        <img src="assets/images/${storyData.image || 'default_story_image.jpg'}" class="card-img-top" alt="Story Image">
+        <div class="card-body">
+          <h5 class="card-title">${storyData.storyTitle}</h5>
+          <p class="card-text">Words required: ${storyData.wordsRequired}</p>
+          <a href="/story.html?storyId=${storyId}" class="btn btn-primary">Read Story</a>
+        </div>
       </div>
-    </div>
-  `;
-
-  cardDiv.innerHTML = cardHTML;
-  return cardDiv;
-}
+    `;
+  
+    cardDiv.innerHTML = cardHTML;
+    return cardDiv;
+  }
+  
 
 // Display a card prompting the user to practice more
 function displayPracticeMoreCard() {

@@ -7,89 +7,125 @@ const storyId = urlParams.get('storyId');
 let currentUser;
 let correctAnswersCount = 0; // Track correct answers for scoring
 const totalQuestions = 4; // Number of questions in the test
+let currentQuestionIndex = 1; // Start from the first question
+let currentStoryData; // Store the loaded story data
+// Global variable to store the audio element
+let audioElement = new Audio(); 
+const countryToLanguage = {
+    cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
+    in: { languageCode: "hi-IN", voice: "Aditi" },         // India
+    us: { languageCode: "en-US", voice: "Joanna" },        // United States
+    br: { languageCode: "pt-BR", voice: "Camila" },        // Brazil
+    ru: { languageCode: "ru-RU", voice: "Tatyana" },       // Russia
+    jp: { languageCode: "ja-JP", voice: "Mizuki" },        // Japan
+    eg: { languageCode: "arb", voice: "Zeina" },           // Egypt (Arabic)
+    tr: { languageCode: "tr-TR", voice: "Filiz" },         // Turkey
+    de: { languageCode: "de-DE", voice: "Marlene" },       // Germany
+    fr: { languageCode: "fr-FR", voice: "Celine" },        // France
+    es: { languageCode: "es-ES", voice: "Conchita" },      // Spain
+    it: { languageCode: "it-IT", voice: "Carla" },         // Italy
+    nl: { languageCode: "nl-NL", voice: "Lotte" },         // Netherlands
+    sv: { languageCode: "sv-SE", voice: "Astrid" },        // Sweden
+    no: { languageCode: "nb-NO", voice: "Liv" },           // Norway
+    dk: { languageCode: "da-DK", voice: "Naja" }           // Denmark
+};
 
-// Load Story
+// Call this function within your existing loadStory function after the story is loaded
 async function loadStory() {
-  try {
-    const storyDoc = await db.collection('stories').doc(storyId).get();
-    if (!storyDoc.exists) {
-      console.error("Story not found!");
-      return;
+    try {
+      const storyDoc = await db.collection('stories').doc(storyId).get();
+      if (!storyDoc.exists) {
+        console.error("Story not found!");
+        return;
+      }
+  
+      currentStoryData = storyDoc.data();
+      document.getElementById('storyTitle').innerText = currentStoryData.storyTitle;
+      document.getElementById('storyImage').src = `assets/images/${currentStoryData.image || 'storyImage.jpg'}`;
+  
+      const formattedStoryText = formatStoryText(currentStoryData.storyText);
+      document.getElementById('storyText').innerHTML = formattedStoryText;
+  
+      document.getElementById('testYourKnowledgeBtn').onclick = startTest;
+  
+      // Initialize the audio button for the story
+      initializeAudioButton(currentStoryData);
+  
+    } catch (error) {
+      console.error("Error loading story:", error);
     }
-
-    const storyData = storyDoc.data();
-    document.getElementById('storyTitle').innerText = storyData.storyTitle;
-    document.getElementById('storyImage').src = `/images/${storyData.image || 'storyImage.jpg'}`;
-    document.getElementById('storyText').innerHTML = storyData.storyText.replace(/\n/g, '<br>');
-
-    // Set up test your knowledge button
-    document.getElementById('testYourKnowledgeBtn').onclick = () => {
-      startTest(storyData);
-    };
-
-  } catch (error) {
-    console.error("Error loading story:", error);
   }
-}
 
-// Start Test for the Story
-function startTest(storyData) {
+// Improved format story text function to handle different line breaks and quotes
+function formatStoryText(text) {
+    if (typeof text !== 'string') return text;
+  
+    return text
+      .replace(/\\n/g, '\n')            // Normalize escaped \n to normal newlines
+      .replace(/\n\n+/g, '</p><p>')      // Convert two or more consecutive newlines to paragraph breaks
+      .replace(/\n/g, '<br>')            // Convert remaining single newlines to <br> tags for line breaks
+      .replace(/\\"/g, '"')              // Unescape quotes (\")
+      .replace(/^/, '<p>')               // Add opening <p> tag at the beginning
+      .replace(/$/, '</p>');             // Add closing </p> tag at the end
+  }
+  
+
+// Start Test for the Story (one question at a time)
+function startTest() {
   document.getElementById('testYourKnowledgeBtn').style.display = 'none';
   document.getElementById('testSection').style.display = 'block';
-  
-  // Populate questions
+  loadNextQuestion();
+}
+
+// Load Next Question with four large answer buttons
+function loadNextQuestion() {
   const questionContainer = document.getElementById('questionContainer');
-  questionContainer.innerHTML = ''; // Clear previous questions
+  questionContainer.innerHTML = ''; // Clear previous question
 
-  for (let i = 1; i <= totalQuestions; i++) {
-    const question = storyData[`test_question${i}`];
-    const answers = shuffleArray(storyData[`answers${i}`]); // Randomize answers
-    
-    const questionHTML = `
-      <div class="mb-3">
-        <p><strong>${i}. ${question}</strong></p>
-        ${answers.map(answer => `
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="question${i}" value="${answer}">
-            <label class="form-check-label">${answer}</label>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    
-    questionContainer.innerHTML += questionHTML;
-  }
+  if (currentQuestionIndex <= totalQuestions) {
+    const question = currentStoryData[`test_question${currentQuestionIndex}`];
+    const answers = currentStoryData[`answers${currentQuestionIndex}`];
 
-  // Set up the test submission button
-  document.getElementById('submitTestBtn').onclick = () => {
-    submitTest(storyData);
-  };
-}
-
-// Shuffle answers for randomness
-function shuffleArray(array) {
-  return array.sort(() => Math.random() - 0.5);
-}
-
-// Submit Test and Evaluate Results
-function submitTest(storyData) {
-  correctAnswersCount = 0; // Reset correct answers count
-
-  for (let i = 1; i <= totalQuestions; i++) {
-    const userAnswer = document.querySelector(`input[name="question${i}"]:checked`);
-    if (!userAnswer) {
-      alert('Please answer all the questions!');
+    // Ensure the question and answers are available
+    if (!question || !answers || answers.length === 0) {
+      console.error(`Missing question or answers for question ${currentQuestionIndex}`);
+      questionContainer.innerHTML = `<p class="text-danger">Error loading question ${currentQuestionIndex}. Please try again later.</p>`;
       return;
     }
 
-    const correctAnswer = storyData[`answers${i}`][0]; // The first answer in the array is always correct
-    if (userAnswer.value === correctAnswer) {
-      correctAnswersCount++;
-    }
+    const shuffledAnswers = shuffleArray(answers); // Shuffle the answers
+
+    const questionHTML = `
+      <h5 class="mb-4">${currentQuestionIndex}. ${question}</h5>
+      <div id="answerButtons"></div>
+    `;
+
+    questionContainer.innerHTML = questionHTML;
+
+    const answerButtonsContainer = document.getElementById('answerButtons');
+
+    // Create buttons for each answer and attach event listeners
+    shuffledAnswers.forEach(answer => {
+      const button = document.createElement('button');
+      button.classList.add('btn', 'btn-outline-primary', 'btn-lg', 'd-block', 'w-100', 'my-2', 'answer-btn');
+      button.innerText = answer;
+      button.onclick = () => submitAnswer(answer, answers[0]);
+      answerButtonsContainer.appendChild(button);
+    });
+
+  } else {
+    showTestFeedback();
+  }
+}
+
+// Submit Answer and Load Next
+function submitAnswer(userAnswer, correctAnswer) {
+  if (userAnswer === correctAnswer) {
+    correctAnswersCount++;
   }
 
-  // Show feedback
-  showTestFeedback();
+  currentQuestionIndex++;
+  loadNextQuestion(); // Load the next question
 }
 
 // Show feedback based on test results
@@ -99,20 +135,19 @@ function showTestFeedback() {
 
   if (correctAnswersCount >= 3) {
     resultsMessage.innerHTML = `
-      <p><strong>Well done!</strong> You answered ${correctAnswersCount} out of 4 correctly.</p>
+      <p><strong>Well done!</strong> You answered ${correctAnswersCount} out of ${totalQuestions} correctly.</p>
       <p>You have completed this story. You've earned 200 points!</p>
     `;
     updateUserProgress(true);
   } else {
     resultsMessage.innerHTML = `
-      <p><strong>Almost there!</strong> You answered ${correctAnswersCount} out of 4 correctly.</p>
+      <p><strong>Almost there!</strong> You answered ${correctAnswersCount} out of ${totalQuestions} correctly.</p>
       <p>You can retry the test or return to the Stories screen.</p>
     `;
     updateUserProgress(false);
   }
 
   feedbackSection.style.display = 'block';
-  document.getElementById('submitTestBtn').style.display = 'none'; // Hide submit button after test is done
 }
 
 // Update User's Story Progress in Firestore
@@ -129,7 +164,6 @@ async function updateUserProgress(isCompleted) {
     }, { merge: true });
 
     if (isCompleted) {
-      // Add points to user's total score
       await userDocRef.update({
         totalPoints: firebase.firestore.FieldValue.increment(200)
       });
@@ -143,7 +177,8 @@ async function updateUserProgress(isCompleted) {
 // Retry test logic
 document.getElementById('retryTestBtn').onclick = function() {
   document.getElementById('testFeedback').style.display = 'none';
-  document.getElementById('submitTestBtn').style.display = 'block';
+  correctAnswersCount = 0; // Reset correct answers count
+  currentQuestionIndex = 1; // Reset to first question
   startTest(); // Start the test again
 };
 
@@ -156,3 +191,136 @@ firebase.auth().onAuthStateChanged(user => {
     window.location.href = 'login.html';
   }
 });
+
+// Shuffle answers for randomness
+function shuffleArray(array) {
+  if (!array || !Array.isArray(array)) {
+    console.error("Invalid answers array for shuffling", array);
+    return [];
+  }
+  return array.sort(() => Math.random() - 0.5);
+}
+
+// Function to handle audio playback and generation
+function handleAudioPlayback(storyId, storyText, languageCode, voice, storyTitle) {
+    const audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/story-${storyId}.mp3`;
+  
+    // Try playing the audio if it exists
+    audioElement.src = audioUrl;
+    audioElement.play()
+      .then(() => {
+        console.log("Audio playback started successfully.");
+      })
+      .catch((error) => {
+        console.error("Error playing audio, attempting to generate audio:", error);
+        generateStoryAudio(storyId, storyText, languageCode, voice, storyTitle);
+      });
+  
+    // Reset the audio if it ends
+    audioElement.onended = () => {
+      console.log("Audio playback ended.");
+    };
+  
+    audioElement.onerror = () => {
+      console.error("Error loading audio from S3, attempting to generate audio.");
+      generateStoryAudio(storyId, storyText, languageCode, voice, storyTitle);
+    };
+  }
+  
+  
+  // Function to generate audio using AWS Polly (same logic as in game.js)
+  function generateStoryAudio(storyId, storyText, languageCode, voice, storyTitle) {
+    console.log(`Generating new audio using AWS Polly with language: ${languageCode} and voice: ${voice}`);
+  
+    $.ajax({
+      url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
+      type: 'GET',
+      data: {
+        filename: `story-${storyId}`,
+        text: convertTextToSSML(storyText, storyTitle), // Convert to SSML format for the story
+        language: languageCode,
+        voice: voice,
+        isSSML: 'true' // Set to true for SSML generation
+      },
+      success: function (response) {
+        console.log("AWS Polly audio generation request succeeded.");
+        const audioUrl = JSON.parse(response).url;
+  
+        console.log(`Audio generated successfully and available at: ${audioUrl}`);
+        audioElement.src = audioUrl;
+        audioElement.play()
+          .then(() => {
+            console.log("Generated audio playback started successfully.");
+          })
+          .catch((error) => {
+            console.error("Error playing generated audio:", error);
+          });
+      },
+      error: function (error) {
+        console.error('Error generating audio using AWS Polly:', error);
+      }
+    });
+}
+
+  
+  
+  // Initialize the "Play Story Audio" button
+function initializeAudioButton(storyData) {
+    const languageCode = countryToLanguage[storyData.language].languageCode;
+    const voice = countryToLanguage[storyData.language].voice;
+  
+    document.getElementById('playStoryAudioBtn').onclick = () => {
+      handleAudioPlayback(storyId, storyData.storyText, languageCode, voice, storyData.storyTitle);
+    };
+  }
+  
+  // Call this function within your existing loadStory function after the story is loaded
+  async function loadStory() {
+    try {
+      const storyDoc = await db.collection('stories').doc(storyId).get();
+      if (!storyDoc.exists) {
+        console.error("Story not found!");
+        return;
+      }
+  
+      currentStoryData = storyDoc.data();
+      document.getElementById('storyTitle').innerText = currentStoryData.storyTitle;
+      document.getElementById('storyImage').src = `assets/images/${currentStoryData.image || 'storyImage.jpg'}`;
+  
+      const formattedStoryText = formatStoryText(currentStoryData.storyText);
+      document.getElementById('storyText').innerHTML = formattedStoryText;
+  
+      document.getElementById('testYourKnowledgeBtn').onclick = startTest;
+  
+      // Initialize the audio button for the story
+      initializeAudioButton(currentStoryData);
+  
+    } catch (error) {
+      console.error("Error loading story:", error);
+    }
+  }
+  
+  function convertTextToSSML(text, headline = "", pauseDuration = 500) {
+    // Helper function to remove redundant breaks
+    const removeRedundantBreaks = (text) => {
+        return text.replace(/(<break time="500ms"\s*\/?>\s*)+/g, '<break time="500ms"/>');
+    };
+    
+    // Trim the text and remove escape sequences like \"
+    let cleanText = text
+        .replace(/\\n/g, '<break time="500ms"/>') // Replace \n with SSML breaks
+        .replace(/\\"/g, '"') // Remove escaped quotes
+        .replace(/<\/?p>/g, '') // Remove <p> tags if any
+        .trim(); // Trim any extra whitespace
+    
+    // Optionally add the headline with a customizable pause after it
+    let ssml = `<speak>${headline ? headline + `<break time="1000ms"/>` : ''}`;
+    
+    // Ensure no redundant breaks and remove excess spacing
+    ssml += removeRedundantBreaks(cleanText);
+
+    ssml += "</speak>"; // Close SSML tag
+    console.log(ssml);
+    debugger;
+    return ssml;
+}
