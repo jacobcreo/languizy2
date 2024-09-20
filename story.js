@@ -9,6 +9,9 @@ let correctAnswersCount = 0; // Track correct answers for scoring
 const totalQuestions = 4; // Number of questions in the test
 let currentQuestionIndex = 1; // Start from the first question
 let currentStoryData; // Store the loaded story data
+let isShowingTranslation = false; // Track translation toggle state
+
+
 // Global variable to store the audio element
 let audioElement = new Audio(); 
 const countryToLanguage = {
@@ -31,31 +34,96 @@ const countryToLanguage = {
 };
 
 // Call this function within your existing loadStory function after the story is loaded
+// Load story function
 async function loadStory() {
     try {
-      const storyDoc = await db.collection('stories').doc(storyId).get();
-      if (!storyDoc.exists) {
-        console.error("Story not found!");
-        return;
-      }
-  
-      currentStoryData = storyDoc.data();
-      document.getElementById('storyTitle').innerText = currentStoryData.storyTitle;
-      document.getElementById('storyImage').src = `assets/images/${currentStoryData.image || 'storyImage.jpg'}`;
-  
-      const formattedStoryText = formatStoryText(currentStoryData.storyText);
-      document.getElementById('storyText').innerHTML = formattedStoryText;
-  
-      document.getElementById('testYourKnowledgeBtn').onclick = startTest;
-  
-      // Initialize the audio button for the story
-      initializeAudioButton(currentStoryData);
-  
-    } catch (error) {
-      console.error("Error loading story:", error);
-    }
-  }
+        const storyDoc = await db.collection('stories').doc(storyId).get();
+        if (!storyDoc.exists) {
+            console.error("Story not found!");
+            return;
+        }
 
+        currentStoryData = storyDoc.data();
+        document.getElementById('storyTitle').innerText = currentStoryData.storyTitle;
+        document.getElementById('storyImage').src = `assets/images/${currentStoryData.image || 'storyImage.jpg'}`;
+
+        const formattedStoryText = formatStoryText(currentStoryData.storyText);
+        document.getElementById('storyText').innerHTML = formattedStoryText;
+
+        const buttonContainer = document.querySelector('.button-container');
+        const playAudioBtn = document.getElementById('playStoryAudioBtn');
+
+        // Check if translation exists
+        if (currentStoryData.storyTitleTranslation && currentStoryData.storyTextTranslation) {
+            const translationToggleBtn = document.createElement('button');
+            translationToggleBtn.id = 'translationToggleBtn';
+            translationToggleBtn.textContent = 'Show Translation';
+            translationToggleBtn.onclick = () => toggleTranslation(translationToggleBtn);
+            
+            buttonContainer.classList.remove('single-button');
+            buttonContainer.appendChild(translationToggleBtn);
+        } else {
+            buttonContainer.classList.add('single-button'); // Only one button
+        }
+
+        // Play story audio button initialization
+        initializeAudioButton(currentStoryData);
+
+        // Re-attach event listener for "Test Your Knowledge" button
+        document.getElementById('testYourKnowledgeBtn').onclick = startTest;
+
+    } catch (error) {
+        console.error("Error loading story:", error);
+    }
+}
+
+
+
+// Toggle translation function
+function toggleTranslation(button) {
+    const storyTextElement = document.getElementById('storyText');
+    const storyTitleElement = document.getElementById('storyTitle');
+
+    if (button.textContent === 'Show Translation') {
+        storyTitleElement.innerText = currentStoryData.storyTitleTranslation;
+        storyTextElement.innerHTML = formatStoryText(currentStoryData.storyTextTranslation);
+        button.textContent = 'Show Original';
+    } else {
+        storyTitleElement.innerText = currentStoryData.storyTitle;
+        storyTextElement.innerHTML = formatStoryText(currentStoryData.storyText);
+        button.textContent = 'Show Translation';
+    }
+}
+
+  // Create the toggle button for switching between original and translation
+function createTranslationToggleButton() {
+    const toggleButton = document.createElement('button');
+    toggleButton.id = 'translationToggleBtn';
+    toggleButton.classList.add('btn', 'btn-secondary', 'my-3');
+    toggleButton.innerText = 'Show Translation';
+    toggleButton.style.width = 'auto'; // Adjust button size
+  
+    // Insert the button next to the story title
+    const titleElement = document.getElementById('storyTitle');
+    titleElement.parentNode.insertBefore(toggleButton, titleElement.nextSibling);
+  
+    // Add event listener to toggle between original and translation
+    toggleButton.addEventListener('click', () => {
+      if (isShowingTranslation) {
+        // Show original story
+        titleElement.innerText = currentStoryData.storyTitle;
+        document.getElementById('storyText').innerHTML = formatStoryText(currentStoryData.storyText);
+        toggleButton.innerText = 'Show Translation';
+      } else {
+        // Show translated story
+        titleElement.innerText = currentStoryData.storyTitleTranslation;
+        document.getElementById('storyText').innerHTML = formatStoryText(currentStoryData.storyTextTranslation);
+        toggleButton.innerText = 'Show Original';
+      }
+      isShowingTranslation = !isShowingTranslation;
+    });
+  }
+  
 // Improved format story text function to handle different line breaks and quotes
 function formatStoryText(text) {
     if (typeof text !== 'string') return text;
@@ -69,53 +137,51 @@ function formatStoryText(text) {
       .replace(/$/, '</p>');             // Add closing </p> tag at the end
   }
   
+  
 
-// Start Test for the Story (one question at a time)
+// Start Test function
 function startTest() {
-  document.getElementById('testYourKnowledgeBtn').style.display = 'none';
-  document.getElementById('testSection').style.display = 'block';
-  loadNextQuestion();
+    document.getElementById('testYourKnowledgeBtn').style.display = 'none';
+    document.getElementById('testSection').style.display = 'block';
+    loadNextQuestion();
 }
 
-// Load Next Question with four large answer buttons
+
+// Load next question function
 function loadNextQuestion() {
-  const questionContainer = document.getElementById('questionContainer');
-  questionContainer.innerHTML = ''; // Clear previous question
+    const questionContainer = document.getElementById('questionContainer');
+    questionContainer.innerHTML = ''; // Clear previous question
 
-  if (currentQuestionIndex <= totalQuestions) {
-    const question = currentStoryData[`test_question${currentQuestionIndex}`];
-    const answers = currentStoryData[`answers${currentQuestionIndex}`];
+    if (currentQuestionIndex <= totalQuestions) {
+        const question = currentStoryData[`test_question${currentQuestionIndex}`];
+        const answers = currentStoryData[`answers${currentQuestionIndex}`];
 
-    // Ensure the question and answers are available
-    if (!question || !answers || answers.length === 0) {
-      console.error(`Missing question or answers for question ${currentQuestionIndex}`);
-      questionContainer.innerHTML = `<p class="text-danger">Error loading question ${currentQuestionIndex}. Please try again later.</p>`;
-      return;
+        if (!question || !answers || answers.length === 0) {
+            console.error(`Missing question or answers for question ${currentQuestionIndex}`);
+            questionContainer.innerHTML = `<p class="text-danger">Error loading question ${currentQuestionIndex}. Please try again later.</p>`;
+            return;
+        }
+
+        const shuffledAnswers = shuffleArray(answers);
+        const questionHTML = `
+            <h5 class="mb-4">${currentQuestionIndex}. ${question}</h5>
+            <div id="answerButtons"></div>
+        `;
+
+        questionContainer.innerHTML = questionHTML;
+        const answerButtonsContainer = document.getElementById('answerButtons');
+
+        shuffledAnswers.forEach(answer => {
+            const button = document.createElement('button');
+            button.classList.add('btn', 'btn-outline-primary', 'btn-lg', 'd-block', 'w-100', 'my-2', 'answer-btn');
+            button.innerText = answer;
+            button.onclick = () => submitAnswer(answer, answers[0]);
+            answerButtonsContainer.appendChild(button);
+        });
+
+    } else {
+        showTestFeedback();
     }
-
-    const shuffledAnswers = shuffleArray(answers); // Shuffle the answers
-
-    const questionHTML = `
-      <h5 class="mb-4">${currentQuestionIndex}. ${question}</h5>
-      <div id="answerButtons"></div>
-    `;
-
-    questionContainer.innerHTML = questionHTML;
-
-    const answerButtonsContainer = document.getElementById('answerButtons');
-
-    // Create buttons for each answer and attach event listeners
-    shuffledAnswers.forEach(answer => {
-      const button = document.createElement('button');
-      button.classList.add('btn', 'btn-outline-primary', 'btn-lg', 'd-block', 'w-100', 'my-2', 'answer-btn');
-      button.innerText = answer;
-      button.onclick = () => submitAnswer(answer, answers[0]);
-      answerButtonsContainer.appendChild(button);
-    });
-
-  } else {
-    showTestFeedback();
-  }
 }
 
 // Submit Answer and Load Next
@@ -274,31 +340,7 @@ function initializeAudioButton(storyData) {
     };
   }
   
-  // Call this function within your existing loadStory function after the story is loaded
-  async function loadStory() {
-    try {
-      const storyDoc = await db.collection('stories').doc(storyId).get();
-      if (!storyDoc.exists) {
-        console.error("Story not found!");
-        return;
-      }
   
-      currentStoryData = storyDoc.data();
-      document.getElementById('storyTitle').innerText = currentStoryData.storyTitle;
-      document.getElementById('storyImage').src = `assets/images/${currentStoryData.image || 'storyImage.jpg'}`;
-  
-      const formattedStoryText = formatStoryText(currentStoryData.storyText);
-      document.getElementById('storyText').innerHTML = formattedStoryText;
-  
-      document.getElementById('testYourKnowledgeBtn').onclick = startTest;
-  
-      // Initialize the audio button for the story
-      initializeAudioButton(currentStoryData);
-  
-    } catch (error) {
-      console.error("Error loading story:", error);
-    }
-  }
   
   function convertTextToSSML(text, headline = "", pauseDuration = 500) {
     // Helper function to remove redundant breaks
