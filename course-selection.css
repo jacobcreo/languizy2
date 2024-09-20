@@ -13,9 +13,10 @@ body {
     border-radius: 10px;
 }
 
-/* Streak and Course Selection Cards */
-.card.bg-success, .card.bg-info {
+/* Streak and Training Options */
+.card.bg-success, .card.bg-info, .card.bg-light {
     border-radius: 10px;
+    padding: 1.5rem;
 }
 
 .card-title {
@@ -25,6 +26,28 @@ body {
 
 .card-body {
     padding: 1.5rem;
+}
+
+/* Training Buttons */
+button {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px;
+}
+
+button i {
+    margin-right: 8px;
+}
+
+.btn-light {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-light:hover {
+    background-color: #ccc;
 }
 
 /* Streak Card Icon */

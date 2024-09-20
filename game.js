@@ -66,6 +66,7 @@ function updateFlagIcons(currentCourse) {
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         fetchCurrentCourse(user).then((currentCourse) => {
+          debugger;
             if (!currentCourse) {
                 console.error('No valid current course found.');
                 window.location.href = 'course_selection.html';
@@ -87,43 +88,68 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 // Function to fetch the current course based on URL or Firestore
 function fetchCurrentCourse(user) {
-    return new Promise((resolve, reject) => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const courseIdFromUrl = urlParams.get('courseId');
+  return new Promise((resolve, reject) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseIdFromUrl = urlParams.get('courseId');
 
-        if (courseIdFromUrl) {
-            console.log(`Course ID found in URL: ${courseIdFromUrl}`);
+      if (courseIdFromUrl) {
+          console.log(`Course ID found in URL: ${courseIdFromUrl}`);
 
-            // Check if the course exists (validate that questions exist for this course)
-            validateCourse(courseIdFromUrl).then((isValidCourse) => {
-                if (isValidCourse) {
-                    // If the course exists, update Firestore with the new course selection
-                    updateCurrentCourseInFirestore(user, courseIdFromUrl);
-                    resolve(courseIdFromUrl);
-                } else {
-                    // If the URL course is invalid, fall back to Firestore course
-                    console.warn('Invalid course ID in URL, falling back to Firestore currentCourse.');
-                    getFirestoreCurrentCourse(user).then(resolve).catch(reject);
-                }
-            }).catch(reject);
-        } else {
-            // No course in URL, fallback to Firestore
-            getFirestoreCurrentCourse(user).then(resolve).catch(reject);
-        }
-    });
+          // Check if the course exists (validate that questions exist for this course)
+          validateCourse(courseIdFromUrl).then((isValidCourse) => {
+              if (isValidCourse) {
+                  // If the course exists, register it under the user's 'courses' sub-collection
+                  registerUserCourse(user, courseIdFromUrl).then(() => {
+                      // Also update the `currentCourse` field in Firestore for the user
+                      updateCurrentCourseInFirestore(user, courseIdFromUrl).then(() => {
+                          resolve(courseIdFromUrl); // Now resolve the promise
+                      }).catch(reject);
+                  }).catch(reject);
+              } else {
+                  // If the URL course is invalid, fall back to Firestore course
+                  console.warn('Invalid course ID in URL, falling back to Firestore currentCourse.');
+                  getFirestoreCurrentCourse(user).then(resolve).catch(reject);
+              }
+          }).catch(reject);
+      } else {
+          // No course in URL, fallback to Firestore
+          getFirestoreCurrentCourse(user).then(resolve).catch(reject);
+      }
+  });
 }
+
+
+
 
 // Function to update Firestore with the new course selection
 function updateCurrentCourseInFirestore(user, newCourseId) {
-    db.collection('users').doc(user.uid).update({
-        currentCourse: newCourseId
-    }).then(() => {
-        console.log(`Updated currentCourse in Firestore to: ${newCourseId}`);
-    }).catch((error) => {
-        console.error('Error updating current course in Firestore:', error);
-    });
+  return db.collection('users').doc(user.uid).update({
+      currentCourse: newCourseId
+  }).then(() => {
+      console.log(`Updated currentCourse in Firestore to: ${newCourseId}`);
+  }).catch((error) => {
+      console.error('Error updating current course in Firestore:', error);
+  });
 }
 
+
+// Function to register the course in the user's 'courses' sub-collection
+function registerUserCourse(user, courseId) {
+  const knownLanguage = courseId.split('-')[0];
+  const targetLanguage = courseId.split('-')[1];
+
+  return db.collection('users').doc(user.uid)
+      .collection('courses').doc(courseId)
+      .set({
+          knownLanguage: knownLanguage,
+          targetLanguage: targetLanguage,
+      }).then(() => {
+          console.log(`Course ${courseId} successfully registered in Firestore.`);
+      }).catch((error) => {
+          console.error('Error registering course in Firestore:', error);
+          throw error; // Pass the error up the chain
+      });
+}
 
 // Function to get the current course from Firestore
 function getFirestoreCurrentCourse(user) {
@@ -231,53 +257,84 @@ function loadQuestionData(questionId, currentCourse) {
 }
 
 // Load a new question that hasn't been answered yet or from a specific course
-// Load a new question that hasn't been answered yet or from a specific course
 function loadNewQuestion(user, courseId) {
-    // Fetch user's selected course details (knownLanguage and targetLanguage)
-    db.collection('users').doc(user.uid).collection('courses').doc(courseId).get().then(courseDoc => {
+  // Fetch user's selected course details (knownLanguage and targetLanguage)
+  db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
+  .then(courseDoc => {
       var courseData = courseDoc.data();
+
       if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
-        console.error('User has not selected a course.');
-        window.location.href = 'course_selection.html';
-        return;
+          // Course data might not be ready, let's retry once after a short delay
+          console.warn('Course data not found. Retrying...');
+          setTimeout(() => {
+            if (typeof(courseData.courseId) == 'undefined') {
+              if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined'))
+                courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
+              }
+              debugger;
+            
+              // Retry fetching course data
+              db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
+              .then(retryDoc => {
+                  courseData = retryDoc.data();
+                  if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
+                      console.error('User has not selected a course after retry.');
+                      window.location.href = 'course_selection.html';
+                  } else {
+                      // Proceed with loading questions after retry
+                      fetchAndLoadQuestions(courseData);
+                  }
+              }).catch(error => {
+                  console.error('Error fetching course data during retry:', error);
+                  window.location.href = 'course_selection.html';
+              });
+          }, 1000);  // 1-second delay for retry
+      } else {
+          // Proceed if course data is available
+          fetchAndLoadQuestions(courseData);
       }
-  
-      // Fetch all questions for the relevant course (language pair) and order by frequency
-      db.collection('questions')
-        .where('language', '==', courseData.targetLanguage)
-        .where('knownLanguage', '==', courseData.knownLanguage)
-        .orderBy('frequency', 'asc')  // Order by frequency in ascending order
-        .get()
-        .then(questionSnapshot => {
+  }).catch(error => {
+      console.error('Error loading user course data:', error);
+  });
+}
+
+// Helper function to fetch and load questions
+function fetchAndLoadQuestions(courseData) {
+  if (typeof(courseData.courseId) == 'undefined') {
+    if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined'))
+      courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
+    }
+    debugger;
+  db.collection('questions')
+      .where('language', '==', courseData.targetLanguage)
+      .where('knownLanguage', '==', courseData.knownLanguage)
+      .orderBy('frequency', 'asc')  // Order by frequency in ascending order
+      .get()
+      .then(questionSnapshot => {
           var questions = [];
           questionSnapshot.forEach(doc => {
-            questions.push({ id: doc.id, data: doc.data() });
+              questions.push({ id: doc.id, data: doc.data() });
           });
-  
-          // Filter out questions the user has already answered (progress collection)
-          db.collection('users').doc(user.uid)
-            .collection('courses').doc(courseId)
-            .collection('progress').get()
-            .then(progressSnapshot => {
-              var seenQuestions = progressSnapshot.docs.map(doc => doc.id);
-              var unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
-  
-              if (unseenQuestions.length > 0) {
-                // Select the first question with the lowest frequency
-                var lowestFrequencyQuestion = unseenQuestions[0];
-                displayQuestion(lowestFrequencyQuestion.data, lowestFrequencyQuestion.id, courseId); 
-              } else {
-                console.log('No new questions available.');
-                loadNextEarlyQuestion(user, courseId); // Load the next question even if it's not yet due
-              }
-            });
-        });
-    }).catch(error => {
-      console.error('Error loading user course data:', error);
-    });
-  }
-  
 
+          // Filter out questions the user has already answered (progress collection)
+          db.collection('users').doc(firebase.auth().currentUser.uid)
+              .collection('courses').doc(courseData.courseId)
+              .collection('progress').get()
+              .then(progressSnapshot => {
+                  var seenQuestions = progressSnapshot.docs.map(doc => doc.id);
+                  var unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
+
+                  if (unseenQuestions.length > 0) {
+                      // Select the first question with the lowest frequency
+                      var lowestFrequencyQuestion = unseenQuestions[0];
+                      displayQuestion(lowestFrequencyQuestion.data, lowestFrequencyQuestion.id, courseData.courseId); 
+                  } else {
+                      console.log('No new questions available.');
+                      loadNextEarlyQuestion(firebase.auth().currentUser, courseData.courseId); // Load the next question even if it's not yet due
+                  }
+              });
+      });
+}
 // Load the next question even if it's not yet due
 function loadNextEarlyQuestion(user, courseId) {
   db.collection('users').doc(user.uid)

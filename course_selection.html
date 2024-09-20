@@ -37,33 +37,85 @@
                 </div>
             </div>
         </div>
-
-        <!-- Streak and Course Selection Row -->
-        <div class="row mb-4">
-            <div class="col-md-6 mb-3">
-                <div class="card bg-success text-white text-center">
-                    <div class="card-body d-flex align-items-center justify-content-center">
-                        <i class="fas fa-fire fa-3x me-3"></i>
-                        <div>
-                            <h5 class="card-title">Current Streak</h5>
-                            <p id="streakCount" class="card-text">0 Days in a Row</p>
-                        </div>
+    
+        <!-- Streak and Training Options Row -->
+       <!-- Streak and Training Options Row -->
+<div class="row mb-4 d-flex align-items-stretch">
+    <!-- Streak Section -->
+    <div class="col-md-6 mb-3 d-flex">
+        <div class="card bg-success text-white text-center flex-fill">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-center">
+                    <i class="fas fa-fire fa-3x me-3" id="flameIcon"></i>
+                    <div>
+                        <h5 class="card-title">Current Streak</h5>
+                        <p id="streakCount" class="mb-0">4 Days in a Row</p>
+                        <p id="streakMessage" class="mt-1"></p> <!-- Add margin for better spacing -->
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="card bg-info text-white text-center">
+        </div>
+    </div>
+
+    <!-- Training Options -->
+    <div id="trainingOptions" class="col-md-6 mb-3 d-flex">
+        <div class="card bg-info text-white text-center flex-fill">
+            <div class="card-body">
+                <button id="continueCourseBtn" class="btn btn-primary w-100 mb-3" style="display:none;">Continue Training</button>
+                <div class="row">
+                    <div class="col-12 col-lg-4 mb-2 px-1">
+                        <button id="storiesBtn" class="btn btn-light w-100" disabled>
+                            <i class="fas fa-book"></i>  Stories
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-4 mb-2 px-1">
+                        <button id="grammarBtn" class="btn btn-light w-100" disabled>
+                            <i class="fas fa-pencil-alt"></i>  Grammar
+                        </button>
+                    </div>
+                    <div class="col-12 col-lg-4 mb-2 px-1">
+                        <button id="chatBtn" class="btn btn-light w-100" disabled>
+                            <i class="fas fa-comments"></i> Chat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    
+        <!-- Course switching and adding -->
+        <div id="switchCourseDropdown" class="row mb-4 mx-0 px-0" style="display:none;">
+            <div class="col-md-12 px-0">
+                <div class="card bg-primary text-light text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Select a Course</h5>
-                        <select id="courseDropdown" class="form-select">
+                        <h5 class="card-title">Switch to Another Course</h5>
+                        <select id="switchCourseSelect" class="form-select">
                             <option>Select a Course</option>
-                            <!-- Course options will be dynamically populated here -->
+                            <!-- Options populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row  mx-0 px-0">
+            <div class="col-md-12 px-0">
+                <div class="card bg-primary text-light text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Another Course</h5>
+                        <select id="addCourseSelect" class="form-select">
+                            <option>Select a Course</option>
+                            <!-- Add new course options populated here -->
                         </select>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
 
     <!-- Firebase, jQuery, and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
