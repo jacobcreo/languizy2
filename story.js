@@ -77,6 +77,37 @@ async function loadStory() {
     }
 }
 
+// Load User Avatar or Initials into Navbar
+function loadUserAvatar(user) {
+  const userRef = db.collection('users').doc(user.uid);
+
+  userRef.get().then((doc) => {
+      if (doc.exists) {
+          const userData = doc.data();
+          const photoURL = userData.photoURL;
+          const displayName = userData.displayName || '';
+          const email = userData.email || '';
+          
+          // Get the avatar element in the navbar
+          const userAvatar = document.getElementById('userAvatar');
+
+          if (photoURL) {
+              // If photoURL exists, display the user's profile image
+              userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
+          } else {
+              // If no photoURL, create a circle with initials
+              const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
+              userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
+          }
+      } else {
+          console.error('User data does not exist in Firestore');
+      }
+  }).catch((error) => {
+      console.error('Error loading user avatar:', error);
+  });
+}
+
+
 
 
 // Toggle translation function
@@ -259,6 +290,8 @@ firebase.auth().onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
     loadStory(); // Load the story when user is authenticated
+    loadUserAvatar(user);  // Load user avatar in the navbar
+
   } else {
     window.location.href = 'login.html';
   }

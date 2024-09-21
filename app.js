@@ -45,7 +45,7 @@ function googleLogin() {
       // Save user data to Firestore
       saveUserData(result.user);
 
-      window.location.href = 'course_selection.html';
+      
     })
     .catch(error => {
       console.error('Google Sign-In error:', error);
@@ -69,39 +69,58 @@ function emailLogin() {
     });
 }
 
-// Function to save user data to Firestore
+// Function to save user data to Firestore and update profile image if changed
 function saveUserData(user) {
-    var userRef = db.collection('users').doc(user.uid);
-    userRef.set({
-      email: user.email,
-      displayName: user.displayName,
-      lastLogin: firebase.firestore.Timestamp.now()
-    }, { merge: true })
-    .then(() => {
-      console.log('User data saved successfully');
-    })
-    .catch(error => {
-      console.error('Error saving user data:', error);
-    });
-  }
-  
+  debugger;
+  var userRef = db.collection('users').doc(user.uid);
 
-// Complete Email Link Sign-In
-if (auth.isSignInWithEmailLink(window.location.href)) {
-  var email = window.localStorage.getItem('emailForSignIn');
-  if (!email) {
-    email = prompt('Please provide your email for confirmation');
-  }
-  auth.signInWithEmailLink(email, window.location.href)
-    .then(result => {
-      window.localStorage.removeItem('emailForSignIn');
-      console.log('Email Sign-In successful:', result.user);
-      window.location.href = 'course_selection.html';
-    })
-    .catch(error => {
-      console.error('Email Sign-In error:', error);
-    });
+  // Check if the user's Firestore document exists
+  userRef.get().then(doc => {
+    if (doc.exists) {
+      debugger;
+      const userData = doc.data();
+      const storedPhotoURL = userData.photoURL;  // Get the stored photoURL
+
+      // Check if the stored photoURL is different from the Google photoURL
+      if (user.photoURL && (!storedPhotoURL || storedPhotoURL !== user.photoURL)) {
+        debugger;
+        // If photoURL has changed or is missing, update the Firestore document
+        userRef.update({
+          photoURL: user.photoURL,  // Update the profile image
+          lastLogin: firebase.firestore.Timestamp.now()  // Update the last login timestamp
+        }).then(() => {
+          console.log('Profile image updated in Firestore.');
+          window.location.href = 'course_selection.html';
+        }).catch(error => {
+          console.error('Error updating profile image:', error);
+        });
+        
+      } else {
+        // Just update the lastLogin if no photoURL changes
+        userRef.update({
+          lastLogin: firebase.firestore.Timestamp.now()
+        });
+        window.location.href = 'course_selection.html';
+      }
+    } else {
+      // If the document doesn't exist (new user), create it with the profile image
+      userRef.set({
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,  // Save the profile image for new users
+        lastLogin: firebase.firestore.Timestamp.now()
+      }).then(() => {
+        console.log('New user data saved successfully with profile image.');
+        window.location.href = 'course_selection.html';
+      }).catch(error => {
+        console.error('Error saving new user data:', error);
+      });
+    }
+  }).catch(error => {
+    console.error('Error fetching user data from Firestore:', error);
+  });
 }
+
 
 // Function to load user settings
 function loadUserSettings() {

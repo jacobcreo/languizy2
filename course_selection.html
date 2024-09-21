@@ -15,12 +15,18 @@
 
 <body>
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">LanguageApp</a>
-            <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="#">LanguageApp</a>
+        
+        <!-- Wrap the logout button and avatar inside a flex container -->
+        <div class="d-flex align-items-center">
+            <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+            <div id="userAvatar" class="avatar"></div>
         </div>
-    </nav>
+    </div>
+</nav>
+
 
     <!-- Main Container -->
     <div class="container my-5">
@@ -29,7 +35,8 @@
             <div class="col-md-12">
                 <div class="card bg-warning text-dark text-center">
                     <div class="card-body d-flex align-items-center justify-content-center">
-                        <img src="assets/images/robot_transparent.png" alt="Character" class="img-fluid" style="max-width: 100px; margin-right: 20px;">
+                        <img src="assets/images/robot_transparent.png" alt="Character" class="img-fluid"
+                            style="max-width: 100px; margin-right: 20px;">
                         <div>
                             <h5 id="headline" class="card-title">Loading your daily motivation...</h5>
                         </div>
@@ -37,62 +44,59 @@
                 </div>
             </div>
         </div>
-    
+
         <!-- Streak and Training Options Row -->
-       <!-- Streak and Training Options Row -->
-<div class="row mb-4 d-flex align-items-stretch">
-    <!-- Streak Section -->
-    <div class="col-md-6 mb-3 d-flex">
-        <div class="card bg-success text-white text-center flex-fill">
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-center">
-                    <i class="fas fa-fire fa-3x me-3" id="flameIcon"></i>
-                    <div>
-                        <h5 class="card-title">Current Streak</h5>
-                        <p id="streakCount" class="mb-0">4 Days in a Row</p>
-                        <p id="streakMessage" class="mt-1"></p> <!-- Add margin for better spacing -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Training Options -->
-    <div id="trainingOptions" class="col-md-6 mb-3 d-flex">
-        <div class="card bg-info text-white text-center flex-fill">
-            <div class="card-body">
-                <button id="continueCourseBtn" class="btn btn-primary w-100 mb-3" style="display:none;">Continue Training</button>
-                <div class="row">
-                    <div class="col-12 col-lg-4 mb-2 px-1">
-                        <button id="storiesBtn" class="btn btn-light w-100" disabled>
-                            <i class="fas fa-book"></i>  Stories
-                        </button>
-                    </div>
-                    <div class="col-12 col-lg-4 mb-2 px-1">
-                        <button id="grammarBtn" class="btn btn-light w-100" disabled>
-                            <i class="fas fa-pencil-alt"></i>  Grammar
-                        </button>
-                    </div>
-                    <div class="col-12 col-lg-4 mb-2 px-1">
-                        <button id="chatBtn" class="btn btn-light w-100" disabled>
-                            <i class="fas fa-comments"></i> Chat
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-    
-        <!-- Course switching and adding -->
-        <div id="switchCourseDropdown" class="row mb-4 mx-0 px-0" style="display:none;">
-            <div class="col-md-12 px-0">
-                <div class="card bg-primary text-light text-center">
+        <!-- Streak and Training Options Row -->
+        <div class="row mb-4 d-flex align-items-stretch">
+            <!-- Streak Section -->
+            <div class="col-md-6 mb-3 d-flex">
+                <div class="card bg-success text-white text-center flex-fill">
                     <div class="card-body">
-                        <h5 class="card-title">Switch to Another Course</h5>
-                        <select id="switchCourseSelect" class="form-select">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <i class="fas fa-fire fa-3x me-3" id="flameIcon"></i>
+                            <div>
+                                <h5 class="card-title">Current Streak</h5>
+                                <p id="streakCount" class="mb-0">4 Days in a Row</p>
+                                <p id="streakMessage" class="mt-1"></p> <!-- Add margin for better spacing -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Options -->
+            <div id="trainingOptions" class="col-md-6 mb-3 d-flex hidden">
+                <div class="card bg-info text-white text-center flex-fill">
+                    <div class="card-body">
+                        <button id="continueCourseBtn" class="btn btn-primary w-100 mb-3" style="display:none;">Continue
+                            Training</button>
+                        <div class="row">
+                            <div class="col-12 col-lg-4 mb-2 px-1">
+                                <button id="storiesBtn" class="btn btn-light w-100" disabled>
+                                    <i class="fas fa-book"></i> Stories
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-4 mb-2 px-1">
+                                <button id="grammarBtn" class="btn btn-light w-100" disabled>
+                                    <i class="fas fa-pencil-alt"></i> Grammar
+                                </button>
+                            </div>
+                            <div class="col-12 col-lg-4 mb-2 px-1">
+                                <button id="chatBtn" class="btn btn-light w-100" disabled>
+                                    <i class="fas fa-comments"></i> Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="newUserOptions" class="col-md-6 mb-3 d-flex hidden">
+                <div class="card bg-info text-white text-center flex-fill">
+                    <div class="card-body">
+                        <div class="alert alert-success" role="alert">
+                            No Courses Yet, Start a new Course!
+                        </div>
+                        <select id="newCoursesSelect" class="form-select">
                             <option>Select a Course</option>
                             <!-- Options populated dynamically -->
                         </select>
@@ -100,22 +104,42 @@
                 </div>
             </div>
         </div>
+
+        
     
-        <div class="row  mx-0 px-0">
-            <div class="col-md-12 px-0">
-                <div class="card bg-primary text-light text-center">
-                    <div class="card-body">
-                        <h5 class="card-title">Add Another Course</h5>
-                        <select id="addCourseSelect" class="form-select">
-                            <option>Select a Course</option>
-                            <!-- Add new course options populated here -->
-                        </select>
-                    </div>
+
+
+
+    <!-- Course switching and adding -->
+    <div id="switchCourseDropdown" class="row mb-4 mx-0 px-0" style="display:none;">
+        <div class="col-md-12 px-0">
+            <div class="card bg-primary text-light text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Switch to Another Course</h5>
+                    <select id="switchCourseSelect" class="form-select">
+                        <option>Select a Course</option>
+                        <!-- Options populated dynamically -->
+                    </select>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    <div id="addAnotherCourseBox" class="row  mx-0 px-0 hidden">
+        <div class="col-md-12 px-0">
+            <div class="card bg-primary text-light text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Add Another Course</h5>
+                    <select id="addCourseSelect" class="form-select">
+                        <option>Select a Course</option>
+                        <!-- Add new course options populated here -->
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
 
     <!-- Firebase, jQuery, and Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -127,7 +151,7 @@
     <script src="firebase-config.js"></script>
     <script src="auth.js"></script>
     <!-- Custom JS -->
-    <script src="course-selection.js"></script>
+    <script src="course-selection.js?a=1"></script>
 </body>
 
 </html>

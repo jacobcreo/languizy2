@@ -22,6 +22,37 @@ const countryToLanguage = {
     dk: { languageCode: "da-DK", voice: "Naja" }           // Denmark
 };
 
+// Load User Avatar or Initials into Navbar
+function loadUserAvatar(user) {
+  const userRef = db.collection('users').doc(user.uid);
+
+  userRef.get().then((doc) => {
+      if (doc.exists) {
+          const userData = doc.data();
+          const photoURL = userData.photoURL;
+          const displayName = userData.displayName || '';
+          const email = userData.email || '';
+          
+          // Get the avatar element in the navbar
+          const userAvatar = document.getElementById('userAvatar');
+
+          if (photoURL) {
+              // If photoURL exists, display the user's profile image
+              userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
+          } else {
+              // If no photoURL, create a circle with initials
+              const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
+              userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
+          }
+      } else {
+          console.error('User data does not exist in Firestore');
+      }
+  }).catch((error) => {
+      console.error('Error loading user avatar:', error);
+  });
+}
+
+
 function updateFlagIcons(currentCourse) {
     const flagCard = document.getElementById('flag-card');
     if (!flagCard) return;
@@ -66,6 +97,7 @@ function updateFlagIcons(currentCourse) {
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         fetchCurrentCourse(user).then((currentCourse) => {
+          loadUserAvatar(user);  // Load user avatar in the navbar
           debugger;
             if (!currentCourse) {
                 console.error('No valid current course found.');

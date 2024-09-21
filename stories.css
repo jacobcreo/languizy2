@@ -79,3 +79,26 @@ body {
     }
   }
   
+  /* Avatar Image (Profile Photo) */
+#userAvatar img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* Ensure the avatar and logout button are aligned properly */
+.navbar .d-flex.align-items-center {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Add spacing between the button and the avatar */
+}
+
+/* Adjust the size of the profile image */
+#userAvatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Ensure logout button and avatar are aligned */
+.me-3 {
+  margin-right: 15px; /* Add margin to the right of the logout button */
+}

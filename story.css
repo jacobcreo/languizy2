@@ -74,3 +74,34 @@ button {
 #playStoryAudioBtn:hover {
     background-color: #0056b3;
 }
+
+
+/* Ensure the avatar and logout button are aligned properly */
+.navbar .d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between the button and the avatar */
+}
+
+/* Ensure the avatar image is circular and maintains its aspect ratio */
+#userAvatar img {
+    width: 40px;  /* Set fixed width */
+    height: 40px;  /* Set fixed height */
+    border-radius: 50%;  /* Make it circular */
+    object-fit: cover;  /* Ensure the image covers the area without distortion */
+    max-width:none !important;
+}
+
+/* Ensure logout button and avatar are aligned */
+.me-3 {
+    margin-right: 15px; /* Add margin to the right of the logout button */
+}
+
+#userAvatar {
+    width: 40px;  /* Ensure the container has a fixed width */
+    height: 40px; /* Ensure the container has a fixed height */
+    display: flex; /* Align the content properly */
+    align-items: center;
+    justify-content: center;
+    overflow: visible; /* In case the image is larger */
+}

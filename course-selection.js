@@ -22,10 +22,42 @@ firebase.auth().onAuthStateChanged((user) => {
         loadHeadline(user);
         loadStreak(user);
         loadCourses(user);
+        loadUserAvatar(user);  // Load user avatar in the navbar
     } else {
         window.location.href = 'login.html';
     }
 });
+
+// Load User Avatar or Initials into Navbar
+function loadUserAvatar(user) {
+    const userRef = db.collection('users').doc(user.uid);
+
+    userRef.get().then((doc) => {
+        if (doc.exists) {
+            const userData = doc.data();
+            const photoURL = userData.photoURL;
+            const displayName = userData.displayName || '';
+            const email = userData.email || '';
+            
+            // Get the avatar element in the navbar
+            const userAvatar = document.getElementById('userAvatar');
+
+            if (photoURL) {
+                // If photoURL exists, display the user's profile image
+                userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
+            } else {
+                // If no photoURL, create a circle with initials
+                const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
+                userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
+            }
+        } else {
+            console.error('User data does not exist in Firestore');
+        }
+    }).catch((error) => {
+        console.error('Error loading user avatar:', error);
+    });
+}
+
 
 // Load daily headline based on current date
 function loadHeadline(user) {
@@ -191,7 +223,6 @@ function getFlagIcons(currentCourse) {
 }
 
 
-// Load available courses for the user
 function loadCourses(user) {
     const courseDropdown = document.getElementById('courseDropdown');
     const trainingOptions = document.getElementById('trainingOptions');
@@ -209,25 +240,40 @@ function loadCourses(user) {
         db.collection('users').doc(user.uid).collection('courses').get()
             .then((snapshot) => {
                 const courseCount = snapshot.size;
+                
+                // Case 1: No courses found for the user
                 if (courseCount === 0) {
-                    // Case 1: No courses selected yet
-                    courseDropdown.style.display = 'block';
-                    populateAvailableCourses(user, currentCourse);
-                } else if (courseCount === 1) {
-                    // Case 2: Only 1 course available
-                    courseDropdown.style.display = 'none';
-                    loadTrainingOptions(currentCourse, user.uid, true);
-                    populateAvailableCourses(user, currentCourse);
-                } else {
-                    // Case 3: Multiple courses available
-                    switchCourseDropdown.style.display = 'block';
-                    loadSwitchCourses(currentCourse, user.uid);
-                    loadTrainingOptions(currentCourse, user.uid, false);
-                    populateAvailableCourses(user, currentCourse);
+                    document.getElementById('trainingOptions').classList.add('hidden');  // Hide training options
+                    document.getElementById('newUserOptions').classList.remove('hidden');  // Hide training options
+                    debugger;
+                    
+                    
+                    populateNewCoursesSelect(user); // New function call here
+
+                } 
+                
+                // Case 2: Only 1 course available
+                else if (courseCount === 1) {
+                    document.getElementById('trainingOptions').classList.remove('hidden');  // Hide training options
+                    document.getElementById('addAnotherCourseBox').classList.remove('hidden');  // Hide training options
+                    switchCourseDropdown.style.display = 'none';  // Hide course switch option
+                    loadTrainingOptions(currentCourse, user.uid, true);  // Load training options
+                    populateAvailableCourses(user, currentCourse);  // Show available courses
+                } 
+                
+                // Case 3: Multiple courses available
+                else {
+                    document.getElementById('trainingOptions').classList.remove('hidden');  // Hide training options
+                    document.getElementById('addAnotherCourseBox').classList.remove('hidden');  // Hide training options
+                    switchCourseDropdown.style.display = 'block';  // Show switch course option
+                    loadSwitchCourses(currentCourse, user.uid);  // Show the switch course dropdown
+                    loadTrainingOptions(currentCourse, user.uid, false);  // Load training options
+                    populateAvailableCourses(user, currentCourse);  // Show available courses
                 }
             });
     });
 }
+
 
 function populateAvailableCourses(user, currentCourse) {
     const addCourseSelect = document.getElementById('addCourseSelect');
@@ -236,7 +282,7 @@ function populateAvailableCourses(user, currentCourse) {
     // Add default "Select new course" option
     const defaultOption = document.createElement('option');
     defaultOption.value = '';
-    defaultOption.textContent = 'Select new course';
+    defaultOption.textContent = 'Select a Course to begin';
     defaultOption.disabled = true;
     defaultOption.selected = true;
     addCourseSelect.appendChild(defaultOption);
@@ -268,7 +314,6 @@ function populateAvailableCourses(user, currentCourse) {
                             const [knownLanguage, language] = course.split('-');
                             const option = document.createElement('option');
                             option.value = course;
-                            // Use languageShorts to convert the codes to full language names
                             option.textContent = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
                             addCourseSelect.appendChild(option);
                         }
@@ -295,6 +340,59 @@ function populateAvailableCourses(user, currentCourse) {
     });
 }
 
+// New function to populate the newCoursesSelect dropdown for new users
+function populateNewCoursesSelect(user) {
+    const newCoursesSelect = document.getElementById('newCoursesSelect');
+    newCoursesSelect.innerHTML = ''; // Clear previous options
+
+    // Add default "Select new course" option
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Select a Course to begin';
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    newCoursesSelect.appendChild(defaultOption);
+
+    // Get all available courses from the questions collection
+    db.collection('questions')
+        .get()
+        .then((snapshot) => {
+            const courses = new Set();
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const courseCombo = `${data.knownLanguage}-${data.language}`;
+                courses.add(courseCombo);
+            });
+
+            // Populate the dropdown with all available courses (no filtering for enrolled courses)
+            courses.forEach((course) => {
+                const [knownLanguage, language] = course.split('-');
+                const option = document.createElement('option');
+                option.value = course;
+                option.textContent = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
+                newCoursesSelect.appendChild(option);
+            });
+
+            if (newCoursesSelect.children.length === 1) { // Only default option is present
+                const noCoursesOption = document.createElement('option');
+                noCoursesOption.textContent = 'No courses available';
+                noCoursesOption.disabled = true;
+                newCoursesSelect.appendChild(noCoursesOption);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching courses:", error);
+        });
+
+    // Add event listener for course selection
+    newCoursesSelect.addEventListener('change', () => {
+        const selectedCourse = newCoursesSelect.value;
+        if (selectedCourse) {
+            window.location.href = `practice.html?courseId=${selectedCourse}`;
+        }
+    });
+}
 
 function loadTrainingOptions(currentCourse, userId) {
     const [knownLanguage, language] = currentCourse.split('-');
