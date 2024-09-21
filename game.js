@@ -384,136 +384,138 @@ function hideLoadingProgress() {
 
 // Display the question on the page
 function displayQuestion(question, questionId, currentCourse) {
-    console.log(question);
-    hideLoadingProgress(); // Hide progress bar when the question loads
+  console.log(question);
+  hideLoadingProgress(); // Hide progress bar when the question loads
 
-    var inputLength = question.missingWord.length;
+  var inputLength = question.missingWord.length;
 
-    // Calculate input width dynamically to match the expected answer length
-    var inputWidth = inputLength * 1.2 + 1;
+  // Calculate input width dynamically to match the expected answer length
+  var inputWidth = inputLength * 1.2 + 1;
 
-    // Replace the missing word with an input field
-    var inputHTML = `<input type="text" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
-    var sentenceHTML = question.sentence.replace('___', inputHTML);
+  // Replace the missing word with an input field
+  var inputHTML = `<input type="text" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
+  var sentenceHTML = question.sentence.replace('___', inputHTML);
 
-    // Display the sentence with the embedded input field
-    $('#sentence').html(sentenceHTML);
-    $('#translation').text(question.translation);
+  // Display the sentence with the embedded input field
+  $('#sentence').html(sentenceHTML);
+  $('#translation').text(question.translation);
 
-    // Retrieve the progress data for this question to get `lastAnswered`
-    var user = firebase.auth().currentUser;
-    var userProgressRef = db.collection('users').doc(user.uid)
-      .collection('courses').doc(currentCourse)
-      .collection('progress').doc(questionId);
+  // Retrieve the progress data for this question to get `lastAnswered`
+  var user = firebase.auth().currentUser;
+  var userProgressRef = db.collection('users').doc(user.uid)
+    .collection('courses').doc(currentCourse)
+    .collection('progress').doc(questionId);
 
-    userProgressRef.get().then(progressDoc => {
-      var phraseStatus = "(new phrase)"; // Default if never answered before
+  userProgressRef.get().then(progressDoc => {
+    var phraseStatus = "(new phrase)"; // Default if never answered before
 
-      if (progressDoc.exists) {
-        var progressData = progressDoc.data();
-        if (progressData.lastAnswered) {
-          // Calculate time difference for display
-          phraseStatus = timeDifference(progressData.lastAnswered);
-        }
-
-        // ** NEW: Update Question Stats **
-        var timesSeen = (progressData.timesCorrect || 0) + (progressData.timesIncorrect || 0);
-        var timesCorrect = progressData.timesCorrect || 0;
-        var timesWrong = progressData.timesIncorrect || 0;
-
-        // Update HTML with the stats
-        $('#times-seen').text(timesSeen);
-        $('#times-correct').text(timesCorrect);
-        $('#times-wrong').text(timesWrong);
-        $('#question-stats').show(); // Show the stats section
-      } else {
-
-        var timesSeen = 0;
-        var timesCorrect = 0;
-        var timesWrong = 0;
-
-        // Update HTML with the stats
-        $('#times-seen').text(timesSeen);
-        $('#times-correct').text(timesCorrect);
-        $('#times-wrong').text(timesWrong);
-        $('#question-stats').show(); // Show the stats section
-
-
+    if (progressDoc.exists) {
+      var progressData = progressDoc.data();
+      if (progressData.lastAnswered) {
+        // Calculate time difference for display
+        phraseStatus = timeDifference(progressData.lastAnswered);
       }
 
-      // Display the phrase status
-      $('#translation').append(` <span class="text-muted">${phraseStatus}</span>`);
+      // ** NEW: Update Question Stats **
+      var timesSeen = (progressData.timesCorrect || 0) + (progressData.timesIncorrect || 0);
+      var timesCorrect = progressData.timesCorrect || 0;
+      var timesWrong = progressData.timesIncorrect || 0;
 
-      // Automatically focus on the input field
-      $('#user-answer').focus();
-    });
+      // Update HTML with the stats
+      $('#times-seen').text(timesSeen);
+      $('#times-correct').text(timesCorrect);
+      $('#times-wrong').text(timesWrong);
+      $('#question-stats').show(); // Show the stats section
+    } else {
 
-    $('#feedback').text('').removeClass('text-success text-danger');
+      var timesSeen = 0;
+      var timesCorrect = 0;
+      var timesWrong = 0;
 
-    // Show the submit button, hide the next button
-    $('#submit-answer').show();
-    $('#next-question').hide();
-    // $('#replay-audio').hide(); // Hide the replay audio button initially
+      // Update HTML with the stats
+      $('#times-seen').text(timesSeen);
+      $('#times-correct').text(timesCorrect);
+      $('#times-wrong').text(timesWrong);
+      $('#question-stats').show(); // Show the stats section
 
-    // Debounce handler to prevent multiple triggers
-    function handleDebounce(callback) {
-      if (!debounceTimeout) {
-        callback(); // Execute the callback function immediately
 
-        // Set debounceTimeout to prevent further triggers
-        debounceTimeout = setTimeout(() => {
-          debounceTimeout = null; // Reset after 300ms
-        }, 300); // Debounce time set to 300ms
-      }
     }
 
-    // Handle answer submission
-    function handleSubmit() {
-      var userAnswer = $('#user-answer').val().trim();
-      checkAnswer(userAnswer, question, questionId, currentCourse); // Pass currentCourse as a parameter
-      $('#submit-answer').hide(); // Hide submit button after submission
-      $('#next-question').show(); // Show next question button after submission
+    // Display the phrase status
+    $('#translation').append(` <span class="text-muted">${phraseStatus}</span>`);
 
-      // Construct the complete sentence using the correct missing word
-      var completeSentence = question.sentence.replace('___', question.missingWord); // **Added**
-      var targetLanguage = question.language; // **Added** Assume language is stored in question data
+    // Automatically focus on the input field
+    $('#user-answer').focus();
+  });
 
-      playAudio(questionId, completeSentence, targetLanguage); // **Modified** Pass completeSentence and targetLanguage
+  $('#feedback').text('').removeClass('text-success text-danger');
+  $('#coach-feedback').hide(); // Hide coach feedback when a new question is loaded
+
+  // Show the submit button, hide the next button
+  $('#submit-answer').show();
+  $('#next-question').hide();
+  // $('#replay-audio').hide(); // Hide the replay audio button initially
+
+  // Debounce handler to prevent multiple triggers
+  function handleDebounce(callback) {
+    if (!debounceTimeout) {
+      callback(); // Execute the callback function immediately
+
+      // Set debounceTimeout to prevent further triggers
+      debounceTimeout = setTimeout(() => {
+        debounceTimeout = null; // Reset after 300ms
+      }, 300); // Debounce time set to 300ms
     }
+  }
 
-    // Event listener for Enter key to submit answer
-    $('#user-answer').off('keypress').on('keypress', function (e) {
-      if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
-        handleDebounce(handleSubmit);
-      }
-    });
+  // Handle answer submission
+  function handleSubmit() {
+    var userAnswer = $('#user-answer').val().trim();
+    checkAnswer(userAnswer, question, questionId, currentCourse); // Pass currentCourse as a parameter
+    $('#submit-answer').hide(); // Hide submit button after submission
+    $('#next-question').show(); // Show next question button after submission
 
-    // Handle submit answer button click
-    $('#submit-answer').off('click').on('click', function () {
+    // Construct the complete sentence using the correct missing word
+    var completeSentence = question.sentence.replace('___', question.missingWord); // **Added**
+    var targetLanguage = question.language; // **Added** Assume language is stored in question data
+
+    playAudio(questionId, completeSentence, targetLanguage); // **Modified** Pass completeSentence and targetLanguage
+  }
+
+  // Event listener for Enter key to submit answer
+  $('#user-answer').off('keypress').on('keypress', function (e) {
+    if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
       handleDebounce(handleSubmit);
-    });
+    }
+  });
 
-    // Handle next question button click
-    $('#next-question').off('click').on('click', function () {
-      stopAudio(); // Stop audio when moving to the next question
-      handleDebounce(() => loadQuestion(user, currentCourse)); // Pass currentCourse as a parameter
-    });
+  // Handle submit answer button click
+  $('#submit-answer').off('click').on('click', function () {
+    handleDebounce(handleSubmit);
+  });
 
-    // Event listener for Enter key to move to the next question
-    $(document).off('keypress').on('keypress', function (e) {
-      if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
-        handleDebounce(() => $('#next-question').click());
-      }
-    });
+  // Handle next question button click
+  $('#next-question').off('click').on('click', function () {
+    stopAudio(); // Stop audio when moving to the next question
+    handleDebounce(() => loadQuestion(user, currentCourse)); // Pass currentCourse as a parameter
+  });
 
-    // Replay audio button event
-    $('#replay-audio').off('click').on('click', function () {
-      // **Modified** Ensure completeSentence and targetLanguage are passed correctly
-      var completeSentence = question.sentence.replace('___', question.missingWord); 
-      var targetLanguage = question.language;
-      playAudio(questionId, completeSentence, targetLanguage); 
-    });
+  // Event listener for Enter key to move to the next question
+  $(document).off('keypress').on('keypress', function (e) {
+    if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
+      handleDebounce(() => $('#next-question').click());
+    }
+  });
+
+  // Replay audio button event
+  $('#replay-audio').off('click').on('click', function () {
+    // **Modified** Ensure completeSentence and targetLanguage are passed correctly
+    var completeSentence = question.sentence.replace('___', question.missingWord); 
+    var targetLanguage = question.language;
+    playAudio(questionId, completeSentence, targetLanguage); 
+  });
 }
+
 
   
 
@@ -643,88 +645,118 @@ function checkAnswer(userAnswer, question, questionId, currentCourse) {
 
 // Update user progress in the database
 function updateUserProgress(questionId, isCorrect, currentCourse) {
-    var user = firebase.auth().currentUser;
-  
-    var userProgressRef = db.collection('users').doc(user.uid)
-      .collection('courses').doc(currentCourse)
-      .collection('progress').doc(questionId);
-  
-    var userStatsRef = db.collection('users').doc(user.uid)
-      .collection('courses').doc(currentCourse)
-      .collection('stats');
-  
-    var allTimeStatsRef = userStatsRef.doc('all-time');
-  
-    // First, fetch the question data to get its frequency outside the transaction
-    db.collection('questions').doc(questionId).get().then(questionDoc => {
-      if (questionDoc.exists) {
-        var questionFrequency = questionDoc.data().frequency; // Frequency of the current question
-  
-        // Now, run the transaction to update progress and stats
-        db.runTransaction(transaction => {
-          return transaction.get(userProgressRef).then(doc => {
-            var data = doc.exists ? doc.data() : {
-              timesCorrect: 0,
-              timesIncorrect: 0,
-              timesCorrectInARow: 0,
-              lastAnswered: null,
-              nextDue: null,
-              initialAppearance: true
-            };
-  
-            var now = new Date();
-            var today = now.toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
-  
-            if (isCorrect) {
-              data.timesCorrect += 1;
-              data.timesCorrectInARow += 1;
-              var daysToAdd = data.initialAppearance ? 28 : 2 * data.timesCorrectInARow;
-              data.nextDue = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-              updateStats(userStatsRef, today, 10, true);
-              dailyScore += 10; // Update the daily score
-              $('#score').text(dailyScore); // Update the score on screen
-            } else {
-              data.timesIncorrect += 1;
-              data.timesCorrectInARow = 0;
-              data.nextDue = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes
-              updateStats(userStatsRef, today, 0, false);
-            }
-  
-            // Update `lastAnswered` to the current time
-            data.lastAnswered = firebase.firestore.Timestamp.fromDate(now);
-            data.initialAppearance = false;
-  
-            // Fetch the current maxFrequency and update if necessary
-            return transaction.get(allTimeStatsRef).then(allTimeDoc => {
-                var allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {};
-              
-                // Ensure maxFrequency is set, even if the document exists but the field is missing
-                if (typeof allTimeData.maxFrequency === 'undefined') {
-                  allTimeData.maxFrequency = 0;
-                }
-              
-                // Compare question frequency and update if necessary
-                if (questionFrequency > allTimeData.maxFrequency) {
-                  allTimeData.maxFrequency = questionFrequency;
-                }
-              
-                // Write the updated progress and stats back to Firestore
-                transaction.set(userProgressRef, data);
-                transaction.set(allTimeStatsRef, allTimeData);
-              });
-          });
-        }).catch(error => {
-          console.error('Transaction failed:', error);
+  var user = firebase.auth().currentUser;
+
+  var userProgressRef = db.collection('users').doc(user.uid)
+    .collection('courses').doc(currentCourse)
+    .collection('progress').doc(questionId);
+
+  var userStatsRef = db.collection('users').doc(user.uid)
+    .collection('courses').doc(currentCourse)
+    .collection('stats');
+
+  var allTimeStatsRef = userStatsRef.doc('all-time');
+
+  // First, fetch the question data to get its frequency outside the transaction
+  db.collection('questions').doc(questionId).get().then(questionDoc => {
+    if (questionDoc.exists) {
+      var questionFrequency = questionDoc.data().frequency; // Frequency of the current question
+
+      // Now, run the transaction to update progress and stats
+      db.runTransaction(transaction => {
+        return transaction.get(userProgressRef).then(doc => {
+          var data = doc.exists ? doc.data() : {
+            timesCorrect: 0,
+            timesIncorrect: 0,
+            timesCorrectInARow: 0,
+            timesIncorrectInARow: 0,
+            lastAnswered: null,
+            nextDue: null,
+            initialAppearance: true
+          };
+
+          var now = new Date();
+          var today = now.toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
+
+          if (isCorrect) {
+            data.timesCorrect += 1;
+            data.timesCorrectInARow += 1;
+            data.timesIncorrectInARow = 0; // Reset incorrect streak
+            var daysToAdd = data.initialAppearance ? 28 : 2 * data.timesCorrectInARow;
+            data.nextDue = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+            updateStats(userStatsRef, today, 10, true);
+            dailyScore += 10; // Update the daily score
+            $('#score').text(dailyScore); // Update the score on screen
+          } else {
+            data.timesIncorrect += 1;
+            data.timesCorrectInARow = 0; // Reset correct streak
+            data.timesIncorrectInARow += 1; // Increment incorrect streak
+            data.nextDue = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes
+            updateStats(userStatsRef, today, 0, false);
+          }
+
+          // Update `lastAnswered` to the current time
+          data.lastAnswered = firebase.firestore.Timestamp.fromDate(now);
+          data.initialAppearance = false;
+
+          // Fetch the current maxFrequency and update if necessary
+          return transaction.get(allTimeStatsRef).then(allTimeDoc => {
+              var allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {};
+            
+              // Ensure maxFrequency is set, even if the document exists but the field is missing
+              if (typeof allTimeData.maxFrequency === 'undefined') {
+                allTimeData.maxFrequency = 0;
+              }
+            
+              // Compare question frequency and update if necessary
+              if (questionFrequency > allTimeData.maxFrequency) {
+                allTimeData.maxFrequency = questionFrequency;
+              }
+            
+              // Write the updated progress and stats back to Firestore
+              transaction.set(userProgressRef, data);
+              transaction.set(allTimeStatsRef, allTimeData);
+
+              return Promise.resolve(data); // Return updated data
+            });
         });
-  
-      } else {
-        console.error("Question not found");
-      }
-    }).catch(error => {
-      console.error('Error fetching question data:', error);
-    });
+      }).then((data) => {
+        console.log('Transaction successful');
+        // Now data contains the updated progress data
+        // We can call a function to update the coach feedback
+        updateCoachFeedback(data.timesCorrectInARow, data.timesIncorrectInARow);
+      }).catch(error => {
+        console.error('Transaction failed:', error);
+      });
+
+    } else {
+      console.error("Question not found");
+    }
+  }).catch(error => {
+    console.error('Error fetching question data:', error);
+  });
+}
+
+// Function to update coach feedback
+function updateCoachFeedback(correctStreak, incorrectStreak) {
+  var coachMessage = '';
+  if (correctStreak >= 5) {
+      coachMessage = "Excellent work! You've got 5 correct answers in a row!";
+  } else if (correctStreak >= 3) {
+      coachMessage = "Good job! 3 correct answers in a row!";
+  } else if (correctStreak > 0) {
+      coachMessage = "Correct! Keep it up!";
+  } else if (incorrectStreak >= 5) {
+      coachMessage = "Don't give up! Let's review the material together.";
+  } else if (incorrectStreak >= 3) {
+      coachMessage = "Keep trying! Practice makes perfect.";
+  } else {
+      coachMessage = "Incorrect. Let's try another one.";
   }
-  
+
+  $('#coach-message').text(coachMessage);
+  $('#coach-feedback').show();
+}
 
 
 // Update stats in the database
