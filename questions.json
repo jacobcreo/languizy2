@@ -1,0 +1,18 @@
+[
+  {
+    "sentence": "Kannst du planen, ___ du die Reise kennst?",
+    "translation": "Can you plan, because you know the journey?",
+    "timeOfUpload": "2024-09-21T07:34:40.331Z",
+    "missingWord": "denn",
+    "missingWordTranslation": [
+      "because",
+      "then",
+      "for"
+    ],
+    "language": "de",
+    "knownLanguage": "en",
+    "difficultyLevel": 3,
+    "topic": "Travel",
+    "frequency": 99
+  }
+]

@@ -229,7 +229,6 @@ function loadCourses(user) {
     });
 }
 
-// Populate available courses for adding new courses
 function populateAvailableCourses(user, currentCourse) {
     const addCourseSelect = document.getElementById('addCourseSelect');
     addCourseSelect.innerHTML = ''; // Clear previous options
@@ -269,7 +268,8 @@ function populateAvailableCourses(user, currentCourse) {
                             const [knownLanguage, language] = course.split('-');
                             const option = document.createElement('option');
                             option.value = course;
-                            option.textContent = `${knownLanguage} to ${language}`;
+                            // Use languageShorts to convert the codes to full language names
+                            option.textContent = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
                             addCourseSelect.appendChild(option);
                         }
                     });
@@ -296,7 +296,6 @@ function populateAvailableCourses(user, currentCourse) {
 }
 
 
-// Load training options for stories, grammar, and chat
 function loadTrainingOptions(currentCourse, userId) {
     const [knownLanguage, language] = currentCourse.split('-');
     
@@ -309,7 +308,7 @@ function loadTrainingOptions(currentCourse, userId) {
     // Only proceed if the buttons exist
     if (storiesBtn && grammarBtn && chatBtn && continueCourseBtn) {
         // Display course name and flags on the continue button (for both single and multiple courses)
-        continueCourseBtn.innerHTML = `${getFlagIcons(currentCourse)} Continue ${knownLanguage} to ${language} Training`;
+        continueCourseBtn.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
         continueCourseBtn.style.display = 'block';
 
         continueCourseBtn.onclick = function() {
@@ -370,7 +369,7 @@ function loadTrainingOptions(currentCourse, userId) {
 
 
 
-// Populate courses for switching (Case 3)
+
 function loadSwitchCourses(currentCourse, userId) {
     const switchCourseSelect = document.getElementById('switchCourseSelect');
 
@@ -380,7 +379,8 @@ function loadSwitchCourses(currentCourse, userId) {
                 if (doc.id !== currentCourse) {
                     const option = document.createElement('option');
                     option.value = doc.id;
-                    option.textContent = `${doc.data().knownLanguage} to ${doc.data().targetLanguage}`;
+                    // Use languageShorts to convert language codes to full names
+                    option.textContent = `${languageShorts[doc.data().knownLanguage]} to ${languageShorts[doc.data().targetLanguage]}`;
                     switchCourseSelect.appendChild(option);
                 }
             });
@@ -394,6 +394,7 @@ function loadSwitchCourses(currentCourse, userId) {
         }
     });
 }
+
 
 // Logout function
 function logout() {

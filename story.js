@@ -141,111 +141,117 @@ function formatStoryText(text) {
 
 // Start Test function
 function startTest() {
-    document.getElementById('testYourKnowledgeBtn').style.display = 'none';
-    document.getElementById('testSection').style.display = 'block';
-    loadNextQuestion();
+  document.getElementById('testYourKnowledgeBtn').style.display = 'none';
+  document.getElementById('testSection').style.display = 'block';
+  loadNextQuestion();
 }
+
+let correctAnswer;  // Store the correct answer for comparison
+
 
 
 // Load next question function
 function loadNextQuestion() {
-    const questionContainer = document.getElementById('questionContainer');
-    questionContainer.innerHTML = ''; // Clear previous question
+  const questionContainer = document.getElementById('questionContainer');
+  questionContainer.innerHTML = ''; // Clear previous question
 
-    if (currentQuestionIndex <= totalQuestions) {
-        const question = currentStoryData[`test_question${currentQuestionIndex}`];
-        const answers = currentStoryData[`answers${currentQuestionIndex}`];
+  if (currentQuestionIndex <= totalQuestions) {
+      const question = currentStoryData[`test_question${currentQuestionIndex}`];
+      const answers = currentStoryData[`answers${currentQuestionIndex}`];
 
-        if (!question || !answers || answers.length === 0) {
-            console.error(`Missing question or answers for question ${currentQuestionIndex}`);
-            questionContainer.innerHTML = `<p class="text-danger">Error loading question ${currentQuestionIndex}. Please try again later.</p>`;
-            return;
-        }
+      if (!question || !answers || answers.length === 0) {
+          console.error(`Missing question or answers for question ${currentQuestionIndex}`);
+          questionContainer.innerHTML = `<p class="text-danger">Error loading question ${currentQuestionIndex}. Please try again later.</p>`;
+          return;
+      }
 
-        const shuffledAnswers = shuffleArray(answers);
-        const questionHTML = `
-            <h5 class="mb-4">${currentQuestionIndex}. ${question}</h5>
-            <div id="answerButtons"></div>
-        `;
+      correctAnswer = answers[0];  // The first answer in the array is the correct one
+      // The first answer in the array is the correct one
+      const shuffledAnswers = shuffleArray(answers);  // Shuffle the answers
 
-        questionContainer.innerHTML = questionHTML;
-        const answerButtonsContainer = document.getElementById('answerButtons');
+      const questionHTML = `
+          <h5 class="mb-4">${currentQuestionIndex}. ${question}</h5>
+          <div id="answerButtons"></div>
+      `;
 
-        shuffledAnswers.forEach(answer => {
-            const button = document.createElement('button');
-            button.classList.add('btn', 'btn-outline-primary', 'btn-lg', 'd-block', 'w-100', 'my-2', 'answer-btn');
-            button.innerText = answer;
-            button.onclick = () => submitAnswer(answer, answers[0]);
-            answerButtonsContainer.appendChild(button);
-        });
+      questionContainer.innerHTML = questionHTML;
+      const answerButtonsContainer = document.getElementById('answerButtons');
 
-    } else {
-        showTestFeedback();
-    }
+      shuffledAnswers.forEach(answer => {
+          const button = document.createElement('button');
+          button.classList.add('btn', 'btn-outline-primary', 'btn-lg', 'd-block', 'w-100', 'my-2', 'answer-btn');
+          button.innerText = answer;
+          button.onclick = () => submitAnswer(answer);  // Call submitAnswer without passing correctAnswer explicitly
+          answerButtonsContainer.appendChild(button);
+      });
+
+  } else {
+      showTestFeedback();
+  }
 }
 
 // Submit Answer and Load Next
-function submitAnswer(userAnswer, correctAnswer) {
+function submitAnswer(userAnswer) {
   if (userAnswer === correctAnswer) {
-    correctAnswersCount++;
+      correctAnswersCount++;
   }
 
   currentQuestionIndex++;
-  loadNextQuestion(); // Load the next question
+  loadNextQuestion();  // Load the next question
 }
 
 // Show feedback based on test results
 function showTestFeedback() {
-  const feedbackSection = document.getElementById('testFeedback');
-  const resultsMessage = document.getElementById('testResults');
+    const feedbackSection = document.getElementById('testFeedback');
+    const resultsMessage = document.getElementById('testResults');
 
-  if (correctAnswersCount >= 3) {
-    resultsMessage.innerHTML = `
-      <p><strong>Well done!</strong> You answered ${correctAnswersCount} out of ${totalQuestions} correctly.</p>
-      <p>You have completed this story. You've earned 200 points!</p>
-    `;
-    updateUserProgress(true);
-  } else {
-    resultsMessage.innerHTML = `
-      <p><strong>Almost there!</strong> You answered ${correctAnswersCount} out of ${totalQuestions} correctly.</p>
-      <p>You can retry the test or return to the Stories screen.</p>
-    `;
-    updateUserProgress(false);
-  }
+    if (correctAnswersCount >= 3) {
+        resultsMessage.innerHTML = `
+            <p><strong>Well done!</strong> You answered ${correctAnswersCount} out of ${totalQuestions} correctly.</p>
+            <p>You have completed this story. You've earned 200 points!</p>
+        `;
+        updateUserProgress(true);
+    } else {
+        resultsMessage.innerHTML = `
+            <p><strong>Almost there!</strong> You answered ${correctAnswersCount} out of ${totalQuestions} correctly.</p>
+            <p>You can retry the test or return to the Stories screen.</p>
+        `;
+        updateUserProgress(false);
+    }
 
-  feedbackSection.style.display = 'block';
+    feedbackSection.style.display = 'block';
 }
 
 // Update User's Story Progress in Firestore
 async function updateUserProgress(isCompleted) {
   try {
-    const userDocRef = db.collection('users').doc(currentUser.uid);
-    const storyProgressRef = userDocRef.collection('stories').doc(storyId);
+      const userDocRef = db.collection('users').doc(currentUser.uid);
+      const storyProgressRef = userDocRef.collection('stories').doc(storyId);
 
-    await storyProgressRef.set({
-      lastAnswered: new Date().toISOString(),
-      questionsAnsweredCorrect: correctAnswersCount,
-      questionsAnsweredWrong: totalQuestions - correctAnswersCount,
-      finished: isCompleted
-    }, { merge: true });
+      await storyProgressRef.set({
+          lastAnswered: new Date().toISOString(),
+          questionsAnsweredCorrect: correctAnswersCount,
+          questionsAnsweredWrong: totalQuestions - correctAnswersCount,
+          finished: isCompleted
+      }, { merge: true });
 
-    if (isCompleted) {
-      await userDocRef.update({
-        totalPoints: firebase.firestore.FieldValue.increment(200)
-      });
-    }
+      if (isCompleted) {
+          await userDocRef.update({
+              totalPoints: firebase.firestore.FieldValue.increment(200)
+          });
+      }
 
   } catch (error) {
-    console.error("Error updating story progress:", error);
+      console.error("Error updating story progress:", error);
   }
 }
 
 // Retry test logic
 document.getElementById('retryTestBtn').onclick = function() {
   document.getElementById('testFeedback').style.display = 'none';
-  correctAnswersCount = 0; // Reset correct answers count
-  currentQuestionIndex = 1; // Reset to first question
-  startTest(); // Start the test again
+  correctAnswersCount = 0;  // Reset correct answers count
+  currentQuestionIndex = 1;  // Reset to first question
+  startTest();  // Start the test again
 };
 
 // Authentication listener to get the user
@@ -261,8 +267,8 @@ firebase.auth().onAuthStateChanged(user => {
 // Shuffle answers for randomness
 function shuffleArray(array) {
   if (!array || !Array.isArray(array)) {
-    console.error("Invalid answers array for shuffling", array);
-    return [];
+      console.error("Invalid answers array for shuffling", array);
+      return [];
   }
   return array.sort(() => Math.random() - 0.5);
 }
