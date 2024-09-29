@@ -118,6 +118,8 @@ async function loadStats(user) {
       });
     }
 
+
+
     // Determine Day Joined
     const dayJoined = earliestDate ? earliestDate.toLocaleDateString() : 'N/A';
 
@@ -143,13 +145,40 @@ async function loadStats(user) {
     document.getElementById('averageScore').innerText = `Average Score: ${averageScore}`;
     document.getElementById('totalWrongAnswers').innerText = `Total Wrong Answers: ${totalWrongAnswers}`;
 
-    // Prepare Data for Charts
+
+    // ** New Part: Generate a Complete Date Range and Fill Missing Dates **
+    const latestDate = new Date(); // Assume latest date is today
+    if (!earliestDate) earliestDate = latestDate; // If there's no earliest date, set it to today
+    // Sort dailyStats to ensure correct ordering
     const sortedDailyStats = dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
-    const answersOverTimeData = sortedDailyStats.map(stat => ({
-      date: stat.date,
-      correctAnswers: stat.correctAnswers,
-      wrongAnswers: stat.wrongAnswers
-    }));
+    // Generate a complete date range from earliestDate to latestDate
+    const dateRange = generateDateRange(earliestDate, latestDate);
+
+    // Fill in missing dates in dailyStats with zero values
+    const filledDailyStats = dateRange.map(date => {
+      const existingStat = sortedDailyStats.find(stat => stat.date === date);
+      return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0 };
+    });
+
+        // Prepare Data for Charts
+        const answersOverTimeData = filledDailyStats.map(stat => ({
+          date: stat.date,
+          correctAnswers: stat.correctAnswers,
+          wrongAnswers: stat.wrongAnswers
+        }));
+    
+
+
+
+
+
+    // Prepare Data for Charts
+    // const sortedDailyStats = dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // const answersOverTimeData = sortedDailyStats.map(stat => ({
+      // date: stat.date,
+      // correctAnswers: stat.correctAnswers,
+      // wrongAnswers: stat.wrongAnswers
+    // }));
 
     // Display Charts and Heatmap
     displayHeatmap(Array.from(datesSet));
@@ -598,4 +627,18 @@ async function displayDifficultyLevelChart(userDocRef, currentCourse) {
       }
     });
   }
+
+  // Function to generate an array of date strings between two dates
+function generateDateRange(startDate, endDate) {
+  const dates = [];
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    dates.push(new Date(currentDate).toISOString().split('T')[0]); // Format as YYYY-MM-DD
+    currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+  }
+
+  return dates;
+}
+
     
