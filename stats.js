@@ -244,40 +244,55 @@ function calculateStreaks(dates) {
   dateObjects.sort((a, b) => a - b);
 
   const uniqueDates = Array.from(new Set(dateObjects.map(d => d.toDateString()))).map(d => new Date(d));
-
+  
   let longestStreak = 1;
   let currentStreak = 1;
 
   for (let i = 1; i < uniqueDates.length; i++) {
-    const diffTime = uniqueDates[i] - uniqueDates[i - 1];
-    const diffDays = diffTime / (24 * 60 * 60 * 1000);
+      const diffTime = uniqueDates[i] - uniqueDates[i - 1];
+      const diffDays = diffTime / (24 * 60 * 60 * 1000);
 
-    if (diffDays === 1) {
-      currentStreak++;
-      if (currentStreak > longestStreak) {
-        longestStreak = currentStreak;
+      if (diffDays === 1) {
+          currentStreak++;
+          if (currentStreak > longestStreak) {
+              longestStreak = currentStreak;
+          }
+      } else {
+          currentStreak = 1;
       }
-    } else {
-      currentStreak = 1;
-    }
   }
+  debugger;
 
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  let tempStreak = 0;
-  let checkDate = new Date(today);
+today.setHours(0, 0, 0, 0);
+let tempStreak = 0;
+let checkDate = new Date(today);
+checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
 
-  while (true) {
-    const dateStr = checkDate.toISOString().split('T')[0];
-    if (uniqueDates.find(d => d.toISOString().split('T')[0] === dateStr)) {
+// Check if there is a continuous streak until yesterday
+while (true) {
+  const dateStr = checkDate.toLocaleDateString('en-CA');
+
+  // Check if checkDate is in uniqueDates
+  if (uniqueDates.find(d => d.toLocaleDateString('en-CA') === dateStr)) {
+      // If the streak started, increment it
       tempStreak++;
-      checkDate.setDate(checkDate.getDate() - 1);
-    } else {
+      checkDate.setDate(checkDate.getDate() - 1); // Move to the previous day
+  } else {
+      // Break if no streak found for this day
       break;
-    }
   }
+}
 
-  currentStreak = tempStreak;
+// Check if today is part of the streak
+const streakExtendedToday = uniqueDates.some(d => d.toLocaleDateString('en-CA') === today.toLocaleDateString('en-CA'));
+
+if (streakExtendedToday) {
+  tempStreak++; // Include today in the streak count if practiced today
+}
+
+currentStreak = tempStreak;
+  
 
   return { currentStreak, longestStreak };
 }

@@ -120,8 +120,8 @@ async function loadStreak(user) {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Reset hours to compare dates accurately
 
-        const todayDateStr = today.toISOString().split('T')[0];
-
+        const todayDateStr = today.toLocaleDateString('en-CA');
+        debugger;
         // Determine if the streak was extended today
         const streakExtendedToday = datesSet.has(todayDateStr);
 
@@ -151,7 +151,6 @@ async function loadStreak(user) {
     }
 }
 
-// Reuse the same streak calculation function from stats screen
 function calculateStreaks(dates) {
     if (dates.length === 0) return { currentStreak: 0, longestStreak: 0 };
 
@@ -159,7 +158,7 @@ function calculateStreaks(dates) {
     dateObjects.sort((a, b) => a - b);
 
     const uniqueDates = Array.from(new Set(dateObjects.map(d => d.toDateString()))).map(d => new Date(d));
-
+    
     let longestStreak = 1;
     let currentStreak = 1;
 
@@ -176,26 +175,42 @@ function calculateStreaks(dates) {
             currentStreak = 1;
         }
     }
+    debugger;
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    let tempStreak = 0;
-    let checkDate = new Date(today);
+today.setHours(0, 0, 0, 0);
+let tempStreak = 0;
+let checkDate = new Date(today);
+checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
 
-    while (true) {
-        const dateStr = checkDate.toISOString().split('T')[0];
-        if (uniqueDates.find(d => d.toISOString().split('T')[0] === dateStr)) {
-            tempStreak++;
-            checkDate.setDate(checkDate.getDate() - 1);
-        } else {
-            break;
-        }
+// Check if there is a continuous streak until yesterday
+while (true) {
+    const dateStr = checkDate.toLocaleDateString('en-CA');
+
+    // Check if checkDate is in uniqueDates
+    if (uniqueDates.find(d => d.toLocaleDateString('en-CA') === dateStr)) {
+        // If the streak started, increment it
+        tempStreak++;
+        checkDate.setDate(checkDate.getDate() - 1); // Move to the previous day
+    } else {
+        // Break if no streak found for this day
+        break;
     }
-
-    currentStreak = tempStreak;
-
-    return { currentStreak, longestStreak };
 }
+
+// Check if today is part of the streak
+const streakExtendedToday = uniqueDates.some(d => d.toLocaleDateString('en-CA') === today.toLocaleDateString('en-CA'));
+
+if (streakExtendedToday) {
+    tempStreak++; // Include today in the streak count if practiced today
+}
+
+currentStreak = tempStreak;
+    
+
+    return { currentStreak, longestStreak, streakExtendedToday };
+}
+
 
 
 
@@ -245,7 +260,7 @@ function loadCourses(user) {
                 if (courseCount === 0) {
                     document.getElementById('trainingOptions').classList.add('hidden');  // Hide training options
                     document.getElementById('newUserOptions').classList.remove('hidden');  // Hide training options
-                    debugger;
+                    
                     
                     
                     populateNewCoursesSelect(user); // New function call here
@@ -276,6 +291,7 @@ function loadCourses(user) {
 
 
 function populateAvailableCourses(user, currentCourse) {
+    
     const addCourseSelect = document.getElementById('addCourseSelect');
     addCourseSelect.innerHTML = ''; // Clear previous options
 
@@ -304,6 +320,7 @@ function populateAvailableCourses(user, currentCourse) {
                 .then((userCoursesSnap) => {
                     const userCourses = new Set();
                     userCoursesSnap.forEach((doc) => {
+                        
                         const userCourse = `${doc.data().knownLanguage}-${doc.data().targetLanguage}`;
                         userCourses.add(userCourse);
                     });
@@ -316,14 +333,18 @@ function populateAvailableCourses(user, currentCourse) {
                             option.value = course;
                             option.textContent = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
                             addCourseSelect.appendChild(option);
+                            
                         }
                     });
+
+                    
 
                     if (addCourseSelect.children.length === 1) { // Only default option is present
                         const noCoursesOption = document.createElement('option');
                         noCoursesOption.textContent = 'No new courses available';
                         noCoursesOption.disabled = true;
                         addCourseSelect.appendChild(noCoursesOption);
+                        
                     }
                 });
         })
@@ -342,6 +363,7 @@ function populateAvailableCourses(user, currentCourse) {
 
 // New function to populate the newCoursesSelect dropdown for new users
 function populateNewCoursesSelect(user) {
+    
     const newCoursesSelect = document.getElementById('newCoursesSelect');
     newCoursesSelect.innerHTML = ''; // Clear previous options
 

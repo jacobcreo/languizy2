@@ -2,6 +2,22 @@
 var db = firebase.firestore();
 var dailyScore = 0;
 var debounceTimeout = null; // Use a debounce timeout instead of a boolean flag
+let correctAnswers = 0;
+let wrongAnswers = 0;
+let streakCorrect = 0;
+let streakWrong = 0;
+let lastFiveAnswers = [];
+
+// Array of random encouragement statements
+const encouragementStatements = [
+  "You got this! Let's make this fun!",
+  "Believe in yourself – you're doing great!",
+  "Let's conquer this question together!",
+  "You're unstoppable! Keep up the good work!",
+  "Every step counts – let's make it count!"
+];
+
+
 var audioElement = new Audio(); // Create a new audio element
 const countryToLanguage = {
     cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
@@ -253,6 +269,9 @@ function loadQuestion(user, currentCourse) {
     return;
   }
 
+  // Show a random encouragement message when loading a new question
+  showEncouragementMessage();
+
   // Fetch the due questions based on scheduling algorithm
   db.collection('users').doc(user.uid)
     .collection('courses').doc(currentCourse)
@@ -372,13 +391,15 @@ function loadNextEarlyQuestion(user, courseId) {
   db.collection('users').doc(user.uid)
     .collection('courses').doc(courseId)
     .collection('progress')
-    .orderBy('nextDue')
+    .orderBy('nextDue','asc')
     .limit(1)
     .get()
     .then(progressSnapshot => {
       if (!progressSnapshot.empty) {
+        debugger;
         var progressDoc = progressSnapshot.docs[0];
         var questionId = progressDoc.id;
+        debugger;
         loadQuestionData(questionId, courseId); // Pass currentCourse as a parameter
       } else {
         console.log('No questions found at all.');
@@ -390,8 +411,11 @@ function loadNextEarlyQuestion(user, courseId) {
 
 // Show loading progress
 function showLoadingProgress() {
+  // Hide the question area content but keep its space
+  $('#question-area').removeClass('visible').css('visibility', 'hidden');
+
   $('#loading-progress').show();
-  $('#question-area').hide(); // Hide the question area
+  // $('#question-area').hide(); // Hide the question area
   $('#progress-bar').css('width', '0%');
 
   let width = 0;
@@ -411,7 +435,11 @@ function showLoadingProgress() {
 function hideLoadingProgress() {
   $('#loading-progress').hide();
   clearInterval($('#loading-progress').data('interval'));
-  $('#question-area').show(); // Show the question area
+  // $('#question-area').show(); // Show the question area
+    // Make the question area content visible again
+    $('#question-area').css('visibility', 'visible').addClass('visible');
+  
+
 }
 
 // Display the question on the page
@@ -425,7 +453,7 @@ function displayQuestion(question, questionId, currentCourse) {
   var inputWidth = inputLength * 1.2 + 1;
 
   // Replace the missing word with an input field
-  var inputHTML = `<input type="text" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
+  var inputHTML = `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
   var sentenceHTML = question.sentence.replace('___', inputHTML);
 
   // Display the sentence with the embedded input field
@@ -480,7 +508,8 @@ function displayQuestion(question, questionId, currentCourse) {
     $('#user-answer').focus();
   });
 
-  $('#feedback').text('').removeClass('text-success text-danger');
+  // $('#feedback').text('').removeClass('text-success text-danger');
+  $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden');
   $('#coach-feedback').hide(); // Hide coach feedback when a new question is loaded
 
   // Show the submit button, hide the next button
@@ -667,12 +696,15 @@ function checkAnswer(userAnswer, question, questionId, currentCourse) {
   var isCorrect = normalizedUserAnswer === correctAnswer;
 
   if (isCorrect) {
-    $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success');
+    
+    $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
     updateUserProgress(questionId, true, currentCourse);
-  } else {
-    $('#feedback').text(`Incorrect. The correct answer was "${question.missingWord}".`).removeClass('text-success').addClass('text-danger');
+  } else {    
+    $('#feedback').text(`Incorrect. The correct answer was "${question.missingWord}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
     updateUserProgress(questionId, false, currentCourse);
   }
+    updateVisualStats(isCorrect);
+
 }
 
 // Update user progress in the database
@@ -711,6 +743,8 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
           var today = now.toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
 
           if (isCorrect) {
+            streakCorrect += 1;
+            streakWrong = 0;
             data.timesCorrect += 1;
             data.timesCorrectInARow += 1;
             data.timesIncorrectInARow = 0; // Reset incorrect streak
@@ -720,6 +754,8 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
             dailyScore += 10; // Update the daily score
             $('#score').text(dailyScore); // Update the score on screen
           } else {
+            streakWrong += 1;
+            streakCorrect = 0;
             data.timesIncorrect += 1;
             data.timesCorrectInARow = 0; // Reset correct streak
             data.timesIncorrectInARow += 1; // Increment incorrect streak
@@ -756,7 +792,8 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
         console.log('Transaction successful');
         // Now data contains the updated progress data
         // We can call a function to update the coach feedback
-        updateCoachFeedback(data.timesCorrectInARow, data.timesIncorrectInARow);
+        
+        updateCoachFeedback(streakCorrect, streakWrong);
       }).catch(error => {
         console.error('Transaction failed:', error);
       });
@@ -767,6 +804,15 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
   }).catch(error => {
     console.error('Error fetching question data:', error);
   });
+}
+
+// Function to update the coach message with a random encouragement statement
+function showEncouragementMessage() {
+  const randomIndex = Math.floor(Math.random() * encouragementStatements.length);
+  const message = encouragementStatements[randomIndex];
+
+  $('#coach-message').text(message);
+  $('#coach-feedback').show();
 }
 
 // Function to update coach feedback
@@ -790,23 +836,74 @@ function updateCoachFeedback(correctStreak, incorrectStreak) {
   $('#coach-feedback').show();
 }
 
+// Function to update the visual stats (correct/wrong counts and last 5 answers)
+function updateVisualStats(isCorrect) {
+  // Update correct/wrong counts
+  if (isCorrect) {
+    correctAnswers++;
+  } else {
+    wrongAnswers++;
+  }
+
+  // Update last 5 answers (push new answer and maintain only 5)
+  if (lastFiveAnswers.length >= 5) {
+    lastFiveAnswers.shift(); // Remove the oldest entry
+  }
+  lastFiveAnswers.push(isCorrect ? 'correct' : 'wrong');
+
+  // Update UI for correct/wrong counts
+  $('#correct-count').text(correctAnswers);
+  $('#wrong-count').text(wrongAnswers);
+  
+  // Update last 5 answers (display boxes)
+  updateLastFiveAnswers();
+}
+
+// Function to visually update the last 5 answers
+function updateLastFiveAnswers() {
+  const container = $('#last-five-answers');
+  container.empty(); // Clear the container
+
+  // Add boxes based on last 5 answers
+  for (let i = 0; i < 5; i++) {
+    let answerClass = 'gray'; // Default is gray
+    if (i < lastFiveAnswers.length) {
+      answerClass = lastFiveAnswers[i] === 'correct' ? 'green' : 'red';
+    }
+    const box = $('<div></div>').addClass('answer-box').css('background-color', answerClass);
+    container.append(box);
+  }
+}
+
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect, courseId) {
-  var dailyStatsRef = userStatsRef.doc(date);
-  var allTimeStatsRef = userStatsRef.doc('all-time');
+  const dailyStatsRef = userStatsRef.doc(date);
+  const allTimeStatsRef = userStatsRef.doc('all-time');
 
   db.runTransaction(transaction => {
     return transaction.get(dailyStatsRef).then(dailyDoc => {
       return transaction.get(allTimeStatsRef).then(allTimeDoc => {
+        // Helper function to validate and sanitize fields
+        function ensureNumber(value, defaultValue = 0) {
+          return (typeof value === 'number' && !isNaN(value)) ? value : defaultValue;
+        }
+
         // Process daily stats
-        var dailyData = dailyDoc.exists ? dailyDoc.data() : {
+        const dailyData = dailyDoc.exists ? dailyDoc.data() : {
           correctAnswers: 0,
           wrongAnswers: 0,
           totalDrills: 0,
           score: 0
         };
 
+        // Ensure all fields are numbers
+        dailyData.totalDrills = ensureNumber(dailyData.totalDrills);
+        dailyData.score = ensureNumber(dailyData.score);
+        dailyData.correctAnswers = ensureNumber(dailyData.correctAnswers);
+        dailyData.wrongAnswers = ensureNumber(dailyData.wrongAnswers);
+
+        // Update stats safely
         dailyData.totalDrills += 1;
         dailyData.score += score;
 
@@ -817,13 +914,20 @@ function updateStats(userStatsRef, date, score, isCorrect, courseId) {
         }
 
         // Process all-time stats
-        var allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {
+        const allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {
           totalCorrectAnswers: 0,
           totalWrongAnswers: 0,
           totalDrills: 0,
           totalScore: 0
         };
 
+        // Ensure all fields are numbers
+        allTimeData.totalDrills = ensureNumber(allTimeData.totalDrills);
+        allTimeData.totalScore = ensureNumber(allTimeData.totalScore);
+        allTimeData.totalCorrectAnswers = ensureNumber(allTimeData.totalCorrectAnswers);
+        allTimeData.totalWrongAnswers = ensureNumber(allTimeData.totalWrongAnswers);
+
+        // Update stats safely
         allTimeData.totalDrills += 1;
         allTimeData.totalScore += score;
 
