@@ -1,0 +1,85 @@
+<!-- settings.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings - Language Learning App</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">LanguageApp</a>
+    <button class="btn btn-outline-danger ml-auto" onclick="logout()">Logout</button>
+  </nav>
+  <!-- Main Content -->
+  <div class="container">
+    <h2 class="mt-5">Settings</h2>
+    <form id="settings-form">
+      <div class="form-group">
+        <label for="firstAppearanceDaysCorrect">First Appearance Days (Correct)</label>
+        <input type="number" class="form-control" id="firstAppearanceDaysCorrect" value="28">
+      </div>
+      <div class="form-group">
+        <label for="firstAppearanceDaysIncorrect">First Appearance Days (Incorrect in minutes)</label>
+        <input type="number" class="form-control" id="firstAppearanceDaysIncorrect" value="5">
+      </div>
+      <div class="form-group">
+        <label for="repeatDaysCorrectMultiplier">Repeat Days Correct Multiplier</label>
+        <input type="number" class="form-control" id="repeatDaysCorrectMultiplier" value="2">
+      </div>
+      <div class="form-group">
+        <label for="repeatDaysIncorrect">Repeat Days Incorrect (in minutes)</label>
+        <input type="number" class="form-control" id="repeatDaysIncorrect" value="5">
+      </div>
+      <button type="submit" class="btn btn-primary">Save Settings</button>
+    </form>
+  </div>
+  <!-- Firebase and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+  <script src="firebase-config.js"></script>
+  <!-- Custom JS -->
+  <script src="app.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Load current settings
+      var user = auth.currentUser;
+      var settingsRef = db.collection('users').doc(user.uid).collection('settings').doc('appSettings');
+      settingsRef.get().then(doc => {
+        if (doc.exists) {
+          var settings = doc.data();
+          $('#firstAppearanceDaysCorrect').val(settings.firstAppearanceDaysCorrect);
+          $('#firstAppearanceDaysIncorrect').val(settings.firstAppearanceDaysIncorrect * 24 * 60);
+          $('#repeatDaysCorrectMultiplier').val(settings.repeatDaysCorrectMultiplier);
+          $('#repeatDaysIncorrect').val(settings.repeatDaysIncorrect * 24 * 60);
+        }
+      });
+
+      // Save settings
+      $('#settings-form').submit(function(e) {
+        e.preventDefault();
+        var settingsData = {
+          firstAppearanceDaysCorrect: parseFloat($('#firstAppearanceDaysCorrect').val()),
+          firstAppearanceDaysIncorrect: parseFloat($('#firstAppearanceDaysIncorrect').val()) / (24 * 60),
+          repeatDaysCorrectMultiplier: parseFloat($('#repeatDaysCorrectMultiplier').val()),
+          repeatDaysIncorrect: parseFloat($('#repeatDaysIncorrect').val()) / (24 * 60)
+        };
+        settingsRef.set(settingsData).then(() => {
+          alert('Settings saved.');
+          // Update local userSettings
+          userSettings = settingsData;
+        }).catch(error => {
+          console.error('Error saving settings:', error);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

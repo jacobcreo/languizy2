@@ -47,6 +47,9 @@ function loadUserAvatar(user) {
       } else {
           console.error('User data does not exist in Firestore');
       }
+      userAvatar.onclick = () => {
+        window.location.href = '/settings.html';
+    };
   }).catch((error) => {
       console.error('Error loading user avatar:', error);
   });

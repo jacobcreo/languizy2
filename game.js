@@ -60,6 +60,9 @@ function loadUserAvatar(user) {
               const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
               userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
           }
+          userAvatar.onclick = () => {
+            window.location.href = '/settings.html';
+        };
       } else {
           console.error('User data does not exist in Firestore');
       }
@@ -532,7 +535,7 @@ function displayQuestion(question, questionId, currentCourse) {
   // Handle answer submission
   function handleSubmit() {
     var userAnswer = $('#user-answer').val().trim();
-    checkAnswer(userAnswer, question, questionId, currentCourse); // Pass currentCourse as a parameter
+    var isCorrect = checkAnswer(userAnswer, question, questionId, currentCourse); // Pass currentCourse as a parameter
     $('#submit-answer').hide(); // Hide submit button after submission
     $('#next-question').show(); // Show next question button after submission
 
@@ -540,7 +543,11 @@ function displayQuestion(question, questionId, currentCourse) {
     var completeSentence = question.sentence.replace('___', question.missingWord); // **Added**
     var targetLanguage = question.language; // **Added** Assume language is stored in question data
 
-    playAudio(questionId, completeSentence, targetLanguage); // **Modified** Pass completeSentence and targetLanguage
+    // playAudio(questionId, completeSentence, targetLanguage); // **Modified** Pass completeSentence and targetLanguage
+    // Play feedback sound first, then play the full sentence audio
+    playFeedbackSound(isCorrect, () => {
+      playAudio(questionId, completeSentence, targetLanguage); // Play the full sentence audio
+  });
   }
 
   // Event listener for Enter key to submit answer
@@ -665,6 +672,25 @@ function generateAudio(questionId, completeSentence, targetLanguage) {
     });
 }
   
+// Function to play feedback sound
+function playFeedbackSound(isCorrect, callback) {
+  const feedbackAudio = new Audio();
+  feedbackAudio.src = isCorrect ? '/assets/audio/correct.mp3' : '/assets/audio/wrong.mp3';
+  
+  // Play the feedback sound
+  feedbackAudio.play()
+      .then(() => {
+          console.log("Feedback sound played successfully.");
+      })
+      .catch((error) => {
+          console.error("Error playing feedback sound:", error);
+      });
+
+  // After feedback sound ends, call the callback to play the full sentence audio
+  feedbackAudio.onended = callback;
+}
+
+
 // Function to get the language code and female voice based on the target language
 function getLanguageAndVoice(countryCode) {
     console.log(`Attempting to find language and voice for country code: ${countryCode}`);
@@ -704,6 +730,7 @@ function checkAnswer(userAnswer, question, questionId, currentCourse) {
     updateUserProgress(questionId, false, currentCourse);
   }
     updateVisualStats(isCorrect);
+    return isCorrect;
 
 }
 

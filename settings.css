@@ -1,0 +1,90 @@
+body {
+    background-color: #f8f9fa;
+}
+
+/* Navigation Bar */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Styling */
+.card {
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Profile Image */
+#profileImage {
+    max-width: 100px;
+    height: 100px;
+}
+
+/* Avatar and Logout Button */
+#userAvatar img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Buttons */
+button {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.btn-light {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-light:hover {
+    background-color: #ccc;
+}
+
+.btn-outline-primary {
+    border-color: #007bff;
+    color: #007bff;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn-outline-light {
+    border-color: #fff;
+    color: #fff;
+}
+
+.btn-outline-light:hover {
+    background-color: #fff;
+    color: #000;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .row.mb-4 {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Modal Styling */
+.modal-header {
+    background-color: #dc3545; /* Red for danger */
+    color: #fff;
+}
+
+.modal-footer .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.modal-footer .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+

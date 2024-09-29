@@ -50,6 +50,9 @@ function loadUserAvatar(user) {
                 const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
                 userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
             }
+        userAvatar.onclick = () => {
+            window.location.href = '/settings.html';
+        };
         } else {
             console.error('User data does not exist in Firestore');
         }
@@ -206,7 +209,7 @@ if (streakExtendedToday) {
 }
 
 currentStreak = tempStreak;
-    
+
 
     return { currentStreak, longestStreak, streakExtendedToday };
 }
