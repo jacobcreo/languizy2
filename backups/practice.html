@@ -33,7 +33,7 @@
   <!-- Stats Bar -->
 
   <div class="container-fluid m-0 p-0">
-    <div class="row align-items-center justify-content-between stats-bar p-2">
+    <div class="row align-items-center justify-content-between stats-bar">
       <!-- Course Flags -->
       <div class="col-6 col-lg-2 text-start d-flex align-items-center justify-content-start">
         <div id="flag-card" class="d-flex align-items-center">
@@ -59,8 +59,8 @@
       </div>
   
       <!-- Last 5 Answers -->
-      <div class="col-12 col-lg-2 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
-        <div id="last-five-answers" class="d-flex align-items-center p-0">
+      <div class="col-12 col-lg-2 mt-3 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
+        <div id="last-five-answers" class="d-flex align-items-center">
           <div class="answer-box gray"></div>
           <div class="answer-box gray"></div>
           <div class="answer-box gray"></div>
@@ -72,7 +72,7 @@
   </div>
 
   <!-- Main Content -->
-  <div class="container text-center mt-2 mt-lg-5">
+  <div class="container text-center mt-5">
 
 
     
@@ -107,40 +107,14 @@
       </div>
 
 
-      <!-- Buttons Row -->
-      <div class="button-row mt-3 d-flex justify-content-center">
-        <!-- Submit Answer Button -->
-        <button class="btn btn-primary me-2" id="submit-answer">Submit Answer</button>
+      <!-- Submit Answer Button -->
+      <button class="btn btn-primary mt-3" id="submit-answer">Submit Answer</button>
 
-        <!-- Next Question Button -->
-        <button class="btn btn-success me-2" id="next-question" style="display:none;">Next Question</button>
-
-        <!-- Toggle Button -->
-        <button id="toggle-mode" class="btn btn-secondary">Make it easier</button>
-      </div>
+      <!-- Next Question Button -->
+      <button class="btn btn-success mt-3" id="next-question" style="display:none;">Next Question</button>
     </div>
 
-
-<!-- Multiple Choice Options (hidden initially) -->
-<div id="multiple-choice-options" class="mt-3" style="display: none;">
-    <div class="row">
-        <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="1"></button>
-        </div>
-        <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="2"></button>
-        </div>
-        <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="3"></button>
-        </div>
-        <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="4"></button>
-        </div>
-    </div>
-</div>
-
-
-    <div id="coach-container" class="d-flex align-items-start mt-lg-3 mb-3">
+    <div id="coach-container" class="d-flex align-items-start mb-3">
       <div class="coach-image">
           <img src="/assets/images/coach1.png" class="img-fluid rounded-start" alt="Coach">
       </div>

@@ -412,9 +412,84 @@ button[disabled] {
 }
 #feedback {
   opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 #feedback.visible {
   opacity: 1;
+  visibility: visible;
+}
+
+/* Multiple Choice Button Styling */
+.option-btn {
+  font-size: 1.2rem;
+  padding: 10px;
+  margin: 5px 0;
+}
+
+.option-btn {
+  position: relative;
+}
+
+.option-btn::before {
+  content: attr(data-index);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: bold;
+  color: #555;
+}
+
+/* Adjust the width and alignment of the option buttons */
+#multiple-choice-options .col-6 {
+  margin-bottom: 10px;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 767px) {
+  /* Styles for mobile devices */
+}
+
+@media (min-width: 768px) {
+  /* Styles for desktops */
+}
+
+/* Style for the selected option */
+.option-btn.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Style for the correct answer in the sentence */
+.correct-answer {
+  color: #28a745; /* Green color for correct answer */
+  font-weight: bold;
+}
+
+/* Center buttons on small screens */
+@media (max-width: 576px) {
+  .button-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .button-row .btn {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+}
+
+/* Style for missing word translations in the feedback area */
+.missing-word-translations {
+  font-size: 1.4rem;
+  color: #555;
+  font-weight: 700;
+}
+
+/* Optional: Add some spacing or styling */
+#feedback {
+  margin-top: 15px;
 }

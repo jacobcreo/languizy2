@@ -1,3 +1,5 @@
+// Before multiple choice
+
 // Initialize Firestore
 var db = firebase.firestore();
 var dailyScore = 0;
@@ -8,14 +10,6 @@ let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
 
-// Global variable to track the current mode (multiple-choice or text input)
-let isMultipleChoice;
-
-// Global variables to store the current question data
-let currentQuestionId;
-let currentQuestionData;
-let currentCourse;
-
 // Array of random encouragement statements
 const encouragementStatements = [
   "You got this! Let's make this fun!",
@@ -24,6 +18,7 @@ const encouragementStatements = [
   "You're unstoppable! Keep up the good work!",
   "Every step counts – let's make it count!"
 ];
+
 
 var audioElement = new Audio(); // Create a new audio element
 const countryToLanguage = {
@@ -78,6 +73,7 @@ function loadUserAvatar(user) {
   });
 }
 
+
 function updateFlagIcons(currentCourse) {
     const flagCard = document.getElementById('flag-card');
     if (!flagCard) return;
@@ -116,18 +112,20 @@ function updateFlagIcons(currentCourse) {
     }
 }
 
+
+
 // Usage in auth state check
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         fetchCurrentCourse(user).then((currentCourse) => {
           loadUserAvatar(user);  // Load user avatar in the navbar
+          debugger;
             if (!currentCourse) {
                 console.error('No valid current course found.');
                 window.location.href = 'course_selection.html';
                 return;
             }
             loadDailyScore(user, currentCourse); // Fetch and display daily score
-            initializeDefaultMode(); // Set the initial mode based on screen size
             loadQuestion(user, currentCourse);
             updateFlagIcons(currentCourse); // Update flag icons based on current course
 
@@ -140,28 +138,6 @@ firebase.auth().onAuthStateChanged(function (user) {
         window.location.href = 'login.html';
     }
 });
-
-// Function to initialize the default mode based on screen size
-function initializeDefaultMode() {
-    if (window.innerWidth < 768) { // Mobile devices
-        isMultipleChoice = true; // Set to multiple-choice
-        $('#toggle-mode').text('Make it harder');
-    } else {
-        isMultipleChoice = false; // Set to text input
-        $('#toggle-mode').text('Make it easier');
-    }
-
-    // Add an event listener for the toggle button
-    $('#toggle-mode').off('click').on('click', toggleMode);
-}
-
-// Function to toggle between modes
-function toggleMode() {
-    isMultipleChoice = !isMultipleChoice; // Toggle the mode
-    $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
-    // Reload the current question with the new mode
-    displayQuestion(currentQuestionData, currentQuestionId, currentCourse);
-}
 
 // Function to fetch the current course based on URL or Firestore
 function fetchCurrentCourse(user) {
@@ -195,6 +171,9 @@ function fetchCurrentCourse(user) {
   });
 }
 
+
+
+
 // Function to update Firestore with the new course selection
 function updateCurrentCourseInFirestore(user, newCourseId) {
   return db.collection('users').doc(user.uid).update({
@@ -205,6 +184,7 @@ function updateCurrentCourseInFirestore(user, newCourseId) {
       console.error('Error updating current course in Firestore:', error);
   });
 }
+
 
 // Function to register the course in the user's 'courses' sub-collection
 function registerUserCourse(user, courseId) {
@@ -241,6 +221,7 @@ function getFirestoreCurrentCourse(user) {
     });
 }
 
+
 // Function to validate if the course exists (i.e., there are questions for it)
 function validateCourse(courseId) {
     return db.collection('questions')
@@ -254,6 +235,7 @@ function validateCourse(courseId) {
             return false;
         });
 }
+
 
 // Function to load daily score from Firestore
 function loadDailyScore(user, currentCourse) {
@@ -345,6 +327,8 @@ function loadNewQuestion(user, courseId) {
               if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined'))
                 courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
               }
+              debugger;
+            
               // Retry fetching course data
               db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
               .then(retryDoc => {
@@ -376,6 +360,7 @@ function fetchAndLoadQuestions(courseData) {
     if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined'))
       courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
     }
+    debugger;
   db.collection('questions')
       .where('language', '==', courseData.targetLanguage)
       .where('knownLanguage', '==', courseData.knownLanguage)
@@ -406,7 +391,6 @@ function fetchAndLoadQuestions(courseData) {
               });
       });
 }
-
 // Load the next question even if it's not yet due
 function loadNextEarlyQuestion(user, courseId) {
   db.collection('users').doc(user.uid)
@@ -417,8 +401,10 @@ function loadNextEarlyQuestion(user, courseId) {
     .get()
     .then(progressSnapshot => {
       if (!progressSnapshot.empty) {
+        debugger;
         var progressDoc = progressSnapshot.docs[0];
         var questionId = progressDoc.id;
+        debugger;
         loadQuestionData(questionId, courseId); // Pass currentCourse as a parameter
       } else {
         console.log('No questions found at all.');
@@ -434,6 +420,7 @@ function showLoadingProgress() {
   $('#question-area').removeClass('visible').css('visibility', 'hidden');
 
   $('#loading-progress').show();
+  // $('#question-area').hide(); // Hide the question area
   $('#progress-bar').css('width', '0%');
 
   let width = 0;
@@ -453,8 +440,11 @@ function showLoadingProgress() {
 function hideLoadingProgress() {
   $('#loading-progress').hide();
   clearInterval($('#loading-progress').data('interval'));
-  // Make the question area content visible again
-  $('#question-area').css('visibility', 'visible').addClass('visible');
+  // $('#question-area').show(); // Show the question area
+    // Make the question area content visible again
+    $('#question-area').css('visibility', 'visible').addClass('visible');
+  
+
 }
 
 // Display the question on the page
@@ -462,40 +452,18 @@ function displayQuestion(question, questionId, currentCourse) {
   console.log(question);
   hideLoadingProgress(); // Hide progress bar when the question loads
 
-  // Store questionId and current question data globally for use in other functions
-  if (typeof questionId !== 'undefined') {
-    window.currentQuestionId = questionId;
-  } else {
-    questionId = window.currentQuestionId;
-  }
-  
-  if (typeof question !== 'undefined') {
-    window.currentQuestionData = question;
-  } else {
-    question = window.currentQuestionData;
-  }
-  
-  if (typeof currentCourse !== 'undefined') {
-    window.currentCourse = currentCourse;
-  } else {
-    currentCourse = window.currentCourse;
-  }
-
   var inputLength = question.missingWord.length;
 
   // Calculate input width dynamically to match the expected answer length
   var inputWidth = inputLength * 1.2 + 1;
 
-  // Determine whether to show input field or placeholder based on mode
-  const inputField = isMultipleChoice ? '_____' : `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
-  var sentenceHTML = question.sentence.replace('___', inputField);
+  // Replace the missing word with an input field
+  var inputHTML = `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
+  var sentenceHTML = question.sentence.replace('___', inputHTML);
 
-  // Display the sentence with the appropriate input field or placeholder
+  // Display the sentence with the embedded input field
   $('#sentence').html(sentenceHTML);
   $('#translation').text(question.translation);
-
-  $('#toggle-mode').prop('disabled', false);
-
 
   // Retrieve the progress data for this question to get `lastAnswered`
   var user = firebase.auth().currentUser;
@@ -524,6 +492,7 @@ function displayQuestion(question, questionId, currentCourse) {
       $('#times-wrong').text(timesWrong);
       $('#question-stats').show(); // Show the stats section
     } else {
+
       var timesSeen = 0;
       var timesCorrect = 0;
       var timesWrong = 0;
@@ -533,52 +502,25 @@ function displayQuestion(question, questionId, currentCourse) {
       $('#times-correct').text(timesCorrect);
       $('#times-wrong').text(timesWrong);
       $('#question-stats').show(); // Show the stats section
+
+
     }
 
     // Display the phrase status
     $('#translation').append(` <span class="text-muted">${phraseStatus}</span>`);
 
-    // Display the translations of the missing word in the feedback area
-  displayMissingWordTranslations(question.missingWordTranslation);
-
-
-    // Automatically focus on the input field if in text input mode
-    if (!isMultipleChoice) {
-        $('#user-answer').focus();
-    }
+    // Automatically focus on the input field
+    $('#user-answer').focus();
   });
 
+  // $('#feedback').text('').removeClass('text-success text-danger');
   $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden');
   $('#coach-feedback').hide(); // Hide coach feedback when a new question is loaded
 
-  // Show or hide the submit button based on the current mode
-if (isMultipleChoice) {
-  $('#submit-answer').hide();
-} else {
+  // Show the submit button, hide the next button
   $('#submit-answer').show();
-}
   $('#next-question').hide();
-
-  // Hide or show elements based on the current mode
-  if (isMultipleChoice) {
-      $('#user-answer').hide();
-      $('#multiple-choice-options').show();
-      displayMultipleChoiceOptions(question);
-      // Add keydown event for keys 1-4
-    $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
-      if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
-      const key = e.which - 48; // For top number keys
-      if (key >= 1 && key <= 4) {
-          e.preventDefault();
-          $('.option-btn').eq(key - 1).click();
-      }
-  });
-  } else {
-      $('#user-answer').show();
-      $('#multiple-choice-options').hide();
-      // Remove multiple-choice keydown event
-    $(document).off('keydown.multipleChoice');
-  }
+  // $('#replay-audio').hide(); // Hide the replay audio button initially
 
   // Debounce handler to prevent multiple triggers
   function handleDebounce(callback) {
@@ -592,133 +534,35 @@ if (isMultipleChoice) {
     }
   }
 
-  // Handle answer submission for text input mode
+  // Handle answer submission
   function handleSubmit() {
     var userAnswer = $('#user-answer').val().trim();
-    var isCorrect = normalizeString(userAnswer) === normalizeString(question.missingWord);
-    afterAnswerSubmission(isCorrect);
-  }
+    var isCorrect = checkAnswer(userAnswer, question, questionId, currentCourse); // Pass currentCourse as a parameter
+    $('#submit-answer').hide(); // Hide submit button after submission
+    $('#next-question').show(); // Show next question button after submission
 
-  // Function to display missing word translations
-function displayMissingWordTranslations(translationsArray) {
-  debugger;
-  // Ensure translationsArray is an array and limit to 3 entries
-  const translations = Array.isArray(translationsArray) ? translationsArray.slice(0, 3) : [];
+    // Construct the complete sentence using the correct missing word
+    var completeSentence = question.sentence.replace('___', question.missingWord); // **Added**
+    var targetLanguage = question.language; // **Added** Assume language is stored in question data
 
-  if (translations.length > 0) {
-    // Create a comma-separated string of translations
-    const translationsText = translations.join(', ');
-
-    // Update the #feedback area with the translations
-    $('#feedback')
-    .html(`<span class="missing-word-translations">${translationsText}</span>`)
-    .addClass('visible')
-    .removeClass('text-success text-danger'); // Remove any previous feedback classes
-} else {
-  // Hide the feedback area if there are no translations
-  $('#feedback').removeClass('visible').html('');
-}
-}
-
-
-  // Common function to handle after answer submission
-  function afterAnswerSubmission(isCorrect, selectedOption) {
-    $('#submit-answer').hide();
-    $('#next-question').show();
-
-    // Disable the toggle button after submission
-    $('#toggle-mode').prop('disabled', true);
-
-    // Replace '_____' with the correct answer in the sentence and style it
-    var answerToDisplay = `<span class="correct-answer">${question.missingWord}</span>`;
-    var sentenceHTML = question.sentence.replace('___', answerToDisplay);
-    $('#sentence').html(sentenceHTML);
-
-    // Feedback to user
-    if (isCorrect) {
-      $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
-    } else {
-      $('#feedback').text(`Incorrect. The correct answer was "${question.missingWord}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
-    }
-
-    // Update visual stats and progress
-    updateVisualStats(isCorrect);
-    updateUserProgress(questionId, isCorrect, currentCourse);
-
-    // Play feedback sound and audio
+    // playAudio(questionId, completeSentence, targetLanguage); // **Modified** Pass completeSentence and targetLanguage
+    // Play feedback sound first, then play the full sentence audio
     playFeedbackSound(isCorrect, () => {
-      var completeSentence = question.sentence.replace('___', question.missingWord);
-      var targetLanguage = question.language;
-      playAudio(questionId, completeSentence, targetLanguage);
-    });
-}
-
-if (isMultipleChoice) {
-    // Event listener for multiple-choice option buttons
-    $('.option-btn').off('click').on('click', function () {
-      const selectedOption = $(this).data('option');
-      var isCorrect = normalizeString(selectedOption) === normalizeString(question.missingWord);
-
-      // Visually mark the selected option
-      $('.option-btn').removeClass('selected'); // Remove selected class from all options
-      $(this).addClass('selected'); // Add selected class to the clicked button
-
-      // Disable all option buttons
-      $('.option-btn').prop('disabled', true);
-
-      afterAnswerSubmission(isCorrect, selectedOption);
-    });
-
-    // Add keydown event for keys 1-4
-    $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
-        if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
-        const key = e.which - 48; // For top number keys
-        if (key >= 1 && key <= 4) {
-            e.preventDefault();
-            const optionBtn = $('.option-btn').eq(key - 1);
-
-            // Trigger click on the option button
-            optionBtn.click();
-        }
-    });
-} else {
-    // Remove multiple-choice keydown event
-    $(document).off('keydown.multipleChoice');
-
-    // Event listener for Enter key to submit answer
-    $('#user-answer').off('keypress').on('keypress', function (e) {
-      if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
-        handleDebounce(handleSubmit);
-      }
-    });
-
-    // Handle submit answer button click
-    $('#submit-answer').off('click').on('click', function () {
-      handleDebounce(handleSubmit);
-    });
-}
-
-
-  if (isMultipleChoice) {
-    // Event listener for multiple-choice option buttons
-    $('.option-btn').off('click').on('click', function () {
-      const selectedOption = $(this).data('option');
-      var isCorrect = normalizeString(selectedOption) === normalizeString(question.missingWord);
-      afterAnswerSubmission(isCorrect);
-    });
-  } else {
-    // Event listener for Enter key to submit answer
-    $('#user-answer').off('keypress').on('keypress', function (e) {
-      if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
-        handleDebounce(handleSubmit);
-      }
-    });
-
-    // Handle submit answer button click
-    $('#submit-answer').off('click').on('click', function () {
-      handleDebounce(handleSubmit);
-    });
+      playAudio(questionId, completeSentence, targetLanguage); // Play the full sentence audio
+  });
   }
+
+  // Event listener for Enter key to submit answer
+  $('#user-answer').off('keypress').on('keypress', function (e) {
+    if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
+      handleDebounce(handleSubmit);
+    }
+  });
+
+  // Handle submit answer button click
+  $('#submit-answer').off('click').on('click', function () {
+    handleDebounce(handleSubmit);
+  });
 
   // Handle next question button click
   $('#next-question').off('click').on('click', function () {
@@ -729,75 +573,58 @@ if (isMultipleChoice) {
   // Event listener for Enter key to move to the next question
   $(document).off('keypress').on('keypress', function (e) {
     if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
-      e.preventDefault(); // Prevent default behavior
       handleDebounce(() => $('#next-question').click());
     }
   });
 
   // Replay audio button event
   $('#replay-audio').off('click').on('click', function () {
-    // Ensure completeSentence and targetLanguage are passed correctly
+    // **Modified** Ensure completeSentence and targetLanguage are passed correctly
     var completeSentence = question.sentence.replace('___', question.missingWord); 
     var targetLanguage = question.language;
     playAudio(questionId, completeSentence, targetLanguage); 
   });
 }
 
-// Function to display multiple-choice options
-function displayMultipleChoiceOptions(question) {
-  // Combine the correct answer with distractors
-  const options = [...question.distractors, question.missingWord];
 
-  // Shuffle the options array
-  shuffleArray(options);
-
-  // Display the options in the buttons
-  $('.option-btn').each(function (index) {
-    if (index < options.length) {
-      $(this).text(options[index]).data('option', options[index]).show();
-    } else {
-      $(this).hide(); // Hide unused buttons
-    }
-  });
-}
-
-// Helper function to shuffle an array (Fisher-Yates algorithm)
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-  }
-}
+  
 
 // Function to play audio from S3
 function playAudio(questionId, completeSentence, targetLanguage) {
-  var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${questionId}.mp3`;
+    
+    var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${questionId}.mp3`;
 
   // Disable replay button during playback
   $('#replay-audio').prop('disabled', true); // Disable and grey out the button
 
-  audioElement.src = audioUrl;
-  audioElement.play()
-      .then(() => {
-          console.log("Audio playback started successfully.");
-      })
-      .catch((error) => {
-          console.error("Error playing audio:", error);
-          console.log("Attempting to generate audio since playback failed.");
-          generateAudio(questionId, completeSentence, targetLanguage);
-      });
 
-  audioElement.onended = function () {
-      console.log("Audio playback ended.");
-      $('#replay-audio').prop('disabled', false); // Re-enable the button
-  };
+    audioElement.src = audioUrl;
+    audioElement.play()
+        .then(() => {
+            console.log("Audio playback started successfully.");
+        })
+        .catch((error) => {
+            console.error("Error playing audio:", error);
+            console.log("Attempting to generate audio since playback failed.");
+            generateAudio(questionId, completeSentence, targetLanguage);
+        });
 
-  audioElement.onerror = function () {
-      console.error("Error loading audio from S3:", audioUrl);
-      console.log("Attempting to generate audio due to loading error.");
-      generateAudio(questionId, completeSentence, targetLanguage);
-  };
+    // $('#replay-audio').hide(); // Hide replay button while playing
+
+    audioElement.onended = function () {
+        console.log("Audio playback ended.");
+        // $('#replay-audio').show(); // Show replay button when audio ends
+        $('#replay-audio').prop('disabled', false); // Re-enable the button
+
+    };
+
+    audioElement.onerror = function () {
+        console.error("Error loading audio from S3:", audioUrl);
+        console.log("Attempting to generate audio due to loading error.");
+        generateAudio(questionId, completeSentence, targetLanguage);
+    };
 }
+
 
 // Function to stop the audio
 function stopAudio() {
@@ -807,44 +634,46 @@ function stopAudio() {
 
 // Function to generate audio using the provided Lambda function
 function generateAudio(questionId, completeSentence, targetLanguage) {
-  const [languageCode, voice] = getLanguageAndVoice(targetLanguage);
+    const [languageCode, voice] = getLanguageAndVoice(targetLanguage);
+  
+    if (!languageCode || !voice) {
+        console.error(`Error: No language and voice found for language: ${targetLanguage}`);
+        return;
+    }
 
-  if (!languageCode || !voice) {
-      console.error(`Error: No language and voice found for language: ${targetLanguage}`);
-      return;
-  }
+    console.log(`Generating new audio using AWS Polly with language: ${languageCode} and voice: ${voice}`);
 
-  console.log(`Generating new audio using AWS Polly with language: ${languageCode} and voice: ${voice}`);
+    $.ajax({
+        url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
+        type: 'GET',
+        data: {
+            filename: questionId,
+            text: completeSentence,
+            language: languageCode,
+            voice: voice
+        },
+        success: function (response) {
+            console.log("AWS Polly audio generation request succeeded.");
+            const audioUrl = JSON.parse(response).url;
 
-  $.ajax({
-      url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
-      type: 'GET',
-      data: {
-          filename: questionId,
-          text: completeSentence,
-          language: languageCode,
-          voice: voice
-      },
-      success: function (response) {
-          console.log("AWS Polly audio generation request succeeded.");
-          const audioUrl = JSON.parse(response).url;
-
-          console.log(`Audio generated successfully and available at: ${audioUrl}`);
-          audioElement.src = audioUrl;
-          audioElement.play()
-              .then(() => {
-                  console.log("Generated audio playback started successfully.");
-              })
-              .catch((error) => {
-                  console.error("Error playing generated audio:", error);
-              });
-      },
-      error: function (error) {
-          console.error('Error generating audio using AWS Polly:', error);
-      }
-  });
+            console.log(`Audio generated successfully and available at: ${audioUrl}`);
+            audioElement.src = audioUrl;
+            audioElement.play()
+                .then(() => {
+                    console.log("Generated audio playback started successfully.");
+                })
+                .catch((error) => {
+                    console.error("Error playing generated audio:", error);
+                });
+            
+            // $('#replay-audio').hide(); // Hide replay button while playing
+        },
+        error: function (error) {
+            console.error('Error generating audio using AWS Polly:', error);
+        }
+    });
 }
-
+  
 // Function to play feedback sound
 function playFeedbackSound(isCorrect, callback) {
   const feedbackAudio = new Audio();
@@ -863,6 +692,7 @@ function playFeedbackSound(isCorrect, callback) {
   feedbackAudio.onended = callback;
 }
 
+
 // Function to get the language code and female voice based on the target language
 function getLanguageAndVoice(countryCode) {
     console.log(`Attempting to find language and voice for country code: ${countryCode}`);
@@ -871,7 +701,7 @@ function getLanguageAndVoice(countryCode) {
     
     if (!entry) {
         console.error(`No language and voice found for country code: ${countryCode}`);
-        return [null, null]; // Return null values to indicate failure
+        return null; // Explicitly returning null to indicate failure
     }
 
     const { languageCode, voice } = entry;
@@ -879,10 +709,31 @@ function getLanguageAndVoice(countryCode) {
     
     return [languageCode, voice];
 }
+    
 
 // Normalization function to ignore special characters
 function normalizeString(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+// Check user's answer
+function checkAnswer(userAnswer, question, questionId, currentCourse) {
+  var correctAnswer = normalizeString(question.missingWord);
+  var normalizedUserAnswer = normalizeString(userAnswer);
+
+  var isCorrect = normalizedUserAnswer === correctAnswer;
+
+  if (isCorrect) {
+    
+    $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
+    updateUserProgress(questionId, true, currentCourse);
+  } else {    
+    $('#feedback').text(`Incorrect. The correct answer was "${question.missingWord}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+    updateUserProgress(questionId, false, currentCourse);
+  }
+    updateVisualStats(isCorrect);
+    return isCorrect;
+
 }
 
 // Update user progress in the database
@@ -919,11 +770,6 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
 
           var now = new Date();
           var today = now.toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
-          var points = isCorrect ? 10 : 0;
-
-          if (isMultipleChoice) {
-              points = Math.ceil(points / 2); // Half points for multiple choice
-          }
 
           if (isCorrect) {
             streakCorrect += 1;
@@ -933,8 +779,8 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
             data.timesIncorrectInARow = 0; // Reset incorrect streak
             var daysToAdd = data.initialAppearance ? 28 : 2 * data.timesCorrectInARow;
             data.nextDue = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-            updateStats(userStatsRef, today, points, true);
-            dailyScore += points; // Update the daily score
+            updateStats(userStatsRef, today, 10, true);
+            dailyScore += 10; // Update the daily score
             $('#score').text(dailyScore); // Update the score on screen
           } else {
             streakWrong += 1;
@@ -943,7 +789,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
             data.timesCorrectInARow = 0; // Reset correct streak
             data.timesIncorrectInARow += 1; // Increment incorrect streak
             data.nextDue = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes
-            updateStats(userStatsRef, today, points, false);
+            updateStats(userStatsRef, today, 0, false);
           }
 
           // Update `lastAnswered` to the current time
@@ -1058,8 +904,9 @@ function updateLastFiveAnswers() {
   }
 }
 
+
 // Update stats in the database
-function updateStats(userStatsRef, date, score, isCorrect) {
+function updateStats(userStatsRef, date, score, isCorrect, courseId) {
   const dailyStatsRef = userStatsRef.doc(date);
   const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -1167,8 +1014,18 @@ function timeDifference(lastAnswered) {
   }
 }
 
+function getLanguageAndVoice(countryCode) {
+    const entry = countryToLanguage[countryCode.toLowerCase()];
+    if (!entry) {
+        return `No language and voice found for country code: ${countryCode}`;
+    }
+
+    const { languageCode, voice } = entry;
+    return [languageCode, voice];
+}
+
 function buttonClick(which) {
-  if (which === 'stats') {
-      window.location.href = 'stats.html';
-  }
+if (which === 'stats') {
+    window.location.href = 'stats.html';
+}
 }
