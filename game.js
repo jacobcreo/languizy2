@@ -136,6 +136,72 @@ function loadUserAvatar(user) {
   });
 }
 
+async function fetchOrAssignCoach(user) {
+  const userRef = db.collection('users').doc(user.uid);
+  
+  try {
+    // Get user document to find coach ID
+    const userDoc = await userRef.get();
+    let coachId = userDoc.exists && userDoc.data().coach;
+
+    // If no coach is assigned, set the default coach ID and update the user document
+    if (!coachId) {
+      coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
+      await userRef.update({ coach: coachId });
+    }
+
+    // Fetch coach data from Firestore
+    const coachData = await fetchCoachData(coachId);
+
+    // Set global variables or store coach data to be used throughout the practice screen
+    window.coachData = coachData;
+    setCoachImage(coachData.image); // Set the coach image in the UI
+  } catch (error) {
+    console.error('Error fetching or assigning coach:', error);
+  }
+}
+
+async function fetchCoachData(coachId) {
+  try {
+    const coachDoc = await db.collection('coaches').doc(coachId).get();
+    if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
+
+    const coachData = coachDoc.data();
+
+    // Get 10 random entries from each message array
+    function getRandomMessages(array, count = 10) {
+      return array.sort(() => 0.5 - Math.random()).slice(0, count);
+    }
+
+    return {
+      coachName: coachData.coachName,
+      image: coachData.image,
+      correctMessages: getRandomMessages(coachData.correctMessages),
+      encouragementMessages: getRandomMessages(coachData.encouragementMessages),
+      fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
+      fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
+      loadingMessages: getRandomMessages(coachData.loadingMessages),
+      mistakeMessages: getRandomMessages(coachData.mistakeMessages),
+      sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
+      sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
+      threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
+      threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
+      tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
+      tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
+    };
+  } catch (error) {
+    console.error('Error fetching coach data:', error);
+  }
+}
+
+function setCoachImage(imageFilename) {
+  const imagePath = `assets/images/${imageFilename}`;
+  $('#coachImage').attr('src', imagePath); // Assuming there's an <img id="coach-image"> in your HTML
+}
+
+
+
+
 function updateFlagIcons(currentCourse) {
     const flagCard = document.getElementById('flag-card');
     if (!flagCard) return;
@@ -174,30 +240,30 @@ function updateFlagIcons(currentCourse) {
     }
 }
 
-// Usage in auth state check
 firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-        fetchCurrentCourse(user).then((currentCourse) => {
-          loadUserAvatar(user);  // Load user avatar in the navbar
-            if (!currentCourse) {
-                console.error('No valid current course found.');
-                window.location.href = 'course_selection.html';
-                return;
-            }
-            loadDailyScore(user, currentCourse); // Fetch and display daily score
-            initializeDefaultMode(); // Set the initial mode based on screen size
-            loadQuestion(user, currentCourse);
-            updateFlagIcons(currentCourse); // Update flag icons based on current course
-
-        }).catch((error) => {
-            console.error('Error fetching current course:', error);
-            window.location.href = 'course_selection.html';
-        });
-    } else {
-        // No user is signed in, redirect to login
-        window.location.href = 'login.html';
-    }
+  if (user) {
+    fetchOrAssignCoach(user).then(() => {
+      fetchCurrentCourse(user).then((currentCourse) => {
+        loadUserAvatar(user); 
+        if (!currentCourse) {
+          console.error('No valid current course found.');
+          window.location.href = 'course_selection.html';
+          return;
+        }
+        loadDailyScore(user, currentCourse);
+        initializeDefaultMode();
+        loadQuestion(user, currentCourse);
+        updateFlagIcons(currentCourse);
+      }).catch((error) => {
+        console.error('Error fetching current course:', error);
+        window.location.href = 'course_selection.html';
+      });
+    });
+  } else {
+    window.location.href = 'login.html';
+  }
 });
+
 
 // Function to initialize the default mode based on screen size
 function initializeDefaultMode() {
@@ -487,11 +553,10 @@ function loadNextEarlyQuestion(user, courseId) {
 }
 
 function showLoadingMessages() {
-  // Shuffle the messages for randomness
-  const shuffledMessages = [...loadingMessages].sort(() => Math.random() - 0.5);
+  // Use coach-specific loading messages
+  const shuffledMessages = [...window.coachData.loadingMessages].sort(() => Math.random() - 0.5);
   let currentMessageIndex = 0;
 
-  // Create the loading spinner and message container dynamically
   const loadingHtml = `
     <div id="loading-indicator" class="loading-container">
       <div class="spinner"></div>
@@ -499,26 +564,20 @@ function showLoadingMessages() {
     </div>
   `;
 
-  // Display the modal with the loading container
   $('#explanation-content').html(loadingHtml);
   $('#explanationModal').modal('show');
 
-  // Insert the first message
   $('#loading-message').text(shuffledMessages[currentMessageIndex]);
 
-  // Update the message every 2-3 seconds
   interimMessageInterval = setInterval(() => {
     currentMessageIndex++;
-    
-    // If all messages are shown, reshuffle and start again
     if (currentMessageIndex >= shuffledMessages.length) {
       currentMessageIndex = 0;
     }
-    
-    // Update the content of the modal with the next message
     $('#loading-message').text(shuffledMessages[currentMessageIndex]);
-  }, 2000 + Math.random() * 1000); // Random interval between 2-3 seconds
+  }, 2000 + Math.random() * 1000);
 }
+
 
 
 
@@ -1099,8 +1158,8 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
 
 // Function to update the coach message with a random encouragement statement
 function showEncouragementMessage() {
-  const randomIndex = Math.floor(Math.random() * encouragementStatements.length);
-  const message = encouragementStatements[randomIndex];
+  const randomIndex = Math.floor(Math.random() * window.coachData.encouragementMessages.length);
+  const message = window.coachData.encouragementMessages[randomIndex];
 
   $('#coach-message').text(message);
   $('#coach-feedback').show();
@@ -1108,23 +1167,38 @@ function showEncouragementMessage() {
 
 // Function to update coach feedback
 function updateCoachFeedback(correctStreak, incorrectStreak) {
-  var coachMessage = '';
-  if (correctStreak >= 5) {
-      coachMessage = "Excellent work! You've got 5 correct answers in a row!";
+  let coachMessage = '';
+
+  // Select messages based on streaks
+  if (correctStreak >= 9) {
+    coachMessage = getRandomMessage(window.coachData.tonsOfCorrectsInARowMessages);
+  } else if (correctStreak >= 7) {
+    coachMessage = getRandomMessage(window.coachData.sevenCorrectMessages);
+  } else if (correctStreak >= 5) {
+    coachMessage = getRandomMessage(window.coachData.fiveCorrectMessages);
   } else if (correctStreak >= 3) {
-      coachMessage = "Good job! 3 correct answers in a row!";
+    coachMessage = getRandomMessage(window.coachData.threeCorrectMessages);
   } else if (correctStreak > 0) {
-      coachMessage = "Correct! Keep it up!";
+    coachMessage = getRandomMessage(window.coachData.correctMessages);
+  } else if (incorrectStreak >= 9) {
+    coachMessage = getRandomMessage(window.coachData.tonsOfMistakesInARowMessages);
+  } else if (incorrectStreak >= 7) {
+    coachMessage = getRandomMessage(window.coachData.sevenMistakesMessages);
   } else if (incorrectStreak >= 5) {
-      coachMessage = "Don't give up! Let's review the material together.";
+    coachMessage = getRandomMessage(window.coachData.fiveMistakesMessages);
   } else if (incorrectStreak >= 3) {
-      coachMessage = "Keep trying! Practice makes perfect.";
+    coachMessage = getRandomMessage(window.coachData.threeMistakesMessages);
   } else {
-      coachMessage = "Incorrect. Let's try another one.";
+    coachMessage = getRandomMessage(window.coachData.mistakeMessages);
   }
 
   $('#coach-message').text(coachMessage);
   $('#coach-feedback').show();
+}
+
+// Helper function to get a random message from an array
+function getRandomMessage(messagesArray) {
+  return messagesArray[Math.floor(Math.random() * messagesArray.length)];
 }
 
 // Function to update the visual stats (correct/wrong counts and last 5 answers)
