@@ -25,6 +25,64 @@ const encouragementStatements = [
   "Every step counts – let's make it count!"
 ];
 
+const loadingMessages = [
+  "Hang tight! We're fetching some cool grammar tips...",
+  "Just a moment! Your explanation is on the way...",
+  "Patience is key! Almost there with your breakdown...",
+  "Great things take time, and so does your explanation...",
+  "Did you know? We're crafting the perfect explanation just for you...",
+  "A little longer... Good things come to those who wait!",
+  "Loading... the suspense is building!",
+  "Grabbing the grammar gnomes... they can be tricky to catch!",
+  "We're halfway there... keep your linguistic curiosity strong!",
+  "Cooking up some tasty grammar for your brain. Yum!",
+  "Just a sec... the grammar elves are polishing their explanations.",
+  "Almost ready! Good explanations can't be rushed!",
+  "Brushing up the words, cleaning up the commas...",
+  "Did you know? Explaining things is 70% magic, 30% caffeine.",
+  "Your grammar wish is our command... almost granted!",
+  "Making sure every word is in its proper place...",
+  "Loading... this is a great time to stretch, don't you think?",
+  "Our grammar detectives are connecting all the clues!",
+  "Fetching some A+ explanations for your learning pleasure...",
+  "It's like brewing coffee, but with words. Hold on!",
+  "Loading... our language squirrel is gathering all the nuts of knowledge!",
+  "Meanwhile, in the Land of Verbs... your answer is being prepared.",
+  "Ever wonder how explanations are made? Well, you’re about to find out...",
+  "Beep boop... translating grammar magic into human-readable form.",
+  "The words are warming up... almost ready to jump onto your screen!",
+  "We're making sure every comma and full stop is in tip-top shape...",
+  "Spinning up the Grammar Machine... almost done!",
+  "Words are like cheese... they get better with a little time.",
+  "Practicing some word yoga... stretching those definitions!",
+  "Adding some pizzazz to those explanations... sparkle, sparkle!",
+  "Taking a grammar selfie... it just needs the right angle.",
+  "Pouring a cup of linguistic tea... patience is brewed!",
+  "Shhh... the words are concentrating. Silence, please.",
+  "Our grammar gremlins are triple-checking everything!",
+  "Your explanation is coming... it's fashionably late, but worth it.",
+  "Grabbing some words from the adjective jungle... they'll be back soon.",
+  "Counting all the verbs... and there are a lot of them!",
+  "Just fluffing up the explanations so they look nice and neat.",
+  "Filling in the missing word... with style and precision!",
+  "All the commas are lining up in a row... very orderly.",
+  "Your explanation is being wrapped with a bow. Almost ready to open!",
+  "Generating some A-grade grammar jokes... and your explanation too.",
+  "Crossing all the t's and dotting all the i's... literally.",
+  "Finding just the right words... it's a very picky process.",
+  "Patience, grasshopper. Your grammar lesson will be worth the wait!",
+  "We’re talking to a noun about your explanation... nouns talk slow.",
+  "We're fishing for some top-notch explanations... almost caught one!",
+  "Balancing out the sentence structure... it's like word acrobatics!",
+  "The missing word is shy... coaxing it out for you.",
+  "Putting the final touches on your word masterpiece... voila!",
+  "Loading... trust me, your brain is going to love this!"
+];
+
+
+let interimMessageInterval;
+
+
 var audioElement = new Audio(); // Create a new audio element
 const countryToLanguage = {
     cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
@@ -428,10 +486,47 @@ function loadNextEarlyQuestion(user, courseId) {
     });
 }
 
+function showLoadingMessages() {
+  // Shuffle the messages for randomness
+  const shuffledMessages = [...loadingMessages].sort(() => Math.random() - 0.5);
+  let currentMessageIndex = 0;
+
+  // Create the loading spinner and message container dynamically
+  const loadingHtml = `
+    <div id="loading-indicator" class="loading-container">
+      <div class="spinner"></div>
+      <p id="loading-message" class="loading-text"></p>
+    </div>
+  `;
+
+  // Display the modal with the loading container
+  $('#explanation-content').html(loadingHtml);
+  $('#explanationModal').modal('show');
+
+  // Insert the first message
+  $('#loading-message').text(shuffledMessages[currentMessageIndex]);
+
+  // Update the message every 2-3 seconds
+  interimMessageInterval = setInterval(() => {
+    currentMessageIndex++;
+    
+    // If all messages are shown, reshuffle and start again
+    if (currentMessageIndex >= shuffledMessages.length) {
+      currentMessageIndex = 0;
+    }
+    
+    // Update the content of the modal with the next message
+    $('#loading-message').text(shuffledMessages[currentMessageIndex]);
+  }, 2000 + Math.random() * 1000); // Random interval between 2-3 seconds
+}
+
+
+
 // Show loading progress
 function showLoadingProgress() {
   // Hide the question area content but keep its space
   $('#question-area').removeClass('visible').css('visibility', 'hidden');
+  $('.option-btn').text('\u00A0');
 
   $('#loading-progress').show();
   $('#progress-bar').css('width', '0%');
@@ -468,6 +563,10 @@ function displayQuestion(question, questionId, currentCourse) {
   } else {
     questionId = window.currentQuestionId;
   }
+
+  // Show the toggle button (Make it Easier/Harder) when a new question is displayed
+$('#toggle-mode').show();
+$('#explain-sentence-btn').hide(); // Hide the explain button initially
   
   if (typeof question !== 'undefined') {
     window.currentQuestionData = question;
@@ -554,7 +653,9 @@ function displayQuestion(question, questionId, currentCourse) {
   // Show or hide the submit button based on the current mode
 if (isMultipleChoice) {
   $('#submit-answer').hide();
+  $('#special-characters').hide();
 } else {
+  $('#special-characters').show();
   $('#submit-answer').show();
 }
   $('#next-question').hide();
@@ -601,7 +702,7 @@ if (isMultipleChoice) {
 
   // Function to display missing word translations
 function displayMissingWordTranslations(translationsArray) {
-  debugger;
+  
   // Ensure translationsArray is an array and limit to 3 entries
   const translations = Array.isArray(translationsArray) ? translationsArray.slice(0, 3) : [];
 
@@ -644,6 +745,10 @@ function displayMissingWordTranslations(translationsArray) {
     // Update visual stats and progress
     updateVisualStats(isCorrect);
     updateUserProgress(questionId, isCorrect, currentCourse);
+
+    // Hide toggle-mode button and show explain-sentence button after answer is submitted
+$('#toggle-mode').hide();
+$('#explain-sentence-btn').show();
 
     // Play feedback sound and audio
     playFeedbackSound(isCorrect, () => {
@@ -720,10 +825,13 @@ if (isMultipleChoice) {
     });
   }
 
-  // Handle next question button click
   $('#next-question').off('click').on('click', function () {
     stopAudio(); // Stop audio when moving to the next question
-    handleDebounce(() => loadQuestion(user, currentCourse)); // Pass currentCourse as a parameter
+    handleDebounce(() => {
+      loadQuestion(user, currentCourse);
+      $('#explain-sentence-btn').hide(); // Hide the button for the next question
+      $('#toggle-mode').show(); // Show the toggle button back
+    });
   });
 
   // Event listener for Enter key to move to the next question
@@ -1172,3 +1280,119 @@ function buttonClick(which) {
       window.location.href = 'stats.html';
   }
 }
+
+async function generateExplanation(questionId, fullSentence, missingWord, targetLanguage, userLanguage) {
+  try {
+    const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        questionId,
+        fullSentence,
+        missingWord,
+        targetLanguage,
+        userLanguage
+      })
+    });
+
+    if (!response.ok) {
+      // Log the response for debugging
+      console.error('Failed to call explanation function:', response.status, response.statusText);
+      throw new Error(`Failed to call explanation function: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    // Ensure that the explanation is properly retrieved
+    if (!data || !data.focus_word_explanation) {
+      throw new Error('Invalid explanation received from the function');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error in generateExplanation:', error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
+}
+
+
+function showExplanationModal(explanationData) {
+  // Stop the interim message interval
+  clearInterval(interimMessageInterval);
+
+  // Parse explanationData if it's in JSON string format
+  let parsedExplanation;
+  try {
+    parsedExplanation = typeof explanationData === 'string' ? JSON.parse(explanationData) : explanationData;
+  } catch (error) {
+    console.error('Failed to parse explanation data:', error);
+    alert('Failed to display explanation. Please try again.');
+    return; // Exit the function if parsing fails
+  }
+
+  // Set the modal title to include the full sentence being explained
+  $('#explanationModalLabel').html(`Sentence Explanation: "${window.currentQuestionData.sentence}"`);
+
+  // Build the explanation HTML with classes for styling
+  let explanationHtml = '<div class="general-explanation"><h2>General Explanation:</h2>';
+
+  parsedExplanation.sentence_breakdown.forEach(part => {
+    const partOfSpeechClass = part.part_of_speech.toLowerCase(); // Use a CSS class based on part of speech
+    explanationHtml += `
+      <p>
+        <i class="icon ${partOfSpeechClass} fas fa-info-circle"></i>
+        <strong>${part.word} (${part.part_of_speech})</strong> - ${part.explanation}
+      </p>`;
+  });
+
+  explanationHtml += `</div>
+    <div class="missing-word-section">
+      <h2 class="missing-word-title">The Missing Word: ${window.currentQuestionData.missingWord}</h2>
+      <p>${parsedExplanation.focus_word_explanation}</p>
+    </div>`;
+
+  // Populate the modal content with the final explanation
+  $('#explanation-content').html(explanationHtml);
+
+  // Show the modal
+  $('#explanationModal').modal('show');
+}
+
+
+
+
+$('#explain-sentence-btn').off('click').on('click', async function() {
+  try {
+    // Show loading messages while fetching the explanation
+    showLoadingMessages();
+
+    // Check if window.currentQuestionData exists and has an explanation
+    if (window.currentQuestionData && typeof window.currentQuestionData.explanation === 'string' && window.currentQuestionData.explanation.trim() !== '') {
+      // Explanation already exists, display it in the modal
+      showExplanationModal(window.currentQuestionData.explanation);
+    } else {
+      // Call the Cloud Function to generate the explanation
+      const explanation = await generateExplanation(window.currentQuestionId, window.currentQuestionData.sentence, window.currentQuestionData.missingWord, window.currentQuestionData.language, 'en');
+
+      console.log('Generated explanation:', explanation);
+
+      if (!explanation || typeof explanation !== 'object' || Object.keys(explanation).length === 0) {
+        throw new Error('Explanation generation failed or returned empty.');
+      }
+
+      // Save the explanation to Firestore
+      // await db.collection('questions').doc(window.currentQuestionId).update({ explanation });
+
+      // Display the explanation in the modal
+      showExplanationModal(explanation);
+    }
+  } catch (error) {
+    console.error('Error generating explanation:', error);
+    alert('Failed to generate explanation. Please try again.');
+  } finally {
+    // Stop the interim messages once the explanation is ready
+    clearInterval(interimMessageInterval);
+  }
+});

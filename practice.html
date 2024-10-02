@@ -9,6 +9,7 @@
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
+
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -32,8 +33,8 @@
 
   <!-- Stats Bar -->
 
-  <div class="container-fluid m-0 p-0">
-    <div class="row align-items-center justify-content-between stats-bar p-2">
+  <div  class="container-fluid m-0 p-0">
+    <div id="stats-row" class="row align-items-center justify-content-between stats-bar p-2">
       <!-- Course Flags -->
       <div class="col-6 col-lg-2 text-start d-flex align-items-center justify-content-start">
         <div id="flag-card" class="d-flex align-items-center">
@@ -59,7 +60,7 @@
       </div>
   
       <!-- Last 5 Answers -->
-      <div class="col-12 col-lg-2 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
+      <div id="lfa-container" class="col-12 col-lg-2 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
         <div id="last-five-answers" class="d-flex align-items-center p-0">
           <div class="answer-box gray"></div>
           <div class="answer-box gray"></div>
@@ -117,6 +118,9 @@
 
         <!-- Toggle Button -->
         <button id="toggle-mode" class="btn btn-secondary">Make it easier</button>
+
+        <!-- Explain Sentence Button -->
+        <button id="explain-sentence-btn" class="btn btn-info" style="display: none;">Explain Sentence</button>
       </div>
     </div>
 
@@ -152,7 +156,7 @@
   </div>
 
     <!-- Special Characters for Input -->
-    <div class="special-characters mb-3">
+    <div id="special-characters" class="special-characters mb-3" style="display: none;">
       <button class="btn btn-light" onclick="addCharacter('ä')">ä</button>
       <button class="btn btn-light" onclick="addCharacter('ö')">ö</button>
       <button class="btn btn-light" onclick="addCharacter('ü')">ü</button>
@@ -181,10 +185,31 @@
     </div>
 
   </div>
+  
+  
+
+ <!-- Explanation Modal -->
+<div class="modal fade" id="explanationModal" tabindex="-1" aria-labelledby="explanationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="explanationModalLabel"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="explanation-content">
+        <!-- Explanation will be populated here -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>

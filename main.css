@@ -1,67 +1,13 @@
 /* main.css */
 
-body {
-    
-  background-color: #f8f9fa;
-  font-family: 'Arial', sans-serif;
+/* 1. Global Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
 }
-
-.navbar {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.question-area h2 {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.question-area p {
-  font-size: 1.2rem;
-  color: #555;
-}
-
-.input-group .form-control-inline {
-  display: inline-block;
-  width: 200px;
-}
-
-.special-characters button {
-  margin: 0 5px;
-}
-
-#feedback {
-  font-size: 1rem;
-  margin-top: 15px;
-}
-
-.btn {
-  font-size: 1rem;
-  padding: 10px 20px;
-}
-
-.correct-answer {
-  color: green;
-}
-
-.incorrect-answer {
-  color: red;
-}
-
-/* Progress bar styling */
-#loading-progress {
-  height: 4px;
-  margin-top: -20px;
-}
-
-.progress-bar {
-  transition: width 1s ease-in-out;
-}
-/* Practice Page Custom Styles */
 
 body {
   background-color: #f8f9fa;
   font-family: 'Arial', sans-serif;
-  
 }
 
 .navbar {
@@ -80,13 +26,34 @@ h1, h3 {
   color: #007bff;
 }
 
-.progress-bar {
-  transition: width 0.6s ease;
+.question-area p {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.input-group .form-control-inline {
+  display: inline-block;
+  width: 200px;
+}
+
+.special-characters button {
+  margin: 0 5px;
+  font-size: 1.5rem;
+  padding: 10px 15px;
 }
 
 #feedback {
   font-size: 1.2rem;
   font-weight: bold;
+  margin-top: 15px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+#feedback.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .btn {
@@ -115,11 +82,6 @@ h1, h3 {
   background-color: #ffc107;
 }
 
-.special-characters button {
-  font-size: 1.5rem;
-  padding: 10px 15px;
-}
-
 .card {
   border: none;
   border-radius: 12px;
@@ -138,7 +100,7 @@ h1, h3 {
   background-color: #17a2b8;
   color: white;
 }
-/* Styling for the Score Card */
+
 .card.bg-success {
   background-color: #28a745; /* Green background */
   border-radius: 12px;
@@ -150,7 +112,6 @@ h1, h3 {
   color: white; /* White star icon */
 }
 
-/* Disabled (greyed-out) replay button */
 button[disabled] {
   background-color: #6c757d !important; /* Grey background */
   border-color: #6c757d !important;     /* Grey border */
@@ -158,7 +119,6 @@ button[disabled] {
   opacity: 0.7;                         /* Semi-transparent */
 }
 
-/* Style the Score Card */
 .score-card {
   background-color: #28a745;
   border-radius: 5px;
@@ -168,203 +128,23 @@ button[disabled] {
   font-size: 1.2rem;
 }
 
-/* Responsive alignment for flags and score */
-@media (max-width: 768px) {
-  .row.align-items-center .col-12 {
-    text-align: center !important;
-    margin-bottom: 10px;
-  }
-}
-
-/* Responsive design for buttons - split into two rows on smaller screens */
-@media (max-width: 576px) {
-  .row.justify-content-center {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-/* Question Stats Styling */
-#question-stats .badge {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-}
-
-#question-stats .bg-secondary {
-  background-color: #6c757d;
-  font-size: 1rem;
-  border-radius: 20px;
-}
-
-#question-stats .bg-success, 
-#question-stats .bg-danger {
-  font-size: 1rem;
-  border-radius: 20px;
-}
-
-#question-stats .badge i {
-  margin-right: 5px;
-}
-
-/* Flag Card Styling */
-#flag-card {
-  border: none;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-  max-width: 150px;
-  margin: 0 auto;
-  border-radius: 12px;
-}
-
-#flag-card .card-body {
-  padding: 0.5rem;
-}
-
-* Ensure buttons align properly in a flexbox layout on small screens */
-.button-container .col-6 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* For small screens, two buttons per row */
-@media (max-width: 767.98px) {
-  .button-container .col-6 {
-    max-width: 50%; /* Ensures two buttons per row */
-    flex: 0 0 50%;
-  }
-}
-
-/* Override the previous media query for button-container only */
-@media (max-width: 576px) {
-  .button-container.row.justify-content-center {
-    flex-direction: row !important; /* Prevent column stacking */
-    align-items: flex-start; /* Ensure buttons align properly */
-  }
-}
-
-/* For larger screens, buttons spread evenly across the row */
-@media (min-width: 768px) {
-  .button-container .col-md-3 {
-    max-width: 25%; /* Ensures four buttons per row on larger screens */
-    flex: 0 0 25%;
-  }
-}
-
-/* Coach image styling */
-.coach-image {
-  flex-shrink: 0; /* Prevents shrinking */
-  margin-right: 15px;
-  max-width: 100px; /* Adjust size as needed */
-}
-
-/* Speech bubble styling */
-.speech-bubble {
-  position: relative;
-  background-color: #f1f1f1;
-  border-radius: 12px;
-  padding: 10px 15px;
-  max-width: 60%;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Triangle arrow for speech bubble */
-.speech-bubble::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: -15px; /* Adjust the positioning */
-  transform: translateY(-50%);
-  border-width: 10px;
-  border-style: solid;
-  border-color: transparent #f1f1f1 transparent transparent; /* Arrow direction */
-}
-
-/* Bubble content */
-.bubble-content {
-  font-size: 1rem;
-  color: #333;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .speech-bubble {
-      max-width: 80%; /* Expand bubble width on smaller screens */
-  }
-
-  .coach-image {
-      max-width: 70px; /* Adjust coach image size */
-  }
-}
-
-@media (max-width: 576px) {
-  .speech-bubble {
-      max-width: 90%; /* Further expand on very small screens */
-  }
-
-  .coach-image {
-      max-width: 50px; /* Further reduce coach image size */
-  }
-}
-/* Avatar Image (Profile Photo) */
-#userAvatar img {
-  border-radius: 50%;
-  object-fit: cover;
-}
-/* Ensure the avatar and logout button are aligned properly */
-.navbar .d-flex.align-items-center {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Add spacing between the button and the avatar */
-}
-
-/* Adjust the size of the profile image */
-#userAvatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-
-/* Ensure logout button and avatar are aligned */
-.me-3 {
-  margin-right: 15px; /* Add margin to the right of the logout button */
-}
-
-/* Styling for the Stats Bar */
+/* 2. Stats Bar Styles */
 .stats-bar {
   padding: 10px 20px;
   background-color: transparent;
   box-shadow: none;
 }
 
-/* For large screens, remove background, border, and shadow */
-@media (min-width: 992px) {
-  .stats-bar {
-    background-color: transparent;
-    box-shadow: none;
-  }
-}
-
 @media (max-width: 991px) {
-  /* Dark-blue background for top row on small screens */
   .stats-bar {
     background-color: #004080;
     color: white;
-    margin-top: 0;
-    margin-left: 0;
-    margin-right: 0;
+    margin: 0;
   }
 
   .justify-content-center-sm {
     justify-content: center !important;
   }
-
-  /* Second row with gray background */
-  #last-five-answers {
-    /* background-color: #f0f0f0; */
-    padding: 10px;
-  }
-
-  
 
   /* Adjust icon sizes for small screens */
   .correct-box i, .wrong-box i, .answer-box {
@@ -377,12 +157,14 @@ button[disabled] {
   }
 }
 
-/* Align elements in the stats bar */
 .score-box, .correct-box, .wrong-box {
   font-size: 1.2rem;
   font-weight: 600;
 }
 
+/* 3. Last Five Answers Styles */
+
+/* Large Screens: Five Colored Squares */
 #last-five-answers {
   display: flex;
   gap: 10px;
@@ -393,6 +175,7 @@ button[disabled] {
   height: 30px;
   background-color: gray;
   border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .answer-box.green {
@@ -402,33 +185,162 @@ button[disabled] {
 .answer-box.red {
   background-color: #dc3545;
 }
-#question-area {
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+
+/* Small Screens: Five Thick Horizontal Lines */
+@media (max-width: 767.98px) {
+
+  #stats-row {
+    padding:0px !important;
+  }
+
+  #lfa-container {
+    margin-bottom:0px;
+    padding:0px;
+  }
+  /* Container Styles */
+  #last-five-answers {
+    display: flex;
+    width:100%;
+    justify-content: space-between;
+    padding: 0 8px; /* 8px padding on both sides */
+    align-items: center; /* Center vertically */
+    height: 8px; /* Thickness of the lines */
+    gap: 8px; /* Space between lines */
+  }
+
+  /* Line Styles */
+  #last-five-answers .answer-box {
+    height: 8px; /* Thickness of the line */
+    flex: 1; /* Equal width */
+    background-color: gray; /* Default color */
+    transition: background-color 0.3s ease; /* Smooth transition */
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Enhance visibility */
+    border-radius: 0px;
+  }
+
+  /* Remove extra spacing from first and last lines */
+  #last-five-answers .answer-box:first-child {
+    margin-left: 0;
+  }
+
+  #last-five-answers .answer-box:last-child {
+    margin-right: 0;
+  }
 }
 
-#question-area.visible {
-  opacity: 1;
-}
-#feedback {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+/* 4. Button Container Styles */
+.button-container .col-6 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#feedback.visible {
-  opacity: 1;
-  visibility: visible;
+@media (max-width: 767.98px) {
+  .button-container .col-6 {
+    max-width: 50%; /* Two buttons per row */
+    flex: 0 0 50%;
+  }
 }
 
-/* Multiple Choice Button Styling */
+@media (max-width: 576px) {
+  .button-container.row.justify-content-center {
+    flex-direction: row !important; /* Prevent column stacking */
+    align-items: flex-start; /* Ensure buttons align properly */
+  }
+
+  .button-row {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .button-row .btn {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .button-container .col-md-3 {
+    max-width: 25%; /* Four buttons per row on larger screens */
+    flex: 0 0 25%;
+  }
+}
+
+/* 5. Coach Section Styles */
+.coach-image {
+  flex-shrink: 0; /* Prevent shrinking */
+  margin-right: 15px;
+  max-width: 100px; /* Adjust size as needed */
+}
+
+.speech-bubble {
+  position: relative;
+  background-color: #f1f1f1;
+  border-radius: 12px;
+  padding: 10px 15px;
+  max-width: 60%;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -15px; /* Positioning of the arrow */
+  transform: translateY(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent #f1f1f1 transparent transparent; /* Arrow direction */
+}
+
+.bubble-content {
+  font-size: 1rem;
+  color: #333;
+}
+
+@media (max-width: 768px) {
+  .speech-bubble {
+    max-width: 80%; /* Expand bubble width on smaller screens */
+  }
+
+  .coach-image {
+    max-width: 70px; /* Adjust coach image size */
+  }
+}
+
+@media (max-width: 576px) {
+  .speech-bubble {
+    max-width: 90%; /* Further expand on very small screens */
+  }
+
+  .coach-image {
+    max-width: 50px; /* Further reduce coach image size */
+  }
+}
+
+/* 6. Avatar Styles */
+#userAvatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.navbar .d-flex.align-items-center {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Spacing between logout button and avatar */
+}
+
+.me-3 {
+  margin-right: 15px; /* Margin for logout button */
+}
+
+/* 7. Option Button Styles */
 .option-btn {
   font-size: 1.2rem;
   padding: 10px;
   margin: 5px 0;
-}
-
-.option-btn {
   position: relative;
 }
 
@@ -442,54 +354,170 @@ button[disabled] {
   color: #555;
 }
 
-/* Adjust the width and alignment of the option buttons */
-#multiple-choice-options .col-6 {
-  margin-bottom: 10px;
-}
-
-/* Responsive design adjustments */
-@media (max-width: 767px) {
-  /* Styles for mobile devices */
-}
-
-@media (min-width: 768px) {
-  /* Styles for desktops */
-}
-
-/* Style for the selected option */
 .option-btn.selected {
   background-color: #007bff;
   color: white;
   border-color: #007bff;
 }
 
-/* Style for the correct answer in the sentence */
-.correct-answer {
-  color: #28a745; /* Green color for correct answer */
-  font-weight: bold;
-}
-
-/* Center buttons on small screens */
-@media (max-width: 576px) {
-  .button-row {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .button-row .btn {
-    margin-bottom: 10px;
-    width: 100%;
-  }
-}
-
-/* Style for missing word translations in the feedback area */
+/* 8. Missing Word Translations */
 .missing-word-translations {
   font-size: 1.4rem;
   color: #555;
   font-weight: 700;
+  background-color: #e9ecef;
+  padding: 8px 12px;
+  border-radius: 5px;
 }
 
-/* Optional: Add some spacing or styling */
-#feedback {
-  margin-top: 15px;
+#feedback .missing-word-translations + .missing-word-translations {
+  margin-left: 5px;
+}
+
+/* 9. Correct and Incorrect Answers */
+.correct-answer {
+  color: #28a745; /* Green for correct answers */
+  font-weight: bold;
+}
+
+.incorrect-answer {
+  color: #dc3545; /* Red for incorrect answers */
+}
+
+/* 10. Question Area Visibility */
+#question-area {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#question-area.visible {
+  opacity: 1;
+}
+
+/* Modal Header Styles */
+.modal-header {
+  border-bottom: none;
+  padding: 1rem 1.5rem;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Explanation Content Styles */
+#explanation-content {
+  font-size: 1rem;
+  padding: 1.5rem;
+}
+
+/* General Explanation Section */
+.general-explanation {
+  margin-bottom: 1.5rem;
+}
+
+.general-explanation p {
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.general-explanation p strong {
+  font-weight: 700;
+  color: #007bff; /* Highlight color */
+}
+
+/* Icons for parts of speech */
+.general-explanation .icon {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+/* The Missing Word Section */
+.missing-word-section {
+  background-color: #ffefc1;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.missing-word-title {
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Fun Colors for parts of speech */
+.noun { color: #ff5733; } 
+.verb { color: #33c4ff; } 
+.adjective { color: #ffc300; } 
+.conjunction { color: #8cff33; }
+.adverb { color: #9933ff; }
+
+/* Close Button */
+.btn-secondary {
+  background-color: #6c757d;
+  transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Style for the loading container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+/* Style for the spinner */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #09f;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+/* Keyframes for the spinner animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Style for the loading text */
+.loading-text {
+  font-family: 'Arial', sans-serif;
+  font-size: 1.2rem;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  max-width: 80%;
+  animation: text-blink 1s ease-in-out infinite alternate;
+}
+
+/* Text animation for a slight pulse effect */
+@keyframes text-blink {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+/* Spinner bounce animation */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Applying bounce animation to the spinner */
+.spinner {
+  animation: spin 1s linear infinite, bounce 0.5s ease-in-out infinite;
 }
