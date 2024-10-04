@@ -105,3 +105,25 @@ button i {
 .me-3 {
     margin-right: 15px; /* Add margin to the right of the logout button */
 }
+
+/* Headline Row - Responsive Two Columns */
+.card.bg-light, .card.bg-warning {
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+#currentCoachImage {
+    object-fit: cover; /* Ensures the image maintains its aspect ratio */
+}
+
+@media (max-width: 768px) {
+    /* Stack the columns vertically on smaller screens */
+    .row.mb-4 {
+        flex-direction: column;
+        align-items: center;
+    }
+}

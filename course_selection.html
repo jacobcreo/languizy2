@@ -15,35 +15,48 @@
 
 <body>
     <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <a class="navbar-brand" href="#">LanguageApp</a>
-        
-        <!-- Wrap the logout button and avatar inside a flex container -->
-        <div class="d-flex align-items-center">
-            <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
-            <div id="userAvatar" class="avatar"></div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">LanguageApp</a>
+
+            <!-- Wrap the logout button and avatar inside a flex container -->
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+                <div id="userAvatar" class="avatar"></div>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
 
     <!-- Main Container -->
     <div class="container my-5">
-        <!-- Headline Row with Character -->
+        <!-- Headline Row with Current Coach and Daily Message -->
         <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card bg-warning text-dark text-center">
+            <!-- Current Coach Column -->
+            <div class="col-md-3 mb-3">
+                <div class="card bg-light text-dark text-center h-100">
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <img id="currentCoachImage" class="img-fluid rounded mb-3" style="max-width: 120px;" src=""
+                            alt="Current Coach">
+                        <h5 id="currentCoachName" class="card-title">Loading Coach...</h5>
+                        <button class="btn btn-primary mt-3" onclick="openCoachSelection()">Change Coach</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Daily Motivation Column -->
+            <div class="col-md-9 mb-3">
+                <div class="card bg-warning text-dark text-center h-100">
                     <div class="card-body d-flex align-items-center justify-content-center">
-                        <img src="assets/images/robot_transparent.png" alt="Character" class="img-fluid"
-                            style="max-width: 100px; margin-right: 20px;">
-                        <div>
+                        
                             <h5 id="headline" class="card-title">Loading your daily motivation...</h5>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        
+
+        
+
 
         <!-- Streak and Training Options Row -->
         <!-- Streak and Training Options Row -->
@@ -105,39 +118,39 @@
             </div>
         </div>
 
-        
-    
 
 
 
-    <!-- Course switching and adding -->
-    <div id="switchCourseDropdown" class="row mb-4 mx-0 px-0" style="display:none;">
-        <div class="col-md-12 px-0">
-            <div class="card bg-primary text-light text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Switch to Another Course</h5>
-                    <select id="switchCourseSelect" class="form-select">
-                        <option>Select a Course</option>
-                        <!-- Options populated dynamically -->
-                    </select>
+
+
+        <!-- Course switching and adding -->
+        <div id="switchCourseDropdown" class="row mb-4 mx-0 px-0" style="display:none;">
+            <div class="col-md-12 px-0">
+                <div class="card bg-primary text-light text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Switch to Another Course</h5>
+                        <select id="switchCourseSelect" class="form-select">
+                            <option>Select a Course</option>
+                            <!-- Options populated dynamically -->
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="addAnotherCourseBox" class="row  mx-0 px-0 hidden">
-        <div class="col-md-12 px-0">
-            <div class="card bg-primary text-light text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Add Another Course</h5>
-                    <select id="addCourseSelect" class="form-select">
-                        <option>Select a Course</option>
-                        <!-- Add new course options populated here -->
-                    </select>
+        <div id="addAnotherCourseBox" class="row  mx-0 px-0 hidden">
+            <div class="col-md-12 px-0">
+                <div class="card bg-primary text-light text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Add Another Course</h5>
+                        <select id="addCourseSelect" class="form-select">
+                            <option>Select a Course</option>
+                            <!-- Add new course options populated here -->
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 
 

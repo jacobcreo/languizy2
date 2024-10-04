@@ -1172,21 +1172,21 @@ function updateCoachFeedback(correctStreak, incorrectStreak) {
   // Select messages based on streaks
   if (correctStreak >= 9) {
     coachMessage = getRandomMessage(window.coachData.tonsOfCorrectsInARowMessages);
-  } else if (correctStreak >= 7) {
+  } else if (correctStreak == 7) {
     coachMessage = getRandomMessage(window.coachData.sevenCorrectMessages);
-  } else if (correctStreak >= 5) {
+  } else if (correctStreak == 5) {
     coachMessage = getRandomMessage(window.coachData.fiveCorrectMessages);
-  } else if (correctStreak >= 3) {
+  } else if (correctStreak == 3) {
     coachMessage = getRandomMessage(window.coachData.threeCorrectMessages);
   } else if (correctStreak > 0) {
     coachMessage = getRandomMessage(window.coachData.correctMessages);
   } else if (incorrectStreak >= 9) {
     coachMessage = getRandomMessage(window.coachData.tonsOfMistakesInARowMessages);
-  } else if (incorrectStreak >= 7) {
+  } else if (incorrectStreak == 7) {
     coachMessage = getRandomMessage(window.coachData.sevenMistakesMessages);
-  } else if (incorrectStreak >= 5) {
+  } else if (incorrectStreak == 5) {
     coachMessage = getRandomMessage(window.coachData.fiveMistakesMessages);
-  } else if (incorrectStreak >= 3) {
+  } else if (incorrectStreak == 3) {
     coachMessage = getRandomMessage(window.coachData.threeMistakesMessages);
   } else {
     coachMessage = getRandomMessage(window.coachData.mistakeMessages);

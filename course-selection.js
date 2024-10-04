@@ -22,6 +22,7 @@ firebase.auth().onAuthStateChanged((user) => {
         loadHeadline(user);
         loadStreak(user);
         loadCourses(user);
+        fetchOrAssignCoach(user);
         loadUserAvatar(user);  // Load user avatar in the navbar
     } else {
         window.location.href = 'login.html';
@@ -60,6 +61,44 @@ function loadUserAvatar(user) {
         console.error('Error loading user avatar:', error);
     });
 }
+
+// Fetch or assign the coach for the user
+async function fetchOrAssignCoach(user) {
+    const userRef = db.collection('users').doc(user.uid);
+    const userDoc = await userRef.get();
+
+    // Check if the user has a coach assigned
+    let coachId = userDoc.exists && userDoc.data().coach;
+    if (!coachId) {
+        // If no coach is assigned, set a default coach
+        coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
+        await userRef.update({ coach: coachId });
+    }
+
+    loadCurrentCoach(coachId);
+}
+
+// Load the current coach details
+async function loadCurrentCoach(coachId) {
+    try {
+        const coachDoc = await db.collection('coaches').doc(coachId).get();
+        if (coachDoc.exists) {
+            const coachData = coachDoc.data();
+
+            // Update the current coach section
+            $('#currentCoachImage').attr('src', `assets/images/${coachData.image}`);
+            $('#currentCoachName').text(coachData.coachName);
+        }
+    } catch (error) {
+        console.error('Error loading current coach:', error);
+    }
+}
+
+// Open the coach selection page
+function openCoachSelection() {
+    window.location.href = 'coach-selection.html'; // Modify the path as needed
+}
+
 
 
 // Load daily headline based on current date
