@@ -75,17 +75,17 @@
     </div>
 
     <!-- Speech Parts Breakdown Row -->
-<div class="row mb-4">
-  <div class="col-12">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Speech Parts Breakdown</h5>
-        <canvas id="speechPartBreakdownChart"></canvas>
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Speech Parts Breakdown</h5>
+            <div id="speechPartBreakdownLoading">Loading...</div>
+            <canvas id="speechPartBreakdownChart" style="display:none;"></canvas>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
 
     <!-- Additional Data Boxes Row -->
     <div class="row mb-4">
@@ -130,7 +130,8 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Answers Over Time</h5>
-            <canvas id="answersOverTimeChart"></canvas>
+            <div id="answersOverTimeLoading">Loading...</div>
+            <canvas id="answersOverTimeChart" style="display:none;"></canvas>
           </div>
         </div>
       </div>
@@ -138,7 +139,8 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Accuracy</h5>
-            <canvas id="accuracyChart"></canvas>
+            <div id="accuracyLoading">Loading...</div>
+            <canvas id="accuracyChart" style="display:none;"></canvas>
           </div>
         </div>
       </div>
@@ -162,7 +164,8 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Cumulative Score Over Time</h5>
-            <canvas id="cumulativeScoreChart"></canvas>
+            <div id="cumulativeScoreLoading">Loading...</div>
+            <canvas id="cumulativeScoreChart" style="display:none;"></canvas>
           </div>
         </div>
       </div>
@@ -174,7 +177,8 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Questions by Difficulty Level</h5>
-            <canvas id="difficultyLevelChart"></canvas>
+            <div id="difficultyLevelLoading">Loading...</div>
+            <canvas id="difficultyLevelChart" style="display:none;"></canvas>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ let accuracyChartInstance;
 let answersOverTimeChartInstance;
 let cumulativeScoreChartInstance;
 let difficultyLevelChartInstance;
+let speechPartBreakdownChartInstance;
 
 // Initialize selectedCourse to 'all' for showing all course stats by default
 let selectedCourse = 'all';
@@ -63,20 +64,22 @@ function loadUserAvatar(user) {
 async function loadStats(user) {
   try {
     const userDocRef = db.collection('users').doc(user.uid);
-    const userDoc = await userDocRef.get();
 
-    if (!userDoc.exists) {
-      console.error('No such user!');
-      return;
-    }
+    // Display loading messages for each chart
+    setLoadingState('speechPartBreakdownChart', 'speechPartBreakdownLoading');
+    setLoadingState('answersOverTimeChart', 'answersOverTimeLoading');
+    setLoadingState('accuracyChart', 'accuracyLoading');
+    setLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
+    setLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
+
+    // Fetch user data
+    const userDoc = await userDocRef.get();
+    if (!userDoc.exists) return console.error('No such user!');
 
     const coursesSnapshot = await userDocRef.collection('courses').get();
+    if (coursesSnapshot.empty) return console.warn('No courses found for this user.');
 
-    if (coursesSnapshot.empty) {
-      console.warn('No courses found for this user.');
-      return;
-    }
-
+    // Variables for stats aggregation
     let earliestDate = null;
     let totalCorrectAnswers = 0;
     let totalWrongAnswers = 0;
@@ -104,9 +107,7 @@ async function loadStats(user) {
           totalDrills += data.totalDrills || 0;
         } else {
           const date = new Date(dateId);
-          if (!earliestDate || date < earliestDate) {
-            earliestDate = date;
-          }
+          if (!earliestDate || date < earliestDate) earliestDate = date;
 
           dailyStats.push({
             date: dateId,
@@ -121,8 +122,6 @@ async function loadStats(user) {
       });
     }
 
-
-
     // Determine Day Joined
     const dayJoined = earliestDate ? earliestDate.toLocaleDateString() : 'N/A';
 
@@ -136,10 +135,6 @@ async function loadStats(user) {
     // Calculate Average Score
     const averageScore = totalDaysPracticed > 0 ? (totalScore / totalDaysPracticed).toFixed(2) : 0;
 
-    // Calculate Average Accuracy
-    const totalAnswers = totalCorrectAnswers + totalWrongAnswers;
-    const averageAccuracy = totalAnswers > 0 ? ((totalCorrectAnswers / totalAnswers) * 100).toFixed(2) : 0;
-
     // Update HTML Elements with Calculated Statistics
     document.getElementById('dayJoined').innerText = `Day Joined: ${dayJoined}`;
     document.getElementById('currentStreak').innerText = `Current Streak: ${currentStreak}`;
@@ -148,13 +143,11 @@ async function loadStats(user) {
     document.getElementById('averageScore').innerText = `Average Score: ${averageScore}`;
     document.getElementById('totalWrongAnswers').innerText = `Total Wrong Answers: ${totalWrongAnswers}`;
 
-
-    // ** New Part: Generate a Complete Date Range and Fill Missing Dates **
+    // Generate a Complete Date Range and Fill Missing Dates
     const latestDate = new Date(); // Assume latest date is today
     if (!earliestDate) earliestDate = latestDate; // If there's no earliest date, set it to today
-    // Sort dailyStats to ensure correct ordering
+
     const sortedDailyStats = dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
-    // Generate a complete date range from earliestDate to latestDate
     const dateRange = generateDateRange(earliestDate, latestDate);
 
     // Fill in missing dates in dailyStats with zero values
@@ -163,25 +156,43 @@ async function loadStats(user) {
       return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0 };
     });
 
-        // Prepare Data for Charts
-        const answersOverTimeData = filledDailyStats.map(stat => ({
-          date: stat.date,
-          correctAnswers: stat.correctAnswers,
-          wrongAnswers: stat.wrongAnswers
-        }));
+    // Prepare Data for Charts
+    const answersOverTimeData = filledDailyStats.map(stat => ({
+      date: stat.date,
+      correctAnswers: stat.correctAnswers,
+      wrongAnswers: stat.wrongAnswers
+    }));
 
     // Display Charts and Heatmap
-    displayHeatmap(Array.from(datesSet));
+    displaySpeechPartBreakdownChart(userDocRef, selectedCourse);
     displayAnswersOverTimeChart(answersOverTimeData);
     displayAccuracyChart(totalCorrectAnswers, totalWrongAnswers);
-    displayCumulativeScoreChart(dailyStats);
-    displayDifficultyLevelChart(userDocRef, selectedCourse); // pass the course to this function
-    displaySpeechPartBreakdownChart(userDocRef, selectedCourse);
+    displayCumulativeScoreChart(filledDailyStats);
+    displayDifficultyLevelChart(userDocRef, selectedCourse);
+    displayHeatmap(Array.from(datesSet));
 
   } catch (error) {
     console.error('Error loading stats:', error);
   }
 }
+
+/**
+ * Set a loading state for the chart containers
+ */
+function setLoadingState(chartId, loadingId) {
+  document.getElementById(loadingId).style.display = 'block';
+  document.getElementById(chartId).style.display = 'none';
+}
+
+/**
+ * Clear the loading state once data is loaded
+ */
+function clearLoadingState(chartId, loadingId) {
+  document.getElementById(loadingId).style.display = 'none';
+  document.getElementById(chartId).style.display = 'block';
+}
+
+
 
 /**
  * Populate the course selector with options for the user's courses
@@ -204,6 +215,11 @@ async function populateCourseSelector(user) {
 
 async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   const ctx = document.getElementById('speechPartBreakdownChart').getContext('2d');
+
+  // Destroy previous chart instance if it exists
+  if (speechPartBreakdownChartInstance) {
+    speechPartBreakdownChartInstance.destroy();
+  }
 
   // Data structure to track correct and wrong answers for each speech part
   const speechPartStats = {};
@@ -257,7 +273,7 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   });
 
   // Render horizontal bar chart
-  new Chart(ctx, {
+  speechPartBreakdownChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
@@ -323,6 +339,10 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
       }
     }
   });
+
+  clearLoadingState('speechPartBreakdownChart', 'speechPartBreakdownLoading');
+
+
 }
 
 
@@ -511,6 +531,8 @@ function displayAnswersOverTimeChart(data) {
         }
       }
     }});
+    clearLoadingState('answersOverTimeChart', 'answersOverTimeLoading');
+
 }
 
 /**
@@ -555,6 +577,8 @@ function displayAccuracyChart(totalCorrect, totalWrong) {
       }
     }}
   );
+  clearLoadingState('accuracyChart', 'accuracyLoading');
+
 }
 
 /**
@@ -613,6 +637,8 @@ function displayCumulativeScoreChart(dailyStats) {
       }
     } 
 } );
+clearLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
+
 }
 
 /**
@@ -742,6 +768,8 @@ async function displayDifficultyLevelChart(userDocRef, currentCourse) {
         }
       }
     });
+    clearLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
+
   }
 
   // Function to generate an array of date strings between two dates
