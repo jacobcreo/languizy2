@@ -68,3 +68,7 @@
 .me-3 {
   margin-right: 15px; /* Add margin to the right of the logout button */
 }
+/* Speech Part Breakdown Chart Styling */
+#speechPartBreakdownChart {
+  max-height: 400px; /* Prevent overflow */
+}

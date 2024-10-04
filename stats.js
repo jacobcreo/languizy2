@@ -169,19 +169,6 @@ async function loadStats(user) {
           correctAnswers: stat.correctAnswers,
           wrongAnswers: stat.wrongAnswers
         }));
-    
-
-
-
-
-
-    // Prepare Data for Charts
-    // const sortedDailyStats = dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
-    // const answersOverTimeData = sortedDailyStats.map(stat => ({
-      // date: stat.date,
-      // correctAnswers: stat.correctAnswers,
-      // wrongAnswers: stat.wrongAnswers
-    // }));
 
     // Display Charts and Heatmap
     displayHeatmap(Array.from(datesSet));
@@ -189,6 +176,8 @@ async function loadStats(user) {
     displayAccuracyChart(totalCorrectAnswers, totalWrongAnswers);
     displayCumulativeScoreChart(dailyStats);
     displayDifficultyLevelChart(userDocRef, selectedCourse); // pass the course to this function
+    displaySpeechPartBreakdownChart(userDocRef, selectedCourse);
+
   } catch (error) {
     console.error('Error loading stats:', error);
   }
@@ -212,6 +201,130 @@ async function populateCourseSelector(user) {
     courseSelector.appendChild(option);
   });
 }
+
+async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
+  const ctx = document.getElementById('speechPartBreakdownChart').getContext('2d');
+
+  // Data structure to track correct and wrong answers for each speech part
+  const speechPartStats = {};
+
+  // Function to process questions answered by the user
+  async function processCourseQuestions(courseId) {
+    const progressRef = userDocRef.collection('courses').doc(courseId).collection('progress');
+    const progressSnapshot = await progressRef.get();
+
+    // Loop through progress to analyze each question's results
+    for (const progressDoc of progressSnapshot.docs) {
+      const progressData = progressDoc.data();
+      const questionId = progressDoc.id;
+
+      // Fetch the corresponding question from the questions collection
+      const questionDoc = await db.collection('questions').doc(questionId).get();
+      if (!questionDoc.exists) continue;
+
+      const questionData = questionDoc.data();
+      const speechPart = questionData.missingWordSpeechPart || 'Unknown';
+
+      // Initialize the speech part entry if it doesn't exist
+      if (!speechPartStats[speechPart]) {
+        speechPartStats[speechPart] = { correct: 0, wrong: 0 };
+      }
+
+      // Increment correct and wrong counts
+      speechPartStats[speechPart].correct += progressData.timesCorrect || 0;
+      speechPartStats[speechPart].wrong += progressData.timesIncorrect || 0;
+    }
+  }
+
+  // If showing stats for all courses, process each course
+  if (currentCourse === 'all') {
+    const coursesSnapshot = await userDocRef.collection('courses').get();
+    for (const courseDoc of coursesSnapshot.docs) {
+      await processCourseQuestions(courseDoc.id);
+    }
+  } else {
+    // If showing stats for a specific course, only process that course
+    await processCourseQuestions(currentCourse);
+  }
+
+  // Prepare data for chart
+  const labels = Object.keys(speechPartStats);
+  const correctData = labels.map(speechPart => speechPartStats[speechPart].correct);
+  const wrongData = labels.map(speechPart => speechPartStats[speechPart].wrong);
+  const successRates = labels.map(speechPart => {
+    const total = speechPartStats[speechPart].correct + speechPartStats[speechPart].wrong;
+    return total > 0 ? ((speechPartStats[speechPart].correct / total) * 100).toFixed(1) : 0;
+  });
+
+  // Render horizontal bar chart
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Correct Answers',
+          data: correctData,
+          backgroundColor: '#28a745',
+          barPercentage: 0.7,
+          categoryPercentage: 0.8
+        },
+        {
+          label: 'Wrong Answers',
+          data: wrongData,
+          backgroundColor: '#dc3545',
+          barPercentage: 0.7,
+          categoryPercentage: 0.8
+        }
+      ],
+    },
+    options: {
+      indexAxis: 'y', // Horizontal bars
+      responsive: true,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom'
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const index = context.dataIndex;
+              const correct = correctData[index];
+              const wrong = wrongData[index];
+              const total = correct + wrong;
+              const successRate = total > 0 ? ((correct / total) * 100).toFixed(1) : '0';
+
+              const datasetLabel = context.dataset.label || '';
+              const value = context.raw || 0;
+              
+              return `${datasetLabel}: ${value} (${successRate}% Success)`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Number of Answers',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Speech Parts',
+          },
+          ticks: {
+            autoSkip: false,
+          }
+        },
+      }
+    }
+  });
+}
+
 
 /**
  * Filter stats based on the selected course
