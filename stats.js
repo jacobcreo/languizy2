@@ -17,7 +17,6 @@ firebase.auth().onAuthStateChanged(user => {
     loadStats(user); // Load stats for the authenticated user
     populateCourseSelector(user); // Populate course selector dynamically
     loadUserAvatar(user);  // Load user avatar in the navbar
-
   } else {
     window.location.href = 'login.html'; // Redirect to login if not authenticated
   }
@@ -28,34 +27,30 @@ function loadUserAvatar(user) {
   const userRef = db.collection('users').doc(user.uid);
 
   userRef.get().then((doc) => {
-      if (doc.exists) {
-          const userData = doc.data();
-          const photoURL = userData.photoURL;
-          const displayName = userData.displayName || '';
-          const email = userData.email || '';
-          
-          // Get the avatar element in the navbar
-          const userAvatar = document.getElementById('userAvatar');
+    if (doc.exists) {
+      const userData = doc.data();
+      const photoURL = userData.photoURL;
+      const displayName = userData.displayName || '';
+      const email = userData.email || '';
+      
+      const userAvatar = document.getElementById('userAvatar');
 
-          if (photoURL) {
-              // If photoURL exists, display the user's profile image
-              userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
-          } else {
-              // If no photoURL, create a circle with initials
-              const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
-              userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
-          }
+      if (photoURL) {
+        userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
       } else {
-          console.error('User data does not exist in Firestore');
+        const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
+        userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
       }
-      userAvatar.onclick = () => {
-        window.location.href = '/settings.html';
+    } else {
+      console.error('User data does not exist in Firestore');
+    }
+    userAvatar.onclick = () => {
+      window.location.href = '/settings.html';
     };
   }).catch((error) => {
-      console.error('Error loading user avatar:', error);
+    console.error('Error loading user avatar:', error);
   });
 }
-
 
 /**
  * Load Statistics for the Authenticated User
@@ -72,11 +67,13 @@ async function loadStats(user) {
     setLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
     setLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
 
-    // Fetch user data
-    const userDoc = await userDocRef.get();
-    if (!userDoc.exists) return console.error('No such user!');
+    // Fetch user courses and stats concurrently
+    const [userDoc, coursesSnapshot] = await Promise.all([
+      userDocRef.get(),
+      userDocRef.collection('courses').get()
+    ]);
 
-    const coursesSnapshot = await userDocRef.collection('courses').get();
+    if (!userDoc.exists) return console.error('No such user!');
     if (coursesSnapshot.empty) return console.warn('No courses found for this user.');
 
     // Variables for stats aggregation
@@ -88,13 +85,16 @@ async function loadStats(user) {
     let dailyStats = [];
     let datesSet = new Set();
 
-    // Iterate through each course to aggregate stats or filter by selected course
-    for (const courseDoc of coursesSnapshot.docs) {
-      const courseId = courseDoc.id;
-      if (selectedCourse !== 'all' && courseId !== selectedCourse) continue;
+    // Fetch stats for all courses at once
+    const courseStatsPromises = coursesSnapshot.docs.map(courseDoc => {
+      if (selectedCourse !== 'all' && courseDoc.id !== selectedCourse) return null;
+      return userDocRef.collection('courses').doc(courseDoc.id).collection('stats').get();
+    });
 
-      const statsRef = userDocRef.collection('courses').doc(courseId).collection('stats');
-      const statsSnapshot = await statsRef.get();
+    const statsSnapshots = await Promise.all(courseStatsPromises);
+
+    statsSnapshots.forEach(statsSnapshot => {
+      if (!statsSnapshot) return;
 
       statsSnapshot.forEach(doc => {
         const data = doc.data();
@@ -120,7 +120,7 @@ async function loadStats(user) {
           datesSet.add(dateId);
         }
       });
-    }
+    });
 
     // Determine Day Joined
     const dayJoined = earliestDate ? earliestDate.toLocaleDateString() : 'N/A';
@@ -164,12 +164,14 @@ async function loadStats(user) {
     }));
 
     // Display Charts and Heatmap
-    displaySpeechPartBreakdownChart(userDocRef, selectedCourse);
-    displayAnswersOverTimeChart(answersOverTimeData);
-    displayAccuracyChart(totalCorrectAnswers, totalWrongAnswers);
-    displayCumulativeScoreChart(filledDailyStats);
-    displayDifficultyLevelChart(userDocRef, selectedCourse);
-    displayHeatmap(Array.from(datesSet));
+    await Promise.all([
+      displaySpeechPartBreakdownChart(userDocRef, selectedCourse),
+      displayAnswersOverTimeChart(answersOverTimeData),
+      displayAccuracyChart(totalCorrectAnswers, totalWrongAnswers),
+      displayCumulativeScoreChart(filledDailyStats),
+      displayDifficultyLevelChart(userDocRef, selectedCourse),
+      displayHeatmap(Array.from(datesSet))
+    ]);
 
   } catch (error) {
     console.error('Error loading stats:', error);
@@ -192,8 +194,6 @@ function clearLoadingState(chartId, loadingId) {
   document.getElementById(chartId).style.display = 'block';
 }
 
-
-
 /**
  * Populate the course selector with options for the user's courses
  * @param {Object} user - The authenticated user object
@@ -213,10 +213,12 @@ async function populateCourseSelector(user) {
   });
 }
 
+/**
+ * Display Speech Part Breakdown Chart
+ */
 async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   const ctx = document.getElementById('speechPartBreakdownChart').getContext('2d');
 
-  // Destroy previous chart instance if it exists
   if (speechPartBreakdownChartInstance) {
     speechPartBreakdownChartInstance.destroy();
   }
@@ -224,7 +226,7 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   // Data structure to track correct and wrong answers for each speech part
   const speechPartStats = {};
 
-  // Function to process questions answered by the user
+  // Process questions answered by the user
   async function processCourseQuestions(courseId) {
     const progressRef = userDocRef.collection('courses').doc(courseId).collection('progress');
     const progressSnapshot = await progressRef.get();
@@ -241,7 +243,6 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
       const questionData = questionDoc.data();
       const speechPart = questionData.missingWordSpeechPart || 'Unknown';
 
-      // Initialize the speech part entry if it doesn't exist
       if (!speechPartStats[speechPart]) {
         speechPartStats[speechPart] = { correct: 0, wrong: 0 };
       }
@@ -252,14 +253,11 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
     }
   }
 
-  // If showing stats for all courses, process each course
+  // Fetch data for all courses or a specific course
   if (currentCourse === 'all') {
     const coursesSnapshot = await userDocRef.collection('courses').get();
-    for (const courseDoc of coursesSnapshot.docs) {
-      await processCourseQuestions(courseDoc.id);
-    }
+    await Promise.all(coursesSnapshot.docs.map(courseDoc => processCourseQuestions(courseDoc.id)));
   } else {
-    // If showing stats for a specific course, only process that course
     await processCourseQuestions(currentCourse);
   }
 
@@ -267,12 +265,7 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   const labels = Object.keys(speechPartStats);
   const correctData = labels.map(speechPart => speechPartStats[speechPart].correct);
   const wrongData = labels.map(speechPart => speechPartStats[speechPart].wrong);
-  const successRates = labels.map(speechPart => {
-    const total = speechPartStats[speechPart].correct + speechPartStats[speechPart].wrong;
-    return total > 0 ? ((speechPartStats[speechPart].correct / total) * 100).toFixed(1) : 0;
-  });
 
-  // Render horizontal bar chart
   speechPartBreakdownChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -341,10 +334,7 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   });
 
   clearLoadingState('speechPartBreakdownChart', 'speechPartBreakdownLoading');
-
-
 }
-
 
 /**
  * Filter stats based on the selected course
@@ -360,44 +350,43 @@ function filterByCourse() {
  * @param {Array} dates - Array of date strings in "YYYY-MM-DD" format when the user practiced
  */
 function displayHeatmap(dates) {
-    const heatmapContainer = document.getElementById('heatmapContainer');
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Ensure we start from today without time interference
-  
-    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
-    const datesSet = new Set(dates); // Store practiced dates in a set for easy lookup
-    const minimumBoxes = 30; // Ensure at least 30 boxes are shown
-  
-    // Function to recalculate and redraw the heatmap based on screen size
-    function drawHeatmap() {
-      heatmapContainer.innerHTML = ''; // Clear previous content
-  debugger;
-      const containerWidth = heatmapContainer.offsetWidth;
-      const boxSize = 28.78; // Width of each box in pixels, including margin
-      const boxesPerRow = Math.floor(containerWidth / boxSize);
-      const totalBoxes = Math.max(minimumBoxes, boxesPerRow * Math.ceil(minimumBoxes / boxesPerRow)); // Always fill rows completely
-  
-      for (let i = 0; i < totalBoxes; i++) {
-        const day = new Date(today.getTime() - i * oneDay); // Get date for each box starting from today
-        const dateStr = day.toISOString().split('T')[0];
-        const played = datesSet.has(dateStr); // Check if user practiced on this date
-        const color = played ? '#4CAF50' : '#D3D3D3'; // Color for practiced and non-practiced days
-  
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'heatmap-day';
-        dayDiv.style.backgroundColor = color;
-        dayDiv.title = `Date: ${dateStr}\nPlayed: ${played ? 'Yes' : 'No'}`;
-        heatmapContainer.appendChild(dayDiv);
-      }
+  const heatmapContainer = document.getElementById('heatmapContainer');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Ensure we start from today without time interference
+
+  const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
+  const datesSet = new Set(dates);
+  const minimumBoxes = 30; // Ensure at least 30 boxes are shown
+
+  // Function to recalculate and redraw the heatmap based on screen size
+  function drawHeatmap() {
+    heatmapContainer.innerHTML = ''; // Clear previous content
+    const containerWidth = heatmapContainer.offsetWidth;
+    const boxSize = 28.78; // Width of each box in pixels, including margin
+    const boxesPerRow = Math.floor(containerWidth / boxSize);
+    const totalBoxes = Math.max(minimumBoxes, boxesPerRow * Math.ceil(minimumBoxes / boxesPerRow)); // Always fill rows completely
+
+    for (let i = 0; i < totalBoxes; i++) {
+      const day = new Date(today.getTime() - i * oneDay); // Get date for each box starting from today
+      const dateStr = day.toISOString().split('T')[0];
+      const played = datesSet.has(dateStr);
+      const color = played ? '#4CAF50' : '#D3D3D3'; // Color for practiced and non-practiced days
+
+      const dayDiv = document.createElement('div');
+      dayDiv.className = 'heatmap-day';
+      dayDiv.style.backgroundColor = color;
+      dayDiv.title = `Date: ${dateStr}\nPlayed: ${played ? 'Yes' : 'No'}`;
+      heatmapContainer.appendChild(dayDiv);
     }
-  
-    // Initial draw
-    drawHeatmap();
-  
-    // Redraw heatmap when window is resized to ensure it fits dynamically
-    window.addEventListener('resize', drawHeatmap);
   }
-  
+
+  // Initial draw
+  drawHeatmap();
+
+  // Redraw heatmap when window is resized to ensure it fits dynamically
+  window.addEventListener('resize', drawHeatmap);
+  clearLoadingState('heatmapContainer', 'heatmapLoading');
+}
 
 /**
  * Calculate Streaks
@@ -426,38 +415,32 @@ function calculateStreaks(dates) {
           currentStreak = 1;
       }
   }
-  debugger;
 
   const today = new Date();
-today.setHours(0, 0, 0, 0);
-let tempStreak = 0;
-let checkDate = new Date(today);
-checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
+  today.setHours(0, 0, 0, 0);
+  let tempStreak = 0;
+  let checkDate = new Date(today);
+  checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
 
-// Check if there is a continuous streak until yesterday
-while (true) {
-  const dateStr = checkDate.toLocaleDateString('en-CA');
+  // Check if there is a continuous streak until yesterday
+  while (true) {
+    const dateStr = checkDate.toLocaleDateString('en-CA');
 
-  // Check if checkDate is in uniqueDates
-  if (uniqueDates.find(d => d.toLocaleDateString('en-CA') === dateStr)) {
-      // If the streak started, increment it
-      tempStreak++;
-      checkDate.setDate(checkDate.getDate() - 1); // Move to the previous day
-  } else {
-      // Break if no streak found for this day
-      break;
+    if (uniqueDates.find(d => d.toLocaleDateString('en-CA') === dateStr)) {
+        tempStreak++;
+        checkDate.setDate(checkDate.getDate() - 1); // Move to the previous day
+    } else {
+        break;
+    }
   }
-}
 
-// Check if today is part of the streak
-const streakExtendedToday = uniqueDates.some(d => d.toLocaleDateString('en-CA') === today.toLocaleDateString('en-CA'));
+  const streakExtendedToday = uniqueDates.some(d => d.toLocaleDateString('en-CA') === today.toLocaleDateString('en-CA'));
 
-if (streakExtendedToday) {
-  tempStreak++; // Include today in the streak count if practiced today
-}
+  if (streakExtendedToday) {
+    tempStreak++; // Include today in the streak count if practiced today
+  }
 
-currentStreak = tempStreak;
-  
+  currentStreak = tempStreak;
 
   return { currentStreak, longestStreak };
 }
@@ -469,7 +452,6 @@ currentStreak = tempStreak;
 function displayAnswersOverTimeChart(data) {
   const ctx = document.getElementById('answersOverTimeChart').getContext('2d');
 
-  // Destroy previous chart instance if it exists
   if (answersOverTimeChartInstance) {
     answersOverTimeChartInstance.destroy();
   }
@@ -530,9 +512,9 @@ function displayAnswersOverTimeChart(data) {
           beginAtZero: true
         }
       }
-    }});
-    clearLoadingState('answersOverTimeChart', 'answersOverTimeLoading');
-
+    }
+  });
+  clearLoadingState('answersOverTimeChart', 'answersOverTimeLoading');
 }
 
 /**
@@ -543,7 +525,6 @@ function displayAnswersOverTimeChart(data) {
 function displayAccuracyChart(totalCorrect, totalWrong) {
   const ctx = document.getElementById('accuracyChart').getContext('2d');
 
-  // Destroy previous chart instance if it exists
   if (accuracyChartInstance) {
     accuracyChartInstance.destroy();
   }
@@ -578,7 +559,6 @@ function displayAccuracyChart(totalCorrect, totalWrong) {
     }}
   );
   clearLoadingState('accuracyChart', 'accuracyLoading');
-
 }
 
 /**
@@ -588,7 +568,6 @@ function displayAccuracyChart(totalCorrect, totalWrong) {
 function displayCumulativeScoreChart(dailyStats) {
   const ctx = document.getElementById('cumulativeScoreChart').getContext('2d');
 
-  // Calculate cumulative score over time
   const cumulativeData = [];
   let cumulativeScore = 0;
   dailyStats.forEach(stat => {
@@ -599,7 +578,6 @@ function displayCumulativeScoreChart(dailyStats) {
     });
   });
 
-  // Destroy previous chart instance if it exists
   if (cumulativeScoreChartInstance) {
     cumulativeScoreChartInstance.destroy();
   }
@@ -635,10 +613,9 @@ function displayCumulativeScoreChart(dailyStats) {
           beginAtZero: true
         }
       }
-    } 
-} );
-clearLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
-
+    }
+  });
+  clearLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
 }
 
 /**
@@ -647,132 +624,120 @@ clearLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
  * @param {string} currentCourse - The course to display stats for (or 'all' for all courses)
  */
 async function displayDifficultyLevelChart(userDocRef, currentCourse) {
-    const ctx = document.getElementById('difficultyLevelChart').getContext('2d');
-  
-    // Destroy previous chart instance if it exists
-    if (difficultyLevelChartInstance) {
-      difficultyLevelChartInstance.destroy();
-    }
-  
-    // Object to store difficulty levels and answer statistics
-    const difficultyLevels = {};
-    let maxDifficultyLevelSeen = 0; // Track the highest difficulty level seen
-  
-    // Function to process the progress for a given course
-    async function processCourseProgress(courseId) {
-      const progressRef = userDocRef.collection('courses').doc(courseId).collection('progress');
-      const progressSnapshot = await progressRef.get();
-  
-      for (const progressDoc of progressSnapshot.docs) {
-        const progressData = progressDoc.data();
-        const questionId = progressDoc.id;
-  
-        // Fetch the corresponding question from the questions collection
-        const questionDoc = await db.collection('questions').doc(questionId).get();
-        if (!questionDoc.exists) continue;
-  
-        const questionData = questionDoc.data();
-        const difficultyLevel = questionData.difficultyLevel;
-  
-        // Ensure difficultyLevel is a valid integer between 1 and 200
-        if (!Number.isInteger(difficultyLevel) || difficultyLevel < 1 || difficultyLevel > 200) {
-          console.warn(`Skipping question with invalid difficulty level: ${questionId}`);
-          continue;
-        }
-  
-        // Update the highest difficulty level seen
-        if (difficultyLevel > maxDifficultyLevelSeen) {
-          maxDifficultyLevelSeen = difficultyLevel;
-        }
-  
-        // Initialize the difficulty level entry if it doesn't exist
-        if (!difficultyLevels[difficultyLevel]) {
-          difficultyLevels[difficultyLevel] = {
-            totalReviewed: 0,
-            correctAnswers: 0,
-            incorrectAnswers: 0
-          };
-        }
-  
-        // Update the difficulty level stats
-        difficultyLevels[difficultyLevel].totalReviewed += 1;
-        difficultyLevels[difficultyLevel].correctAnswers += progressData.timesCorrect || 0;
-        difficultyLevels[difficultyLevel].incorrectAnswers += progressData.timesIncorrect || 0;
-      }
-    }
-  
-    // If showing stats for all courses, process each course
-    if (currentCourse === 'all') {
-      const coursesSnapshot = await userDocRef.collection('courses').get();
-      for (const courseDoc of coursesSnapshot.docs) {
-        await processCourseProgress(courseDoc.id);
-      }
-    } else {
-      // If showing stats for a specific course, only process that course
-      await processCourseProgress(currentCourse);
-    }
-  
-    // Prepare data for chart, extending the difficulty levels by 2
-    const extendedMaxLevel = Math.min(maxDifficultyLevelSeen + 2, 200);
-    const labels = Array.from({ length: extendedMaxLevel }, (_, i) => i + 1);
-  
-    const totalReviewed = labels.map(level => difficultyLevels[level]?.totalReviewed || 0);
-    const correctAnswers = labels.map(level => difficultyLevels[level]?.correctAnswers || 0);
-    const incorrectAnswers = labels.map(level => difficultyLevels[level]?.incorrectAnswers || 0);
-  
-    // Display the chart
-    difficultyLevelChartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Total Reviewed',
-            data: totalReviewed,
-            backgroundColor: '#007bff'
-          },
-          {
-            label: 'Correct Answers',
-            data: correctAnswers,
-            backgroundColor: '#28a745'
-          },
-          {
-            label: 'Incorrect Answers',
-            data: incorrectAnswers,
-            backgroundColor: '#dc3545'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Number of Questions'
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: 'Difficulty Level'
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'bottom'
-          }
-        }
-      }
-    });
-    clearLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
+  const ctx = document.getElementById('difficultyLevelChart').getContext('2d');
 
+  if (difficultyLevelChartInstance) {
+    difficultyLevelChartInstance.destroy();
   }
 
-  // Function to generate an array of date strings between two dates
+  // Object to store difficulty levels and answer statistics
+  const difficultyLevels = {};
+  let maxDifficultyLevelSeen = 0; // Track the highest difficulty level seen
+
+  async function processCourseProgress(courseId) {
+    const progressRef = userDocRef.collection('courses').doc(courseId).collection('progress');
+    const progressSnapshot = await progressRef.get();
+
+    for (const progressDoc of progressSnapshot.docs) {
+      const progressData = progressDoc.data();
+      const questionId = progressDoc.id;
+
+      const questionDoc = await db.collection('questions').doc(questionId).get();
+      if (!questionDoc.exists) continue;
+
+      const questionData = questionDoc.data();
+      const difficultyLevel = questionData.difficultyLevel;
+
+      if (!Number.isInteger(difficultyLevel) || difficultyLevel < 1 || difficultyLevel > 200) {
+        console.warn(`Skipping question with invalid difficulty level: ${questionId}`);
+        continue;
+      }
+
+      if (difficultyLevel > maxDifficultyLevelSeen) {
+        maxDifficultyLevelSeen = difficultyLevel;
+      }
+
+      if (!difficultyLevels[difficultyLevel]) {
+        difficultyLevels[difficultyLevel] = {
+          totalReviewed: 0,
+          correctAnswers: 0,
+          incorrectAnswers: 0
+        };
+      }
+
+      difficultyLevels[difficultyLevel].totalReviewed += 1;
+      difficultyLevels[difficultyLevel].correctAnswers += progressData.timesCorrect || 0;
+      difficultyLevels[difficultyLevel].incorrectAnswers += progressData.timesIncorrect || 0;
+    }
+  }
+
+  if (currentCourse === 'all') {
+    const coursesSnapshot = await userDocRef.collection('courses').get();
+    await Promise.all(coursesSnapshot.docs.map(courseDoc => processCourseProgress(courseDoc.id)));
+  } else {
+    await processCourseProgress(currentCourse);
+  }
+
+  const extendedMaxLevel = Math.min(maxDifficultyLevelSeen + 2, 200);
+  const labels = Array.from({ length: extendedMaxLevel }, (_, i) => i + 1);
+
+  const totalReviewed = labels.map(level => difficultyLevels[level]?.totalReviewed || 0);
+  const correctAnswers = labels.map(level => difficultyLevels[level]?.correctAnswers || 0);
+  const incorrectAnswers = labels.map(level => difficultyLevels[level]?.incorrectAnswers || 0);
+
+  difficultyLevelChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Total Reviewed',
+          data: totalReviewed,
+          backgroundColor: '#007bff'
+        },
+        {
+          label: 'Correct Answers',
+          data: correctAnswers,
+          backgroundColor: '#28a745'
+        },
+        {
+          label: 'Incorrect Answers',
+          data: incorrectAnswers,
+          backgroundColor: '#dc3545'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Number of Questions'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Difficulty Level'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom'
+        }
+      }
+    }
+  });
+  clearLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
+}
+
+/**
+ * Generate an array of date strings between two dates
+ */
 function generateDateRange(startDate, endDate) {
   const dates = [];
   let currentDate = new Date(startDate);
@@ -784,5 +749,3 @@ function generateDateRange(startDate, endDate) {
 
   return dates;
 }
-
-    
