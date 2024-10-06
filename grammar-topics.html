@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grammar Topics</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Custom CSS for Grammar Topics -->
+  <link rel="stylesheet" href="grammar-topics.css">
+</head>
+<body>
+  <!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+      <a class="navbar-brand" href="/course_selection.html">LanguageApp</a>
+      
+      <!-- Wrap the logout button and avatar inside a flex container -->
+      <div class="d-flex align-items-center">
+          <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+          <div id="userAvatar" class="avatar"></div>
+      </div>
+  </div>
+</nav>
+
+  <!-- Main Container -->
+  <div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Your Grammar Topics</h2>
+      <select id="courseSelector" class="form-select w-auto" onchange="filterTopicsByCourse()">
+        <option value=""></option>
+        <!-- Dynamically load courses -->
+      </select>
+    </div>
+
+    <div id="topicsList" class="row">
+      <!-- Grammar topic cards will be dynamically populated here -->
+    </div>
+  </div>
+
+  <!-- Topic Details Modal -->
+<div class="modal fade" id="topicDetailsModal" tabindex="-1" aria-labelledby="topicDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+  
+        <!-- Custom Header with Background -->
+        <div class="modal-header position-relative text-white" id="modal-header">
+          <h5 class="modal-title" id="topicDetailsModalLabel"></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="overlay-gradient"></div>
+        </div>
+  
+        <!-- Modal Body with Image and Info Section -->
+        <div class="modal-body p-4">
+          <div class="row">
+            <div class="col-md-4 text-center">
+              <!-- Image Box with Shadow -->
+              <img id="topicImage" src="" alt="Topic Image" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-md-8">
+              <!-- Topic Description Section -->
+              <h4 class="syllabus-title mt-3">Syllabus</h4>
+              <p id="syllabus" class="syllabus-text"></p>
+              <h4 class="explanation-title mt-3">Explanation</h4>
+              <p id="explanation" class="explanation-text"></p>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Custom Footer with Start Button -->
+        <div class="modal-footer justify-content-between">
+          <a id="startLessonLink" href="#" class="btn btn-gradient">Start Lesson</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- Firebase and External Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="grammar-topics.js"></script>
+</body>
+</html>

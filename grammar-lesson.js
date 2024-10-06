@@ -18,6 +18,8 @@ let currentQuestionId;
 let currentQuestionData;
 let currentLesson;
 let currentLanguagePair;
+let previousQuestionId = null;
+
 
 // Array of random encouragement statements
 const encouragementStatements = [
@@ -244,7 +246,7 @@ firebase.auth().onAuthStateChanged(function (user) {
                 loadUserAvatar(user);
                 if (!currentLesson) {
                     console.error('No valid current lesson found.');
-                    debugger;
+                    
                     window.location.href = 'course_selection.html';
                     
                     return;
@@ -255,7 +257,7 @@ firebase.auth().onAuthStateChanged(function (user) {
                 updateFlagIcons(currentLesson);
             }).catch((error) => {
                 console.error('Error fetching current lesson:', error);
-                debugger;
+                
                 window.location.href = 'course_selection.html';
                 
             });
@@ -303,12 +305,9 @@ function fetchCurrentLesson(user) {
             // Check if the lesson exists (validate that questions exist for this lesson)
             validateLesson(lessonId, targetLanguage, knownLanguage).then((isValidLesson) => {
                 if (isValidLesson) {
-                    // If the lesson exists, register it under the user's 'grammar' sub-collection
-                    registerUserLesson(user, lessonId, knownLanguage, targetLanguage).then(() => {
-                        // Also update the `currentLesson` field in Firestore for the user
-                        updateCurrentLessonInFirestore(user, lessonId).then(() => {
-                            resolve(lessonId); // Now resolve the promise
-                        }).catch(reject);
+                    // Update the `currentLesson` field in Firestore for the user
+                    updateCurrentLessonInFirestore(user, lessonId).then(() => {
+                        resolve(lessonId); // Now resolve the promise
                     }).catch(reject);
                 } else {
                     // If the URL lesson is invalid, fall back to Firestore lesson
@@ -407,7 +406,7 @@ function loadDailyScore(user, currentLesson) {
 // Load a question from Firestore
 function loadQuestion(user, currentLesson) {
     showLoadingProgress();
-    debugger;
+
     if (!user) {
         console.error("User is not authenticated.");
         return;
@@ -415,7 +414,6 @@ function loadQuestion(user, currentLesson) {
 
     if (!currentLesson) {
         console.error('User has not selected a lesson.');
-        debugger;
         window.location.href = 'course_selection.html';
         return;
     }
@@ -423,32 +421,54 @@ function loadQuestion(user, currentLesson) {
     // Show a random encouragement message when loading a new question
     showEncouragementMessage();
 
-
-    
-
-
-    // Fetch the due questions based on scheduling algorithm
+    // Step 1: Pull the next due question, ensuring it's not the same as the previous one
     db.collection('users').doc(user.uid)
-    .collection('grammar').doc(window.currentLanguagePair)
-    .collection('questions')
+        .collection('grammar').doc(window.currentLanguagePair)
+        .collection('questions')
         .where('nextDue', '<=', new Date())
         .orderBy('nextDue')
         .limit(1)
         .get()
         .then(progressSnapshot => {
             if (!progressSnapshot.empty) {
-                // Load the due question
-                var progressDoc = progressSnapshot.docs[0];
-                var questionId = progressDoc.id;
-                loadQuestionData(questionId, currentLesson); // Pass currentLesson as a parameter
+                let nextQuestionDoc = progressSnapshot.docs[0];
+
+                // If the next due question is the same as the previous one, get the next available question
+                if (nextQuestionDoc.id === previousQuestionId) {
+                    return db.collection('users').doc(user.uid)
+                        .collection('grammar').doc(window.currentLanguagePair)
+                        .collection('questions')
+                        .where('nextDue', '<=', new Date())
+                        .orderBy('nextDue')
+                        .limit(2) // Pull 2 questions and skip the first
+                        .get()
+                        .then(secondSnapshot => {
+                            return secondSnapshot.docs[1] || null; // Return the next question if available
+                        });
+                } else {
+                    return nextQuestionDoc; // Return the next question if it's different
+                }
             } else {
-                // No due questions; attempt to load a new question
-                loadNewQuestion(user, currentLesson);
+                // No due questions found; proceed to load a new question
+                return loadNewQuestion(user, currentLesson).then(newQuestionDoc => {
+                    return newQuestionDoc || loadNextEarlyQuestion(user, currentLesson); // Fallback to next early question
+                });
             }
-        }).catch(error => {
-            console.error('Error fetching due questions:', error);
+        })
+        .then(nextQuestionDoc => {
+            if (nextQuestionDoc) {
+                const questionId = nextQuestionDoc.id;
+                loadQuestionData(questionId, currentLesson); // Load and display the question
+                previousQuestionId = questionId; // Update the previous question ID
+            } else {
+                console.log('No questions found at all.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching next question:', error);
         });
 }
+
 
 // Load question data and display
 function loadQuestionData(questionId, currentLesson) {
@@ -465,78 +485,110 @@ function loadQuestionData(questionId, currentLesson) {
 
 // Load a new question that hasn't been answered yet or from a specific lesson
 function loadNewQuestion(user, lessonId) {
-
-    if (typeof(window.currentLanguagePair) !== 'undefined') {
-        debugger;
-                // Proceed if lesson data is available
-                fetchAndLoadQuestions(window.currentLanguagePair, lessonId);
-            } else {
-        
+    return new Promise((resolve, reject) => {
+        if (typeof(window.currentLanguagePair) !== 'undefined') {
+            fetchAndLoadQuestions(window.currentLanguagePair, lessonId)
+                .then(newQuestionDoc => {
+                    // Check that the new question is not identical to the previous question
+                    if (newQuestionDoc && newQuestionDoc.id !== previousQuestionId) {
+                        displayQuestion(newQuestionDoc.data, newQuestionDoc.id, window.currentLanguagePair);
+                        previousQuestionId = newQuestionDoc.id; // Update the previous question ID
+                        resolve(newQuestionDoc); // Resolve with the new question document
+                    } else {
+                        // If no new question or duplicate, proceed to load the next early question
+                        loadNextEarlyQuestion(user, window.currentLanguagePair, lessonId)
+                            .then(resolve)
+                            .catch(reject); // Propagate errors
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading new question:', error);
+                    reject(error);
+                });
+        } else {
             console.error('Error loading user lesson data');
-            }
+            reject(new Error('Language pair not defined.'));
+        }
+    });
 }
 
 // Fetch questions and progress for the given language pair (e.g., 'en-de')
 function fetchAndLoadQuestions(languagePair, topic) {
     console.log(`Fetching questions for language pair: ${languagePair} and topic: ${topic}`);
-
-    // Fetch questions from grammar_questions collection based on the topic
-    db.collection('grammar_questions')
-        .where('topic', '==', parseInt(topic))
-        .limit(20) // Limit to 20 questions per lesson
-        .get()
-        .then(questionSnapshot => {
-            const questions = [];
-            questionSnapshot.forEach(doc => {
-                questions.push({ id: doc.id, data: doc.data() });
-            });
-
-            // Fetch progress from the user's grammar collection (for the given languagePair)
-            db.collection('users').doc(firebase.auth().currentUser.uid)
-                .collection('grammar').doc(languagePair)
-                .collection('questions').get()
-                .then(progressSnapshot => {
-                    const seenQuestions = progressSnapshot.docs.map(doc => doc.id);
-                    const unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
-
-                    if (unseenQuestions.length > 0) {
-                        // Load the first question from unseen questions
-                        const questionToDisplay = unseenQuestions[0];
-                        displayQuestion(questionToDisplay.data, questionToDisplay.id, languagePair);
-                    } else {
-                        console.log('No new questions available.');
-                        loadNextEarlyQuestion(firebase.auth().currentUser, languagePair, topic);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching progress data:', error);
+    
+    return new Promise((resolve, reject) => {
+        // Fetch questions from grammar_questions collection based on the topic
+        db.collection('grammar_questions')
+            .where('topic', '==', parseInt(topic))
+            .limit(20) // Limit to 20 questions per lesson
+            .get()
+            .then(questionSnapshot => {
+                const questions = [];
+                questionSnapshot.forEach(doc => {
+                    questions.push({ id: doc.id, data: doc.data() });
                 });
-        })
-        .catch(error => {
-            console.error('Error fetching grammar questions:', error);
-        });
+
+                // Fetch progress from the user's grammar collection (for the given languagePair)
+                db.collection('users').doc(firebase.auth().currentUser.uid)
+                    .collection('grammar').doc(languagePair)
+                    .collection('questions').get()
+                    .then(progressSnapshot => {
+                        const seenQuestions = progressSnapshot.docs.map(doc => doc.id);
+                        const unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
+
+                        if (unseenQuestions.length > 0) {
+                            // Resolve with the first unseen question
+                            resolve(unseenQuestions[0]);
+                        } else {
+                            console.log('No new questions available.');
+                            resolve(null); // Resolve with null if no unseen questions
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching progress data:', error);
+                        reject(error);
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching grammar questions:', error);
+                reject(error);
+            });
+    });
 }
 
 // Load the next available question even if it's not due (based on the topic and language pair)
 function loadNextEarlyQuestion(user, languagePair, topic) {
-    db.collection('users').doc(user.uid)
-        .collection('grammar').doc(languagePair)
-        .collection('questions')
-        .where('topic', '==', topic)
-        .orderBy('nextDue', 'asc')
-        .limit(1)
-        .get()
-        .then(progressSnapshot => {
-            if (!progressSnapshot.empty) {
-                const progressDoc = progressSnapshot.docs[0];
-                const questionId = progressDoc.id;
-                loadQuestionData(questionId);
-            } else {
-                console.log('No questions found at all.');
-            }
-        }).catch(error => {
-            console.error('Error fetching next early question:', error);
-        });
+    return new Promise((resolve, reject) => {
+        db.collection('users').doc(user.uid)
+            .collection('grammar').doc(languagePair)
+            .collection('questions')
+            .where('topic', '==', parseInt(topic))
+            .orderBy('nextDue', 'asc')
+            .limit(2) // Fetch two questions to handle the case of repeating questions
+            .get()
+            .then(progressSnapshot => {
+                if (!progressSnapshot.empty) {
+                    const progressDocs = progressSnapshot.docs;
+
+                    // Find the first question that is not the same as the previous one
+                    const nextQuestionDoc = progressDocs.find(doc => doc.id !== previousQuestionId);
+
+                    if (nextQuestionDoc) {
+                        resolve({ id: nextQuestionDoc.id, data: nextQuestionDoc.data() });
+                    } else {
+                        // If all retrieved questions are the same as the previous one, resolve with the first one (fallback)
+                        resolve({ id: progressDocs[0].id, data: progressDocs[0].data() });
+                    }
+                } else {
+                    console.log('No questions found at all.');
+                    resolve(null);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching next early question:', error);
+                reject(error);
+            });
+    });
 }
 
 function showLoadingMessages() {
@@ -612,7 +664,7 @@ function displayQuestion(question, questionId, currentLesson) {
 
     // Show the toggle button (Make it Easier/Harder) when a new question is displayed
     $('#toggle-mode').show();
-    $('#explain-lesson-btn').hide(); // Hide the explain button initially
+    $('#explain-sentence-btn').hide(); // Hide the explain button initially
 
     if (typeof question !== 'undefined') {
         window.currentQuestionData = question;
@@ -801,7 +853,7 @@ if (translationsText) {
 
         // Hide toggle-mode button and show explain-lesson button after answer is submitted
         $('#toggle-mode').hide();
-        $('#explain-lesson-btn').show();
+        $('#explain-sentence-btn').show();
 
         // Play feedback sound and audio
         playFeedbackSound(isCorrect, () => {
@@ -860,7 +912,7 @@ if (translationsText) {
         stopAudio(); // Stop audio when moving to the next question
         handleDebounce(() => {
             loadQuestion(user, currentLesson);
-            $('#explain-lesson-btn').hide(); // Hide the button for the next question
+            $('#explain-sentence-btn').hide(); // Hide the button for the next question
             $('#toggle-mode').show(); // Show the toggle button back
         });
     });
@@ -1027,7 +1079,7 @@ function normalizeString(str) {
 // Update user progress in the database
 function updateUserProgress(questionId, isCorrect, languagePair) {
     const user = firebase.auth().currentUser;
-debugger;
+
     const questionProgressRef = db.collection('users').doc(user.uid)
         .collection('grammar').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
         .collection('questions').doc(questionId);
@@ -1044,6 +1096,10 @@ debugger;
                 initialAppearance: true,
                 topic: currentQuestionData.topic
             };
+            console.log('we are updating question ID: ' + questionId);
+            console.log('before the update data: ');
+            console.log(data);
+
 
             const now = new Date();
             const points = isCorrect ? 10 : 0;
@@ -1063,10 +1119,14 @@ debugger;
             data.lastAnswered = firebase.firestore.Timestamp.fromDate(now);
             data.initialAppearance = false;
 
+
             transaction.set(questionProgressRef, data);
+            console.log('after update data:')
+            console.log(data);
         });
     }).then(() => {
         console.log('User progress updated successfully');
+       
     }).catch(error => {
         console.error('Error updating progress:', error);
     });
@@ -1273,6 +1333,7 @@ function buttonClick(which) {
 
 async function generateExplanation(questionId, fullSentence, missingWord, targetLanguage, userLanguage) {
     try {
+        debugger;
         const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence', {
             method: 'POST',
             headers: {
@@ -1349,8 +1410,8 @@ function showExplanationModal(explanationData) {
     $('#explanationModal').modal('show');
 }
 
-// Event listener for the explain-lesson button
-$('#explain-lesson-btn').off('click').on('click', async function () {
+// Event listener for the explain-sentence button
+$('#explain-sentence-btn').off('click').on('click', async function () {
     try {
         // Show loading messages while fetching the explanation
         showLoadingMessages();
@@ -1361,7 +1422,7 @@ $('#explain-lesson-btn').off('click').on('click', async function () {
             showExplanationModal(window.currentQuestionData.explanation);
         } else {
             // Call the Cloud Function to generate the explanation
-            const explanation = await generateExplanation(window.currentQuestionId, window.currentQuestionData.sentence, window.currentQuestionData.missingWord, window.currentQuestionData.targetLanguage, 'en');
+            const explanation = await generateExplanation(window.currentQuestionId, window.currentQuestionData.sentence, window.currentQuestionData.missingWord, window.currentQuestionData.language, window.currentQuestionData.knownLanguage);
 
             console.log('Generated explanation:', explanation);
 
