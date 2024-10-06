@@ -648,6 +648,9 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
   const inputField = isMultipleChoice ? '_____' : `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
   var sentenceHTML = question.sentence.replace('___', inputField);
 
+  $('.option-btn').removeClass('selected'); // Remove selected class from all options (relevant to multiple choice, but in case user switches)
+  $('.option-btn').prop('disabled', false);
+
   // Display the sentence with the appropriate input field or placeholder
   $('#sentence').html(sentenceHTML);
   $('#translation').text(question.translation);
@@ -817,6 +820,8 @@ $('#explain-sentence-btn').show();
     });
 }
 
+
+
 if (isMultipleChoice) {
     // Event listener for multiple-choice option buttons
     $('.option-btn').off('click').on('click', function () {
@@ -863,26 +868,6 @@ if (isMultipleChoice) {
 }
 
 
-  if (isMultipleChoice) {
-    // Event listener for multiple-choice option buttons
-    $('.option-btn').off('click').on('click', function () {
-      const selectedOption = $(this).data('option');
-      var isCorrect = normalizeString(selectedOption) === normalizeString(question.missingWord);
-      afterAnswerSubmission(isCorrect);
-    });
-  } else {
-    // Event listener for Enter key to submit answer
-    $('#user-answer').off('keypress').on('keypress', function (e) {
-      if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
-        handleDebounce(handleSubmit);
-      }
-    });
-
-    // Handle submit answer button click
-    $('#submit-answer').off('click').on('click', function () {
-      handleDebounce(handleSubmit);
-    });
-  }
 
   $('#next-question').off('click').on('click', function () {
     stopAudio(); // Stop audio when moving to the next question

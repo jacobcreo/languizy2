@@ -112,11 +112,11 @@ h1, h3 {
   color: white; /* White star icon */
 }
 
-button[disabled] {
-  background-color: #6c757d !important; /* Grey background */
-  border-color: #6c757d !important;     /* Grey border */
-  cursor: not-allowed;                  /* Disable cursor */
-  opacity: 0.7;                         /* Semi-transparent */
+.option-btn:disabled {
+  background-color: white !important; /* Grey background */
+  border-color: black !important; /* Grey border */
+  cursor: not-allowed !important; /* Disable cursor */
+  opacity: 0.7; /* Semi-transparent */                    /* Semi-transparent */
 }
 
 .score-card {
@@ -355,9 +355,10 @@ button[disabled] {
 }
 
 .option-btn.selected {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+  background-color: white !important;
+  color: black !important;
+  border-color: #007bff !important;
+  font-weight: 700 !important;
 }
 
 /* 8. Missing Word Translations */

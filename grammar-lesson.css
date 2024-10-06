@@ -1,0 +1,606 @@
+/* grammar-lesson.css */
+
+/* 1. Global Styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1, h3 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    color: #333;
+}
+
+.question-area h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.question-area p {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.input-group .form-control-inline {
+    display: inline-block;
+    width: 200px;
+}
+
+.special-characters button {
+    margin: 0 5px;
+    font-size: 1.5rem;
+    padding: 10px 15px;
+}
+
+#feedback {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+#feedback.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.btn {
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin: 10px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+.card-title {
+    font-size: 1.75rem;
+    color: #007bff;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+#replay-audio {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.card.bg-success {
+    background-color: #28a745; /* Green background */
+    border-radius: 12px;
+    padding: 10px;
+    display: inline-block;
+}
+
+.card.bg-success .fa-star {
+    color: white; /* White star icon */
+}
+
+.option-btn:disabled {
+    background-color: white !important; /* Grey background */
+    border-color: black !important; /* Grey border */
+    cursor: not-allowed !important; /* Disable cursor */
+    opacity: 0.7; /* Semi-transparent */
+}
+
+.score-card {
+    background-color: #28a745;
+    border-radius: 5px;
+    display: inline-block;
+    color: white;
+    padding: 8px 15px;
+    font-size: 1.2rem;
+}
+
+/* 2. Stats Bar Styles */
+.stats-bar {
+    padding: 10px 20px;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+@media (max-width: 991px) {
+    .stats-bar {
+        background-color: #004080;
+        color: white;
+        margin: 0;
+    }
+
+    .justify-content-center-sm {
+        justify-content: center !important;
+    }
+
+    /* Adjust icon sizes for small screens */
+    .correct-box i, .wrong-box i, .answer-box {
+        font-size: 1.2rem;
+    }
+
+    .answer-box {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+.score-box, .correct-box, .wrong-box {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* 3. Last Five Answers Styles */
+
+/* Large Screens: Five Colored Squares */
+#last-five-answers {
+    display: flex;
+    gap: 10px;
+}
+
+.answer-box {
+    width: 30px;
+    height: 30px;
+    background-color: gray;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.answer-box.green {
+    background-color: #28a745;
+}
+
+.answer-box.red {
+    background-color: #dc3545;
+}
+
+/* Small Screens: Five Thick Horizontal Lines */
+@media (max-width: 767.98px) {
+
+    #stats-row {
+        padding: 0px !important;
+    }
+
+    #lfa-container {
+        margin-bottom: 0px;
+        padding: 0px;
+    }
+
+    /* Container Styles */
+    #last-five-answers {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        padding: 0 8px; /* 8px padding on both sides */
+        align-items: center; /* Center vertically */
+        height: 8px; /* Thickness of the lines */
+        gap: 8px; /* Space between lines */
+    }
+
+    /* Line Styles */
+    #last-five-answers .answer-box {
+        height: 8px; /* Thickness of the line */
+        flex: 1; /* Equal width */
+        background-color: gray; /* Default color */
+        transition: background-color 0.3s ease; /* Smooth transition */
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.3); /* Enhance visibility */
+        border-radius: 0px;
+    }
+
+    /* Remove extra spacing from first and last lines */
+    #last-five-answers .answer-box:first-child {
+        margin-left: 0;
+    }
+
+    #last-five-answers .answer-box:last-child {
+        margin-right: 0;
+    }
+}
+
+/* 4. Button Container Styles */
+.button-container .col-6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 767.98px) {
+    .button-container .col-6 {
+        max-width: 50%; /* Two buttons per row */
+        flex: 0 0 50%;
+    }
+}
+
+@media (max-width: 576px) {
+    .button-container.row.justify-content-center {
+        flex-direction: row !important; /* Prevent column stacking */
+        align-items: flex-start; /* Ensure buttons align properly */
+    }
+
+    .button-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .button-row .btn {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px) {
+    .button-container .col-md-3 {
+        max-width: 25%; /* Four buttons per row on larger screens */
+        flex: 0 0 25%;
+    }
+}
+
+/* 5. Coach Section Styles */
+.coach-image {
+    flex-shrink: 0; /* Prevent shrinking */
+    margin-right: 15px;
+    max-width: 100px; /* Adjust size as needed */
+}
+
+.speech-bubble {
+    position: relative;
+    background-color: #f1f1f1;
+    border-radius: 12px;
+    padding: 10px 15px;
+    max-width: 60%;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.speech-bubble::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -15px; /* Positioning of the arrow */
+    transform: translateY(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent #f1f1f1 transparent transparent; /* Arrow direction */
+}
+
+.bubble-content {
+    font-size: 1rem;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .speech-bubble {
+        max-width: 80%; /* Expand bubble width on smaller screens */
+    }
+
+    .coach-image {
+        max-width: 70px; /* Adjust coach image size */
+    }
+}
+
+@media (max-width: 576px) {
+    .speech-bubble {
+        max-width: 90%; /* Further expand on very small screens */
+    }
+
+    .coach-image {
+        max-width: 50px; /* Further reduce coach image size */
+    }
+}
+
+/* 6. Avatar Styles */
+#userAvatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.navbar .d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Spacing between logout button and avatar */
+}
+
+.me-3 {
+    margin-right: 15px; /* Margin for logout button */
+}
+
+/* 7. Option Button Styles */
+.option-btn {
+    font-size: 1.2rem;
+    padding: 10px;
+    margin: 5px 0;
+    position: relative;
+}
+
+.option-btn::before {
+    content: attr(data-index);
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    color: #555;
+}
+
+.option-btn.selected {
+    background-color: white !important;
+    color: black !important;
+    border-color: #007bff !important;
+    font-weight: 700 !important;
+}
+
+/* 8. Missing Word Translations */
+.missing-word-translations {
+    font-size: 1.4rem;
+    color: #555;
+    font-weight: 700;
+    background-color: #e9ecef;
+    padding: 8px 12px;
+    border-radius: 5px;
+}
+
+#feedback .missing-word-translations + .missing-word-translations {
+    margin-left: 5px;
+}
+
+/* 9. Correct and Incorrect Answers */
+.correct-answer {
+    color: #28a745; /* Green for correct answers */
+    font-weight: bold;
+}
+
+.incorrect-answer {
+    color: #dc3545; /* Red for incorrect answers */
+}
+
+/* 10. Question Area Visibility */
+#question-area {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#question-area.visible {
+    opacity: 1;
+}
+
+/* Modal Header Styles */
+.modal-header {
+    border-bottom: none;
+    padding: 1rem 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Explanation Content Styles */
+#explanation-content {
+    font-size: 1rem;
+    padding: 1.5rem;
+}
+
+/* General Explanation Section */
+.general-explanation {
+    margin-bottom: 1.5rem;
+}
+
+.general-explanation p {
+    background-color: #f8f9fa;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.general-explanation p strong {
+    font-weight: 700;
+    color: #007bff; /* Highlight color */
+}
+
+/* Icons for parts of speech */
+.general-explanation .icon {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+/* The Missing Word Section */
+.missing-word-section {
+    background-color: #ffefc1;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.missing-word-title {
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Fun Colors for parts of speech */
+.noun { color: #ff5733; }
+.verb { color: #33c4ff; }
+.adjective { color: #ffc300; }
+.conjunction { color: #8cff33; }
+.adverb { color: #9933ff; }
+
+/* Close Button */
+.btn-secondary {
+    background-color: #6c757d;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Style for the loading container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+
+/* Style for the spinner */
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #09f;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+/* Keyframes for the spinner animation */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Style for the loading text */
+.loading-text {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.2rem;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    max-width: 80%;
+    animation: text-blink 1s ease-in-out infinite alternate;
+}
+
+/* Text animation for a slight pulse effect */
+@keyframes text-blink {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+}
+
+/* Spinner bounce animation */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Applying bounce animation to the spinner */
+.spinner {
+    animation: spin 1s linear infinite, bounce 0.5s ease-in-out infinite;
+}
+
+/* Additional Styles Specific to Grammar Lesson */
+
+/* Fill-in-the-Blank Input Field */
+.fill-in-blank {
+    /* border: 2px solid #007bff;
+    border-radius: 4px;
+    padding: 5px;
+    font-size: 1.2rem;
+    text-align: center; */
+}
+
+/* Multiple Choice Option Button Selected State */
+.option-btn.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Responsive Adjustments for Multiple Choice Buttons */
+@media (max-width: 767.98px) {
+    .option-btn {
+        font-size: 1rem;
+        padding: 8px;
+    }
+}
+
+/* Explanation Modal Customizations */
+#explanationModal .modal-content {
+    border-radius: 12px;
+}
+
+#explanationModal .modal-header {
+    border-bottom: none;
+}
+
+#explanationModal .modal-footer {
+    border-top: none;
+}
+
+/* Highlight Parts of Speech Icons */
+.noun::before, .verb::before, .adjective::before, .conjunction::before, .adverb::before {
+    margin-right: 5px;
+}
+
+/* Ensure option buttons take full width on smaller screens */
+@media (max-width: 576px) {
+    .option-btn {
+        width: 100%;
+    }
+}
