@@ -1352,7 +1352,8 @@ async function generateExplanation(questionId, fullSentence, missingWord, target
         fullSentence,
         missingWord,
         targetLanguage,
-        userLanguage
+        userLanguage,
+        grammar: false 
       })
     });
 
