@@ -6,48 +6,68 @@ let userMaxTopic = 0;
 // Load topics for the user based on the selected course
 async function loadTopics(user) {
     try {
-      const userDocRef = db.collection('users').doc(user.uid);
-      const userDoc = await userDocRef.get();
-  
-      // Fetch current course from the user's document
-      let currentCourse = userDoc.data().currentCourse;
-  
-      // If the current course has been switched via the dropdown, override it
-      if (selectedCourse) {
-        currentCourse = selectedCourse;
-      } else {
-        selectedCourse = currentCourse;
-      }
-  
-      if (!currentCourse) {
-        console.error("No current course found for this user.");
-        return;
-      }
-  
-      console.log(`Current course: ${selectedCourse}`);
-  
-      // Fetch topics for the selected course
-      const grammarRef = db.collection('grammar')
-        .where('language', '==', selectedCourse.split('-')[1])
-        .where('knownLanguage', '==', selectedCourse.split('-')[0])
-        .orderBy('topic', 'asc'); // Order by 'topic' in ascending order
-  
-      const topicsSnapshot = await grammarRef.get();
-  
-      // Retrieve maxTopic from the user's document
-      const userCourseRef = userDocRef.collection('grammar').doc(currentCourse);
-      const userCourseDoc = await userCourseRef.get();
-      userMaxTopic = userCourseDoc.exists ? userCourseDoc.data().maxTopic : 0;
-  
-      // Calculate user scores and unlock maxTopic
-      const updatedTopics = await calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot);
-  
-      // Now update the UI with the calculated scores
-      updateUIWithTopics(updatedTopics, currentCourse);
+        const userDocRef = db.collection('users').doc(user.uid);
+        const userDoc = await userDocRef.get();
+
+        // Fetch current course from the user's document
+        let currentCourse = userDoc.data().currentCourse;
+
+        // If the current course has been switched via the dropdown, override it
+        if (selectedCourse) {
+            currentCourse = selectedCourse;
+        } else {
+            selectedCourse = currentCourse;
+        }
+
+        if (!currentCourse) {
+            console.error("No current course found for this user.");
+            return;
+        }
+
+        console.log(`Current course: ${selectedCourse}`);
+
+        // Fetch scores and maxTopic from user's grammar document for the current course
+        const userCourseRef = userDocRef.collection('grammar').doc(currentCourse);
+        const userCourseDoc = await userCourseRef.get();
+        const userCourseData = userCourseDoc.exists ? userCourseDoc.data() : {};
+
+        const scores = userCourseData.scores || [];
+        userMaxTopic = userCourseData.maxTopic || 1; // Default maxTopic to 1 if not present
+
+        // Check if no progress exists, and only allow the first topic to be active
+        if (userMaxTopic === 1 && scores.length === 0) {
+            console.log("No progress found. Setting maxTopic to 1 and allowing only Topic 1 to be active.");
+        }
+
+        // Fetch topics for the selected course
+        const grammarRef = db.collection('grammar')
+            .where('language', '==', selectedCourse.split('-')[1])
+            .where('knownLanguage', '==', selectedCourse.split('-')[0])
+            .orderBy('topic', 'asc');
+
+        const topicsSnapshot = await grammarRef.get();
+
+        // Update the topics with scores and maxTopic
+        const updatedTopics = topicsSnapshot.docs.map((doc, index) => {
+            const topicData = doc.data();
+            const topicNumber = topicData.topic;
+
+            // If no progress exists, only the first topic is unlocked
+            const isUnlocked = (userMaxTopic === 1 && scores.length === 0) ? index === 0 : topicNumber <= userMaxTopic;
+
+            topicData.score = scores[topicNumber] || 0; // Use the score from scores array, default to 0 if not found
+            topicData.unlocked = isUnlocked;
+
+            return topicData;
+        });
+
+        // Now update the UI with the topics and their respective scores
+        updateUIWithTopics(updatedTopics);
     } catch (error) {
-      console.error("Error loading topics:", error);
+        console.error("Error loading topics:", error);
     }
-  }
+}
+
 
 // Calculate maxTopic based on user's progress and update Firestore
 async function calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot) {
@@ -102,19 +122,24 @@ async function calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot) {
   }
 
   // Function to update the UI with the topics and their respective scores
-function updateUIWithTopics(topics, currentCourse) {
+  function updateUIWithTopics(topics) {
     const topicsList = document.getElementById('topicsList');
     topicsList.innerHTML = ''; // Clear the current list
-  
+
     topics.forEach(topicData => {
-      const topicNumber = topicData.topic;
-      const topicUnlocked = topicNumber <= userMaxTopic;
-  
-      // Create a card for each topic and add it to the DOM
-      const topicCard = createTopicCard(topicData, currentCourse, topicUnlocked);
-      topicsList.appendChild(topicCard);
+        const topicNumber = topicData.topic;
+        const isUnlocked = topicData.unlocked;
+
+        // Create a card for each topic and add it to the DOM
+        const topicCard = createTopicCard(topicData, selectedCourse, isUnlocked);
+        topicsList.appendChild(topicCard);
     });
-  }
+
+    // If no topics exist or scores are all zero, display a default message
+    if (topics.length === 0 || topics.every(t => t.score === 0)) {
+        topicsList.innerHTML = '<p>No lessons started yet. Start with Topic 1!</p>';
+    }
+}
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
   const userRef = db.collection('users').doc(user.uid);
@@ -149,10 +174,10 @@ function loadUserAvatar(user) {
 function createTopicCard(topicData, course, isUnlocked) {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'col-md-4 mb-4';
-  
+
     const opacityClass = isUnlocked ? '' : 'disabled-card';
     const action = isUnlocked ? `onclick="showTopicModal('${course}', ${topicData.topic})"` : '';
-  
+
     const cardHTML = `
       <div class="card h-100 ${opacityClass}" ${action}>
         <img src="assets/images/grammar/${course}-grammar-${topicData.topic}.png" class="card-img-top" alt="Topic Image">
@@ -163,10 +188,10 @@ function createTopicCard(topicData, course, isUnlocked) {
         </div>
       </div>
     `;
-  
+
     cardDiv.innerHTML = cardHTML;
     return cardDiv;
-  }
+}
   
 // Show Modal with Topic Details
 async function showTopicModal(course, topic) {
