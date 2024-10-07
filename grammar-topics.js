@@ -180,7 +180,7 @@ function createTopicCard(topicData, course, isUnlocked) {
 
     const cardHTML = `
       <div class="card h-100 ${opacityClass}" ${action}>
-        <img src="assets/images/grammar/${course}-grammar-${topicData.topic}.png" class="card-img-top" alt="Topic Image">
+        <img src="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topicData.topic}.png/public" class="card-img-top" alt="Topic Image">
         <div class="card-body">
           <h5 class="card-title">${topicData.name}</h5>
           <p class="card-text">Topic ${topicData.topic}</p>
