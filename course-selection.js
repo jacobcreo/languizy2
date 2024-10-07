@@ -500,7 +500,7 @@ function loadTrainingOptions(currentCourse, userId) {
                 if (!grammarSnap.empty) {
                     grammarBtn.disabled = false;
                     grammarBtn.onclick = function() {
-                        window.location.href = `grammar.html?courseId=${currentCourse}`;
+                        window.location.href = `grammar-topics.html`;
                     };
                 }
             });

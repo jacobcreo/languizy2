@@ -797,6 +797,8 @@ function displayQuestion(question, questionId, currentLesson) {
     function handleSubmit() {
         var userAnswer = $('#user-answer').val().trim();
         var isCorrect = normalizeString(userAnswer) === normalizeString(question.missingWord);
+        handleAnswerSubmission(user, isCorrect, questionId, 
+            currentQuestionData.topic, currentQuestionData.language, currentQuestionData.knownLanguage);
         afterAnswerSubmission(isCorrect);
     }
 
@@ -1445,3 +1447,95 @@ $('#explain-sentence-btn').off('click').on('click', async function () {
         clearInterval(interimMessageInterval);
     }
 });
+
+async function fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, knownLanguage) {
+    // Fetch total number of questions for this topic in the grammar_questions collection
+    let totalQuestionsSnapshot = await db.collection('grammar_questions')
+        .where('topic', '==', topicNumber)
+        .where('language', '==', language)
+        .where('knownLanguage', '==', knownLanguage)
+        .get();
+    
+    const totalQuestions = totalQuestionsSnapshot.size;
+
+    // Fetch user's correct answers for this topic
+    let correctQuestionsSnapshot = await userDocRef
+        .collection('grammar')
+        .doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language)
+        .collection('questions')
+        .where('topic', '==', topicNumber)
+        .where('timesCorrectInARow', '>', 0)
+        .get();
+
+    const correctQuestions = correctQuestionsSnapshot.size;
+
+    return { totalQuestions, correctQuestions };
+}
+
+async function updateTopicScore(userDocRef, topicNumber, totalQuestions, correctQuestions) {
+    // Calculate the topic score as a percentage
+    let topicScore = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
+
+    // Save the score in the scores array (index corresponds to the topic)
+    await userDocRef
+        .collection('grammar')
+        .doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language)
+        .set({
+            scores: { [topicNumber]: topicScore }
+        }, { merge: true });
+
+    return topicScore;
+}
+
+async function adjustCorrectQuestions(isCorrect, wasPreviouslyCorrect, correctQuestions) {
+    if (isCorrect && !wasPreviouslyCorrect) {
+        // Answer was incorrect before but is correct now
+        correctQuestions++;
+    } else if (!isCorrect && wasPreviouslyCorrect) {
+        // Answer was correct before but is incorrect now
+        correctQuestions--;
+    }
+
+    return correctQuestions;
+}
+
+async function updateMaxTopic(userDocRef, topicNumber, topicScore) {
+    // If score is above 75 and maxTopic is not defined or lower, update it
+    if (topicScore >= 75) {
+        const grammarDoc = await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).get();
+        const maxTopic = grammarDoc.exists && grammarDoc.data().maxTopic;
+
+        if (!maxTopic || maxTopic < topicNumber + 1) {
+            await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).update({
+                maxTopic: topicNumber + 1
+            });
+        }
+    }
+}
+
+async function handleAnswerSubmission(user, isCorrect, questionId, topicNumber, language, knownLanguage) {
+    const userDocRef = db.collection('users').doc(user.uid);
+
+    // Fetch total questions and correct answers for the topic
+    const { totalQuestions, correctQuestions: initialCorrectQuestions } = await fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, knownLanguage);
+
+    // Get the current question's progress to know if it was previously answered correctly
+    const questionProgressRef = userDocRef
+        .collection('grammar')
+        .doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language)
+        .collection('questions')
+        .doc(questionId);
+
+    const questionDoc = await questionProgressRef.get();
+    const wasPreviouslyCorrect = questionDoc.exists && (questionDoc.data().timesCorrectInARow > 0);
+
+    // Adjust correct questions based on the new answer status
+    const updatedCorrectQuestions = await adjustCorrectQuestions(isCorrect, wasPreviouslyCorrect, initialCorrectQuestions);
+
+    // Update the topic score
+    const topicScore = await updateTopicScore(userDocRef, topicNumber, totalQuestions, updatedCorrectQuestions);
+
+    // Check and update maxTopic if applicable
+    await updateMaxTopic(userDocRef, topicNumber, topicScore);
+}
+
