@@ -187,7 +187,7 @@ h1, h3 {
     }
 }
 
-.score-box, .correct-box, .wrong-box {
+.score-box, .correct-box, .wrong-box, .lessonType-box {
     font-size: 1.2rem;
     font-weight: 600;
 }
@@ -217,7 +217,7 @@ h1, h3 {
 }
 
 /* Small Screens: Five Thick Horizontal Lines */
-@media (max-width: 767.98px) {
+@media (max-width: 991px) {
 
     #stats-row {
         padding: 0px !important;
@@ -290,7 +290,7 @@ h1, h3 {
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 991.1px) {
     .button-container .col-md-3 {
         max-width: 25%; /* Four buttons per row on larger screens */
         flex: 0 0 25%;

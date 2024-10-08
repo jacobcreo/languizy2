@@ -205,24 +205,24 @@ function setCoachImage(imageFilename) {
 function updateFlagIcons(currentLesson) {
     const flagCard = document.getElementById('flag-card');
     if (!flagCard) return;
-
+    debugger;
     // Clear existing flags
     flagCard.innerHTML = '';
 
     // Define a mapping of lesson IDs to flag icons
     const lessonToFlags = {
-        'en-de-topic-1': ['assets/icons/en-flag.png', 'assets/icons/de-flag.png'],
-        'en-es-topic-1': ['assets/icons/en-flag.png', 'assets/icons/es-flag.png'],
-        'en-fr-topic-1': ['assets/icons/en-flag.png', 'assets/icons/fr-flag.png'],
-        'en-it-topic-1': ['assets/icons/en-flag.png', 'assets/icons/it-flag.png'],
-        'en-ru-topic-1': ['assets/icons/en-flag.png', 'assets/icons/ru-flag.png'],
-        'en-cn-topic-1': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],
-        'en-pt-topic-1': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
-        'en-nl-topic-1': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
+        'en-de': ['assets/icons/en-flag.png', 'assets/icons/de-flag.png'],
+        'en-es': ['assets/icons/en-flag.png', 'assets/icons/es-flag.png'],
+        'en-fr': ['assets/icons/en-flag.png', 'assets/icons/fr-flag.png'],
+        'en-it': ['assets/icons/en-flag.png', 'assets/icons/it-flag.png'],
+        'en-ru': ['assets/icons/en-flag.png', 'assets/icons/ru-flag.png'],
+        'en-cn': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],
+        'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
+        'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
         // Add more lessons and their corresponding flags here
     };
 
-    const flags = lessonToFlags[currentLesson];
+    const flags = lessonToFlags[window.currentLanguagePair];
     if (flags) {
         flags.forEach(flagSrc => {
             const img = document.createElement('img');
@@ -255,6 +255,7 @@ firebase.auth().onAuthStateChanged(function (user) {
                 
                 initializeDefaultMode();
                 loadQuestion(user, currentLesson);
+                debugger;
                 updateFlagIcons(currentLesson);
                 loadDailyScore(user, currentLesson);
             }).catch((error) => {
@@ -304,7 +305,7 @@ function fetchCurrentLesson(user) {
             let lessonId = topicFromUrl;
             console.log(`Lesson ID found in URL: ${lessonId}`);
             window.currentLanguagePair = knownLanguage + '-' + targetLanguage;
-            debugger;
+            $("#topicNum").html(lessonId);
 
             // Check if the lesson exists (validate that questions exist for this lesson)
             validateLesson(lessonId, targetLanguage, knownLanguage).then((isValidLesson) => {

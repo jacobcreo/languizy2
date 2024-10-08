@@ -254,6 +254,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         initializeDefaultMode();
         loadQuestion(user, currentCourse);
         updateFlagIcons(currentCourse);
+        updateMaxFrequency(user, currentCourse);
       }).catch((error) => {
         console.error('Error fetching current course:', error);
         window.location.href = 'course_selection.html';
@@ -264,7 +265,28 @@ firebase.auth().onAuthStateChanged(function (user) {
   }
 });
 
+// New function to update maxFrequency
+function updateMaxFrequency(user, currentCourse) {
+  const allTimeStatsRef = db.collection('users').doc(user.uid)
+    .collection('courses').doc(currentCourse)
+    .collection('stats').doc('all-time');
 
+  allTimeStatsRef.get().then(doc => {
+    if (doc.exists) {
+      const maxFrequency = doc.data().maxFrequency || 0;
+      let maxFrequencyPercentage = (maxFrequency / 10000 * 100).toFixed(2) + '%';
+      $('#proficiencyLevel').text(maxFrequencyPercentage);
+      $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
+    } else {
+      $('#proficiencyLevel').text('0.00%');
+      $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
+      
+    }
+  }).catch(error => {
+    console.error('Error fetching maxFrequency:', error);
+    $('#proficiencyLevel').text('0.00%');
+  });
+}
 // Function to initialize the default mode based on screen size
 function initializeDefaultMode() {
     if (window.innerWidth < 768) { // Mobile devices
@@ -1113,7 +1135,12 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
             
               // Compare question frequency and update if necessary
               if (questionFrequency > allTimeData.maxFrequency) {
-                allTimeData.maxFrequency = questionFrequency;
+                
+                
+              var maxFrequencyPercentage = (questionFrequency / 10000 * 100).toFixed(2) + '%';
+              $('#proficiencyLevel').text(maxFrequencyPercentage);
+              $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
+              
               }
             
               // Write the updated progress and stats back to Firestore
