@@ -1480,3 +1480,29 @@ $('#explain-sentence-btn').off('click').on('click', async function() {
     clearInterval(interimMessageInterval);
   }
 });
+
+function addCharacter(character) {
+  const inputField = document.getElementById('user-answer');
+  if (inputField) {
+    const maxLength = inputField.maxLength;
+    const currentValue = inputField.value;
+    const startPos = inputField.selectionStart;
+    const endPos = inputField.selectionEnd;
+
+    // Calculate the new length after insertion
+    const newLength = currentValue.length - (endPos - startPos) + character.length;
+
+    // Check if the new length exceeds the max length
+    if (newLength <= maxLength) {
+      // Insert the character at the current cursor position
+      inputField.value = currentValue.substring(0, startPos) + character + currentValue.substring(endPos);
+
+      // Move the cursor to the end of the inserted character
+      const newCursorPos = startPos + character.length;
+      inputField.setSelectionRange(newCursorPos, newCursorPos);
+    }
+
+    // Focus the input field
+    inputField.focus();
+  }
+}
