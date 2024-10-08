@@ -280,7 +280,7 @@ function updateMaxFrequency(user, currentCourse) {
     } else {
       $('#proficiencyLevel').text('0.00%');
       $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
-      
+
     }
   }).catch(error => {
     console.error('Error fetching maxFrequency:', error);
@@ -1135,14 +1135,14 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
             
               // Compare question frequency and update if necessary
               if (questionFrequency > allTimeData.maxFrequency) {
-                
+                allTimeData.maxFrequency=questionFrequency;
                 
               var maxFrequencyPercentage = (questionFrequency / 10000 * 100).toFixed(2) + '%';
               $('#proficiencyLevel').text(maxFrequencyPercentage);
               $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
               
               }
-            
+              debugger;
               // Write the updated progress and stats back to Firestore
               transaction.set(userProgressRef, data);
               transaction.set(allTimeStatsRef, allTimeData);
