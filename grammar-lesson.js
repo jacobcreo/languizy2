@@ -251,11 +251,14 @@ firebase.auth().onAuthStateChanged(function (user) {
                     
                     return;
                 }
-                loadDailyScore(user, currentLesson);
+                debugger;
+                
                 initializeDefaultMode();
                 loadQuestion(user, currentLesson);
                 updateFlagIcons(currentLesson);
+                loadDailyScore(user, currentLesson);
             }).catch((error) => {
+                debugger;
                 console.error('Error fetching current lesson:', error);
                 
                 window.location.href = 'course_selection.html';
@@ -301,6 +304,7 @@ function fetchCurrentLesson(user) {
             let lessonId = topicFromUrl;
             console.log(`Lesson ID found in URL: ${lessonId}`);
             window.currentLanguagePair = knownLanguage + '-' + targetLanguage;
+            debugger;
 
             // Check if the lesson exists (validate that questions exist for this lesson)
             validateLesson(lessonId, targetLanguage, knownLanguage).then((isValidLesson) => {
@@ -382,13 +386,14 @@ function validateLesson(lessonId, language, knownLanguage) {
     }
 
 // Function to load daily score from Firestore
-function loadDailyScore(user, currentLesson) {
+function loadDailyScore(user, currentCourse) {
+    debugger;
     var today = new Date().toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
 
     // Fetch user's current lesson stats from the "grammar" sub-collection
     var userStatsRef = db.collection('users').doc(user.uid)
-        .collection('grammar').doc(currentLesson)
-        .collection('stats').doc(today);
+    .collection('courses').doc(window.currentLanguagePair)
+    .collection('stats').doc(today);
 
     // Fetch today's stats
     userStatsRef.get().then(doc => {
@@ -405,6 +410,7 @@ function loadDailyScore(user, currentLesson) {
 
 // Load a question from Firestore
 function loadQuestion(user, currentLesson) {
+    debugger;
     showLoadingProgress();
 
     if (!user) {
@@ -426,6 +432,7 @@ function loadQuestion(user, currentLesson) {
         .collection('grammar').doc(window.currentLanguagePair)
         .collection('questions')
         .where('nextDue', '<=', new Date())
+        .where('topic', '==', parseInt(currentLesson))
         .orderBy('nextDue')
         .limit(1)
         .get()
@@ -439,6 +446,7 @@ function loadQuestion(user, currentLesson) {
                         .collection('grammar').doc(window.currentLanguagePair)
                         .collection('questions')
                         .where('nextDue', '<=', new Date())
+                        .where('topic', '==', parseInt(currentLesson))
                         .orderBy('nextDue')
                         .limit(2) // Pull 2 questions and skip the first
                         .get()
@@ -1086,6 +1094,14 @@ function updateUserProgress(questionId, isCorrect, languagePair) {
         .collection('grammar').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
         .collection('questions').doc(questionId);
 
+        var userProgressRef = db.collection('users').doc(user.uid)
+    .collection('courses').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
+    .collection('progress').doc(questionId); // This is for updating daily stats
+
+  var userStatsRef = db.collection('users').doc(user.uid)
+    .collection('courses').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
+    .collection('stats'); // This is for updating all-time stats
+
     db.runTransaction(transaction => {
         return transaction.get(questionProgressRef).then(doc => {
             const data = doc.exists ? doc.data() : {
@@ -1104,18 +1120,37 @@ function updateUserProgress(questionId, isCorrect, languagePair) {
 
 
             const now = new Date();
-            const points = isCorrect ? 10 : 0;
+            var today = now.toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
 
+            
+
+            var points = isCorrect ? 10 : 0;
+
+            if (isMultipleChoice) {
+                points = Math.ceil(points / 2); // Half points for multiple choice
+            }
+
+            debugger;
             if (isCorrect) {
                 data.timesCorrect++;
+                streakCorrect++;
+                streakWrong=0;
                 data.timesCorrectInARow++;
                 data.timesIncorrectInARow = 0; // Reset incorrect streak
                 data.nextDue = new Date(now.getTime() + (data.timesCorrectInARow * 24 * 60 * 60 * 1000)); // Add more days
+                updateStats(userStatsRef, today, points, true);
+
+                dailyScore += points; // Update the daily score
+                $('#score').text(dailyScore); // Update the score on screen
             } else {
                 data.timesIncorrect++;
+                streakCorrect=0;
+                streakWrong++;
                 data.timesIncorrectInARow++;
                 data.timesCorrectInARow = 0; // Reset correct streak
                 data.nextDue = new Date(now.getTime() + (5 * 60 * 1000)); // Next review in 5 minutes
+                updateStats(userStatsRef, today, points, true);
+
             }
 
             data.lastAnswered = firebase.firestore.Timestamp.fromDate(now);
@@ -1127,6 +1162,8 @@ function updateUserProgress(questionId, isCorrect, languagePair) {
             console.log(data);
         });
     }).then(() => {
+        debugger;
+        updateCoachFeedback(streakCorrect, streakWrong);
         console.log('User progress updated successfully');
        
     }).catch(error => {
@@ -1220,6 +1257,7 @@ function updateLastFiveAnswers() {
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect) {
+    debugger;
     const dailyStatsRef = userStatsRef.doc(date);
     const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -1236,7 +1274,11 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                     correctAnswers: 0,
                     wrongAnswers: 0,
                     totalDrills: 0,
-                    score: 0
+                    score: 0,
+                    grammar_correctAnswers: 0,
+                    grammar_wrongAnswers: 0,
+                    grammar_totalDrills: 0,
+                    grammar_score: 0
                 };
 
                 // Ensure all fields are numbers
@@ -1244,15 +1286,23 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                 dailyData.score = ensureNumber(dailyData.score);
                 dailyData.correctAnswers = ensureNumber(dailyData.correctAnswers);
                 dailyData.wrongAnswers = ensureNumber(dailyData.wrongAnswers);
+                dailyData.grammar_totalDrills = ensureNumber(dailyData.grammar_totalDrills);
+                dailyData.grammar_score = ensureNumber(dailyData.grammar_score);
+                dailyData.grammar_correctAnswers = ensureNumber(dailyData.grammar_correctAnswers);
+                dailyData.grammar_wrongAnswers = ensureNumber(dailyData.grammar_wrongAnswers);
 
                 // Update stats safely
                 dailyData.totalDrills += 1;
                 dailyData.score += score;
+                dailyData.grammar_totalDrills += 1;
+                dailyData.grammar_score += score;
 
                 if (isCorrect) {
                     dailyData.correctAnswers += 1;
+                    dailyData.grammar_correctAnswers += 1;
                 } else {
                     dailyData.wrongAnswers += 1;
+                    dailyData.grammar_wrongAnswers += 1;
                 }
 
                 // Process all-time stats
@@ -1260,7 +1310,11 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                     totalCorrectAnswers: 0,
                     totalWrongAnswers: 0,
                     totalDrills: 0,
-                    totalScore: 0
+                    totalScore: 0,
+                    grammar_totalCorrectAnswers: 0,
+                    grammar_totalWrongAnswers: 0,
+                    grammar_totalDrills: 0,
+                    grammar_totalScore: 0
                 };
 
                 // Ensure all fields are numbers
@@ -1268,15 +1322,23 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                 allTimeData.totalScore = ensureNumber(allTimeData.totalScore);
                 allTimeData.totalCorrectAnswers = ensureNumber(allTimeData.totalCorrectAnswers);
                 allTimeData.totalWrongAnswers = ensureNumber(allTimeData.totalWrongAnswers);
+                allTimeData.grammar_totalDrills = ensureNumber(allTimeData.grammar_totalDrills);
+                allTimeData.grammar_totalScore = ensureNumber(allTimeData.grammar_totalScore);
+                allTimeData.grammar_totalCorrectAnswers = ensureNumber(allTimeData.grammar_totalCorrectAnswers);
+                allTimeData.grammar_totalWrongAnswers = ensureNumber(allTimeData.grammar_totalWrongAnswers);
 
                 // Update stats safely
                 allTimeData.totalDrills += 1;
                 allTimeData.totalScore += score;
+                allTimeData.grammar_totalDrills += 1;
+                allTimeData.grammar_totalScore += score;
 
                 if (isCorrect) {
                     allTimeData.totalCorrectAnswers += 1;
+                    allTimeData.grammar_totalCorrectAnswers += 1;
                 } else {
                     allTimeData.totalWrongAnswers += 1;
+                    allTimeData.grammar_totalWrongAnswers += 1;
                 }
 
                 // Write both sets of stats after all reads
@@ -1291,6 +1353,7 @@ function updateStats(userStatsRef, date, score, isCorrect) {
     }).catch(error => {
         console.error('Transaction failed:', error);
     });
+
 }
 
 // Helper function to calculate time difference

@@ -1243,7 +1243,11 @@ function updateStats(userStatsRef, date, score, isCorrect) {
           correctAnswers: 0,
           wrongAnswers: 0,
           totalDrills: 0,
-          score: 0
+          score: 0,
+          vocabulary_correctAnswers: 0,
+          vocabulary_wrongAnswers: 0,
+          vocabulary_totalDrills: 0,
+          vocabulary_score: 0
         };
 
         // Ensure all fields are numbers
@@ -1251,15 +1255,23 @@ function updateStats(userStatsRef, date, score, isCorrect) {
         dailyData.score = ensureNumber(dailyData.score);
         dailyData.correctAnswers = ensureNumber(dailyData.correctAnswers);
         dailyData.wrongAnswers = ensureNumber(dailyData.wrongAnswers);
+        dailyData.vocabulary_totalDrills = ensureNumber(dailyData.vocabulary_totalDrills);
+        dailyData.vocabulary_score = ensureNumber(dailyData.vocabulary_score);
+        dailyData.vocabulary_correctAnswers = ensureNumber(dailyData.vocabulary_correctAnswers);
+        dailyData.vocabulary_wrongAnswers = ensureNumber(dailyData.vocabulary_wrongAnswers);
 
         // Update stats safely
         dailyData.totalDrills += 1;
         dailyData.score += score;
+        dailyData.vocabulary_totalDrills += 1;
+        dailyData.vocabulary_score += score;
 
         if (isCorrect) {
           dailyData.correctAnswers += 1;
+          dailyData.vocabulary_correctAnswers += 1;
         } else {
           dailyData.wrongAnswers += 1;
+          dailyData.vocabulary_wrongAnswers += 1;
         }
 
         // Process all-time stats
@@ -1267,7 +1279,11 @@ function updateStats(userStatsRef, date, score, isCorrect) {
           totalCorrectAnswers: 0,
           totalWrongAnswers: 0,
           totalDrills: 0,
-          totalScore: 0
+          totalScore: 0,
+          vocabulary_totalCorrectAnswers: 0,
+          vocabulary_totalWrongAnswers: 0,
+          vocabulary_totalDrills: 0,
+          vocabulary_totalScore: 0
         };
 
         // Ensure all fields are numbers
@@ -1275,15 +1291,23 @@ function updateStats(userStatsRef, date, score, isCorrect) {
         allTimeData.totalScore = ensureNumber(allTimeData.totalScore);
         allTimeData.totalCorrectAnswers = ensureNumber(allTimeData.totalCorrectAnswers);
         allTimeData.totalWrongAnswers = ensureNumber(allTimeData.totalWrongAnswers);
+        allTimeData.vocabulary_totalDrills = ensureNumber(allTimeData.vocabulary_totalDrills);
+        allTimeData.vocabulary_totalScore = ensureNumber(allTimeData.vocabulary_totalScore);
+        allTimeData.vocabulary_totalCorrectAnswers = ensureNumber(allTimeData.vocabulary_totalCorrectAnswers);
+        allTimeData.vocabulary_totalWrongAnswers = ensureNumber(allTimeData.vocabulary_totalWrongAnswers);
 
         // Update stats safely
         allTimeData.totalDrills += 1;
         allTimeData.totalScore += score;
+        allTimeData.vocabulary_totalDrills += 1;
+        allTimeData.vocabulary_totalScore += score;
 
         if (isCorrect) {
           allTimeData.totalCorrectAnswers += 1;
+          allTimeData.vocabulary_totalCorrectAnswers += 1;
         } else {
           allTimeData.totalWrongAnswers += 1;
+          allTimeData.vocabulary_totalWrongAnswers += 1;
         }
 
         // Write both sets of stats after all reads
