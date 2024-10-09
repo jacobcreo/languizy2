@@ -28,6 +28,10 @@ body {
     padding: 1.5rem;
 }
 
+#flameIcon {
+    margin-right:5px;
+}
+
 /* Training Buttons */
 button {
     font-size: 1.2rem;

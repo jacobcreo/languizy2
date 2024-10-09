@@ -87,6 +87,7 @@ async function loadCurrentCoach(coachId) {
 
             // Update the current coach section
             $('#currentCoachImage').attr('src', `assets/images/${coachData.image}`);
+            $('#currentCoachImage').css('visibility', 'visible');
             $('#currentCoachName').text(coachData.coachName);
         }
     } catch (error) {
@@ -466,15 +467,27 @@ function loadTrainingOptions(currentCourse, userId) {
     const grammarBtn = document.getElementById('grammarBtn');
     const chatBtn = document.getElementById('chatBtn');
     const continueCourseBtn = document.getElementById('continueCourseBtn');
+    const continueCourseAlert = document.getElementById('continueCourseAlert');
 
     // Only proceed if the buttons exist
-    if (storiesBtn && grammarBtn && chatBtn && continueCourseBtn) {
+    if (storiesBtn && grammarBtn && chatBtn && continueCourseBtn && continueCourseAlert) {
+
+        continueCourseAlert.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`; 
+        continueCourseAlert.style.display = 'block';
         // Display course name and flags on the continue button (for both single and multiple courses)
-        continueCourseBtn.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
-        continueCourseBtn.style.display = 'block';
+        // continueCourseBtn.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
+        // continueCourseBtn.style.display = 'block';
 
         continueCourseBtn.onclick = function() {
             window.location.href = `practice.html?courseId=${currentCourse}`;
+        };
+        statsBtn.disabled = false;
+        statsBtn.onclick = function() {
+            window.location.href = `stats.html`;
+        };
+        vocabBtn.disabled = false;
+        vocabBtn.onclick = function() {
+            window.location.href = `vocabulary.html`;
         };
 
         // Check stories availability and set navigation
