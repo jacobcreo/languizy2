@@ -7,6 +7,10 @@ let answersOverTimeChartInstance;
 let cumulativeScoreChartInstance;
 let difficultyLevelChartInstance;
 let speechPartBreakdownChartInstance;
+let performanceOverTimeChartInstance;
+let dailyScoreBreakdownChartInstance;
+let vocabGrammarAccuracyChartInstance;
+
 
 // Initialize selectedCourse to 'all' for showing all course stats by default
 let selectedCourse = 'all';
@@ -66,6 +70,9 @@ async function loadStats(user) {
     setLoadingState('accuracyChart', 'accuracyLoading');
     setLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
     setLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
+    setLoadingState('performanceOverTimeChart', 'performanceOverTimeLoading');
+    setLoadingState('dailyScoreBreakdownChart', 'dailyScoreBreakdownLoading');
+    setLoadingState('vocabGrammarAccuracyChart', 'vocabGrammarAccuracyLoading');
 
     // Fetch user courses and stats concurrently
     const [userDoc, coursesSnapshot] = await Promise.all([
@@ -84,6 +91,7 @@ async function loadStats(user) {
     let totalDrills = 0;
     let dailyStats = [];
     let datesSet = new Set();
+    let vocabCorrect = 0, vocabWrong = 0, grammarCorrect = 0, grammarWrong = 0;
 
     // Fetch stats for all courses at once
     const courseStatsPromises = coursesSnapshot.docs.map(courseDoc => {
@@ -99,24 +107,38 @@ async function loadStats(user) {
       statsSnapshot.forEach(doc => {
         const data = doc.data();
         const dateId = doc.id;
-
+    
         if (dateId === 'all-time') {
           totalCorrectAnswers += data.totalCorrectAnswers || 0;
           totalWrongAnswers += data.totalWrongAnswers || 0;
           totalScore += data.totalScore || 0;
           totalDrills += data.totalDrills || 0;
+    
+          // Use the correct field names for "all-time" document
+          vocabCorrect += data.vocabulary_totalCorrectAnswers || 0;
+          vocabWrong += data.vocabulary_totalWrongAnswers || 0;
+          grammarCorrect += data.grammar_totalCorrectAnswers || 0;
+          grammarWrong += data.grammar_totalWrongAnswers || 0;
         } else {
           const date = new Date(dateId);
           if (!earliestDate || date < earliestDate) earliestDate = date;
-
+    
           dailyStats.push({
             date: dateId,
             correctAnswers: data.correctAnswers || 0,
             wrongAnswers: data.wrongAnswers || 0,
             score: data.score || 0,
-            totalDrills: data.totalDrills || 0
+            totalDrills: data.totalDrills || 0,
+            vocabularyScore: data.vocabulary_score || 0,
+            grammarScore: data.grammar_score || 0
           });
-
+    
+          // Aggregate daily stats for vocabulary and grammar accuracy
+          vocabCorrect += data.vocabulary_correctAnswers || 0;
+          vocabWrong += data.vocabulary_wrongAnswers || 0;
+          grammarCorrect += data.grammar_correctAnswers || 0;
+          grammarWrong += data.grammar_wrongAnswers || 0;
+    
           datesSet.add(dateId);
         }
       });
@@ -153,7 +175,7 @@ async function loadStats(user) {
     // Fill in missing dates in dailyStats with zero values
     const filledDailyStats = dateRange.map(date => {
       const existingStat = sortedDailyStats.find(stat => stat.date === date);
-      return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0 };
+      return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0, vocabularyScore: 0, grammarScore: 0 };
     });
 
     // Prepare Data for Charts
@@ -170,7 +192,10 @@ async function loadStats(user) {
       displayAccuracyChart(totalCorrectAnswers, totalWrongAnswers),
       displayCumulativeScoreChart(filledDailyStats),
       displayDifficultyLevelChart(userDocRef, selectedCourse),
-      displayHeatmap(Array.from(datesSet))
+      displayHeatmap(Array.from(datesSet)),
+      displayPerformanceOverTimeChart(filledDailyStats),
+      displayDailyScoreBreakdownChart(filledDailyStats),
+      displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorrect, grammarWrong)
     ]);
 
   } catch (error) {
@@ -178,21 +203,37 @@ async function loadStats(user) {
   }
 }
 
+
 /**
  * Set a loading state for the chart containers
  */
 function setLoadingState(chartId, loadingId) {
-  document.getElementById(loadingId).style.display = 'block';
-  document.getElementById(chartId).style.display = 'none';
+  const loadingElement = document.getElementById(loadingId);
+  const chartElement = document.getElementById(chartId);
+
+  if (loadingElement) {
+    loadingElement.style.display = 'block';
+  }
+  if (chartElement) {
+    chartElement.style.display = 'none';
+  }
 }
 
 /**
  * Clear the loading state once data is loaded
  */
 function clearLoadingState(chartId, loadingId) {
-  document.getElementById(loadingId).style.display = 'none';
-  document.getElementById(chartId).style.display = 'block';
+  const loadingElement = document.getElementById(loadingId);
+  const chartElement = document.getElementById(chartId);
+
+  if (loadingElement) {
+    loadingElement.style.display = 'none';
+  }
+  if (chartElement) {
+    chartElement.style.display = 'block';
+  }
 }
+
 
 /**
  * Populate the course selector with options for the user's courses
@@ -748,4 +789,179 @@ function generateDateRange(startDate, endDate) {
   }
 
   return dates;
+}
+
+function displayPerformanceOverTimeChart(data) {
+  const ctx = document.getElementById('performanceOverTimeChart').getContext('2d');
+
+  if (performanceOverTimeChartInstance) {
+    performanceOverTimeChartInstance.destroy();
+  }
+
+  performanceOverTimeChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(d => d.date),
+      datasets: [
+        {
+          label: 'Vocabulary Score',
+          data: data.map(d => d.vocabularyScore),
+          borderColor: '#007bff',
+          backgroundColor: 'rgba(0, 123, 255, 0.2)',
+          fill: true,
+          tension: 0.4
+        },
+        {
+          label: 'Grammar Score',
+          data: data.map(d => d.grammarScore),
+          borderColor: '#28a745',
+          backgroundColor: 'rgba(40, 167, 69, 0.2)',
+          fill: true,
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+        },
+        legend: {
+          position: 'top',
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      },
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Date'
+          }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Score'
+          },
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  clearLoadingState('performanceOverTimeChart', 'performanceOverTimeLoading');
+}
+
+/**
+ * Display Daily Score Breakdown Chart
+ * @param {Array} data - Array of daily stats containing vocabulary and grammar scores
+ */
+function displayDailyScoreBreakdownChart(data) {
+  const ctx = document.getElementById('dailyScoreBreakdownChart').getContext('2d');
+
+  if (dailyScoreBreakdownChartInstance) {
+    dailyScoreBreakdownChartInstance.destroy();
+  }
+
+  dailyScoreBreakdownChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.date),
+      datasets: [
+        {
+          label: 'Vocabulary Score',
+          data: data.map(d => d.vocabularyScore),
+          backgroundColor: '#007bff',
+          barPercentage: 0.7,
+          categoryPercentage: 0.8
+        },
+        {
+          label: 'Grammar Score',
+          data: data.map(d => d.grammarScore),
+          backgroundColor: '#28a745',
+          barPercentage: 0.7,
+          categoryPercentage: 0.8
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Score'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Date'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom'
+        }
+      }
+    }
+  });
+  clearLoadingState('dailyScoreBreakdownChart', 'dailyScoreBreakdownLoading');
+}
+
+/**
+ * Display Vocabulary vs. Grammar Accuracy Chart
+ * @param {number} vocabCorrect - Total number of correct vocabulary answers
+ * @param {number} vocabWrong - Total number of wrong vocabulary answers
+ * @param {number} grammarCorrect - Total number of correct grammar answers
+ * @param {number} grammarWrong - Total number of wrong grammar answers
+ */
+function displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorrect, grammarWrong) {
+
+  const ctx = document.getElementById('vocabGrammarAccuracyChart').getContext('2d');
+
+  if (vocabGrammarAccuracyChartInstance) {
+    vocabGrammarAccuracyChartInstance.destroy();
+  }
+
+  vocabGrammarAccuracyChartInstance = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Vocabulary Correct', 'Vocabulary Wrong', 'Grammar Correct', 'Grammar Wrong'],
+      datasets: [{
+        data: [vocabCorrect, vocabWrong, grammarCorrect, grammarWrong],
+        backgroundColor: ['#007bff', '#dc3545', '#28a745', '#ffc107']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              const total = context.chart._metasets[context.datasetIndex].total;
+              const percentage = ((value / total) * 100).toFixed(2);
+              return `${label}: ${value} (${percentage}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+  clearLoadingState('vocabGrammarAccuracyChart', 'vocabGrammarAccuracyLoading');
 }

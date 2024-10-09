@@ -131,11 +131,10 @@
           </div>
         </div>
       </div>
-    </div>
-
+    
     <!-- Heatmap Row -->
-    <div class="row mb-4">
-      <div class="col-12">
+    
+      <div class="col-lg-6">
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Daily Practice Heatmap</h5>
@@ -143,11 +142,11 @@
           </div>
         </div>
       </div>
-    </div>
+    
 
     <!-- Speech Parts Breakdown Row -->
-    <div class="row mb-4">
-      <div class="col-12">
+   
+      <div class="col-lg-6">
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Speech Parts Breakdown</h5>
@@ -156,11 +155,11 @@
           </div>
         </div>
       </div>
-    </div>
+    
 
     <!-- Cumulative Score Row -->
-    <div class="row mb-4">
-      <div class="col-12">
+    
+      <div class="col-lg-6">
         <div class="card shadow-sm">
           <div class="card-body">
             <h5 class="card-title">Cumulative Score Over Time</h5>
@@ -169,10 +168,50 @@
           </div>
         </div>
       </div>
+    
+
+    <!-- Performance Over Time Chart -->
+
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Performance Over Time</h5>
+        <div id="performanceOverTimeLoading">Loading...</div>
+        <canvas id="performanceOverTimeChart" style="display:none;"></canvas>
+      </div>
     </div>
+  </div>
+
+
+<!-- Daily Score Breakdown Chart -->
+
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Daily Score Breakdown</h5>
+        <div id="dailyScoreBreakdownLoading">Loading...</div>
+        <canvas id="dailyScoreBreakdownChart" style="display:none;"></canvas>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Vocabulary and Grammar Accuracy Chart -->
+
+  <div class="col-lg-6 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Vocabulary and Grammar Accuracy</h5>
+        <div id="vocabGrammarAccuracyLoading">Loading...</div>
+        <canvas id="vocabGrammarAccuracyChart" style="display:none;"></canvas>
+      </div>
+    </div>
+  </div>
+
+
 
     <!-- Question Difficulty Breakdown Row -->
-    <div class="row mb-4">
+    
       <div class="col-12">
         <div class="card shadow-sm">
           <div class="card-body">

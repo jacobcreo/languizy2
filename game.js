@@ -276,10 +276,10 @@ function updateMaxFrequency(user, currentCourse) {
       const maxFrequency = doc.data().maxFrequency || 0;
       let maxFrequencyPercentage = (maxFrequency / 10000 * 100).toFixed(2) + '%';
       $('#proficiencyLevel').text(maxFrequencyPercentage);
-      $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
+      $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
     } else {
       $('#proficiencyLevel').text('0.00%');
-      $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
+      $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
 
     }
   }).catch(error => {
@@ -1139,7 +1139,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
                 
               var maxFrequencyPercentage = (questionFrequency / 10000 * 100).toFixed(2) + '%';
               $('#proficiencyLevel').text(maxFrequencyPercentage);
-              $('#profTooltip').text(maxFrequencyPercentage + 'Proficiency Level');
+              $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
               
               }
               debugger;
