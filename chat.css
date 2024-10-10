@@ -1,0 +1,97 @@
+/* Basic Chat Styles */
+.chat-container {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.chat-message {
+    display: flex;
+    align-items: center;
+    border-radius: 15px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Message Styling */
+.bg-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.bg-light {
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+/* Input Area */
+.fixed-bottom {
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Avatar Circle */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #6f42c1;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Scroll to bottom when new messages appear */
+.chat-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+
+    .typing-dots {
+        display: flex;
+        align-items: center;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        margin: 0 3px;
+        background-color: #999;
+        border-radius: 50%;
+        display: inline-block;
+        animation: blink 1.4s infinite both;
+    }
+
+    .dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+        0%, 80%, 100% {
+            opacity: 0;
+        }
+        40% {
+            opacity: 1;
+        }
+    }
+
+
+/* Disable user input styles */
+input[disabled], button[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+}

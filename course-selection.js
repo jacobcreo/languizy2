@@ -532,6 +532,13 @@ function loadTrainingOptions(currentCourse, userId) {
                 }
             });
 
+            // Chat
+            chatBtn.disabled=false;
+            chatBtn.onclick = function() {
+                window.location.href = `chat.html?courseId=${currentCourse}`;
+            };
+
+
         // Ensure that training options are visible
         document.getElementById('trainingOptions').style.display = 'block';
     } else {
