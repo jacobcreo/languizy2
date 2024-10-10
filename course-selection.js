@@ -519,18 +519,18 @@ function loadTrainingOptions(currentCourse, userId) {
             });
 
         // Check chat availability and set navigation
-        db.collection('chat')
-            .where('knownLanguage', '==', knownLanguage)
-            .where('language', '==', language)
-            .get()
-            .then((chatSnap) => {
-                if (!chatSnap.empty) {
-                    chatBtn.disabled = false;
-                    chatBtn.onclick = function() {
-                        window.location.href = `chat.html?courseId=${currentCourse}`;
-                    };
-                }
-            });
+        // db.collection('chat')
+        //     .where('knownLanguage', '==', knownLanguage)
+        //     .where('language', '==', language)
+        //     .get()
+        //     .then((chatSnap) => {
+        //         if (!chatSnap.empty) {
+        //             chatBtn.disabled = false;
+        //             chatBtn.onclick = function() {
+        //                 window.location.href = `chat.html?courseId=${currentCourse}`;
+        //             };
+        //         }
+        //     });
 
             // Chat
             chatBtn.disabled=false;

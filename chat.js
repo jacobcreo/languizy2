@@ -65,9 +65,27 @@ async function loadCurrentCourse(user) {
 }
 
 // Initialize Chat with Bot's First Message
-async function initializeChat() {
-    const initialMessage = await getFirstBotMessage();
-    addMessage('ai', initialMessage);
+function initializeChat() {
+    conversationHistory = []; // Reset conversation history
+
+    // Show typing indicator
+    const typingIndicatorId = showTypingIndicator();
+
+    // Disable input while waiting for initial AI message
+    toggleUserInput(false);
+
+    getFirstBotMessage().then(initialMessage => {
+        // Remove typing indicator
+        removeTypingIndicator(typingIndicatorId);
+
+        addMessage('ai', initialMessage);
+
+        // Re-enable input
+        toggleUserInput(true);
+
+        // Focus on input field
+        document.getElementById('userInput').focus();
+    });
 }
 
 // Get the First Bot Message from the Google Cloud Function
@@ -87,7 +105,8 @@ async function getFirstBotMessage() {
                 ],
                 knownLanguage,
                 language,
-                level: 50 // Default level, you can customize this
+                level: 50, // Default level, you can customize this
+                uid: currentUser.uid // Pass the user ID
             })
         });
 
@@ -118,12 +137,12 @@ async function sendMessage() {
 
     // Show typing indicator
     const typingIndicatorId = showTypingIndicator();
-    
+
     // Disable input while waiting for response
     toggleUserInput(false);
 
     // Send the updated conversation history to the AI
-    const aiResponse = await chatWithAI(conversationHistory);
+    const aiResponseData = await chatWithAI(conversationHistory);
 
     // Remove typing indicator
     removeTypingIndicator(typingIndicatorId);
@@ -131,8 +150,20 @@ async function sendMessage() {
     // Enable input after response is received
     toggleUserInput(true);
 
-    // Add AI response to chat
-    addMessage('ai', aiResponse);
+    // Focus on input field
+    document.getElementById('userInput').focus();
+
+    if (aiResponseData.type === 'summary') {
+        // Switch to summary view
+        showSummaryView(aiResponseData.message);
+        // Clear conversation history
+        conversationHistory = [];
+    } else {
+        // Add AI response to chat
+        addMessage('ai', aiResponseData.message);
+        // Add AI's response to the conversation history
+        conversationHistory.push({ role: 'assistant', content: aiResponseData.message });
+    }
 }
 
 // Add Message to Chat
@@ -140,14 +171,36 @@ function addMessage(sender, content) {
     const chatArea = document.getElementById('chatArea');
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('d-flex', sender === 'user' ? 'justify-content-end' : 'justify-content-start', 'mb-3');
+
+    // Determine the avatar to use
+    let avatarHtml = '';
+    if (sender === 'user') {
+        const userAvatarElement = document.getElementById('userAvatar').querySelector('img');
+        if (userAvatarElement) {
+            // Use the user's photo if it exists
+            avatarHtml = `<img src="${userAvatarElement.src}" class="avatar me-2">`;
+        } else {
+            // Use the fallback avatar circle if no photo exists
+            const fallbackAvatar = document.getElementById('userAvatar').querySelector('.avatar-circle');
+            avatarHtml = `<div class="avatar me-2">${fallbackAvatar.outerHTML}</div>`;
+        }
+    } else {
+        // Use the coach's image for AI messages
+        avatarHtml = `<img src="assets/images/${currentCoach ? currentCoach.image : 'default.png'}" class="avatar me-2">`;
+    }
+
+    // Construct the message HTML
     messageDiv.innerHTML = `
         <div class="chat-message ${sender === 'user' ? 'bg-primary text-white' : 'bg-light'} p-3 rounded">
-            ${sender === 'user' ? '<img src="' + currentUser.photoURL + '" class="avatar me-2">' : '<img src="assets/images/' + currentCoach.image + '" class="avatar me-2">'}
-            <div>${content}</div>
+            ${sender === 'user' ? avatarHtml : ''}
+            <div class="msgContent">${content}</div>
+            ${sender === 'ai' ? avatarHtml : ''}
         </div>`;
+    
     chatArea.appendChild(messageDiv);
     chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
 }
+
 
 // Chat with AI
 async function chatWithAI(messages) {
@@ -161,19 +214,16 @@ async function chatWithAI(messages) {
                 messages, // Send the entire conversation history
                 knownLanguage,
                 language,
-                level: 50 // Default level, can be changed
+                level: 50, // Default level, can be changed
+                uid: currentUser.uid // Pass the user ID
             })
         });
         const data = await response.json();
-        const aiMessage = data.message;
 
-        // Add the AI's response to the conversation history
-        conversationHistory.push({ role: 'assistant', content: aiMessage });
-
-        return aiMessage;
+        return data; // Return the entire data object
     } catch (error) {
         console.error('Error communicating with AI:', error);
-        return 'Sorry, there was an error. Please try again.';
+        return { message: 'Sorry, there was an error. Please try again.', type: 'error' };
     }
 }
 
@@ -227,4 +277,57 @@ function logout() {
     }).catch((error) => {
         console.error("Logout failed: ", error);
     });
+}
+
+// Show Summary View
+function showSummaryView(summaryText) {
+    // Hide chat area and input area
+    document.getElementById('chatArea').style.display = 'none';
+    document.getElementById('inputArea').style.display = 'none';
+
+    // Create summary view container
+    const container = document.createElement('div');
+    container.id = 'summaryView';
+    container.classList.add('container', 'my-4');
+
+    // Create summary card
+    const card = document.createElement('div');
+    card.classList.add('card', 'p-4');
+
+    // Card content
+    card.innerHTML = `
+        <h2 class="card-title text-center">Conversation Summary</h2>
+        <p class="card-text">${summaryText}</p>
+        <div class="d-flex justify-content-center mt-4">
+            <button class="btn btn-primary me-2" onclick="restartConversation()">Restart Conversation</button>
+            <button class="btn btn-secondary" onclick="exitConversation()">Exit</button>
+        </div>
+    `;
+
+    container.appendChild(card);
+
+    // Append summary view to the main container
+    document.body.appendChild(container);
+}
+
+// Restart Conversation
+function restartConversation() {
+    // Remove summary view
+    const summaryView = document.getElementById('summaryView');
+    if (summaryView) summaryView.remove();
+
+    // Show chat area and input area
+    document.getElementById('chatArea').style.display = 'block';
+    document.getElementById('inputArea').style.display = 'block';
+
+    // Clear chat area
+    document.getElementById('chatArea').innerHTML = '';
+
+    // Initialize chat with bot's first message
+    initializeChat();
+}
+
+// Exit Conversation
+function exitConversation() {
+    window.location.href = '/course-selection.html';
 }

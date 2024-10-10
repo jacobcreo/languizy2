@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <!-- (Same as before) -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat - Language Learning App</title>
@@ -12,7 +12,6 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="chat.css">
 </head>
-
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -29,14 +28,11 @@
     <div class="container my-4">
         <div id="chatArea" class="card p-3 bg-light chat-container">
             <!-- Messages will be appended here dynamically -->
-            
-            
         </div>
     </div>
-    
 
     <!-- Fixed Input Area -->
-    <div class="fixed-bottom bg-white py-2 px-4 border-top">
+    <div class="fixed-bottom bg-white py-2 px-4 border-top" id="inputArea">
         <div class="container">
             <div class="input-group">
                 <input type="text" id="userInput" class="form-control" placeholder="Type your message...">
@@ -56,5 +52,4 @@
     <!-- Custom JS -->
     <script src="chat.js"></script>
 </body>
-
 </html>
