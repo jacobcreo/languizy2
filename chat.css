@@ -125,3 +125,22 @@ input[disabled], button[disabled] {
     order:1;
 }
 
+/* Correction Item Styles */
+.correction-item {
+    background-color: #eef2f7;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #d1d9e6;
+}
+
+.correction-item p {
+    margin: 0;
+}
+
+.correction-item + .correction-item {
+    margin-top: 15px;
+}
+
+.card-title {
+    color: #343a40;
+}

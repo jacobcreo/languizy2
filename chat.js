@@ -155,7 +155,7 @@ async function sendMessage() {
 
     if (aiResponseData.type === 'summary') {
         // Switch to summary view
-        showSummaryView(aiResponseData.message);
+        showSummaryView(aiResponseData.message, aiResponseData.corrections);
         // Clear conversation history
         conversationHistory = [];
     } else {
@@ -280,7 +280,8 @@ function logout() {
 }
 
 // Show Summary View
-function showSummaryView(summaryText) {
+// Show Summary View
+function showSummaryView(summaryText, corrections) {
     // Hide chat area and input area
     document.getElementById('chatArea').style.display = 'none';
     document.getElementById('inputArea').style.display = 'none';
@@ -298,17 +299,55 @@ function showSummaryView(summaryText) {
     card.innerHTML = `
         <h2 class="card-title text-center">Conversation Summary</h2>
         <p class="card-text">${summaryText}</p>
-        <div class="d-flex justify-content-center mt-4">
-            <button class="btn btn-primary me-2" onclick="restartConversation()">Restart Conversation</button>
-            <button class="btn btn-secondary" onclick="exitConversation()">Exit</button>
-        </div>
     `;
+
+    // Display corrections after the summary
+    if (corrections && corrections.length > 0) {
+        const correctionsSection = document.createElement('div');
+        correctionsSection.classList.add('mt-4');
+
+        // Add a title
+        const correctionsTitle = document.createElement('h3');
+        correctionsTitle.classList.add('card-title', 'text-center', 'mt-4');
+        correctionsTitle.textContent = 'Language Corrections';
+        correctionsSection.appendChild(correctionsTitle);
+
+        // Create a list to display corrections
+        corrections.forEach(correction => {
+            const correctionItem = document.createElement('div');
+            correctionItem.classList.add('correction-item', 'mb-3');
+
+            // Original sentence
+            const originalSentence = document.createElement('p');
+            originalSentence.innerHTML = `<strong>Original:</strong> ${correction.originalSentence}`;
+            correctionItem.appendChild(originalSentence);
+
+            // Feedback
+            const feedback = document.createElement('p');
+            feedback.innerHTML = `<strong>Feedback:</strong> ${correction.feedback}`;
+            correctionItem.appendChild(feedback);
+
+            correctionsSection.appendChild(correctionItem);
+        });
+
+        card.appendChild(correctionsSection);
+    }
+
+    // Add buttons
+    const buttonContainer = document.createElement('div');
+    buttonContainer.classList.add('d-flex', 'justify-content-center', 'mt-4');
+    buttonContainer.innerHTML = `
+        <button class="btn btn-primary me-2" onclick="restartConversation()">Restart Conversation</button>
+        <button class="btn btn-secondary" onclick="exitConversation()">Exit</button>
+    `;
+    card.appendChild(buttonContainer);
 
     container.appendChild(card);
 
     // Append summary view to the main container
     document.body.appendChild(container);
 }
+
 
 // Restart Conversation
 function restartConversation() {
@@ -329,5 +368,5 @@ function restartConversation() {
 
 // Exit Conversation
 function exitConversation() {
-    window.location.href = '/course-selection.html';
+    window.location.href = '/course_selection.html';
 }
