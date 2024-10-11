@@ -8,10 +8,18 @@ let language = '';
 // Array to hold the entire conversation history
 let conversationHistory = [];
 
+const urlParams = new URLSearchParams(window.location.search);
+const tid = urlParams.get('tid');
+        if (!tid) {
+            window.location.href = 'chat-topics.html';
+        }
+
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
         currentUser = user;
+        
+        
         await loadUserAvatar(user);
         await loadCurrentCoach(user);
         await loadCurrentCourse(user);
@@ -65,7 +73,7 @@ async function loadCurrentCourse(user) {
 }
 
 // Initialize Chat with Bot's First Message
-function initializeChat() {
+function initializeChat(tid) {
     conversationHistory = []; // Reset conversation history
 
     // Show typing indicator
@@ -90,6 +98,7 @@ function initializeChat() {
 
 // Get the First Bot Message from the Google Cloud Function
 async function getFirstBotMessage() {
+    console.log(tid);
     try {
         const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence-1', {
             method: 'POST',
@@ -105,7 +114,7 @@ async function getFirstBotMessage() {
                 ],
                 knownLanguage,
                 language,
-                level: 50, // Default level, you can customize this
+                tid: tid,
                 uid: currentUser.uid // Pass the user ID
             })
         });
@@ -142,7 +151,7 @@ async function sendMessage() {
     toggleUserInput(false);
 
     // Send the updated conversation history to the AI
-    const aiResponseData = await chatWithAI(conversationHistory);
+    const aiResponseData = await chatWithAI(conversationHistory,tid);
 
     // Remove typing indicator
     removeTypingIndicator(typingIndicatorId);
@@ -203,7 +212,7 @@ function addMessage(sender, content) {
 
 
 // Chat with AI
-async function chatWithAI(messages) {
+async function chatWithAI(messages,tid) {
     try {
         const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence-1', {
             method: 'POST',
@@ -214,7 +223,7 @@ async function chatWithAI(messages) {
                 messages, // Send the entire conversation history
                 knownLanguage,
                 language,
-                level: 50, // Default level, can be changed
+                tid: tid,
                 uid: currentUser.uid // Pass the user ID
             })
         });
@@ -300,7 +309,11 @@ function showSummaryView(summaryText, corrections) {
         <h2 class="card-title text-center">Conversation Summary</h2>
         <p class="card-text">${summaryText}</p>
     `;
-
+    if (corrections) {
+        if (typeof(corrections.corrections) !=='undefined') {
+            corrections=corrections.corrections;
+        }
+    }
     // Display corrections after the summary
     if (corrections && corrections.length > 0) {
         const correctionsSection = document.createElement('div');
@@ -363,7 +376,7 @@ function restartConversation() {
     document.getElementById('chatArea').innerHTML = '';
 
     // Initialize chat with bot's first message
-    initializeChat();
+    initializeChat(tid);
 }
 
 // Exit Conversation

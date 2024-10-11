@@ -1,0 +1,76 @@
+/* Chat Topics Page Styling */
+
+/* Global body styling */
+body {
+    background-color: #f8f9fa;
+  }
+  
+  .container {
+    max-width: 960px;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #343a40;
+  }
+  
+  .card {
+    transition: transform 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Disabled card styling */
+  .disabled-card {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  .lock-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2rem;
+    color: rgba(0, 0, 0, 0.7);
+  }
+  
+  /* Card image wrapper to position lock icon */
+  .card-img-wrapper {
+    position: relative;
+  }
+  
+  .card-img-top {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  /* Avatar Image (Profile Photo) */
+  #userAvatar img {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Adjust the size of the profile image */
+  #userAvatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  /* Ensure logout button and avatar are aligned */
+  .me-3 {
+    margin-right: 15px;
+  }
+  
+  /* Pagination Controls */
+  #paginationControls {
+    align-items: center;
+  }
+  
+  #paginationControls button {
+    min-width: 100px;
+  }
+  
