@@ -8,17 +8,29 @@ let language = '';
 // Array to hold the entire conversation history
 let conversationHistory = [];
 
+// Define an array of funny loading messages
+const loadingMessages = [
+    'Preparing your language lesson...',
+    'Cooking up some grammar...',
+    'Fetching vocabulary...',
+    'Sharpening your sentences...',
+    'Bringing you some fun learning...'
+];
+
+// Variable to store the interval ID for rotating loading messages
+let loadingIntervalId = null;
+
+// Get the topic ID from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 const tid = urlParams.get('tid');
-        if (!tid) {
-            window.location.href = 'chat-topics.html';
-        }
+if (!tid) {
+    window.location.href = 'chat-topics.html';
+}
 
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
         currentUser = user;
-        
         
         await loadUserAvatar(user);
         await loadCurrentCoach(user);
@@ -76,14 +88,14 @@ async function loadCurrentCourse(user) {
 function initializeChat(tid) {
     conversationHistory = []; // Reset conversation history
 
-    // Show typing indicator
+    // Show rotating loading indicator with coach image
     const typingIndicatorId = showTypingIndicator();
 
     // Disable input while waiting for initial AI message
     toggleUserInput(false);
 
     getFirstBotMessage().then(initialMessage => {
-        // Remove typing indicator
+        // Remove typing indicator and stop rotating messages
         removeTypingIndicator(typingIndicatorId);
 
         addMessage('ai', initialMessage);
@@ -144,16 +156,16 @@ async function sendMessage() {
     // Add the user's message to the conversation history
     conversationHistory.push({ role: 'user', content: message });
 
-    // Show typing indicator
+    // Show rotating loading indicator with coach image
     const typingIndicatorId = showTypingIndicator();
 
     // Disable input while waiting for response
     toggleUserInput(false);
 
     // Send the updated conversation history to the AI
-    const aiResponseData = await chatWithAI(conversationHistory,tid);
+    const aiResponseData = await chatWithAI(conversationHistory, tid);
 
-    // Remove typing indicator
+    // Remove typing indicator and stop rotating messages
     removeTypingIndicator(typingIndicatorId);
 
     // Enable input after response is received
@@ -195,7 +207,22 @@ function addMessage(sender, content) {
         }
     } else {
         // Use the coach's image for AI messages
-        avatarHtml = `<img src="assets/images/${currentCoach ? currentCoach.image : 'default.png'}" class="avatar me-2">`;
+        // avatarHtml = `<img src="assets/images/${currentCoach ? currentCoach.image : 'default.png'}" class="avatar me-2">`;
+        if (currentCoach && currentCoach.image) {
+            let coachImage = currentCoach.image;
+            if (coachImage.endsWith('1')) {
+                const alternativeImage = coachImage.slice(0, -1) + '2';
+                const imageExists = await fetch(`assets/images/${alternativeImage}`, { method: 'HEAD' })
+                    .then(res => res.ok)
+                    .catch(() => false);
+                if (imageExists) {
+                    coachImage = alternativeImage;
+                }
+            }
+            avatarHtml = `<img src="assets/images/${coachImage}" class="avatar me-2">`;
+        } else {
+            avatarHtml = `<img src="assets/images/default.png" class="avatar me-2">`;
+        }
     }
 
     // Construct the message HTML
@@ -210,9 +237,8 @@ function addMessage(sender, content) {
     chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
 }
 
-
 // Chat with AI
-async function chatWithAI(messages,tid) {
+async function chatWithAI(messages, tid) {
     try {
         const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence-1', {
             method: 'POST',
@@ -236,7 +262,7 @@ async function chatWithAI(messages,tid) {
     }
 }
 
-// Show typing indicator
+// Show typing indicator with rotating loading messages and coach image
 function showTypingIndicator() {
     const chatArea = document.getElementById('chatArea');
     const typingDiv = document.createElement('div');
@@ -244,22 +270,46 @@ function showTypingIndicator() {
     typingDiv.id = 'typingIndicator';
     typingDiv.innerHTML = `
         <div class="chat-message bg-light p-3 rounded">
-            <div class="typing-dots">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
+            <img src="assets/images/${currentCoach ? currentCoach.image : 'default.png'}" class="avatar me-2">
+            <div class="msgContent">
+                <span id="loadingMessage">${loadingMessages[0]}</span>
+                <div class="typing-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
             </div>
         </div>`;
     chatArea.appendChild(typingDiv);
     chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
+
+    // Initialize message index
+    let messageIndex = 0;
+
+    // Reference to the loading message element
+    const loadingMessageElement = typingDiv.querySelector('#loadingMessage');
+
+    // Set up interval to rotate messages every 3 seconds
+    loadingIntervalId = setInterval(() => {
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+        if (loadingMessageElement) {
+            loadingMessageElement.textContent = loadingMessages[messageIndex];
+        }
+    }, 3000); // Change message every 3 seconds
+
     return typingDiv.id;
 }
 
-// Remove typing indicator
+// Remove typing indicator and clear the rotating message interval
 function removeTypingIndicator(typingIndicatorId) {
     const typingDiv = document.getElementById(typingIndicatorId);
     if (typingDiv) {
         typingDiv.remove();
+    }
+    // Clear the interval to stop rotating messages
+    if (loadingIntervalId) {
+        clearInterval(loadingIntervalId);
+        loadingIntervalId = null;
     }
 }
 
@@ -289,7 +339,6 @@ function logout() {
 }
 
 // Show Summary View
-// Show Summary View
 function showSummaryView(summaryText, corrections) {
     // Hide chat area and input area
     document.getElementById('chatArea').style.display = 'none';
@@ -310,8 +359,8 @@ function showSummaryView(summaryText, corrections) {
         <p class="card-text">${summaryText}</p>
     `;
     if (corrections) {
-        if (typeof(corrections.corrections) !=='undefined') {
-            corrections=corrections.corrections;
+        if (typeof(corrections.corrections) !== 'undefined') {
+            corrections = corrections.corrections;
         }
     }
     // Display corrections after the summary
@@ -360,7 +409,6 @@ function showSummaryView(summaryText, corrections) {
     // Append summary view to the main container
     document.body.appendChild(container);
 }
-
 
 // Restart Conversation
 function restartConversation() {

@@ -59,7 +59,7 @@
 
 /* Typing Indicator */
 .typing-dots {
-    display: flex;
+    display: inline-flex;
     align-items: center;
 }
 
