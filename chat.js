@@ -207,22 +207,10 @@ function addMessage(sender, content) {
         }
     } else {
         // Use the coach's image for AI messages
-        // avatarHtml = `<img src="assets/images/${currentCoach ? currentCoach.image : 'default.png'}" class="avatar me-2">`;
-        if (currentCoach && currentCoach.image) {
-            let coachImage = currentCoach.image;
-            if (coachImage.endsWith('1')) {
-                const alternativeImage = coachImage.slice(0, -1) + '2';
-                const imageExists = await fetch(`assets/images/${alternativeImage}`, { method: 'HEAD' })
-                    .then(res => res.ok)
-                    .catch(() => false);
-                if (imageExists) {
-                    coachImage = alternativeImage;
-                }
-            }
-            avatarHtml = `<img src="assets/images/${coachImage}" class="avatar me-2">`;
-        } else {
-            avatarHtml = `<img src="assets/images/default.png" class="avatar me-2">`;
-        }
+        console.log(currentCoach.image);
+        debugger;
+        avatarHtml = `<img src="assets/images/${currentCoach ? currentCoach.image.replace(/1(?=\.\w+$)/, '2') : 'default.png'}" class="avatar me-2">`;
+       
     }
 
     // Construct the message HTML
@@ -270,7 +258,7 @@ function showTypingIndicator() {
     typingDiv.id = 'typingIndicator';
     typingDiv.innerHTML = `
         <div class="chat-message bg-light p-3 rounded">
-            <img src="assets/images/${currentCoach ? currentCoach.image : 'default.png'}" class="avatar me-2">
+            <img src="assets/images/${currentCoach ? currentCoach.image.replace(/1(?=\.\w+$)/, '2') : 'default.png'}" class="avatar me-2">
             <div class="msgContent">
                 <span id="loadingMessage">${loadingMessages[0]}</span>
                 <div class="typing-dots">
