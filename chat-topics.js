@@ -72,10 +72,11 @@ async function loadChatTopics(user) {
       chatInfoData = chatInfoDoc.data();
     }
 
-    if (chatInfoData.current_max_group && chatInfoData.current_max_group[selectedCourse]) {
-      userMaxGroup = chatInfoData.current_max_group;
-    } else {
-      // Initialize user's max group for the course to 1
+    // Initialize userMaxGroup
+    userMaxGroup = chatInfoData.current_max_group || {};
+
+    // Ensure userMaxGroup[selectedCourse] is set
+    if (!userMaxGroup[selectedCourse]) {
       userMaxGroup[selectedCourse] = 1;
       // Update in Firestore
       await chatInfoDocRef.set({ current_max_group: userMaxGroup }, { merge: true });
@@ -106,7 +107,7 @@ async function loadChatTopics(user) {
 async function determineAccessibleTopics(user) {
   // Fetch user's completed chats for the course
   const userChatsSnapshot = await db.collection('users').doc(user.uid)
-    .collection('chat').doc(selectedCourse)
+    .collection('chats').doc(selectedCourse)
     .collection('completedChats').get();
 
   const completedChatOrders = userChatsSnapshot.docs.map(doc => doc.data().order);
