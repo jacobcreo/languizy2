@@ -164,7 +164,7 @@ async function loadStreak(user) {
         today.setHours(0, 0, 0, 0); // Reset hours to compare dates accurately
 
         const todayDateStr = today.toLocaleDateString('en-CA');
-        debugger;
+        
         // Determine if the streak was extended today
         const streakExtendedToday = datesSet.has(todayDateStr);
 
@@ -218,7 +218,7 @@ function calculateStreaks(dates) {
             currentStreak = 1;
         }
     }
-    debugger;
+    
 
     const today = new Date();
 today.setHours(0, 0, 0, 0);

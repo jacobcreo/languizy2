@@ -131,3 +131,11 @@ button i {
         align-items: center;
     }
 }
+
+.card-footer {
+    border-top:none;
+    text-align:center;
+}
+.card-footer a {
+    min-width: 50%;
+}
