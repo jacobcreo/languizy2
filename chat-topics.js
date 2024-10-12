@@ -8,6 +8,9 @@ let totalTopics = 0;
 let topicsData = []; // To store all topics
 let accessibleTopics = []; // To store topics accessible to the user
 
+// Show loading GIF as soon as the page loads
+document.addEventListener('DOMContentLoaded', showLoadingGif);
+
 // Authentication state listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
@@ -100,30 +103,90 @@ async function loadChatTopics(user) {
 
   } catch (error) {
     console.error("Error loading chat topics:", error);
+  } finally {
+    hideLoadingGif(); // Hide loading GIF
   }
 }
 
-// Determine Accessible Topics
+// Show loading GIF
+function showLoadingGif() {
+  const loadingGif = document.createElement('div');
+  loadingGif.id = 'loadingGif';
+  loadingGif.style.position = 'fixed';
+  loadingGif.style.top = '50%';
+  loadingGif.style.left = '50%';
+  loadingGif.style.transform = 'translate(-50%, -50%)';
+  loadingGif.style.zIndex = '1000';
+  loadingGif.innerHTML = '<img src="assets/images/loadingDog.gif" alt="Loading...">';
+  document.body.appendChild(loadingGif);
+}
+
+// Hide loading GIF
+function hideLoadingGif() {
+  const loadingGif = document.getElementById('loadingGif');
+  if (loadingGif) {
+    document.body.removeChild(loadingGif);
+  }
+}
+
+// Determine Accessible Topics and Fetch Completion Timestamps
 async function determineAccessibleTopics(user) {
-  // Fetch user's completed chats for the course
+  // Fetch user's completed chats for the course with 'completedAt' timestamp
   const userChatsSnapshot = await db.collection('users').doc(user.uid)
-    .collection('chats').doc(selectedCourse)
+    .collection('chat').doc(selectedCourse)
     .collection('completedChats').get();
 
-  const completedChatOrders = userChatsSnapshot.docs.map(doc => doc.data().order);
+  const completedChats = userChatsSnapshot.docs.map(doc => {
+    return {
+      order: doc.data().order,
+      completedAt: doc.data().completedAt.toDate() // Convert Firestore Timestamp to JavaScript Date
+    };
+  });
 
-  // For each topic, determine if it's accessible
+  // Create a map for quick lookup of completed chats by order
+  const completedChatsMap = {};
+  completedChats.forEach(chat => {
+    completedChatsMap[chat.order] = chat.completedAt;
+  });
+
+  // For each topic, determine if it's accessible and if it's completed
   accessibleTopics = topicsData.map(topic => {
     const topicOrder = topic.order;
     const groupNumber = Math.floor(topicOrder / 5) + 1;
     const isAccessible = groupNumber <= userMaxGroup[selectedCourse];
+    const isCompleted = completedChatsMap.hasOwnProperty(topicOrder);
+    const completedAt = isCompleted ? completedChatsMap[topicOrder] : null;
 
     return {
       ...topic,
       isAccessible: isAccessible,
-      isCompleted: completedChatOrders.includes(topicOrder)
+      isCompleted: isCompleted,
+      completedAt: completedAt
     };
   });
+}
+
+// Utility Function to Calculate Time Since Completion
+function timeSince(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+
+  let interval = Math.floor(seconds / 604800); // weeks
+  if (interval >= 1) {
+    return interval === 1 ? '1 week ago' : `${interval} weeks ago`;
+  }
+  interval = Math.floor(seconds / 86400); // days
+  if (interval >= 1) {
+    return interval === 1 ? '1 day ago' : `${interval} days ago`;
+  }
+  interval = Math.floor(seconds / 3600); // hours
+  if (interval >= 1) {
+    return interval === 1 ? '1 hour ago' : `${interval} hours ago`;
+  }
+  interval = Math.floor(seconds / 60); // minutes
+  if (interval >= 1) {
+    return interval === 1 ? '1 minute ago' : `${interval} minutes ago`;
+  }
+  return 'Just now';
 }
 
 // Update UI with Topics
@@ -141,6 +204,13 @@ function updateUIWithTopics() {
     topicsList.appendChild(topicCard);
   }
 
+  // Show pagination controls only after topics are loaded
+  const paginationControls = document.querySelectorAll('.paginationControls');
+  paginationControls.forEach(control => {
+    control.classList.remove('d-none');
+    control.classList.add('d-flex');
+  });
+
   // Update pagination buttons
   updatePaginationControls();
 }
@@ -154,6 +224,19 @@ function createTopicCard(topic) {
   const lockIcon = topic.isAccessible ? '' : '<i class="fas fa-lock lock-icon"></i>';
   const action = topic.isAccessible ? `onclick="startChat('${topic.id}')" ` : '';
 
+  // Determine the status icon and text
+  let statusIcon = '';
+  let statusText = '';
+  if (topic.isCompleted) {
+    // Completed: Show check icon and time since completion
+    statusIcon = '<i class="fas fa-check-circle text-success me-2"></i>';
+    statusText = timeSince(topic.completedAt);
+  } else {
+    // Not Completed: Show hourglass icon and 'Not Started'
+    statusIcon = '<i class="fas fa-hourglass-half text-secondary me-2"></i>';
+    statusText = 'Not Started';
+  }
+
   const cardHTML = `
     <div class="card h-100 ${opacityClass}" ${action}>
       <div class="card-img-wrapper">
@@ -162,7 +245,7 @@ function createTopicCard(topic) {
       </div>
       <div class="card-body">
         <h5 class="card-title">${topic.topic}</h5>
-        <p class="card-text">Topic ${topic.order}</p>
+        <p class="card-status mb-0">${statusIcon}${statusText}</p>
       </div>
     </div>
   `;
@@ -178,11 +261,16 @@ function startChat(topicId) {
 
 // Update Pagination Controls
 function updatePaginationControls() {
-  const prevBtn = document.getElementById('prevPageBtn');
-  const nextBtn = document.getElementById('nextPageBtn');
+  const prevBtns = document.querySelectorAll('.prevPageBtn');
+  const nextBtns = document.querySelectorAll('.nextPageBtn');
 
-  prevBtn.disabled = currentPage === 1;
-  nextBtn.disabled = currentPage * topicsPerPage >= totalTopics;
+  prevBtns.forEach(btn => {
+    btn.disabled = currentPage === 1;
+  });
+
+  nextBtns.forEach(btn => {
+    btn.disabled = currentPage * topicsPerPage >= totalTopics;
+  });
 }
 
 // Pagination Functions
