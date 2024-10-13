@@ -10,6 +10,9 @@ const totalQuestions = 4; // Number of questions in the test
 let currentQuestionIndex = 1; // Start from the first question
 let currentStoryData; // Store the loaded story data
 let isShowingTranslation = false; // Track translation toggle state
+let language = '';
+let knownLanguage = '';
+
 
 
 // Global variable to store the audio element
@@ -44,6 +47,9 @@ async function loadStory() {
         }
 
         currentStoryData = storyDoc.data();
+        language = currentStoryData.language;
+        knownLanguage = currentStoryData.knownLanguage;
+
         document.getElementById('storyTitle').innerText = currentStoryData.storyTitle;
         document.getElementById('storyImage').src = `assets/images/${currentStoryData.image || 'storyImage.jpg'}`;
 
@@ -260,7 +266,8 @@ function showTestFeedback() {
 async function updateUserProgress(isCompleted) {
   try {
       const userDocRef = db.collection('users').doc(currentUser.uid);
-      const storyProgressRef = userDocRef.collection('stories').doc(storyId);
+      const course = knownLanguage + "-" + language;
+      const storyProgressRef = userDocRef.collection('stories').doc(course).collection(course).doc(storyId);
 
       await storyProgressRef.set({
           lastAnswered: new Date().toISOString(),

@@ -172,12 +172,12 @@ async function loadStreak(user) {
         const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
 
         // Update streak display
-        document.getElementById('streakCount').textContent = `${currentStreak || 0} Days in a Row`;
+        document.getElementById('streakCount').textContent = `${currentStreak || 0} Days`;
 
         // Update flame color based on whether the streak was extended today
         const flameIcon = document.querySelector('.fa-fire');
         const messageElement = document.getElementById('streakMessage');
-        flameIcon.style.color = streakExtendedToday ? 'orange' : 'white';
+        flameIcon.style.color = streakExtendedToday ? 'orange' : 'gray';
 
         // Display additional message
         if (streakExtendedToday) {
@@ -188,7 +188,7 @@ async function loadStreak(user) {
 
     } catch (error) {
         console.error("Error fetching streak: ", error);
-        document.getElementById('streakCount').textContent = "0 Days in a Row";
+        document.getElementById('streakCount').textContent = "0 Days";
     }
 }
 
@@ -264,14 +264,14 @@ function loadTrainingOptions(currentCourse, userId) {
     const continueCourseBtn = document.getElementById('learnVocabBtn');
     const continueCourseAlert = document.getElementById('continueCourseAlert');
 
-    if (storiesBtn && grammarBtn && chatBtn && continueCourseBtn && continueCourseAlert) {
+    // if (storiesBtn && grammarBtn && chatBtn && vocabBtn) {
 
-        continueCourseAlert.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
-        continueCourseAlert.style.display = 'block';
+        // continueCourseAlert.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
+        // continueCourseAlert.style.display = 'block';
 
-        continueCourseBtn.onclick = function () {
-            window.location.href = `practice.html?courseId=${currentCourse}`;
-        };
+        // continueCourseBtn.onclick = function () {
+        //     window.location.href = `practice.html?courseId=${currentCourse}`;
+        // };
         document.getElementById('statsBtn').disabled = false;
         document.getElementById('statsBtn').onclick = function () {
             window.location.href = 'stats.html';
@@ -315,10 +315,10 @@ function loadTrainingOptions(currentCourse, userId) {
             window.location.href = `chat.html?courseId=${currentCourse}`;
         };
 
-        document.getElementById('trainingOptions').style.display = 'block';
-    } else {
-        console.error("Training buttons or continue button not found in the DOM.");
-    }
+        // document.getElementById('trainingOptions').style.display = 'block';
+    // } else {
+    //     console.error("Training buttons or continue button not found in the DOM.");
+    // }
 }
 
 // Logout function
@@ -469,13 +469,18 @@ function loadCardData(user, currentCourse) {
             console.error("Error fetching chat stats:", error);
         });
 
-    // Stories Completed Percentage (Placeholder)
-    const totalStories = 100;
-    const storiesCompleted = 0;
-    const storiesPercentage = Math.min((storiesCompleted / totalStories) * 100, 100).toFixed(2);
-    document.getElementById('storiesPercentage').textContent = `${storiesPercentage}%`;
-    document.getElementById('storiesProgress').style.width = `${storiesPercentage}%`;
-    document.getElementById('storiesProgress').setAttribute('aria-valuenow', storiesPercentage);
+        // Chat Topics Percentage
+    db.collection('users').doc(user.uid).collection('stories').doc(currentCourse).collection(currentCourse).where('finished', '==', true).get()
+    .then((snapshot) => {
+        const completedStories = snapshot.size;
+        const storytPercentage = Math.min((completedStories / 100) * 100, 100).toFixed(2);
+        document.getElementById('storiesPercentage').textContent = `${storytPercentage}%`;
+        document.getElementById('storiesProgress').style.width = `${storytPercentage}%`;
+        document.getElementById('storiesProgress').setAttribute('aria-valuenow', storytPercentage);
+    })
+    .catch((error) => {
+        console.error("Error fetching chat stats:", error);
+    });
 
     // Stories Button Functionality
     document.getElementById('storiesBtn').addEventListener('click', () => {
