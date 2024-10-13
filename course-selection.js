@@ -2,28 +2,36 @@
 const db = firebase.firestore();
 
 const languageShorts = {
-    'en' : 'English',
-    'de' : 'German',
-    'fr' : 'French',
-    'it' : 'Italian',
-    'es' : 'Spanish',
-    'us' : 'English',
-    'uk' : 'English',
-    'ru' : 'Russian',
-    'cn' : 'Chinese',
-    'pt' : 'Portuguese',
-    'nl' : 'Dutch'
+    'en': 'English',
+    'de': 'German',
+    'fr': 'French',
+    'it': 'Italian',
+    'es': 'Spanish',
+    'us': 'English',
+    'uk': 'English',
+    'ru': 'Russian',
+    'cn': 'Chinese',
+    'pt': 'Portuguese',
+    'nl': 'Dutch'
 };
-
 
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         loadHeadline(user);
         loadStreak(user);
-        loadCourses(user);
         fetchOrAssignCoach(user);
-        loadUserAvatar(user);  // Load user avatar in the navbar
+        loadUserAvatar(user); // Load user avatar in the navbar
+        db.collection('users').doc(user.uid).get().then((doc) => {
+            if (doc.exists) {
+                populateModalCourses(user); // Populate modal with course options
+                const currentCourse = doc.data().currentCourse;
+                if (currentCourse) {
+                    loadCardData(user, currentCourse);
+                    loadTrainingOptions(currentCourse, user.uid);
+                }
+            }
+        });
     } else {
         window.location.href = 'login.html';
     }
@@ -39,21 +47,18 @@ function loadUserAvatar(user) {
             const photoURL = userData.photoURL;
             const displayName = userData.displayName || '';
             const email = userData.email || '';
-            
-            // Get the avatar element in the navbar
+
             const userAvatar = document.getElementById('userAvatar');
 
             if (photoURL) {
-                // If photoURL exists, display the user's profile image
                 userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
             } else {
-                // If no photoURL, create a circle with initials
                 const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
                 userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
             }
-        userAvatar.onclick = () => {
-            window.location.href = '/settings.html';
-        };
+            userAvatar.onclick = () => {
+                window.location.href = '/settings.html';
+            };
         } else {
             console.error('User data does not exist in Firestore');
         }
@@ -67,14 +72,11 @@ async function fetchOrAssignCoach(user) {
     const userRef = db.collection('users').doc(user.uid);
     const userDoc = await userRef.get();
 
-    // Check if the user has a coach assigned
     let coachId = userDoc.exists && userDoc.data().coach;
     if (!coachId) {
-        // If no coach is assigned, set a default coach
         coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
         await userRef.update({ coach: coachId });
     }
-
     loadCurrentCoach(coachId);
 }
 
@@ -84,8 +86,6 @@ async function loadCurrentCoach(coachId) {
         const coachDoc = await db.collection('coaches').doc(coachId).get();
         if (coachDoc.exists) {
             const coachData = coachDoc.data();
-
-            // Update the current coach section
             $('#currentCoachImage').attr('src', `assets/images/${coachData.image}`);
             $('#currentCoachImage').css('visibility', 'visible');
             $('#currentCoachName').text(coachData.coachName);
@@ -97,10 +97,8 @@ async function loadCurrentCoach(coachId) {
 
 // Open the coach selection page
 function openCoachSelection() {
-    window.location.href = 'coach-selection.html'; // Modify the path as needed
+    window.location.href = 'coach-selection.html';
 }
-
-
 
 // Load daily headline based on current date
 function loadHeadline(user) {
@@ -161,17 +159,17 @@ async function loadStreak(user) {
 
         // Get today's date
         const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset hours to compare dates accurately
+        today.setHours(0, 0, 0, 0);
 
         const todayDateStr = today.toLocaleDateString('en-CA');
-        
+
         // Determine if the streak was extended today
         const streakExtendedToday = datesSet.has(todayDateStr);
 
         // Calculate time left to extend the streak (until midnight)
         const now = new Date();
-        const midnight = new Date(today.getTime() + 24 * 60 * 60 * 1000); // Midnight of the next day
-        const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000)); // Remaining hours
+        const midnight = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+        const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
 
         // Update streak display
         document.getElementById('streakCount').textContent = `${currentStreak || 0} Days in a Row`;
@@ -201,7 +199,7 @@ function calculateStreaks(dates) {
     dateObjects.sort((a, b) => a - b);
 
     const uniqueDates = Array.from(new Set(dateObjects.map(d => d.toDateString()))).map(d => new Date(d));
-    
+
     let longestStreak = 1;
     let currentStreak = 1;
 
@@ -218,276 +216,69 @@ function calculateStreaks(dates) {
             currentStreak = 1;
         }
     }
-    
 
     const today = new Date();
-today.setHours(0, 0, 0, 0);
-let tempStreak = 0;
-let checkDate = new Date(today);
-checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
+    today.setHours(0, 0, 0, 0);
+    let tempStreak = 0;
+    let checkDate = new Date(today);
+    checkDate.setDate(checkDate.getDate() - 1);
 
-// Check if there is a continuous streak until yesterday
-while (true) {
-    const dateStr = checkDate.toLocaleDateString('en-CA');
-
-    // Check if checkDate is in uniqueDates
-    if (uniqueDates.find(d => d.toLocaleDateString('en-CA') === dateStr)) {
-        // If the streak started, increment it
-        tempStreak++;
-        checkDate.setDate(checkDate.getDate() - 1); // Move to the previous day
-    } else {
-        // Break if no streak found for this day
-        break;
+    while (true) {
+        const dateStr = checkDate.toLocaleDateString('en-CA');
+        if (uniqueDates.find(d => d.toLocaleDateString('en-CA') === dateStr)) {
+            tempStreak++;
+            checkDate.setDate(checkDate.getDate() - 1);
+        } else {
+            break;
+        }
     }
-}
 
-// Check if today is part of the streak
-const streakExtendedToday = uniqueDates.some(d => d.toLocaleDateString('en-CA') === today.toLocaleDateString('en-CA'));
+    const streakExtendedToday = uniqueDates.some(d => d.toLocaleDateString('en-CA') === today.toLocaleDateString('en-CA'));
 
-if (streakExtendedToday) {
-    tempStreak++; // Include today in the streak count if practiced today
-}
+    if (streakExtendedToday) {
+        tempStreak++;
+    }
 
-currentStreak = tempStreak;
-
+    currentStreak = tempStreak;
 
     return { currentStreak, longestStreak, streakExtendedToday };
 }
 
-
-
-
 // Function to get flag icons based on the course
 function getFlagIcons(currentCourse) {
-    const courseToFlags = {
-        'en-de': ['assets/icons/en-flag.png', 'assets/icons/de-flag.png'],
-        'en-es': ['assets/icons/en-flag.png', 'assets/icons/es-flag.png'],
-        'en-fr': ['assets/icons/en-flag.png', 'assets/icons/fr-flag.png'],
-        'en-it': ['assets/icons/en-flag.png', 'assets/icons/it-flag.png'],
-        'en-ru': ['assets/icons/en-flag.png', 'assets/icons/ru-flag.png'],
-        'en-cn': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],        
-        'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
-        'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
-        // Add more courses and their corresponding flags here
-    };
-
-    const flags = courseToFlags[currentCourse];
-    if (flags) {
-        return flags.map(flagSrc => `<img src="${flagSrc}" alt="Flag" width="24" class="me-2">`).join('');
-    } else {
-        console.warn(`No flags found for course: ${currentCourse}`);
-        return '';
-    }
-}
-
-
-function loadCourses(user) {
-    const courseDropdown = document.getElementById('courseDropdown');
-    const trainingOptions = document.getElementById('trainingOptions');
-    const switchCourseDropdown = document.getElementById('switchCourseDropdown');
-    const addCourseSelect = document.getElementById('addCourseSelect');
-    let currentCourse;
-
-    // Get current user course if exists
-    db.collection('users').doc(user.uid).get().then((doc) => {
-        if (doc.exists) {
-            currentCourse = doc.data().currentCourse;
-        }
-
-        // Get user's courses
-        db.collection('users').doc(user.uid).collection('courses').get()
-            .then((snapshot) => {
-                const courseCount = snapshot.size;
-                
-                // Case 1: No courses found for the user
-                if (courseCount === 0) {
-                    document.getElementById('trainingOptions').classList.add('hidden');  // Hide training options
-                    document.getElementById('newUserOptions').classList.remove('hidden');  // Hide training options
-                    
-                    
-                    
-                    populateNewCoursesSelect(user); // New function call here
-
-                } 
-                
-                // Case 2: Only 1 course available
-                else if (courseCount === 1) {
-                    document.getElementById('trainingOptions').classList.remove('hidden');  // Hide training options
-                    document.getElementById('addAnotherCourseBox').classList.remove('hidden');  // Hide training options
-                    switchCourseDropdown.style.display = 'none';  // Hide course switch option
-                    loadTrainingOptions(currentCourse, user.uid, true);  // Load training options
-                    populateAvailableCourses(user, currentCourse);  // Show available courses
-                } 
-                
-                // Case 3: Multiple courses available
-                else {
-                    document.getElementById('trainingOptions').classList.remove('hidden');  // Hide training options
-                    document.getElementById('addAnotherCourseBox').classList.remove('hidden');  // Hide training options
-                    switchCourseDropdown.style.display = 'block';  // Show switch course option
-                    loadSwitchCourses(currentCourse, user.uid);  // Show the switch course dropdown
-                    loadTrainingOptions(currentCourse, user.uid, false);  // Load training options
-                    populateAvailableCourses(user, currentCourse);  // Show available courses
-                }
-            });
-    });
-}
-
-
-function populateAvailableCourses(user, currentCourse) {
-    
-    const addCourseSelect = document.getElementById('addCourseSelect');
-    addCourseSelect.innerHTML = ''; // Clear previous options
-
-    // Add default "Select new course" option
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Select a Course to begin';
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
-    addCourseSelect.appendChild(defaultOption);
-
-    // Get unique courses from the questions collection
-    db.collection('questions')
-        .get()
-        .then((snapshot) => {
-            const courses = new Set();
-
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const courseCombo = `${data.knownLanguage}-${data.language}`;
-                courses.add(courseCombo);
-            });
-
-            // Get user's enrolled courses
-            db.collection('users').doc(user.uid).collection('courses').get()
-                .then((userCoursesSnap) => {
-                    const userCourses = new Set();
-                    userCoursesSnap.forEach((doc) => {
-                        
-                        const userCourse = `${doc.data().knownLanguage}-${doc.data().targetLanguage}`;
-                        userCourses.add(userCourse);
-                    });
-
-                    // Populate the dropdown with available courses that the user isn't enrolled in
-                    courses.forEach((course) => {
-                        if (!userCourses.has(course)) {
-                            const [knownLanguage, language] = course.split('-');
-                            const option = document.createElement('option');
-                            option.value = course;
-                            option.textContent = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
-                            addCourseSelect.appendChild(option);
-                            
-                        }
-                    });
-
-                    
-
-                    if (addCourseSelect.children.length === 1) { // Only default option is present
-                        const noCoursesOption = document.createElement('option');
-                        noCoursesOption.textContent = 'No new courses available';
-                        noCoursesOption.disabled = true;
-                        addCourseSelect.appendChild(noCoursesOption);
-                        
-                    }
-                });
-        })
-        .catch((error) => {
-            console.error("Error fetching courses:", error);
-        });
-
-    // Add event listener for course selection
-    addCourseSelect.addEventListener('change', () => {
-        const selectedCourse = addCourseSelect.value;
-        if (selectedCourse) {
-            window.location.href = `practice.html?courseId=${selectedCourse}`;
-        }
-    });
-}
-
-// New function to populate the newCoursesSelect dropdown for new users
-function populateNewCoursesSelect(user) {
-    
-    const newCoursesSelect = document.getElementById('newCoursesSelect');
-    newCoursesSelect.innerHTML = ''; // Clear previous options
-
-    // Add default "Select new course" option
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Select a Course to begin';
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
-    newCoursesSelect.appendChild(defaultOption);
-
-    // Get all available courses from the questions collection
-    db.collection('questions')
-        .get()
-        .then((snapshot) => {
-            const courses = new Set();
-
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                const courseCombo = `${data.knownLanguage}-${data.language}`;
-                courses.add(courseCombo);
-            });
-
-            // Populate the dropdown with all available courses (no filtering for enrolled courses)
-            courses.forEach((course) => {
-                const [knownLanguage, language] = course.split('-');
-                const option = document.createElement('option');
-                option.value = course;
-                option.textContent = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
-                newCoursesSelect.appendChild(option);
-            });
-
-            if (newCoursesSelect.children.length === 1) { // Only default option is present
-                const noCoursesOption = document.createElement('option');
-                noCoursesOption.textContent = 'No courses available';
-                noCoursesOption.disabled = true;
-                newCoursesSelect.appendChild(noCoursesOption);
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching courses:", error);
-        });
-
-    // Add event listener for course selection
-    newCoursesSelect.addEventListener('change', () => {
-        const selectedCourse = newCoursesSelect.value;
-        if (selectedCourse) {
-            window.location.href = `practice.html?courseId=${selectedCourse}`;
-        }
-    });
+    const [knownLanguage, language] = currentCourse.split('-');
+    const flagIcons = `
+        <img src="assets/icons/${knownLanguage}-flag.png" alt="${languageShorts[knownLanguage]} Flag" width="24" class="me-2">
+        <i class="fas fa-arrow-right me-2"></i>
+        <img src="assets/icons/${language}-flag.png" alt="${languageShorts[language]} Flag" width="24" class="me-2">
+    `;
+    return flagIcons;
 }
 
 function loadTrainingOptions(currentCourse, userId) {
     const [knownLanguage, language] = currentCourse.split('-');
-    
-    // Safeguard: Ensure these elements exist before accessing their properties
+
     const storiesBtn = document.getElementById('storiesBtn');
-    const grammarBtn = document.getElementById('grammarBtn');
+    const grammarBtn = document.getElementById('learnGrammarBtn');
     const chatBtn = document.getElementById('chatBtn');
-    const continueCourseBtn = document.getElementById('continueCourseBtn');
+    const continueCourseBtn = document.getElementById('learnVocabBtn');
     const continueCourseAlert = document.getElementById('continueCourseAlert');
 
-    // Only proceed if the buttons exist
     if (storiesBtn && grammarBtn && chatBtn && continueCourseBtn && continueCourseAlert) {
 
-        continueCourseAlert.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`; 
+        continueCourseAlert.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
         continueCourseAlert.style.display = 'block';
-        // Display course name and flags on the continue button (for both single and multiple courses)
-        // continueCourseBtn.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
-        // continueCourseBtn.style.display = 'block';
 
-        continueCourseBtn.onclick = function() {
+        continueCourseBtn.onclick = function () {
             window.location.href = `practice.html?courseId=${currentCourse}`;
         };
-        statsBtn.disabled = false;
-        statsBtn.onclick = function() {
-            window.location.href = `stats.html`;
+        document.getElementById('statsBtn').disabled = false;
+        document.getElementById('statsBtn').onclick = function () {
+            window.location.href = 'stats.html';
         };
-        vocabBtn.disabled = false;
-        vocabBtn.onclick = function() {
-            window.location.href = `vocabulary.html`;
+        document.getElementById('vocabBtn').disabled = false;
+        document.getElementById('vocabBtn').onclick = function () {
+            window.location.href = 'vocabulary.html';
         };
 
         // Check stories availability and set navigation
@@ -498,7 +289,7 @@ function loadTrainingOptions(currentCourse, userId) {
             .then((storySnap) => {
                 if (!storySnap.empty) {
                     storiesBtn.disabled = false;
-                    storiesBtn.onclick = function() {
+                    storiesBtn.onclick = function () {
                         window.location.href = `stories.html?courseId=${currentCourse}`;
                     };
                 }
@@ -512,71 +303,23 @@ function loadTrainingOptions(currentCourse, userId) {
             .then((grammarSnap) => {
                 if (!grammarSnap.empty) {
                     grammarBtn.disabled = false;
-                    grammarBtn.onclick = function() {
-                        window.location.href = `grammar-topics.html`;
+                    grammarBtn.onclick = function () {
+                        window.location.href = 'grammar-topics.html';
                     };
                 }
             });
 
-        // Check chat availability and set navigation
-        // db.collection('chat')
-        //     .where('knownLanguage', '==', knownLanguage)
-        //     .where('language', '==', language)
-        //     .get()
-        //     .then((chatSnap) => {
-        //         if (!chatSnap.empty) {
-        //             chatBtn.disabled = false;
-        //             chatBtn.onclick = function() {
-        //                 window.location.href = `chat.html?courseId=${currentCourse}`;
-        //             };
-        //         }
-        //     });
+        // Chat
+        chatBtn.disabled = false;
+        chatBtn.onclick = function () {
+            window.location.href = `chat.html?courseId=${currentCourse}`;
+        };
 
-            // Chat
-            chatBtn.disabled=false;
-            chatBtn.onclick = function() {
-                window.location.href = `chat.html?courseId=${currentCourse}`;
-            };
-
-
-        // Ensure that training options are visible
         document.getElementById('trainingOptions').style.display = 'block';
     } else {
         console.error("Training buttons or continue button not found in the DOM.");
     }
 }
-
-
-
-
-
-
-
-function loadSwitchCourses(currentCourse, userId) {
-    const switchCourseSelect = document.getElementById('switchCourseSelect');
-
-    db.collection('users').doc(userId).collection('courses').get()
-        .then((snapshot) => {
-            snapshot.forEach((doc) => {
-                if (doc.id !== currentCourse) {
-                    const option = document.createElement('option');
-                    option.value = doc.id;
-                    // Use languageShorts to convert language codes to full names
-                    option.textContent = `${languageShorts[doc.data().knownLanguage]} to ${languageShorts[doc.data().targetLanguage]}`;
-                    switchCourseSelect.appendChild(option);
-                }
-            });
-        });
-
-    // Handle course switching
-    switchCourseSelect.addEventListener('change', () => {
-        const selectedCourse = switchCourseSelect.value;
-        if (selectedCourse) {
-            window.location.href = `practice.html?courseId=${selectedCourse}`;
-        }
-    });
-}
-
 
 // Logout function
 function logout() {
@@ -584,5 +327,158 @@ function logout() {
         window.location.href = 'login.html';
     }).catch((error) => {
         console.error("Logout failed: ", error);
+    });
+}
+
+// Function to populate the modal with course options
+function populateModalCourses(user) {
+    const courseList = document.getElementById('courseList');
+    const searchInput = document.getElementById('searchCourseInput');
+    const selectButton = document.getElementById('modalSelectCourseBtn');
+
+    let coursesData = [];
+
+    db.collection('questions')
+        .get()
+        .then((snapshot) => {
+            const courses = new Set();
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const courseCombo = `${data.knownLanguage}-${data.language}`;
+                courses.add(courseCombo);
+            });
+
+            coursesData = Array.from(courses).sort();
+
+            renderCourseList(coursesData);
+
+            if (coursesData.length === 0) {
+                courseList.innerHTML = '<p>No courses available</p>';
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching courses:", error);
+        });
+
+    let selectedCourse = null;
+
+    function renderCourseList(courses) {
+        courseList.innerHTML = '';
+
+        courses.forEach((course) => {
+            const [knownLanguage, language] = course.split('-');
+            const item = document.createElement('div');
+            item.classList.add('list-group-item', 'course-item', 'cursor-pointer');
+            item.dataset.course = course;
+
+            const courseText = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
+
+            item.innerHTML = `
+                <div class="d-flex align-items-center">
+                    ${getFlagIcons(course)} <span>${courseText}</span>
+                </div>
+            `;
+
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.course-item').forEach(el => el.classList.remove('active'));
+                item.classList.add('active');
+                selectedCourse = course;
+                selectButton.disabled = false;
+            });
+
+            courseList.appendChild(item);
+        });
+    }
+
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredCourses = coursesData.filter(course => {
+            const [knownLanguage, language] = course.split('-');
+            const courseText = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`.toLowerCase();
+            return courseText.includes(searchTerm);
+        });
+
+        renderCourseList(filteredCourses);
+    });
+
+    selectButton.addEventListener('click', () => {
+        if (selectedCourse) {
+            db.collection('users').doc(user.uid).update({
+                currentCourse: selectedCourse
+            }).then(() => {
+                const modalElement = document.getElementById('courseModal');
+                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                modalInstance.hide();
+                window.location.reload();
+            }).catch((error) => {
+                console.error("Error setting current course:", error);
+            });
+        }
+    });
+}
+
+// Function to load data for the cards
+function loadCardData(user, currentCourse) {
+    const courseParts = currentCourse.split('-');
+    const targetLanguageCode = courseParts[1];
+    const targetLanguage = languageShorts[targetLanguageCode] || targetLanguageCode;
+    document.getElementById('currentCourseName').textContent = `${languageShorts[courseParts[0]]} to ${languageShorts[courseParts[1]]}`;
+    document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
+
+    // Vocabulary Percentage
+    db.collection('users').doc(user.uid).collection('courses').doc(currentCourse).collection('stats').doc('all-time').get()
+        .then((doc) => {
+            if (doc.exists) {
+                const maxFrequency = doc.data().maxFrequency || 0;
+                const vocabPercentage = Math.min((maxFrequency / 10000) * 100, 100).toFixed(2);
+                document.getElementById('vocabPercentage').textContent = `${vocabPercentage}%`;
+                document.getElementById('vocabProgress').style.width = `${vocabPercentage}%`;
+                document.getElementById('vocabProgress').setAttribute('aria-valuenow', vocabPercentage);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching vocabulary stats:", error);
+        });
+
+    // Grammar Percentage
+    db.collection('users').doc(user.uid).collection('grammar').doc(currentCourse).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const maxTopic = doc.data().maxTopic || 1;
+                const grammarPercentage = Math.min(((maxTopic - 1) / 200) * 100, 100).toFixed(2);
+                document.getElementById('grammarPercentage').textContent = `${grammarPercentage}%`;
+                document.getElementById('grammarProgress').style.width = `${grammarPercentage}%`;
+                document.getElementById('grammarProgress').setAttribute('aria-valuenow', grammarPercentage);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching grammar stats:", error);
+        });
+
+    // Chat Topics Percentage
+    db.collection('users').doc(user.uid).collection('chat').doc(currentCourse).collection('completedChats').get()
+        .then((snapshot) => {
+            const completedChats = snapshot.size;
+            const chatPercentage = Math.min((completedChats / 200) * 100, 100).toFixed(2);
+            document.getElementById('chatPercentage').textContent = `${chatPercentage}%`;
+            document.getElementById('chatProgress').style.width = `${chatPercentage}%`;
+            document.getElementById('chatProgress').setAttribute('aria-valuenow', chatPercentage);
+        })
+        .catch((error) => {
+            console.error("Error fetching chat stats:", error);
+        });
+
+    // Stories Completed Percentage (Placeholder)
+    const totalStories = 100;
+    const storiesCompleted = 0;
+    const storiesPercentage = Math.min((storiesCompleted / totalStories) * 100, 100).toFixed(2);
+    document.getElementById('storiesPercentage').textContent = `${storiesPercentage}%`;
+    document.getElementById('storiesProgress').style.width = `${storiesPercentage}%`;
+    document.getElementById('storiesProgress').setAttribute('aria-valuenow', storiesPercentage);
+
+    // Stories Button Functionality
+    document.getElementById('storiesBtn').addEventListener('click', () => {
+        window.location.href = 'stories.html';
     });
 }
