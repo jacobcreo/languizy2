@@ -269,16 +269,16 @@ function loadTrainingOptions(currentCourse, userId) {
         // continueCourseAlert.innerHTML = `${getFlagIcons(currentCourse)} Continue ${languageShorts[knownLanguage]} to ${languageShorts[language]} Training`;
         // continueCourseAlert.style.display = 'block';
 
-        // continueCourseBtn.onclick = function () {
-        //     window.location.href = `practice.html?courseId=${currentCourse}`;
-        // };
+        continueCourseBtn.onclick = function () {
+            window.location.href = `practice.html?courseId=${currentCourse}`;
+        };
         document.getElementById('statsBtn').disabled = false;
         document.getElementById('statsBtn').onclick = function () {
             window.location.href = 'stats.html';
         };
         document.getElementById('vocabBtn').disabled = false;
         document.getElementById('vocabBtn').onclick = function () {
-            window.location.href = 'vocabulary.html';
+            window.location.href = 'vocabulary.html?course='+currentCourse;
         };
 
         // Check stories availability and set navigation

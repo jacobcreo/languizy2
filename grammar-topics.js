@@ -171,20 +171,30 @@ function loadUserAvatar(user) {
 }
 
 // Create a Topic Card Element
+
 function createTopicCard(topicData, course, isUnlocked) {
     const cardDiv = document.createElement('div');
-    cardDiv.className = 'col-md-4 mb-4';
+    cardDiv.className = 'col-sm-6 col-md-4 mb-4';
 
     const opacityClass = isUnlocked ? '' : 'disabled-card';
     const action = isUnlocked ? `onclick="showTopicModal('${course}', ${topicData.topic})"` : '';
 
+    const previousTopic = topicData.topic - 1;
+    const tooltip = isUnlocked ? '' : `<div class="tooltiptext">To unlock this topic, you need to get 75% knowledge score on topic number ${previousTopic}</div>`;
+
     const cardHTML = `
       <div class="card h-100 ${opacityClass}" ${action}>
-        <img src="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topicData.topic}.png/public" class="card-img-top" alt="Topic Image">
+        <div class="card-img-wrapper lockbox position-relative">
+          <img src="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topicData.topic}.png/public" class="card-img-top" alt="Topic Image">
+          ${!isUnlocked ? '<svg class="svg-inline--fa fa-lock lock-icon position-absolute" style="top: 5%; left: 95%; transform: translate(-50%, -50%);" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="lock" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"></path></svg>' : ''}
+          ${tooltip}
+        </div>
         <div class="card-body">
           <h5 class="card-title">${topicData.name}</h5>
           <p class="card-text">Topic ${topicData.topic}</p>
-          <p class="card-text">Your Knowledge Score: ${topicData.score ? topicData.score.toFixed(1) + '%' : 'Not Started'}</p>
+        </div>
+        <div class="card-footer">
+          <p class="card-text">Knowledge Score: ${topicData.score ? topicData.score.toFixed(1) + '%' : 'Not Started'}</p>
         </div>
       </div>
     `;
@@ -192,6 +202,7 @@ function createTopicCard(topicData, course, isUnlocked) {
     cardDiv.innerHTML = cardHTML;
     return cardDiv;
 }
+
   
 // Show Modal with Topic Details
 async function showTopicModal(course, topic) {

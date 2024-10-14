@@ -17,6 +17,7 @@ body {
   
   .card {
     transition: transform 0.2s ease;
+    cursor:pointer;
   }
   
   .card:hover {
@@ -53,6 +54,7 @@ body {
   
     .card {
       margin-bottom: 1.5rem;
+      
     }
   }
   
@@ -193,3 +195,30 @@ body {
     }
   }
   
+  .lockbox {
+    position: relative;
+    display: inline-block;
+    cursor: pointer; /* Optional: Changes cursor to a pointer */
+  }
+  
+  .lockbox .tooltiptext {
+    visibility: hidden;
+    width: 200px; /* Adjust the width as necessary */
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the element */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .lockbox:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }

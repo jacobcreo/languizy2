@@ -197,6 +197,7 @@ async function fetchCoachData(coachId) {
 function setCoachImage(imageFilename) {
   const imagePath = `assets/images/${imageFilename}`;
   $('#coachImage').attr('src', imagePath); // Assuming there's an <img id="coach-image"> in your HTML
+  $('#coachImage').removeClass('invisible'); // Assuming there's an <img id="coach-image"> in your HTML
 }
 
 
@@ -224,6 +225,7 @@ function updateFlagIcons(currentCourse) {
 
     const flags = courseToFlags[currentCourse];
     if (flags) {
+      
         flags.forEach(flagSrc => {
             const img = document.createElement('img');
             img.src = flagSrc;
@@ -231,6 +233,8 @@ function updateFlagIcons(currentCourse) {
             img.width = 32;
             if (flagCard.children.length === 0) {
                 img.classList.add('me-2');
+                img.classList.add('d-none');
+                img.classList.add('d-lg-inline');
             }
             flagCard.appendChild(img);
             
@@ -664,7 +668,7 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
   var inputLength = question.missingWord.length;
 
   // Calculate input width dynamically to match the expected answer length
-  var inputWidth = inputLength * 1.2 + 1;
+  var inputWidth = inputLength * 1.2 ;
 
   // Determine whether to show input field or placeholder based on mode
   const inputField = isMultipleChoice ? '_____' : `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
@@ -1532,4 +1536,8 @@ function addCharacter(character) {
     // Focus the input field
     inputField.focus();
   }
+}
+
+function backToCourseSelection() {
+  window.location.href = '/course_selection.html';
 }

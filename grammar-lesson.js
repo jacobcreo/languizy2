@@ -231,6 +231,8 @@ function updateFlagIcons(currentLesson) {
             img.width = 32;
             if (flagCard.children.length === 0) {
                 img.classList.add('me-2');
+                img.classList.add('d-none');
+                img.classList.add('d-lg-inline');
             }
             flagCard.appendChild(img);
         });
@@ -438,11 +440,16 @@ function loadQuestion(user, currentLesson) {
         .limit(1)
         .get()
         .then(progressSnapshot => {
+            console.log('Step 1 - ');
             if (!progressSnapshot.empty) {
+                console.log('progressSnapshot isnt empty');
                 let nextQuestionDoc = progressSnapshot.docs[0];
+                    console.log('loading the first doc from progressSnapshot');
+                    console.log('next question Id is: ',nextQuestionDoc.id);
 
                 // If the next due question is the same as the previous one, get the next available question
                 if (nextQuestionDoc.id === previousQuestionId) {
+                    console.log('next question is supposed to be the same as the previous one already shown...');
                     return db.collection('users').doc(user.uid)
                         .collection('grammar').doc(window.currentLanguagePair)
                         .collection('questions')
@@ -452,13 +459,16 @@ function loadQuestion(user, currentLesson) {
                         .limit(2) // Pull 2 questions and skip the first
                         .get()
                         .then(secondSnapshot => {
+                            console.log('pulling the second possible match as the first question for review is identical to the one just shown');
                             return secondSnapshot.docs[1] || null; // Return the next question if available
+
                         });
                 } else {
                     return nextQuestionDoc; // Return the next question if it's different
                 }
             } else {
                 // No due questions found; proceed to load a new question
+                console.log('No due questions found; proceed to load a new question');
                 return loadNewQuestion(user, currentLesson).then(newQuestionDoc => {
                     return newQuestionDoc || loadNextEarlyQuestion(user, currentLesson); // Fallback to next early question
                 });
@@ -494,6 +504,7 @@ function loadQuestionData(questionId, currentLesson) {
 
 // Load a new question that hasn't been answered yet or from a specific lesson
 function loadNewQuestion(user, lessonId) {
+    console.log('loadNewQuestion function... Trying to load a new question that the user didnt see yet');
     return new Promise((resolve, reject) => {
         if (typeof(window.currentLanguagePair) !== 'undefined') {
             fetchAndLoadQuestions(window.currentLanguagePair, lessonId)
@@ -529,7 +540,7 @@ function fetchAndLoadQuestions(languagePair, topic) {
         // Fetch questions from grammar_questions collection based on the topic
         db.collection('grammar_questions')
             .where('topic', '==', parseInt(topic))
-            .limit(20) // Limit to 20 questions per lesson
+            .limit(100) // Limit to 20 questions per lesson
             .get()
             .then(questionSnapshot => {
                 const questions = [];
@@ -1626,6 +1637,15 @@ function addCharacter(character) {
   
       // Focus the input field
       inputField.focus();
+    }
+  }
+  
+
+function backToSelection(what) {
+    if (what === "course") {
+        window.location.href = '/course_selection.html';
+    } else {
+        window.location.href = '/grammar-topics.html';
     }
   }
   

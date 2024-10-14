@@ -165,7 +165,7 @@ h1, h3 {
     box-shadow: none;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
     .stats-bar {
         background-color: #004080;
         color: white;
@@ -217,7 +217,7 @@ h1, h3 {
 }
 
 /* Small Screens: Five Thick Horizontal Lines */
-@media (max-width: 991px) {
+@media (max-width: 991.98px) {
 
     #stats-row {
         padding: 0px !important;
@@ -266,14 +266,14 @@ h1, h3 {
     align-items: center;
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 991.98px) {
     .button-container .col-6 {
         max-width: 50%; /* Two buttons per row */
         flex: 0 0 50%;
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 991.98px) {
     .button-container.row.justify-content-center {
         flex-direction: row !important; /* Prevent column stacking */
         align-items: flex-start; /* Ensure buttons align properly */
@@ -290,11 +290,14 @@ h1, h3 {
     }
 }
 
-@media (min-width: 991.1px) {
+@media (max-width: 991.98px) {
     .button-container .col-md-3 {
         max-width: 25%; /* Four buttons per row on larger screens */
         flex: 0 0 25%;
     }
+    .m80 {
+        width:80px;
+      }
 }
 
 /* 5. Coach Section Styles */
@@ -329,7 +332,7 @@ h1, h3 {
     color: #333;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991.98px) {
     .speech-bubble {
         max-width: 80%; /* Expand bubble width on smaller screens */
     }
@@ -604,3 +607,21 @@ h1, h3 {
         width: 100%;
     }
 }
+
+
+.invisible {
+    visibility:hidden;
+  }
+  
+  .close {
+    cursor:pointer;
+  }
+  
+  .close:hover {
+    color: red;
+    cursor:pointer;
+  }
+  .close i {
+    cursor:pointer;
+  }
+  

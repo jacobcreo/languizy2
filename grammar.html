@@ -35,16 +35,18 @@
 <div class="container-fluid m-0 p-0">
 <div id="stats-row" class="row align-items-center justify-content-between stats-bar p-2">
 <!-- Course Flags -->
-<div class="col-6 col-lg-2 text-start d-flex align-items-center justify-content-start">
-<div id="flag-card" class="d-flex align-items-center">
-<img src="assets/icons/en-flag.png" alt="English Flag" class="me-2" width="32">
-<img src="assets/icons/de-flag.png" alt="German Flag" width="32">
+<div class="m80 col-6 col-lg-3 text-start d-flex align-items-center justify-content-start">
+    <div id="flag-card" class="d-flex align-items-center">
+<!-- <img src="assets/icons/en-flag.png" alt="English Flag" class="me-2" width="32">
+<img src="assets/icons/de-flag.png" alt="German Flag" width="32"> -->
 </div>
 </div>
 
 <!-- Score and Correct/Wrong Count -->
-<div class="col-6 col-lg-8 text-center">
-<div class="d-flex justify-content-center align-items-center">
+<div class="tp col-6 d-lg-block col-lg-5 text-center" style="flex-grow:1">
+    <div class="close d-none d-lg-inline" style="float:left" onClick="backToSelection('grammar');">
+        <i class="fa-regular fa-circle-xmark fa-2x pt-1"></i>        </div>
+<div class="d-flex justify-content-center align-items-center pt-1">
     <span class="lessonType-box d-inline me-3">
         <i class="fa fa-language text-warning"></i>
         <span id="topicNum">1</span>
@@ -61,6 +63,11 @@
 </span>
 </div>
 </div>
+
+<div class="tp col-3 d-lg-none text-center" style="width: 80px;">
+    <div class="close d-lg-none" style="float:right" onClick="backToSelection('grammar');">
+      <i class="fa-regular fa-circle-xmark fa-2x pt-2"></i>        </div>
+  </div>
 
 <!-- Last 5 Answers -->
 <div id="lfa-container" class="col-12 col-lg-2 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">

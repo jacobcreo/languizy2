@@ -70,12 +70,13 @@ function loadUserAvatar(user) {
   });
 }
 
-
-// Load courses the user has practiced
 // Load courses the user has practiced
 function loadCourses(user) {
   const courseDropdown = document.getElementById('courseDropdown');
-  
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlCourse = urlParams.get('course');
+  let defaultCourseSet = false;
+
   db.collection('users').doc(user.uid).collection('courses').get().then((snapshot) => {
     snapshot.forEach((doc) => {
       const courseData = doc.data();
@@ -88,6 +89,15 @@ function loadCourses(user) {
       option.value = doc.id;
       option.textContent = `${knownLanguageName} to ${targetLanguageName}`;
       courseDropdown.appendChild(option);
+
+      // Check if the course from the URL is available and set it as default
+      if (urlCourse && doc.id === urlCourse && !defaultCourseSet) {
+        option.selected = true;
+        defaultCourseSet = true;
+        document.getElementById('statsCards').style.display = 'flex';
+        loadVocabulary(user, urlCourse);
+        updateCardTitles(urlCourse);
+      }
     });
   });
 
@@ -251,8 +261,6 @@ function renderTable(data) {
       responsive: true
     });
 }
-
-
 
 // Calculate accuracy percentage
 function calculateAccuracy(correct, incorrect) {
