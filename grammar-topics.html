@@ -9,7 +9,8 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   
   <!-- FontAwesome CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p6eN6UJ9iLwDrj81dFJjXG3GqPhtroRWj/Tka11Lhk+2h6KpEJpvCzVZGqCM/Hi5FvzFp0m9SvZGGB2I1GlSQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Custom CSS for Grammar Topics -->
   <link rel="stylesheet" href="grammar-topics.css">
@@ -37,11 +38,23 @@
           <!-- Dynamically load courses -->
         </select>
       </div>
+      <div id="paginationControlsTop" class="d-none paginationControls mb-4">
+        <button id="prevPageBtnTop" class="prevPageBtn btn btn-secondary" onclick="prevPage()">Previous</button>
+        <button id="nextPageBtnTop" class="nextPageBtn btn btn-secondary" onclick="nextPage()">Next</button>
+    </div>
+    
 
       <div id="topicsList" class="row">
         <!-- Grammar topic cards will be dynamically populated here -->
       </div>
+      <div id="paginationControlsBottom" class="d-none paginationControls my-4">
+        <button id="prevPageBtnBottom" class="prevPageBtn btn btn-secondary" onclick="prevPage()">Previous</button>
+        <button id="nextPageBtnBottom" class="nextPageBtn btn btn-secondary" onclick="nextPage()">Next</button>
     </div>
+    
+    </div>
+
+    
 
     <!-- Topic Details Modal -->
     <div class="modal fade" id="topicDetailsModal" tabindex="-1" aria-labelledby="topicDetailsModalLabel" aria-hidden="true">
@@ -49,34 +62,42 @@
           <div class="modal-content rounded-4 shadow-lg">
 
             <!-- Modal Header -->
-            <div class="modal-header bg-primary text-white">
-              <h5 class="modal-title" id="topicDetailsModalLabel">Topic Title</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body">
-              <div class="d-flex flex-column flex-md-row">
-                <div class="me-md-4 mb-4 mb-md-0 text-center">
-                  <img id="topicImage" src="" alt="Topic Image" class="img-fluid rounded">
-                </div>
-                <div>
-                  <h6 class="text-muted">Syllabus</h6>
-                  <p id="syllabus">Syllabus content goes here.</p>
-                  <h6 class="text-muted">Explanation</h6>
-                  <p id="explanation">Explanation content goes here.</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer">
-              <a id="startLessonLink" href="#" class="btn btn-primary">Start Lesson</a>
-            </div>
-
-          </div>
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title" id="topicDetailsModalLabel">Topic Title</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  
+  <!-- Modal Body -->
+  <div class="modal-body">
+    <div class="d-flex flex-column flex-md-row">
+      <div class="me-md-4 mb-4 mb-md-0 text-center">
+        <img id="topicImage" src="" alt="Topic Image" class="img-fluid rounded">
+      </div>
+      <div>
+        <h6 class="syllabus-title text-muted">Syllabus</h6>
+        <p id="syllabus" class="syllabus-text">Syllabus content goes here.</p>
+        
+        <h6 class="explanation-title text-muted mt-4">Explanations</h6>
+        <div id="explanations" class="explanation-text">
+          <!-- Explanations will be dynamically added here -->
         </div>
+  
+        <h6 class="explanation-title text-muted mt-4">Examples</h6>
+        <div id="examples" class="example-text">
+          <!-- Examples will be dynamically added here -->
+        </div>
+  
+        <h6 class="explanation-title text-muted mt-4">Tips</h6>
+        <div id="tips" class="tips-text">
+          <!-- Tips will be dynamically added here -->
+        </div>
+        <div class="modal-footer">
+            <a id="startLessonLink" href="#" class="btn btn-primary">Start Lesson</a>
+          </div>
+
+      </div>
     </div>
+  </div>
     
 
   <!-- Firebase and External Libraries -->

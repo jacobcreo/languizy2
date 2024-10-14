@@ -89,39 +89,61 @@ body {
     margin-right: 15px;
   }
   
-  /* General Modal Styling */
-.modal-content {
+ /* Modal Styling */
+.modal-header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px;
+}
+
+.modal-body img {
+    max-width: 100%;
     border-radius: 10px;
-    overflow: hidden;
-  }
-  
-  /* Header Styling with Overlay */
-  #modal-header {
-    background: url('assets/images/header-bg.jpg') center center / cover;
-    height: 150px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  
-  #modal-header h5 {
-    z-index: 1;
-    font-size: 2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-  
-  #modal-header .overlay-gradient {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.7), rgba(255, 255, 255, 0.1));
-    z-index: 0;
-  }
-  
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    margin-bottom: 15px;
+}
+
+.syllabus-title, .explanation-title {
+    font-size: 1.5rem;
+    color: #343a40;
+    border-bottom: 2px solid #007bff;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.syllabus-text, .explanation-text, .example-text, .tips-text {
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.explanation-text h6, .example-text p, .tips-text p {
+    margin-bottom: 10px;
+}
+
+.fas {
+    color: #007bff;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Hover effects for icons */
+.fas.fa-info-circle:hover, .fas.fa-lightbulb:hover, .fas.fa-quote-left:hover {
+    color: #0056b3;
+}
+
+/* Make the modal body scrollable when content is too long */
+.modal-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 15px;
+}
+
   /* Close Button Styling */
   .btn-close-white {
     filter: brightness(200%);
@@ -270,4 +292,14 @@ body {
     position: absolute;
     font-weight: 700;
     font-size: 125%;
+}
+
+/* Pagination Controls */
+.paginationControls {
+    align-items: center;
+    
+}
+
+.paginationControls button {
+    min-width: 100px;
 }

@@ -218,7 +218,7 @@ function updateUIWithTopics() {
 // Create a Topic Card Element
 function createTopicCard(topic) {
   const cardDiv = document.createElement('div');
-  cardDiv.className = 'col-md-4 mb-4';
+  cardDiv.className = 'col-12 col-md-4 mb-4';
 
   const opacityClass = topic.isAccessible ? '' : 'disabled-card';
   const lockIcon = topic.isAccessible ? '' : '<i class="fas fa-lock lock-icon"></i>';

@@ -3,7 +3,13 @@ const db = firebase.firestore();
 let selectedCourse = null;
 let userMaxTopic = 0;
 
-// Load topics for the user based on the selected course
+// Pagination variables
+let currentPage = 1;
+const topicsPerPage = 20; // Number of topics per page
+let totalTopics = 0;
+let topicsData = []; // To store all topics
+
+
 async function loadTopics(user) {
     try {
         const userDocRef = db.collection('users').doc(user.uid);
@@ -46,23 +52,24 @@ async function loadTopics(user) {
             .orderBy('topic', 'asc');
 
         const topicsSnapshot = await grammarRef.get();
-
-        // Update the topics with scores and maxTopic
-        const updatedTopics = topicsSnapshot.docs.map((doc, index) => {
+        topicsData = topicsSnapshot.docs.map((doc, index) => {
             const topicData = doc.data();
             const topicNumber = topicData.topic;
 
             // If no progress exists, only the first topic is unlocked
             const isUnlocked = (userMaxTopic === 1 && scores.length === 0) ? index === 0 : topicNumber <= userMaxTopic;
 
-            topicData.score = scores[topicNumber] || 0; // Use the score from scores array, default to 0 if not found
+            topicData.score = scores[topicNumber] || 0; // Use the score from the scores array, default to 0 if not found
             topicData.unlocked = isUnlocked;
 
             return topicData;
         });
 
-        // Now update the UI with the topics and their respective scores
-        updateUIWithTopics(updatedTopics);
+        totalTopics = topicsData.length;
+
+        // Now update the UI with topics for the current page
+        updateUIWithTopics();
+
     } catch (error) {
         console.error("Error loading topics:", error);
     } finally {
@@ -124,22 +131,49 @@ async function calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot) {
   }
 
   // Function to update the UI with the topics and their respective scores
-  function updateUIWithTopics(topics) {
+  function updateUIWithTopics() {
     const topicsList = document.getElementById('topicsList');
     topicsList.innerHTML = ''; // Clear the current list
 
-    topics.forEach(topicData => {
-        const topicNumber = topicData.topic;
-        const isUnlocked = topicData.unlocked;
+    // Calculate start and end indices for the current page
+    const startIndex = (currentPage - 1) * topicsPerPage;
+    const endIndex = Math.min(startIndex + topicsPerPage, totalTopics);
 
-        // Create a card for each topic and add it to the DOM
-        const topicCard = createTopicCard(topicData, selectedCourse, isUnlocked);
+    // Loop through topics for the current page and create cards
+    for (let i = startIndex; i < endIndex; i++) {
+        const topicData = topicsData[i];
+        const topicCard = createTopicCard(topicData, selectedCourse, topicData.unlocked);
         topicsList.appendChild(topicCard);
-    });
+    }
 
-    // If no topics exist or scores are all zero, display a default message
-    if (topics.length === 0 || topics.every(t => t.score === 0)) {
-        topicsList.innerHTML = '<p>No lessons started yet. Start with Topic 1!</p>';
+    // Show pagination controls and update buttons
+    document.querySelectorAll('.paginationControls').forEach(control => {
+        control.classList.remove('d-none');
+    });
+    updatePaginationControls();
+}
+
+// Update pagination controls (disable buttons as necessary)
+function updatePaginationControls() {
+    const prevBtns = document.querySelectorAll('.prevPageBtn');
+    const nextBtns = document.querySelectorAll('.nextPageBtn');
+
+    prevBtns.forEach(btn => btn.disabled = currentPage === 1);
+    nextBtns.forEach(btn => btn.disabled = currentPage * topicsPerPage >= totalTopics);
+}
+
+// Pagination functions
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        updateUIWithTopics();
+    }
+}
+
+function nextPage() {
+    if (currentPage * topicsPerPage < totalTopics) {
+        currentPage++;
+        updateUIWithTopics();
     }
 }
 // Load User Avatar or Initials into Navbar
@@ -209,27 +243,69 @@ function createTopicCard(topicData, course, isUnlocked) {
   
 // Show Modal with Topic Details
 async function showTopicModal(course, topic) {
-  const topicRef = db.collection('grammar')
-    .where('language', '==', course.split('-')[1])
-    .where('knownLanguage', '==', course.split('-')[0])
-    .where('topic', '==', topic);
-
-  const topicSnapshot = await topicRef.get();
-  const topicData = topicSnapshot.docs[0].data();
-
-  document.getElementById('topicDetailsModalLabel').innerText = topicData.name;
-  document.getElementById('syllabus').innerText = topicData.syllabus;
-  document.getElementById('explanation').innerText = topicData.explanation || '';
-  document.getElementById('topicImage').src = `https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topic}.png/public`;
+    const topicRef = db.collection('grammar')
+      .where('language', '==', course.split('-')[1])
+      .where('knownLanguage', '==', course.split('-')[0])
+      .where('topic', '==', topic);
   
-  document.getElementById('startLessonLink').href = `/grammar.html?topic=${topic}&language=${course.split('-')[1]}&knownLanguage=${course.split('-')[0]}`;
-
+    const topicSnapshot = await topicRef.get();
+    const topicData = topicSnapshot.docs[0].data();
   
-  $('#topicDetailsModal').modal('show');
-
-//   const modal = new bootstrap.Modal(document.getElementById('topicDetailsModal'));
-//   modal.show();
-}
+    document.getElementById('topicDetailsModalLabel').innerText = topicData.name;
+    document.getElementById('syllabus').innerText = topicData.syllabus || 'No syllabus available';
+    document.getElementById('topicImage').src = `https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topic}.png/public`;
+  
+    // Clear previous data
+    document.getElementById('explanations').innerHTML = '';
+    document.getElementById('examples').innerHTML = '';
+    document.getElementById('tips').innerHTML = '';
+  
+    // Display explanations, examples, and tips (if available)
+    const explain = topicData.explain || {};
+    
+    if (explain.explanations && explain.explanations.length > 0) {
+      explain.explanations.forEach((item) => {
+        const explanationHTML = `
+          <div class="mb-3">
+            <h6 class="fw-bold"><i class="fas fa-info-circle me-2"></i>${item.title}</h6>
+            <p>${item.content}</p>
+          </div>`;
+        document.getElementById('explanations').insertAdjacentHTML('beforeend', explanationHTML);
+      });
+    } else {
+      document.getElementById('explanations').innerHTML = '<p>No explanations available.</p>';
+    }
+  
+    if (explain.examples && explain.examples.length > 0) {
+      explain.examples.forEach((item) => {
+        const exampleHTML = `
+          <div class="mb-3">
+            <p><i class="fas fa-quote-left me-2"></i><strong>${item.example}</strong></p>
+            <p class="text-muted">${item.example_explanation}</p>
+          </div>`;
+        document.getElementById('examples').insertAdjacentHTML('beforeend', exampleHTML);
+      });
+    } else {
+      document.getElementById('examples').innerHTML = '<p>No examples available.</p>';
+    }
+  
+    if (explain.tips && explain.tips.length > 0) {
+      explain.tips.forEach((tip, index) => {
+        const tipHTML = `
+          <div class="mb-3">
+            <p><i class="fas fa-lightbulb me-2"></i><strong>Tip ${index + 1}:</strong> ${tip}</p>
+          </div>`;
+        document.getElementById('tips').insertAdjacentHTML('beforeend', tipHTML);
+      });
+    } else {
+      document.getElementById('tips').innerHTML = '<p>No tips available.</p>';
+    }
+  
+    document.getElementById('startLessonLink').href = `/grammar.html?topic=${topic}&language=${course.split('-')[1]}&knownLanguage=${course.split('-')[0]}`;
+  
+    $('#topicDetailsModal').modal('show');
+  }
+  
 
 // Populate course selector
 async function populateCourseSelector(user) {
