@@ -200,6 +200,7 @@ async function fetchCoachData(coachId) {
 function setCoachImage(imageFilename) {
     const imagePath = `assets/images/${imageFilename}`;
     $('#coachImage').attr('src', imagePath); // Assuming there's an <img id="coachImage"> in your HTML
+    $('#coachImage').removeClass('invisible');
 }
 
 function updateFlagIcons(currentLesson) {
@@ -701,7 +702,7 @@ function displayQuestion(question, questionId, currentLesson) {
     var inputLength = question.missingWord.length;
 
     // Calculate input width dynamically to match the expected answer length
-    var inputWidth = inputLength * 1.2 + 1;
+    var inputWidth = inputLength * 1.2;
 
     // Determine whether to show input field or placeholder based on mode
     const inputField = isMultipleChoice ? '_____' : `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;

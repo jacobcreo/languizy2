@@ -65,6 +65,8 @@ async function loadTopics(user) {
         updateUIWithTopics(updatedTopics);
     } catch (error) {
         console.error("Error loading topics:", error);
+    } finally {
+        hideLoadingGif();
     }
 }
 
@@ -182,16 +184,17 @@ function createTopicCard(topicData, course, isUnlocked) {
     const previousTopic = topicData.topic - 1;
     const tooltip = isUnlocked ? '' : `<div class="tooltiptext">To unlock this topic, you need to get 75% knowledge score on topic number ${previousTopic}</div>`;
 
+
     const cardHTML = `
       <div class="card h-100 ${opacityClass}" ${action}>
         <div class="card-img-wrapper lockbox position-relative">
           <img src="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topicData.topic}.png/public" class="card-img-top" alt="Topic Image">
           ${!isUnlocked ? '<svg class="svg-inline--fa fa-lock lock-icon position-absolute" style="top: 5%; left: 95%; transform: translate(-50%, -50%);" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="lock" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"></path></svg>' : ''}
+          ${'<span class="topicNum">'}${topicData.topic}${'</span>'}
           ${tooltip}
         </div>
         <div class="card-body">
           <h5 class="card-title">${topicData.name}</h5>
-          <p class="card-text">Topic ${topicData.topic}</p>
         </div>
         <div class="card-footer">
           <p class="card-text">Knowledge Score: ${topicData.score ? topicData.score.toFixed(1) + '%' : 'Not Started'}</p>
@@ -217,7 +220,8 @@ async function showTopicModal(course, topic) {
   document.getElementById('topicDetailsModalLabel').innerText = topicData.name;
   document.getElementById('syllabus').innerText = topicData.syllabus;
   document.getElementById('explanation').innerText = topicData.explanation || '';
-  document.getElementById('topicImage').src = `assets/images/grammar/${course}-grammar-${topic}.png`;
+  document.getElementById('topicImage').src = `https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topic}.png/public`;
+  
   document.getElementById('startLessonLink').href = `/grammar.html?topic=${topic}&language=${course.split('-')[1]}&knownLanguage=${course.split('-')[0]}`;
 
   
@@ -252,9 +256,31 @@ function filterTopicsByCourse() {
   loadTopics(firebase.auth().currentUser);
 }
 
+// Show loading GIF
+function showLoadingGif() {
+    const loadingGif = document.createElement('div');
+    loadingGif.id = 'loadingGif';
+    loadingGif.style.position = 'fixed';
+    loadingGif.style.top = '50%';
+    loadingGif.style.left = '50%';
+    loadingGif.style.transform = 'translate(-50%, -50%)';
+    loadingGif.style.zIndex = '1000';
+    loadingGif.innerHTML = '<img src="assets/images/loadingDog.gif" alt="Loading...">';
+    document.body.appendChild(loadingGif);
+  }
+  
+  // Hide loading GIF
+  function hideLoadingGif() {
+    const loadingGif = document.getElementById('loadingGif');
+    if (loadingGif) {
+      document.body.removeChild(loadingGif);
+    }
+  }
+
 // Authentication state listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
+    showLoadingGif();
     populateCourseSelector(user);
     loadTopics(user);
     loadUserAvatar(user); // Load user avatar in the navbar
