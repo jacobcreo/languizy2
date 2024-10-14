@@ -1,0 +1,41 @@
+/* terms-of-service.css */
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.terms-of-service {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+}
+
+.terms-of-service h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #343a40;
+}
+
+.terms-of-service p {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.75;
+}
+
+.footer h5 {
+    margin-bottom: 1rem;
+}
+
+.footer a:hover {
+    color: #007bff;
+}
+
+@media (max-width: 768px) {
+    .terms-of-service h1 {
+        font-size: 2rem;
+    }
+    
+    .terms-of-service p {
+        font-size: 1rem;
+    }
+}

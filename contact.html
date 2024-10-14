@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Languizy</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS for Contact Us Page -->
+    <link rel="stylesheet" href="contact.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="index.html">
+                <img src="assets/images/languizy-logo.png" alt="Languizy Logo" width="160" height="40"
+                    class="d-inline-block align-text-top">
+                
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Sign In</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Us Section -->
+    <section class="contact-section py-5">
+        <div class="container">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8 text-center">
+                    <h1 class="fw-bold mb-4">Contact Us</h1>
+                    <p class="lead text-muted">We're here to help! Feel free to get in touch with any questions, comments, or inquiries.</p>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <form id="contactForm">
+                        
+                        <!-- Name Input -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required>
+                        </div>
+                        <!-- Email Input -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <input type="text" name="_honey" style="display:none">
+                        <!-- Subject Input -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="subject" name="subject" placeholder="Enter the subject" required>
+                        </div>
+                        <!-- Message Input -->
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" placeholder="Type your message here" required></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                        </div>
+                    </form>
+                    <div id="thankYouMessage" class="mt-3 text-center text-success" style="display: none;">
+                        Thank you for contacting us! We will get back to you soon.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="row justify-content-center mt-5">
+                <div class="col-lg-6 text-center">
+                    <h5 class="fw-bold">Address</h5>
+
+                    <p>Languizy, Content Technologies<br>68 Rothschild Blvd, Tel Aviv, Israel</p>
+                    <h5 class="fw-bold">Email</h5>
+                    <p><a href="mailto:contact@languizy.com">contact@languizy.com</a></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer bg-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <h5 class="fw-bold">Languizy</h5>
+                    <p>Master a new language with immersive courses and expert coaches.</p>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h5 class="fw-bold">Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-decoration-none text-muted">About</a></li>
+                        <li><a href="#" class="text-decoration-none text-muted">Privacy Policy</a></li>
+                        <li><a href="#" class="text-decoration-none text-muted">Terms of Service</a></li>
+                        <li><a href="#" class="text-decoration-none text-muted">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h5 class="fw-bold">Follow Us</h5>
+                    <a href="#" class="text-muted me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-muted me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-muted me-3"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-muted"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <h5 class="fw-bold">Newsletter</h5>
+                    <form>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Your Email" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted">
+                &copy; 2024 Languizy. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#contactForm').on('submit', function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: "https://formsubmit.co/ajax/f5013ef43f3ffc6806cf82568946a52d",
+                    method: "POST",
+                    data: {
+                        name: $('#name').val(),
+                        email: $('#email').val(),
+                        subject: $('#subject').val(),
+                        message: $('#message').val()
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        $('#thankYouMessage').show();
+                        $('#contactForm')[0].reset();
+                    },
+                    error: function(err) {
+                        alert("There was an error submitting the form. Please try again.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

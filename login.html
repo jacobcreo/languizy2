@@ -1,20 +1,415 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Language Learning App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Languizy - Master a New Language with Expert Coaches</title>
+  
   <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="main.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- FontAwesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom CSS for Languizy Landing Page -->
+  <link rel="stylesheet" href="languizy-landing.css">
+  
+  <!-- Google Fonts (Optional for Modern Typography) -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  
 </head>
 <body>
-  <div class="container">
-    <h2 class="mt-5">Login</h2>
-    <button id="google-login" class="btn btn-primary">Login with Google</button>
-    <button id="email-login" class="btn btn-secondary">Login with Email</button>
-  </div>
+  
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">
+        <img src="assets/images/languizy-logo.png" alt="Languizy Logo" width="160" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+          <li class="nav-item me-3">
+            <a class="nav-link google-login">Sign In</a>
+          </li>
+          <li class="nav-item ">
+            <a class="btn btn-primary google-login">Get Started</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero d-flex align-items-center" style="background-image: url('assets/images/hero1.png');">
+    <div class="container text-center text-white">
+      <h1 class="display-4 fw-bold">Languages Learning for Real.</h1>
+      <p class="lead my-4">Learn over 10 languages with immersive courses and expert coaches.</p>
+      <a  class="google-login" btn btn-lg btn-primary me-3">Join Now</a>
+      <a  class="google-login" btn btn-lg btn-outline-light">Sign In</a>
+    </div>
+  </section>
+  
+  <!-- Features Section -->
+  <section class="features py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">Why Choose Languizy?</h2>
+        <p class="text-muted">Experience a comprehensive language learning journey.</p>
+      </div>
+      <div class="row g-4">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body">
+              <i class="fa-solid fa-language fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Learn 10+ Languages</h5>
+              <p class="card-text">Master Spanish, German, Italian, French, Dutch, Swedish, Portuguese, and more.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body">
+              <i class="fa-solid fa-book fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Comprehensive Courses</h5>
+              <p class="card-text">Immerse yourself in grammar, vocabulary, reading stories, and AI chat scenarios to reach C1 proficiency.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body">
+              <i class="fa-solid fa-award fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Superior Syllabus</h5>
+              <p class="card-text">Dive into a more profound syllabus than the course with the Owl, ensuring thorough language mastery.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 4 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body">
+              <i class="fa-solid fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Expert Coaches</h5>
+              <p class="card-text">Choose from 15 unique coaches who guide you every step of the way.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 5 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body">
+              <i class="fa-solid fa-chart-line fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Detailed Stats</h5>
+              <p class="card-text">Understand your progress, identify weak areas, and focus on improvement with in-depth statistics.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 6 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body">
+              <i class="fa-solid fa-lightbulb fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Personalized Recommendations</h5>
+              <p class="card-text">Receive tailored suggestions to enhance your study habits and accelerate your learning.</p>
+            </div>
+          </div>
+        </div>
+        <!-- Feature 7 -->
+        <div class="col-md-4">
+          <div class="card h-100 text-center border-0 shadow-sm">
+            <div class="card-body">
+              <i class="fa-solid fa-clipboard-list fa-3x text-primary mb-3"></i>
+              <h5 class="card-title">Diverse Assessments</h5>
+              <p class="card-text">Engage with various types of questions, quizzes, and exams to ensure you stay on top of the material.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Coaches Section -->
+<section class="coaches py-5 bg-light">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">Meet Your Coaches</h2>
+        <p class="text-muted">Guided by personalities designed to inspire and challenge you.</p>
+      </div>
+      <div class="row g-4">
+        
+        <!-- Coach 1: Alien Diplomat -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachAlien1.png" class="card-img-top" alt="Alien Diplomat">
+            <div class="card-body">
+              <h5 class="card-title">Alien Diplomat</h5>
+              <p class="card-text">Navigate language complexities with galactic wisdom. Stay sharp to earn the Alien Diplomat's guidance!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 2: Eccentric Chef -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachChef1.png" class="card-img-top" alt="Eccentric Chef">
+            <div class="card-body">
+              <h5 class="card-title">Eccentric Chef</h5>
+              <p class="card-text">Whip up your language skills with creative flair. Impress the Eccentric Chef and master the art of words!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 3: Russian Dictator -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachDictator1.png" class="card-img-top" alt="Russian Dictator">
+            <div class="card-body">
+              <h5 class="card-title">Russian Dictator</h5>
+              <p class="card-text">Achieve perfection under strict guidance. Impress the Russian Dictator to earn unwavering respect!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 4: Grumpy Old Librarian -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachLibrarian1.png" class="card-img-top" alt="Grumpy Old Librarian">
+            <div class="card-body">
+              <h5 class="card-title">Grumpy Old Librarian</h5>
+              <p class="card-text">Maintain order and precision. Impress the Grumpy Librarian by mastering your language studies diligently!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 5: Ninja Sensei -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachNinja1.png" class="card-img-top" alt="Ninja Sensei">
+            <div class="card-body">
+              <h5 class="card-title">Ninja Sensei</h5>
+              <p class="card-text">Achieve mastery through discipline and precision. Earn the silent approval of the Ninja Sensei!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 6: Pirate Captain -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachPirate1.png" class="card-img-top" alt="Pirate Captain">
+            <div class="card-body">
+              <h5 class="card-title">Pirate Captain</h5>
+              <p class="card-text">Embark on adventurous learning quests. Navigate rough seas to reach linguistic treasure with the Pirate Captain!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 7: Royal Queen -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachQueen1.png" class="card-img-top" alt="Royal Queen">
+            <div class="card-body">
+              <h5 class="card-title">Royal Queen</h5>
+              <p class="card-text">Strive for elegance and perfection. Receive regal guidance as you conquer language mastery with the Royal Queen!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 8: Robot Overlord -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachRobot1.png" class="card-img-top" alt="Robot Overlord">
+            <div class="card-body">
+              <h5 class="card-title">Robot Overlord</h5>
+              <p class="card-text">Optimize your learning with flawless precision. Impress the Robot Overlord through efficient and accurate progress!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 9: Drill Sergeant -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachSargent1.png" class="card-img-top" alt="Drill Sergeant">
+            <div class="card-body">
+              <h5 class="card-title">Drill Sergeant</h5>
+              <p class="card-text">Push your limits with rigorous training. Earn the strength and resilience of language mastery under the Drill Sergeant!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 10: Mad Scientist -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachScientist1.png" class="card-img-top" alt="Mad Scientist">
+            <div class="card-body">
+              <h5 class="card-title">Mad Scientist</h5>
+              <p class="card-text">Innovate and experiment with your language skills. Spark breakthroughs and embrace learning adventures with the Mad Scientist!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 11: Surfer Dude -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachSurfer1.png" class="card-img-top" alt="Surfer Dude">
+            <div class="card-body">
+              <h5 class="card-title">Surfer Dude</h5>
+              <p class="card-text">Ride the waves of language learning effortlessly. Keep the good vibes flowing with the laid-back Surfer Dude!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 12: Teacher (Old-School British Boarding School Teacher) -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachTeacher1.png" class="card-img-top" alt="Old-School British Boarding School Teacher">
+            <div class="card-body">
+              <h5 class="card-title">Old-School British Teacher</h5>
+              <p class="card-text">Embrace discipline and tradition in your studies. Achieve steady progress with the guidance of the Old-School British Teacher!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 13: Vampire Count -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachVampire1.png" class="card-img-top" alt="Vampire Count">
+            <div class="card-body">
+              <h5 class="card-title">Vampire Count</h5>
+              <p class="card-text">Refine your language skills with timeless sophistication. Gain immortal wisdom from the Vampire Count!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 14: Wizard Mentor -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachWizard1.png" class="card-img-top" alt="Wizard Mentor">
+            <div class="card-body">
+              <h5 class="card-title">Wizard Mentor</h5>
+              <p class="card-text">Master the mystical arts of language. Grow your wisdom and become a linguistic wizard with the Wizard Mentor!</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Coach 15: Zombie Coach -->
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="assets/images/coachZombie1.png" class="card-img-top" alt="Zombie Coach">
+            <div class="card-body">
+              <h5 class="card-title">Zombie Coach</h5>
+              <p class="card-text">Relentlessly pursue language mastery. Stay on track and thrive under the unwavering guidance of the Zombie Coach!</p>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+  
+  
+  <!-- Testimonials Section (Optional) -->
+  <section class="testimonials py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="fw-bold">What Our Learners Say</h2>
+        <p class="text-muted">Join thousands who have transformed their lives with Languizy.</p>
+      </div>
+      <div class="row g-4">
+        <!-- Testimonial Card Template -->
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm p-4">
+            <p class="card-text">"Languizy has completely changed the way I learn languages. The coaches are fantastic, and the immersive courses really work!"</p>
+            <div class="d-flex align-items-center mt-3">
+              <img src="assets/images/maria1.jpg" alt="Maria's user photo" class="rounded-circle me-3" width="50" height="50">
+              <div>
+                <h6 class="mb-0">Maria S.</h6>
+                <small class="text-muted">Advanced Spanish Learner</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Repeat similar blocks for other testimonials -->
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm p-4">
+            <p class="card-text">"The personalized recommendations helped me focus on my weak areas. Thanks to Languizy, I'm now fluent in French!"</p>
+            <div class="d-flex align-items-center mt-3">
+              <img src="assets/images/John1.jpg" alt="John's user photo" class="rounded-circle me-3" width="50" height="50">
+              <div>
+                <h6 class="mb-0">John D.</h6>
+                <small class="text-muted">Intermediate German Learner</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Add more testimonials as needed -->
+      </div>
+    </div>
+  </section>
+  
+  <!-- Call to Action Section -->
+  <section class="cta text-center py-5" style="background-color: #007bff; color: #fff;">
+    <div class="container">
+      <h2 class="fw-bold">Ready to Master a New Language?</h2>
+      <p class="lead my-4">Join Languizy today and start your journey to fluency with expert guidance.</p>
+      <a  class="google-login" btn btn-lg btn-light text-primary">Get Started</a>
+    </div>
+  </section>
+  
+  <!-- Footer -->
+  <footer class="footer bg-white py-4">
+    <div class="container">
+      <div class="row">
+        <!-- About -->
+        <div class="col-md-3 mb-3">
+          <h5 class="fw-bold">Languizy</h5>
+          <p>Master a new language with immersive courses and expert coaches.</p>
+        </div>
+        <!-- Links -->
+        <div class="col-md-3 mb-3">
+          <h5 class="fw-bold">Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-decoration-none text-muted">About</a></li>
+            <li><a href="privacy-policy.html" class="text-decoration-none text-muted">Privacy Policy</a></li>
+            <li><a href="#" class="text-decoration-none text-muted">Terms of Service</a></li>
+            <li><a href="#" class="text-decoration-none text-muted">Contact Us</a></li>
+          </ul>
+        </div>
+        <!-- Social Media -->
+        <div class="col-md-3 mb-3">
+          <h5 class="fw-bold">Follow Us</h5>
+          <a href="#" class="text-muted me-3"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="text-muted me-3"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="text-muted me-3"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="text-muted"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <!-- Newsletter -->
+        <div class="col-md-3 mb-3">
+          <h5 class="fw-bold">Newsletter</h5>
+          <form>
+            <div class="mb-3">
+              <input type="email" class="form-control" placeholder="Your Email" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <hr>
+      <div class="text-center text-muted">
+        &copy; 2024 Languizy. All rights reserved.
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Bootstrap JS Bundle (Includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Firebase and jQuery -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <!-- Firebase SDKs -->
@@ -25,8 +420,8 @@
   <!-- Custom JS -->
   <script src="app.js"></script>
   <script>
-    $('#google-login').click(googleLogin);
-    $('#email-login').click(emailLogin);
+    $('.google-login').click(googleLogin);
+    // $('#email-login').click(emailLogin);
   </script>
 </body>
 </html>
