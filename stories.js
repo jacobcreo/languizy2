@@ -61,6 +61,15 @@ async function loadStories(user) {
         completedStoryIds.add(doc.id);
       }
     });
+    if (window.innerWidth <= 700) { // Check if screen width is 'sm' or less
+      const style = document.createElement('style');
+      style.innerHTML = `
+        .card-img-top {
+          height:100%;
+        }
+      `;
+      document.head.appendChild(style);
+    }
 
     const storiesList = document.getElementById('storiesList');
     storiesList.innerHTML = ''; // Clear the current list
@@ -83,6 +92,8 @@ async function loadStories(user) {
       const storyCard = createStoryCard(storyData, storyId, isAccessible, isCompleted);
       storiesList.appendChild(storyCard);
     });
+
+    
 
     if (!storiesAvailable) {
       displayPracticeMoreCard();
@@ -159,9 +170,11 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
     ? `<a href="/story.html?storyId=${storyId}" class="btn btn-primary">Read Story</a>`
     : `<button class="btn btn-secondary" disabled>Locked</button>`;
 
+  let storyImg = 'https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/stories/'+storyData.knownLanguage + '-' + storyData.language + '-' + storyId + '.png' + '/public';
+
   const cardHTML = `
     <div class="card h-100">
-      <img src="assets/images/${storyData.image || 'default_story_image.jpg'}" class="card-img-top" alt="Story Image">
+      <img src=${storyImg} || 'default_story_image.jpg'}" class="card-img-top" alt="Story Image">
       <div class="card-body">
         <h5 class="card-title">${storyData.storyTitle}${statusIcon}</h5>
         <p class="card-text">Words required: ${storyData.wordsRequired}</p>
@@ -171,6 +184,8 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
   `;
 
   cardDiv.innerHTML = cardHTML;
+
+  
   return cardDiv;
 }
 

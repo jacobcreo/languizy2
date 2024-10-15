@@ -7,6 +7,8 @@ let wrongAnswers = 0;
 let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
+let previousQuestionId = null; // Ensure this is correctly initialized
+
 
 // Global variable to track the current mode (multiple-choice or text input)
 let isMultipleChoice;
@@ -451,14 +453,31 @@ function loadQuestion(user, currentCourse) {
     .collection('progress')
     .where('nextDue', '<=', new Date())
     .orderBy('nextDue')
-    .limit(1)
+    .limit(2) // Fetch two due questions to handle potential duplicates
     .get()
     .then(progressSnapshot => {
       if (!progressSnapshot.empty) {
-        // Load the due question
-        var progressDoc = progressSnapshot.docs[0];
-        var questionId = progressDoc.id;
-        loadQuestionData(questionId, currentCourse); // Pass currentCourse as a parameter
+        // Iterate through fetched questions to find one that's not the same as the previous
+        let selectedQuestionDoc = null;
+        progressSnapshot.forEach(doc => {
+          if (doc.id !== previousQuestionId && !selectedQuestionDoc) {
+            selectedQuestionDoc = doc;
+          }
+        });
+
+        // If all fetched questions are same as previous, select the first one (to avoid missing questions)
+        if (!selectedQuestionDoc && progressSnapshot.size > 0) {
+          selectedQuestionDoc = progressSnapshot.docs[0];
+        }
+
+        if (selectedQuestionDoc) {
+          var questionId = selectedQuestionDoc.id;
+          loadQuestionData(questionId, currentCourse); // Pass currentCourse as a parameter
+          previousQuestionId = questionId; // Update the previousQuestionId
+        } else {
+          console.log('No suitable due questions found. Attempting to load a new question.');
+          loadNewQuestion(user, currentCourse);
+        }
       } else {
         // No due questions; attempt to load a new question
         loadNewQuestion(user, currentCourse);
@@ -474,6 +493,7 @@ function loadQuestionData(questionId, currentCourse) {
     .then(questionDoc => {
       if (questionDoc.exists) {
         displayQuestion(questionDoc.data(), questionId, currentCourse); // Pass currentCourse as a parameter
+        previousQuestionId = questionId; // Ensure previousQuestionId is updated
       } else {
         console.error('Question not found:', questionId);
       }
@@ -491,10 +511,7 @@ function loadNewQuestion(user, courseId) {
           // Course data might not be ready, let's retry once after a short delay
           console.warn('Course data not found. Retrying...');
           setTimeout(() => {
-            if (typeof(courseData.courseId) == 'undefined') {
-              if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined'))
-                courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
-              }
+            if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined')) {
               // Retry fetching course data
               db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
               .then(retryDoc => {
@@ -510,6 +527,10 @@ function loadNewQuestion(user, courseId) {
                   console.error('Error fetching course data during retry:', error);
                   window.location.href = 'course_selection.html';
               });
+            } else {
+              console.error('User has not selected a course correctly.');
+              window.location.href = 'course_selection.html';
+            }
           }, 1000);  // 1-second delay for retry
       } else {
           // Proceed if course data is available
@@ -522,10 +543,9 @@ function loadNewQuestion(user, courseId) {
 
 // Helper function to fetch and load questions
 function fetchAndLoadQuestions(courseData) {
-  if (typeof(courseData.courseId) == 'undefined') {
-    if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined'))
-      courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
-    }
+  if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined')) {
+    courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
+  }
   db.collection('questions')
       .where('language', '==', courseData.targetLanguage)
       .where('knownLanguage', '==', courseData.knownLanguage)
@@ -545,12 +565,22 @@ function fetchAndLoadQuestions(courseData) {
                   var seenQuestions = progressSnapshot.docs.map(doc => doc.id);
                   var unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
 
-                  if (unseenQuestions.length > 0) {
-                      // Select the first question with the lowest frequency
-                      var lowestFrequencyQuestion = unseenQuestions[0];
-                      displayQuestion(lowestFrequencyQuestion.data, lowestFrequencyQuestion.id, courseData.courseId); 
+                  // Shuffle unseenQuestions to add randomness
+                  // shuffleArray(unseenQuestions);
+
+                  // Find the first question that is not the same as previousQuestionId
+                  let selectedQuestion = unseenQuestions.find(q => q.id !== previousQuestionId);
+
+                  if (!selectedQuestion && unseenQuestions.length > 0) {
+                      // If all unseen questions are same as previous (unlikely), select the first one
+                      selectedQuestion = unseenQuestions[0];
+                  }
+
+                  if (selectedQuestion) {
+                      displayQuestion(selectedQuestion.data, selectedQuestion.id, courseData.courseId); 
+                      previousQuestionId = selectedQuestion.id; // Update the previousQuestionId
                   } else {
-                      console.log('No new questions available.');
+                      console.log('No new questions available. Loading next early question.');
                       loadNextEarlyQuestion(firebase.auth().currentUser, courseData.courseId); // Load the next question even if it's not yet due
                   }
               });
@@ -563,13 +593,29 @@ function loadNextEarlyQuestion(user, courseId) {
     .collection('courses').doc(courseId)
     .collection('progress')
     .orderBy('nextDue','asc')
-    .limit(1)
+    .limit(2) // Fetch two to handle potential duplicates
     .get()
     .then(progressSnapshot => {
       if (!progressSnapshot.empty) {
-        var progressDoc = progressSnapshot.docs[0];
-        var questionId = progressDoc.id;
-        loadQuestionData(questionId, courseId); // Pass currentCourse as a parameter
+        let selectedQuestionDoc = null;
+        progressSnapshot.forEach(doc => {
+          if (doc.id !== previousQuestionId && !selectedQuestionDoc) {
+            selectedQuestionDoc = doc;
+          }
+        });
+
+        // If all fetched questions are same as previous, select the first one
+        if (!selectedQuestionDoc && progressSnapshot.size > 0) {
+          selectedQuestionDoc = progressSnapshot.docs[0];
+        }
+
+        if (selectedQuestionDoc) {
+          var questionId = selectedQuestionDoc.id;
+          loadQuestionData(questionId, courseId); // Pass currentCourse as a parameter
+          previousQuestionId = questionId; // Update the previousQuestionId
+        } else {
+          console.log('No questions found at all.');
+        }
       } else {
         console.log('No questions found at all.');
       }

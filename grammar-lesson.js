@@ -341,21 +341,21 @@ function updateCurrentLessonInFirestore(user, newLessonId) {
     });
 }
 
-// Function to register the lesson in the user's 'grammar' sub-collection
-function registerUserLesson(user, lessonId, knownLanguage, targetLanguage) {
-    return db.collection('users').doc(user.uid)
-        .collection('grammar').doc(lessonId)
-        .set({
-            knownLanguage: knownLanguage,
-            targetLanguage: targetLanguage,
-            lessonNumber: parseInt(lessonId.split('-').pop()),
-        }).then(() => {
-            console.log(`Lesson ${lessonId} successfully registered in Firestore.`);
-        }).catch((error) => {
-            console.error('Error registering lesson in Firestore:', error);
-            throw error; // Pass the error up the chain
-        });
-}
+// // Function to register the lesson in the user's 'grammar' sub-collection
+// function registerUserLesson(user, lessonId, knownLanguage, targetLanguage) {
+//     return db.collection('users').doc(user.uid)
+//         .collection('grammar').doc(lessonId)
+//         .set({
+//             knownLanguage: knownLanguage,
+//             targetLanguage: targetLanguage,
+//             lessonNumber: parseInt(lessonId.split('-').pop()),
+//         }).then(() => {
+//             console.log(`Lesson ${lessonId} successfully registered in Firestore.`);
+//         }).catch((error) => {
+//             console.error('Error registering lesson in Firestore:', error);
+//             throw error; // Pass the error up the chain
+//         });
+// }
 
 // Function to get the current lesson from Firestore
 function getFirestoreCurrentLesson(user) {
