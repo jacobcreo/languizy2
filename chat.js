@@ -8,14 +8,41 @@ let language = '';
 // Array to hold the entire conversation history
 let conversationHistory = [];
 
-// Define an array of funny loading messages
-const loadingMessages = [
-    'Preparing your language lesson...',
-    'Cooking up some grammar...',
-    'Fetching vocabulary...',
-    'Sharpening your sentences...',
-    'Bringing you some fun learning...'
+const initialLoadingMessages = [
+    'Initializing your language session...',
+    'Getting everything ready for you...',
+    'Setting up your learning environment...',
+    'Loading language resources...',
+    'Preparing your personalized dashboard...',
+    'Connecting to language servers...',
+    'Fetching the latest language updates...',
+    'Optimizing your learning path...',
+    'Calibrating language models...',
+    'Synchronizing with language databases...',
+    'Loading interactive features...',
+    'Preparing language exercises...',
+    'Gathering language insights...',
+    'Customizing your language experience...'
 ];
+
+const subsequentLoadingMessages = [
+    'Thinking of the best response...',
+    'Coming up with a great idea...',
+    'Analyzing your input...',
+    'Formulating a thoughtful reply...',
+    'Consulting the language experts...',
+    'Crafting a personalized response...',
+    'Gathering relevant information...',
+    'Synthesizing the best answer...',
+    'Exploring creative solutions...',
+    'Reviewing the latest data...',
+    'Checking for the best insights...',
+    'Preparing a detailed response...'
+];
+
+
+// Variable to track if it's the first loading
+let isFirstLoading = true;
 
 // Variable to store the interval ID for rotating loading messages
 let loadingIntervalId = null;
@@ -35,7 +62,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
         await loadUserAvatar(user);
         await loadCurrentCoach(user);
         await loadCurrentCourse(user);
-        initializeChat(); // Initialize chat with bot's first message
+        initializeChat(tid); // Initialize chat with bot's first message
     } else {
         window.location.href = 'login.html';
     }
@@ -112,7 +139,7 @@ function initializeChat(tid) {
 async function getFirstBotMessage() {
     console.log(tid);
     try {
-        const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence-1', {
+        const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence-1', { // Updated URL
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -175,16 +202,42 @@ async function sendMessage() {
     document.getElementById('userInput').focus();
 
     if (aiResponseData.type === 'summary') {
-        // Switch to summary view
-        showSummaryView(aiResponseData.message, aiResponseData.corrections);
-        // Clear conversation history
-        conversationHistory = [];
+        // Display the last assistant message
+        addMessage('ai', aiResponseData.lastMessage);
+        conversationHistory.push({ role: 'assistant', content: aiResponseData.lastMessage });
+
+        // Insert "Show Chat Summary" button
+        addShowSummaryButton(aiResponseData.summary, aiResponseData.corrections);
+
+        // Clear conversation history if desired
+        // conversationHistory = []; // Uncomment if you want to reset history after summary
     } else {
         // Add AI response to chat
         addMessage('ai', aiResponseData.message);
         // Add AI's response to the conversation history
         conversationHistory.push({ role: 'assistant', content: aiResponseData.message });
     }
+}
+
+// Add Show Chat Summary Button
+function addShowSummaryButton(summaryText, corrections) {
+    const chatArea = document.getElementById('chatArea');
+
+    const buttonDiv = document.createElement('div');
+    buttonDiv.classList.add('d-flex', 'justify-content-center', 'mb-3');
+
+    const summaryButton = document.createElement('button');
+    summaryButton.classList.add('btn', 'btn-secondary');
+    summaryButton.textContent = 'Show Chat Summary';
+
+    // Attach event listener to the button
+    summaryButton.addEventListener('click', () => {
+        showSummaryView(summaryText, corrections);
+    });
+
+    buttonDiv.appendChild(summaryButton);
+    chatArea.appendChild(buttonDiv);
+    chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
 }
 
 // Add Message to Chat
@@ -207,10 +260,7 @@ function addMessage(sender, content) {
         }
     } else {
         // Use the coach's image for AI messages
-        console.log(currentCoach.image);
-        debugger;
-        avatarHtml = `<img src="assets/images/${currentCoach ? currentCoach.image.replace(/1(?=\.\w+$)/, '2') : 'default.png'}" class="avatar me-2">`;
-       
+        avatarHtml = `<img src="assets/images/${currentCoach && currentCoach.image ? currentCoach.image.replace(/1(?=\.\w+$)/, '2') : 'default.png'}" class="avatar me-2">`;
     }
 
     // Construct the message HTML
@@ -220,7 +270,7 @@ function addMessage(sender, content) {
             <div class="msgContent">${content}</div>
             ${sender === 'ai' ? avatarHtml : ''}
         </div>`;
-    
+
     chatArea.appendChild(messageDiv);
     chatArea.scrollTop = chatArea.scrollHeight; // Scroll to bottom
 }
@@ -228,7 +278,7 @@ function addMessage(sender, content) {
 // Chat with AI
 async function chatWithAI(messages, tid) {
     try {
-        const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence-1', {
+        const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence-1', { // Updated URL
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -258,9 +308,9 @@ function showTypingIndicator() {
     typingDiv.id = 'typingIndicator';
     typingDiv.innerHTML = `
         <div class="chat-message bg-light p-3 rounded">
-            <img src="assets/images/${currentCoach ? currentCoach.image.replace(/1(?=\.\w+$)/, '2') : 'default.png'}" class="avatar me-2">
+            <img src="assets/images/${currentCoach && currentCoach.image ? currentCoach.image.replace(/1(?=\.\w+$)/, '2') : 'default.png'}" class="avatar me-2">
             <div class="msgContent">
-                <span id="loadingMessage">${loadingMessages[0]}</span>
+                <span id="loadingMessage">${isFirstLoading ? initialLoadingMessages[0] : subsequentLoadingMessages[0]}</span>
                 <div class="typing-dots">
                     <span class="dot"></span>
                     <span class="dot"></span>
@@ -277,13 +327,21 @@ function showTypingIndicator() {
     // Reference to the loading message element
     const loadingMessageElement = typingDiv.querySelector('#loadingMessage');
 
+    // Determine which loading messages array to use
+    const messagesToUse = isFirstLoading ? initialLoadingMessages : subsequentLoadingMessages;
+
     // Set up interval to rotate messages every 3 seconds
     loadingIntervalId = setInterval(() => {
-        messageIndex = (messageIndex + 1) % loadingMessages.length;
+        messageIndex = (messageIndex + 1) % messagesToUse.length;
         if (loadingMessageElement) {
-            loadingMessageElement.textContent = loadingMessages[messageIndex];
+            loadingMessageElement.textContent = messagesToUse[messageIndex];
         }
     }, 3000); // Change message every 3 seconds
+
+    // After the first loading, set isFirstLoading to false
+    if (isFirstLoading) {
+        isFirstLoading = false;
+    }
 
     return typingDiv.id;
 }
@@ -347,8 +405,12 @@ function showSummaryView(summaryText, corrections) {
         <p class="card-text">${summaryText}</p>
     `;
     if (corrections) {
-        if (typeof(corrections.corrections) !== 'undefined') {
+        if (Array.isArray(corrections)) {
+            // Corrections are already an array
+        } else if (corrections.corrections && Array.isArray(corrections.corrections)) {
             corrections = corrections.corrections;
+        } else {
+            corrections = [];
         }
     }
     // Display corrections after the summary
@@ -369,7 +431,7 @@ function showSummaryView(summaryText, corrections) {
 
             // Original sentence
             const originalSentence = document.createElement('p');
-            originalSentence.innerHTML = `<strong>Original:</strong> ${correction.originalSentence}`;
+            originalSentence.innerHTML = `<strong>Original:</strong> ${correction.originalSentence.replace(/@@@/g, '')}`;
             correctionItem.appendChild(originalSentence);
 
             // Feedback

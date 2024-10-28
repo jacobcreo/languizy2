@@ -327,6 +327,7 @@ function fetchCurrentLesson(user) {
             console.log(`Lesson ID found in URL: ${lessonId}`);
             window.currentLanguagePair = knownLanguage + '-' + targetLanguage;
             $("#topicNum").html(lessonId);
+            
 
             // Check if the lesson exists (validate that questions exist for this lesson)
             validateLesson(lessonId, targetLanguage, knownLanguage).then((isValidLesson) => {
@@ -1744,6 +1745,7 @@ function displayLessonName(name) {
     const lessonNameElement = document.getElementById('lessonNameDisplay');
     if (lessonNameElement) {
         lessonNameElement.textContent = `${name}`;
+        $("#profTooltip").html(name);
     } else {
         console.warn('Lesson name display element not found.');
     }
