@@ -275,3 +275,18 @@ button i {
     color: white;
     margin-left: auto;
 }
+
+/* **New: Recommendation Card Specific Styling (Optional)** */
+.card.border-left-success {
+    border-left-width: 0.25rem;
+    border-left-color: #28a745 !important;
+}
+
+.card.border-left-success .card-title {
+    display: flex;
+    align-items: center;
+}
+
+.card.border-left-success .card-title i {
+    margin-right: 8px;
+}
