@@ -13,12 +13,18 @@ let lastFiveAnswers = [];
 // Global variable to track the current mode (multiple-choice or text input)
 let isMultipleChoice;
 
+let hasShownCompletionModal = false;
+let startedAt100 = false; // Initialize as false
+
+
 // Global variables to store the current question data
 let currentQuestionId;
 let currentQuestionData;
 let currentLesson;
 let currentLanguagePair;
 let previousQuestionId = null;
+let lessonName = ''; // Global variable to store the lesson name
+
 
 
 // Array of random encouragement statements
@@ -245,34 +251,46 @@ function updateFlagIcons(currentLesson) {
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         fetchOrAssignCoach(user).then(() => {
-            fetchCurrentLesson(user).then((currentLesson) => {
+            fetchCurrentLesson(user).then(async (currentLesson) => {
                 loadUserAvatar(user);
                 if (!currentLesson) {
                     console.error('No valid current lesson found.');
-                    
                     window.location.href = 'course_selection.html';
-                    
                     return;
                 }
-                debugger;
-                
+
+                // Initialize default mode and load question
                 initializeDefaultMode();
                 loadQuestion(user, currentLesson);
-                debugger;
                 updateFlagIcons(currentLesson);
                 loadDailyScore(user, currentLesson);
+
+                // Fetch and store the lesson name, then display it
+                fetchLessonName(currentLesson).then(name => {
+                    lessonName = name;
+                    console.log(`Current Lesson Name: ${lessonName}`);
+                    displayLessonName(lessonName);
+                }).catch(error => {
+                    console.error('Error fetching lesson name:', error);
+                });
+
+                
+
+                // After loading the initial question, check if started at 100%
+                if (startedAt100 && !hasShownCompletionModal) {
+                    await showCompletionModal(currentLesson);
+                    hasShownCompletionModal = true;
+                }
             }).catch((error) => {
-                debugger;
                 console.error('Error fetching current lesson:', error);
-                
                 window.location.href = 'course_selection.html';
-                
             });
         });
     } else {
         window.location.href = 'login.html';
     }
 });
+
 
 // Function to initialize the default mode based on screen size
 function initializeDefaultMode() {
@@ -605,12 +623,41 @@ function loadNextEarlyQuestion(user, languagePair, topic) {
                     resolve(null);
                 }
             })
+            .then(async (nextQuestionDoc) => {
+                if (nextQuestionDoc) {
+                    // Check if this question was answered correctly before
+                    if (nextQuestionDoc.data().timesCorrectInARow >= 1) {
+                        // Now, check if all questions are answered correctly
+                        const { totalQuestions, correctQuestions } = await fetchTotalQuestionsAndCorrect(
+                            db.collection('users').doc(user.uid),
+                            topic,
+                            languagePair.split('-')[1],
+                            languagePair.split('-')[0]
+                        );
+
+                        if (totalQuestions > 0 && correctQuestions === totalQuestions) {
+                            // Set startedAt100 to true
+                            startedAt100 = true;
+                            console.log('User has achieved 100% in this lesson.');
+
+                            // Do not show the modal
+                        }
+                    }
+
+                    const questionId = nextQuestionDoc.id;
+                    loadQuestionData(questionId, topic); // Load and display the question
+                    previousQuestionId = questionId; // Update the previous question ID
+                } else {
+                    console.log('No questions found.');
+                }
+            })
             .catch(error => {
                 console.error('Error fetching next early question:', error);
                 reject(error);
             });
     });
 }
+
 
 function showLoadingMessages() {
     // Use coach-specific loading messages
@@ -1598,12 +1645,12 @@ async function handleAnswerSubmission(user, isCorrect, questionId, topicNumber, 
     // Get the current question's progress to know if it was previously answered correctly
     const questionProgressRef = userDocRef
         .collection('grammar')
-        .doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language)
+        .doc(knownLanguage + '-' + language)
         .collection('questions')
         .doc(questionId);
 
     const questionDoc = await questionProgressRef.get();
-    const wasPreviouslyCorrect = questionDoc.exists && (questionDoc.data().timesCorrectInARow > 0);
+    const wasPreviouslyCorrect = questionDoc.exists && (questionDoc.data().timesCorrectInARow >= 1);
 
     // Adjust correct questions based on the new answer status
     const updatedCorrectQuestions = await adjustCorrectQuestions(isCorrect, wasPreviouslyCorrect, initialCorrectQuestions);
@@ -1613,6 +1660,93 @@ async function handleAnswerSubmission(user, isCorrect, questionId, topicNumber, 
 
     // Check and update maxTopic if applicable
     await updateMaxTopic(userDocRef, topicNumber, topicScore);
+
+    // After updating progress, check if the user has achieved 100%
+    if (updatedCorrectQuestions === totalQuestions && !hasShownCompletionModal && !startedAt100) {
+        // Show the completion modal
+        await showCompletionModal(topicNumber); // Assuming topicNumber correlates with lessonId
+        hasShownCompletionModal = true;
+    }
+}
+
+async function fetchLessonName(lessonId) {
+    try {
+        const lessonDoc = await db.collection('grammar_topics').doc(lessonId.toString()).get();
+        if (lessonDoc.exists) {
+            return lessonDoc.data().name || 'this lesson';
+        } else {
+            console.warn(`No lesson name found for lesson ID: ${lessonId}`);
+            return 'this lesson';
+        }
+    } catch (error) {
+        console.error('Error fetching lesson name:', error);
+        return 'this lesson';
+    }
+}
+
+async function showCompletionModal(lessonId) {
+    // Fetch the lesson name using the topic number
+    const fetchedLessonName = await fetchLessonName(lessonId);
+
+    // Update the modal message with the lesson name
+    document.getElementById('completionMessage').textContent = `You've achieved 100% in "${fetchedLessonName}"!`;
+
+    // Optionally, include the lesson name elsewhere in the modal
+    // For example, updating the modal title
+    document.getElementById('completionModalLabel').textContent = `Excellent Work on "${fetchedLessonName}"!`;
+
+    // Show the modal using Bootstrap's Modal API
+    const completionModalElement = document.getElementById('completionModal');
+    const completionModal = new bootstrap.Modal(completionModalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+    completionModal.show();
+
+    // Remove existing event listeners to prevent multiple triggers
+    $('#continuePracticingBtn').off('click');
+    $('#returnToTopicsBtn').off('click');
+
+    // Add event listeners to the modal buttons
+    document.getElementById('continuePracticingBtn').addEventListener('click', () => {
+        completionModal.hide();
+        // Optionally, you can reload the current lesson or navigate to a practice page
+        loadQuestion(firebase.auth().currentUser, lessonId);
+    });
+
+    document.getElementById('returnToTopicsBtn').addEventListener('click', () => {
+        completionModal.hide();
+        window.location.href = 'grammar-topics.html';
+    });
+}
+
+async function fetchLessonName(topicNumber) {
+    try {
+        const grammarSnapshot = await db.collection('grammar')
+            .where('topic', '==', parseInt(topicNumber))
+            .limit(1) // Assuming each topic number is unique
+            .get();
+        
+        if (!grammarSnapshot.empty) {
+            const lessonData = grammarSnapshot.docs[0].data();
+            return lessonData.name || 'this lesson';
+        } else {
+            console.warn(`No lesson found for topic number: ${topicNumber}`);
+            return 'this lesson';
+        }
+    } catch (error) {
+        console.error('Error fetching lesson name:', error);
+        return 'this lesson';
+    }
+}
+
+function displayLessonName(name) {
+    const lessonNameElement = document.getElementById('lessonNameDisplay');
+    if (lessonNameElement) {
+        lessonNameElement.textContent = `${name}`;
+    } else {
+        console.warn('Lesson name display element not found.');
+    }
 }
 
 function addCharacter(character) {
