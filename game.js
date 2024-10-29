@@ -723,6 +723,17 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
   $('.option-btn').removeClass('selected'); // Remove selected class from all options (relevant to multiple choice, but in case user switches)
   $('.option-btn').prop('disabled', false);
 
+  $('#sentence').html(questionHTML);
+    if (questionHTML.length > 68) {
+        $('#sentence').removeClass('size2 size175').addClass('size15');
+    } else if (questionHTML.length > 51) {
+        $('#sentence').removeClass('size2 size15').addClass('size175');
+    } else if (questionHTML.length > 34) {
+        $('#sentence').removeClass('size175 size15').addClass('size2');
+    } else {
+        $('#sentence').removeClass('size2 size175 size15');
+    }
+
   // Display the sentence with the appropriate input field or placeholder
   $('#sentence').html(sentenceHTML);
   $('#translation').text(question.translation);
@@ -953,6 +964,7 @@ if (isMultipleChoice) {
   // Event listener for Enter key to move to the next question
   $(document).off('keypress').on('keypress', function (e) {
     if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
+      stopAudio();
       e.preventDefault(); // Prevent default behavior
       handleDebounce(() => $('#next-question').click());
     }
@@ -1025,6 +1037,7 @@ function playAudio(questionId, completeSentence, targetLanguage) {
 
 // Function to stop the audio
 function stopAudio() {
+  debugger;
   audioElement.pause();
   audioElement.currentTime = 0; // Reset the audio playback
 }

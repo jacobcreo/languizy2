@@ -762,6 +762,15 @@ function displayQuestion(question, questionId, currentLesson) {
 
     // Display the question with the appropriate input field or placeholder
     $('#sentence').html(questionHTML);
+    if (questionHTML.length > 68) {
+        $('#sentence').removeClass('size2 size175').addClass('size15');
+    } else if (questionHTML.length > 51) {
+        $('#sentence').removeClass('size2 size15').addClass('size175');
+    } else if (questionHTML.length > 34) {
+        $('#sentence').removeClass('size175 size15').addClass('size2');
+    } else {
+        $('#sentence').removeClass('size2 size175 size15');
+    }
     $('#translation').text(question.translation);
 
     $('#toggle-mode').prop('disabled', false);
@@ -969,6 +978,7 @@ if (translationsText) {
         // Event listener for Enter key to submit answer
         $('#user-answer').off('keypress').on('keypress', function (e) {
             if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
+                stopAudio();
                 handleDebounce(handleSubmit);
             }
         });
