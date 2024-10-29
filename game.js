@@ -723,12 +723,12 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
   $('.option-btn').removeClass('selected'); // Remove selected class from all options (relevant to multiple choice, but in case user switches)
   $('.option-btn').prop('disabled', false);
 
-  $('#sentence').html(questionHTML);
-    if (questionHTML.length > 68) {
+  $('#sentence').html(sentenceHTML);
+    if (sentenceHTML.length > 68) {
         $('#sentence').removeClass('size2 size175').addClass('size15');
-    } else if (questionHTML.length > 51) {
+    } else if (sentenceHTML.length > 51) {
         $('#sentence').removeClass('size2 size15').addClass('size175');
-    } else if (questionHTML.length > 34) {
+    } else if (sentenceHTML.length > 34) {
         $('#sentence').removeClass('size175 size15').addClass('size2');
     } else {
         $('#sentence').removeClass('size2 size175 size15');
