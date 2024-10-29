@@ -18,7 +18,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="/">
-                <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
+                <img src="assets/images/languizy-thin.stpng" alt="Languizy Logo" width="100" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
             </a>
 
             <!-- Wrap the logout button and avatar inside a flex container -->
@@ -232,22 +232,12 @@
             </div>
             <!-- New Streaks Card -->
             <div class="col-xl-2 col-md-6 mb-3">
-                <div class="card border-left-warning shadow h-100 py-0">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Streak
-                                </div>
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col-auto">
-                                        <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="streakCount">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-fire fa-2x" id="flameIcon" style="color: black;"></i>
-                            </div>
+                <div class="card border-left-warning shadow h-100 py-0 d-flex align-items-center justify-content-center">
+                    <div class="card-body text-center">
+                        <h5 class="card-title text-danger text-uppercase mb-3">
+                            <i id="flameIcon" class="fas fa-fire fa-fw"></i> Streak
+                        </h5>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="streakCount">
                         </div>
                     </div>
                     <div class="card-footer">
