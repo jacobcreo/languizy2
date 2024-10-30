@@ -75,6 +75,8 @@ async function loadStories(user) {
     storiesList.innerHTML = ''; // Clear the current list
 
     let storiesAvailable = false;
+    const sortedStories = [];
+
     storiesSnapshot.forEach(doc => {
       const storyData = doc.data();
       const storyId = doc.id; // Retrieve the document ID
@@ -82,18 +84,24 @@ async function loadStories(user) {
       const isAccessible = storyData.wordsRequired <= maxFrequencySeen;
       const isCompleted = completedStoryIds.has(storyId);
 
+      sortedStories.push({ storyData, storyId, isAccessible, isCompleted });
+
       if (isAccessible) {
         storiesAvailable = true;
         console.log(`Story pulled: ${storyData.storyTitle} (Words required: ${storyData.wordsRequired})`);
       } else {
         console.log(`Story skipped (locked): ${storyData.storyTitle} (Words required: ${storyData.wordsRequired})`);
       }
+    });
 
+    // Sort stories by wordsRequired in ascending order
+    sortedStories.sort((a, b) => a.storyData.wordsRequired - b.storyData.wordsRequired);
+
+    // Append sorted stories to the DOM
+    sortedStories.forEach(({ storyData, storyId, isAccessible, isCompleted }) => {
       const storyCard = createStoryCard(storyData, storyId, isAccessible, isCompleted);
       storiesList.appendChild(storyCard);
     });
-
-    
 
     if (!storiesAvailable) {
       displayPracticeMoreCard();
