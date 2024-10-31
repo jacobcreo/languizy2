@@ -37,6 +37,11 @@ auth.onAuthStateChanged(user => {
 
 // Google Sign-In
 function googleLogin() {
+  gtag('event', 'registration_started', {
+    'method': 'google_login',
+    'source': 'homepage_button'
+  });
+  
   var provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
     .then(result => {
@@ -79,6 +84,11 @@ function saveUserData(user) {
     if (doc.exists) {
       debugger;
       const userData = doc.data();
+      gtag('event', 'signin_completed', {
+        'method': 'google_login',
+        'user_id': doc.id,
+        'tier': doc.subLevel || 'Free'
+      }); 
       const storedPhotoURL = userData.photoURL;  // Get the stored photoURL
 
       // Check if the stored photoURL is different from the Google photoURL
@@ -108,13 +118,24 @@ function saveUserData(user) {
         email: user.email,
         displayName: user.displayName,
         photoURL: user.photoURL,  // Save the profile image for new users
-        lastLogin: firebase.firestore.Timestamp.now()
+        lastLogin: firebase.firestore.Timestamp.now(),
+        subLevel : 'Free'
       }).then(() => {
         console.log('New user data saved successfully with profile image.');
+        
         // Fetch the newly created document to ensure the userId exists
         debugger;
         userRef.get().then(newDoc => {
           if (newDoc.exists) {
+            gtag('event', 'registration_completed', {
+              'method': 'google_login',
+              'user_id':  gtag('event', 'registration_completed', {
+                'method': 'google_login',
+                'user_id': doc.id,
+                'tier': 'Free'
+              });.id,
+              'tier': doc.subLevel || 'Free'
+            });
             pingOnboardFunction(newDoc.id, user);
           }
           window.location.href = 'course_selection.html';
