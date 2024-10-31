@@ -143,11 +143,13 @@ function pingOnboardFunction(userId, user) {
     }
   };
 
-  fetch('https://us-central1-languizy2.cloudfunctions.net/onboard', {
+  fetch('https://us-central1-languizy2.cloudfunctions.net/onboardUser', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
+    mode: 'cors',  // Enables CORS mode
     body: JSON.stringify(payload)
   })
   .then(response => response.json())
