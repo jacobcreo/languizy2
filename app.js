@@ -133,8 +133,6 @@ function saveUserData(user) {
                 'method': 'google_login',
                 'user_id': doc.id,
                 'tier': 'Free'
-              });.id,
-              'tier': doc.subLevel || 'Free'
             });
             pingOnboardFunction(newDoc.id, user);
           }
