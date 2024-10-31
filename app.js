@@ -128,12 +128,11 @@ function saveUserData(user) {
         userRef.get().then(newDoc => {
           if (newDoc.exists) {
             gtag('event', 'registration_completed', {
-              'method': 'google_login',
-              'user_id':  gtag('event', 'registration_completed', {
                 'method': 'google_login',
                 'user_id': doc.id,
                 'tier': 'Free'
             });
+
             pingOnboardFunction(newDoc.id, user);
           }
           window.location.href = 'course_selection.html';
