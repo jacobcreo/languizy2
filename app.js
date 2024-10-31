@@ -111,7 +111,16 @@ function saveUserData(user) {
         lastLogin: firebase.firestore.Timestamp.now()
       }).then(() => {
         console.log('New user data saved successfully with profile image.');
-        window.location.href = 'course_selection.html';
+        // Fetch the newly created document to ensure the userId exists
+        debugger;
+        userRef.get().then(newDoc => {
+          if (newDoc.exists) {
+            pingOnboardFunction(newDoc.id, user);
+          }
+          window.location.href = 'course_selection.html';
+        }).catch(error => {
+          console.error('Error fetching new user document:', error);
+        });
       }).catch(error => {
         console.error('Error saving new user data:', error);
       });
@@ -121,6 +130,34 @@ function saveUserData(user) {
   });
 }
 
+// Function to ping the onboard Google function
+function pingOnboardFunction(userId, user) {
+  const payload = {
+    email: user.email,
+    userId: userId,
+    eventName: "user_joined",
+    firstName: user.displayName,
+    eventProperties: {
+      activity: "Signed up",
+      date: new Date().toISOString()
+    }
+  };
+
+  fetch('https://us-central1-languizy2.cloudfunctions.net/onboard', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Successfully pinged onboard function:', data);
+  })
+  .catch(error => {
+    console.error('Error pinging onboard function:', error);
+  });
+}
 
 // Function to load user settings
 function loadUserSettings() {
