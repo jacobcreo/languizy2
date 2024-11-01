@@ -691,7 +691,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const regParam = urlParams.get('reg');
 
 if (regParam && regParam.length > 2) {
-    gtag('event', 'registration_completed', {
+    gtag('event', 'Signup', {
         'method': 'google_login',
         'user_id': user.uid,
         'tier': 'Free'
