@@ -18,6 +18,7 @@ const languageShorts = {
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
+        checkReg(user);
         await loadHeadline(user);
         await loadStreak(user);
         await fetchOrAssignCoach(user);
@@ -683,4 +684,17 @@ async function loadCardData(user, currentCourse) {
         // Update the recommendation card
         updateRecommendationCard(recommendationObj);
     }
+}
+
+function checkReg(user) {
+const urlParams = new URLSearchParams(window.location.search);
+const regParam = urlParams.get('reg');
+
+if (regParam && regParam.length > 2) {
+    gtag('event', 'registration_completed', {
+        'method': 'google_login',
+        'user_id': user.uid,
+        'tier': 'Free'
+    });
+}
 }
