@@ -5,27 +5,62 @@ var db = firebase.firestore();
 // Add Firestore settings if needed (optional)
 db.settings({ timestampsInSnapshots: true });
 
-// User settings (default values)
-var userSettings = {
-  firstAppearanceDaysCorrect: 28,
-  firstAppearanceDaysIncorrect: 0.0035, // 5 minutes in days
-  repeatDaysCorrectMultiplier: 2,
-  repeatDaysIncorrect: 0.0035 // 5 minutes in days
-};
+// // User settings (default values)
+// var userSettings = {
+//   firstAppearanceDaysCorrect: 28,
+//   firstAppearanceDaysIncorrect: 0.0035, // 5 minutes in days
+//   repeatDaysCorrectMultiplier: 2,
+//   repeatDaysIncorrect: 0.0035 // 5 minutes in days
+// };
 
-// Monitor auth state
+// // Monitor auth state
+// auth.onAuthStateChanged(user => {
+//   if (user) {
+//     console.log('User logged in:', user.email);
+//     saveUserData(user);
+
+//     // Load user settings
+//     loadUserSettings().then(() => {
+//       // Load question if on practice page
+//       if (window.location.pathname.endsWith('practice.html')) {
+//         loadQuestion();
+//       }
+//     });
+//   } else {
+//     console.log('User logged out');
+//     // Redirect to login if not authenticated
+//     if (!window.location.pathname.endsWith('login.html')) {
+//       window.location.href = 'login.html';
+//     }
+//   }
+// });
+
+
+
+// Google Sign-In
+function googleLogin() {
+  gtag('event', 'registration_started', {
+    'method': 'google_login',
+    'source': 'homepage_button'
+  });
+  
+  var provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then(result => {
+      console.log('Google Sign-In successful:', result.user);
+      
+      // Redirect handled after auth state changes, to avoid multiple save calls
+    })
+    .catch(error => {
+      console.error('Google Sign-In error:', error);
+    });
+}
+
+// Monitor auth state changes
 auth.onAuthStateChanged(user => {
   if (user) {
     console.log('User logged in:', user.email);
-    saveUserData(user);
-
-    // Load user settings
-    loadUserSettings().then(() => {
-      // Load question if on practice page
-      if (window.location.pathname.endsWith('practice.html')) {
-        loadQuestion();
-      }
-    });
+    handleUserLogin(user);
   } else {
     console.log('User logged out');
     // Redirect to login if not authenticated
@@ -34,6 +69,54 @@ auth.onAuthStateChanged(user => {
     }
   }
 });
+
+// Handle user login based on database existence
+function handleUserLogin(user) {
+  var userRef = db.collection('users').doc(user.uid);
+
+  userRef.get().then(doc => {
+    if (doc.exists) {
+      // Existing user: Update necessary fields if changed
+      const userData = doc.data();
+      const updates = { lastLogin: firebase.firestore.Timestamp.now() };
+      if (user.photoURL && userData.photoURL !== user.photoURL) updates.photoURL = user.photoURL;
+
+      // Update Firestore with changes, then redirect
+      userRef.update(updates).then(() => {
+        console.log('Existing user data updated.');
+        redirectToCourseSelection('login');
+      }).catch(error => {
+        console.error('Error updating existing user data:', error);
+      });
+    } else {
+      // New user: Set user data and call onboarding function
+      userRef.set({
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        lastLogin: firebase.firestore.Timestamp.now(),
+        subLevel: 'Free'
+      }).then(() => {
+        console.log('New user data saved.');
+        pingOnboardFunction(user.uid, user);
+        redirectToCourseSelection('reg');
+      }).catch(error => {
+        console.error('Error saving new user data:', error);
+      });
+    }
+  }).catch(error => {
+    console.error('Error fetching user data from Firestore:', error);
+  });
+}
+
+// Redirect to course selection with appropriate parameter
+function redirectToCourseSelection(paramType) {
+  const randomValue = Math.random().toString(36).substring(2, 15); // Generate a random string
+  const param = paramType === 'reg' ? `reg=${randomValue}` : `login=${randomValue}`;
+  window.location.href = `course_selection.html?${param}`;
+}
+
+/*
 
 // Google Sign-In
 function googleLogin() {
@@ -146,6 +229,8 @@ function saveUserData(user) {
   });
 }
 
+*/
+
 // Function to ping the onboard Google function
 function pingOnboardFunction(userId, user) {
   const payload = {
@@ -175,8 +260,15 @@ function pingOnboardFunction(userId, user) {
   });
 }
 
+function logout() {
+  auth.signOut().then(() => {
+    window.location.href = 'login.html';
+  });
+}
 
 
+
+/*
 
 // Function to load user settings
 function loadUserSettings() {
@@ -364,10 +456,6 @@ function updateUserProgress(questionId, isCorrect) {
     console.error('Transaction failed:', error);
   });
 }
+  */
 
 // Logout function
-function logout() {
-  auth.signOut().then(() => {
-    window.location.href = 'login.html';
-  });
-}
