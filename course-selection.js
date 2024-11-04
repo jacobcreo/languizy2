@@ -417,25 +417,16 @@ function populateModalCourses(user) {
             db.collection('users').doc(user.uid).update({
                 currentCourse: selectedCourse
             }).then(() => {
-                // Prepare the data for the gtag event
-                const eventData = {
-                    'event': 'Course Selection',
-                    'user_id': user.uid,
-                    'course': selectedCourse
-                };
-    
-                // Convert the data to a JSON string
-                const eventDataString = JSON.stringify(eventData);
-    
-                // Use navigator.sendBeacon to send the data
-                const beaconUrl = 'https://www.google-analytics.com/collect'; // Replace with your actual endpoint
-                const success = navigator.sendBeacon(beaconUrl, eventDataString);
-    
-                if (!success) {
-                    console.error('Failed to send analytics data via sendBeacon');
-                }
-    
-                // Proceed with hiding the modal and reloading the page
+                // Fire the gtag event and simulate waiting for it to complete
+                return new Promise((resolve) => {
+                    gtag('event', 'Course Selection', {
+                        'user_id': user.uid,
+                        'course': selectedCourse
+                    });
+                    // Simulate a delay to ensure gtag has time to process
+                    setTimeout(resolve, 500); // Adjust the timeout as needed
+                });
+            }).then(() => {
                 const modalElement = document.getElementById('courseModal');
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
