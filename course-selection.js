@@ -30,6 +30,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
                 if (currentCourse) {
                     await loadCardData(user, currentCourse);
                     loadTrainingOptions(currentCourse, user.uid);
+                } else {
+                    showCourseModal(user);
                 }
             }
         });
@@ -415,6 +417,14 @@ function populateModalCourses(user) {
             db.collection('users').doc(user.uid).update({
                 currentCourse: selectedCourse
             }).then(() => {
+                // Fire the gtag event and wait for it to complete
+                return new Promise((resolve) => {
+                    gtag('event', 'Course Selection', {
+                        'user_id': user.uid,
+                        'course': selectedCourse
+                    }, resolve);
+                });
+            }).then(() => {
                 const modalElement = document.getElementById('courseModal');
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
@@ -426,6 +436,19 @@ function populateModalCourses(user) {
         }
     });
 }
+
+function showCourseModal(user) {
+    const modalElement = document.getElementById('courseModal');
+    const modalInstance = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+    modalInstance.show();
+    gtag('event', 'Course Selection Modal Launch', {
+        'user_id': user.uid
+    });
+}
+
 
 // **New Function: Calculate Recommendation**
 function calculateRecommendation(vocab, grammar, stories, chat) {
