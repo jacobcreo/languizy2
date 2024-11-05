@@ -40,12 +40,32 @@ const subsequentLoadingMessages = [
     'Preparing a detailed response...'
 ];
 
+const lastLoadingMessages = [
+    'Coming out with my final message...',
+    'Summarizing our conversation...',
+    'Reflecting on our chat...',
+    'Preparing to say goodbye...',
+    'Gathering my final thoughts...',
+    'Wrapping up our session...',
+    'Concluding our discussion...',
+    'Finalizing my response...',
+    'Bidding you farewell...',
+    'Expressing my gratitude...',
+    'Signing off with a smile...',
+    'Leaving you with a thought...',
+    'Ending on a positive note...',
+    'Wishing you all the best...',
+    'Hoping to chat again soon...'
+];
 
 // Variable to track if it's the first loading
 let isFirstLoading = true;
 
 // Variable to store the interval ID for rotating loading messages
 let loadingIntervalId = null;
+
+// Counter for loading messages
+let loadingMessageCounter = 0;
 
 // Get the topic ID from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
@@ -302,15 +322,24 @@ async function chatWithAI(messages, tid) {
 
 // Show typing indicator with rotating loading messages and coach image
 function showTypingIndicator() {
+    loadingMessageCounter++;
     const chatArea = document.getElementById('chatArea');
     const typingDiv = document.createElement('div');
     typingDiv.classList.add('d-flex', 'justify-content-start', 'mb-3');
     typingDiv.id = 'typingIndicator';
+
+    // Determine the user's subscription level
+    const subLevel = (currentUser && currentUser.subLevel) ? currentUser.subLevel.toLowerCase() : 'free';
+    const maxMessages = (subLevel === 'free' || subLevel === 'basic') ? 4 : 10;
+
+    // Determine which loading messages array to use
+    const messagesToUse = (loadingMessageCounter >= maxMessages) ? lastLoadingMessages : (isFirstLoading ? initialLoadingMessages : subsequentLoadingMessages);
+
     typingDiv.innerHTML = `
         <div class="chat-message bg-light p-3 rounded">
             <img src="assets/images/${currentCoach && currentCoach.image ? currentCoach.image.replace(/1(?=\.\w+$)/, '2') : 'default.png'}" class="avatar me-2">
             <div class="msgContent">
-                <span id="loadingMessage">${isFirstLoading ? initialLoadingMessages[0] : subsequentLoadingMessages[0]}</span>
+                <span id="loadingMessage">${messagesToUse[0]}</span>
                 <div class="typing-dots">
                     <span class="dot"></span>
                     <span class="dot"></span>
@@ -326,9 +355,6 @@ function showTypingIndicator() {
 
     // Reference to the loading message element
     const loadingMessageElement = typingDiv.querySelector('#loadingMessage');
-
-    // Determine which loading messages array to use
-    const messagesToUse = isFirstLoading ? initialLoadingMessages : subsequentLoadingMessages;
 
     // Set up interval to rotate messages every 3 seconds
     loadingIntervalId = setInterval(() => {
