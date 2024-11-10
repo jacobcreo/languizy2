@@ -249,6 +249,6 @@ firebase.auth().onAuthStateChanged(user => {
     loadStories(user);
     loadUserAvatar(user);  // Load user avatar in the navbar
   } else {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   }
 });

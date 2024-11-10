@@ -17,7 +17,7 @@ firebase.auth().onAuthStateChanged(user => {
     loadUserAvatar(user);
     loadChatTopics(user);
   } else {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   }
 });
 
@@ -291,7 +291,7 @@ function nextPage() {
 // Logout Function
 function logout() {
   firebase.auth().signOut().then(() => {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   }).catch((error) => {
     console.error("Logout failed: ", error);
   });

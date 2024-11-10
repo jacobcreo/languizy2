@@ -33,7 +33,7 @@ firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     loadCourses(user);
   } else {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   }
 });
 
@@ -284,6 +284,6 @@ function createAccuracyBar(accuracyPercentage) {
 // Handle logout functionality
 function logout() {
   firebase.auth().signOut().then(() => {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   });
 }

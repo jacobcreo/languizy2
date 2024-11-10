@@ -84,7 +84,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
         await loadCurrentCourse(user);
         initializeChat(tid); // Initialize chat with bot's first message
     } else {
-        window.location.href = 'login.html';
+        window.location.href = '/';
     }
 });
 
@@ -404,7 +404,7 @@ document.getElementById('userInput').addEventListener('keypress', (e) => {
 // Logout Function
 function logout() {
     firebase.auth().signOut().then(() => {
-        window.location.href = 'login.html';
+        window.location.href = '/';
     }).catch((error) => {
         console.error("Logout failed: ", error);
     });

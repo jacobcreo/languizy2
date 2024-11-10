@@ -7,7 +7,7 @@ firebase.auth().onAuthStateChanged((user) => {
         loadUserProfile(user);
         loadUserAvatar(user); // Load avatar in the navbar
     } else {
-        window.location.href = 'login.html';
+        window.location.href = '/';
     }
 });
 
@@ -169,7 +169,7 @@ function showResetModal() {
 // Logout function
 function logout() {
     firebase.auth().signOut().then(() => {
-        window.location.href = 'login.html';
+        window.location.href = '/';
     }).catch((error) => {
         console.error("Logout failed: ", error);
     });

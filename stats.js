@@ -22,7 +22,7 @@ firebase.auth().onAuthStateChanged(user => {
     populateCourseSelector(user); // Populate course selector dynamically
     loadUserAvatar(user);  // Load user avatar in the navbar
   } else {
-    window.location.href = 'login.html'; // Redirect to login if not authenticated
+    window.location.href = '/'; // Redirect to login if not authenticated
   }
 });
 

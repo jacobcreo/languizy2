@@ -68,6 +68,6 @@ function saveUserData(user) {
 // Logout function
 function logout() {
   auth.signOut().then(() => {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   });
 }

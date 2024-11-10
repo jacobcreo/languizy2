@@ -36,7 +36,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
             }
         });
     } else {
-        window.location.href = 'login.html';
+        window.location.href = '/';
     }
 });
 
@@ -333,7 +333,7 @@ function loadTrainingOptions(currentCourse, userId) {
 // Logout function
 function logout() {
     firebase.auth().signOut().then(() => {
-        window.location.href = 'login.html';
+        window.location.href = '/';
     }).catch((error) => {
         console.error("Logout failed: ", error);
     });
@@ -589,7 +589,7 @@ function updateRecommendationCard(recommendationObj) {
     recommendationBtn.onclick = () => {
         switch (recommendation.name) {
             case 'Vocabulary':
-                window.location.href = 'vocabulary.html';
+                window.location.href = 'practice.html';
                 break;
             case 'Grammar':
                 window.location.href = 'grammar-topics.html';

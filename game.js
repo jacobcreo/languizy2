@@ -267,7 +267,7 @@ firebase.auth().onAuthStateChanged(function (user) {
       });
     });
   } else {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   }
 });
 

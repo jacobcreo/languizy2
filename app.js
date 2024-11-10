@@ -64,8 +64,8 @@ auth.onAuthStateChanged(user => {
   } else {
     console.log('User logged out');
     // Redirect to login if not authenticated
-    if (!window.location.pathname.endsWith('login.html')) {
-      window.location.href = 'login.html';
+    if (window.location.pathname !== '/' && !window.location.pathname.endsWith('index.html')) {
+      window.location.href = '/';
     }
   }
 });
@@ -262,7 +262,7 @@ function pingOnboardFunction(userId, user) {
 
 function logout() {
   auth.signOut().then(() => {
-    window.location.href = 'login.html';
+    window.location.href = '/';
   });
 }
 

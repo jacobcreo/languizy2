@@ -135,7 +135,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         });
     } else {
         // No user is signed in, redirect to login
-        window.location.href = 'login.html';
+        window.location.href = '/';
     }
 });
 
