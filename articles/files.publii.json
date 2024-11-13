@@ -127,17 +127,17 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "6f36d17132b4d94b88ac926d0dbcf470"
+        "md5": "c22a1b334f57a30611df7400abc4f60a"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "19766adb35ba6c4d151fa08bc0d45424"
+        "md5": "39844b02ea0c4e8847a537aecf2ebd13"
     },
     {
         "path": "index.html",
         "type": "file",
-        "md5": "e7bc7439968d947cc33aeb758c1d9f23"
+        "md5": "4d6f1f6fec3d9dc75e22e6b2f3d11b49"
     },
     {
         "path": "media",
@@ -247,7 +247,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "2f05e8528dd5f7f621b279f69d675dc9"
+        "md5": "091fa7c9024ac06782a4c3db6c597a1b"
     },
     {
         "path": "sitemap.xsl",
@@ -263,11 +263,6 @@
         "path": "/tags/index.html",
         "type": "file",
         "md5": "54793b03c8c66766193a0a3ee2ed2615"
-    },
-    {
-        "path": "test-post.html",
-        "type": "file",
-        "md5": "83cfd79f3b3d27cdaa979bb2fd0de00f"
     },
     {
         "path": "the-science-of-language-learning.html",

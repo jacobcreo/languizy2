@@ -3,32 +3,12 @@
     <title>Languizy</title>
     <link href="https://languizy.com/articles/feed.xml" rel="self" />
     <link href="https://languizy.com/articles" />
-    <updated>2024-11-13T17:30:35+02:00</updated>
+    <updated>2024-11-13T15:01:20+02:00</updated>
     <author>
         <name>Jacob</name>
     </author>
     <id>https://languizy.com/articles</id>
 
-    <entry>
-        <title>test post</title>
-        <author>
-            <name>Jacob</name>
-        </author>
-        <link href="https://languizy.com/articles/test-post.html"/>
-        <id>https://languizy.com/articles/test-post.html</id>
-
-        <updated>2024-11-13T17:30:35+02:00</updated>
-            <summary>
-                <![CDATA[
-                    this is a test post
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                <p>this is a test post</p>
-            ]]>
-        </content>
-    </entry>
     <entry>
         <title>The Science of Language Learning: How Our Brains Make Magic (With a Little Help from Languizy)</title>
         <author>

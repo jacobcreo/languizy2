@@ -11,20 +11,6 @@
     },
     "items": [
         {
-            "id": "https://languizy.com/articles/test-post.html",
-            "url": "https://languizy.com/articles/test-post.html",
-            "title": "test post",
-            "summary": "this is a test post",
-            "content_html": "<p>this is a test post</p>",
-            "author": {
-                "name": "Jacob"
-            },
-            "tags": [
-            ],
-            "date_published": "2024-11-13T17:30:35+02:00",
-            "date_modified": "2024-11-13T17:30:35+02:00"
-        },
-        {
             "id": "https://languizy.com/articles/the-science-of-language-learning.html",
             "url": "https://languizy.com/articles/the-science-of-language-learning.html",
             "title": "The Science of Language Learning: How Our Brains Make Magic (With a Little Help from Languizy)",
