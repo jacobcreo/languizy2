@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://languizy.com/articles/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url>
+<loc>https://languizy.com/articles/</loc>
+</url>
+<url>
+<loc>https://languizy.com/articles/page/2/</loc>
+</url>
+<url>
+<loc>https://languizy.com/articles/the-science-of-language-learning.html</loc>
+<lastmod>2024-11-13T15:01:20+02:00</lastmod>
+<image:image>
+<image:loc>https://languizy.com/articles/media/posts/2/sceince_of_languages.png</image:loc>
+<image:title><![CDATA[The Science of Language Learning:]]></image:title>
+</image:image>
+</url>
+<url>
+<loc>https://languizy.com/articles/this-is-my-first-post.html</loc>
+<lastmod>2024-11-13T14:41:46+02:00</lastmod>
+<image:image>
+<image:loc>https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2.png</image:loc>
+<image:title><![CDATA[brain learning]]></image:title>
+</image:image>
+<image:image>
+<image:loc>https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3.png</image:loc>
+<image:title><![CDATA[brain]]></image:title>
+</image:image>
+</url>
+</urlset>
