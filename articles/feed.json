@@ -24,21 +24,6 @@
             ],
             "date_published": "2024-11-13T15:01:20+02:00",
             "date_modified": "2024-11-13T15:01:20+02:00"
-        },
-        {
-            "id": "https://languizy.com/articles/this-is-my-first-post.html",
-            "url": "https://languizy.com/articles/this-is-my-first-post.html",
-            "title": "This is my first post!",
-            "summary": "Hi, so this is how my first post looks. And this is a picture of a brain just checking",
-            "content_html": "<p>Hi, so this is how my first post looks.</p>\n<figure class=\"post__image\"><img loading=\"lazy\"  src=\"https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3.png\" alt=\"brain\" width=\"1232\" height=\"928\" sizes=\"(max-width: 1920px) 100vw, 1920px\" srcset=\"https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-xs.png 640w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-sm.png 768w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-md.png 1024w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-lg.png 1366w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-xl.png 1600w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2xl.png 1920w\"></figure>\n<p>And this is a picture of a brain</p>\n<h2>subtitle</h2>\n<p>just checking</p>",
-            "image": "https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2.png",
-            "author": {
-                "name": "Jacob"
-            },
-            "tags": [
-            ],
-            "date_published": "2024-11-12T21:35:55+02:00",
-            "date_modified": "2024-11-13T14:41:46+02:00"
         }
     ]
 }

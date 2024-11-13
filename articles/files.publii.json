@@ -2,7 +2,7 @@
     {
         "path": "404.html",
         "type": "file",
-        "md5": "169a768330c46e7b693b04c9e0a6678b"
+        "md5": "1fd9905c35aa8cbe7c937b0ffc5a473f"
     },
     {
         "path": "assets",
@@ -122,22 +122,22 @@
     {
         "path": "/authors/jacob/index.html",
         "type": "file",
-        "md5": "4073090a0cd75750ec357297a2ba985f"
+        "md5": "d8cf9d7d06ef352874dc39e06fe0891f"
     },
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "f038b560e3f9573418a38142de5a43ff"
+        "md5": "c22a1b334f57a30611df7400abc4f60a"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "516b77ec971c5de7ad8d99fc7d4177ac"
+        "md5": "39844b02ea0c4e8847a537aecf2ebd13"
     },
     {
         "path": "index.html",
         "type": "file",
-        "md5": "59c6c6115deed769db63e517f443762e"
+        "md5": "4d6f1f6fec3d9dc75e22e6b2f3d11b49"
     },
     {
         "path": "media",
@@ -148,86 +148,6 @@
         "path": "media/posts",
         "type": "directory",
         "md5": false
-    },
-    {
-        "path": "media/posts/1",
-        "type": "directory",
-        "md5": false
-    },
-    {
-        "path": "/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2.png",
-        "type": "file",
-        "md5": "d5abf57dcd4b90ad8a1dd1735a7125d4"
-    },
-    {
-        "path": "/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3.png",
-        "type": "file",
-        "md5": "d5abf57dcd4b90ad8a1dd1735a7125d4"
-    },
-    {
-        "path": "media/posts/1/responsive",
-        "type": "directory",
-        "md5": false
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2-2xl.png",
-        "type": "file",
-        "md5": "6c80729b03aee1d771a3a13c1e009710"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2-lg.png",
-        "type": "file",
-        "md5": "6c80729b03aee1d771a3a13c1e009710"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2-md.png",
-        "type": "file",
-        "md5": "fcb078bb3165aaef66aea8c89ca75dcb"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2-sm.png",
-        "type": "file",
-        "md5": "77d18e4c4472d2336970128f4de704c4"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2-xl.png",
-        "type": "file",
-        "md5": "6c80729b03aee1d771a3a13c1e009710"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2-xs.png",
-        "type": "file",
-        "md5": "12b889e78ab4a803e542a7c5e205e60f"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2xl.png",
-        "type": "file",
-        "md5": "6c80729b03aee1d771a3a13c1e009710"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-lg.png",
-        "type": "file",
-        "md5": "6c80729b03aee1d771a3a13c1e009710"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-md.png",
-        "type": "file",
-        "md5": "fcb078bb3165aaef66aea8c89ca75dcb"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-sm.png",
-        "type": "file",
-        "md5": "77d18e4c4472d2336970128f4de704c4"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-xl.png",
-        "type": "file",
-        "md5": "6c80729b03aee1d771a3a13c1e009710"
-    },
-    {
-        "path": "/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-xs.png",
-        "type": "file",
-        "md5": "12b889e78ab4a803e542a7c5e205e60f"
     },
     {
         "path": "media/posts/2",
@@ -320,21 +240,6 @@
         "md5": "9240e4152d8fc9252d17899156c4acfc"
     },
     {
-        "path": "page",
-        "type": "directory",
-        "md5": false
-    },
-    {
-        "path": "page/2",
-        "type": "directory",
-        "md5": false
-    },
-    {
-        "path": "/page/2/index.html",
-        "type": "file",
-        "md5": "13daf12c4a7d08b64c4f4b1015a684ec"
-    },
-    {
         "path": "robots.txt",
         "type": "file",
         "md5": "1ef8b7cb2ccb6db31597c9fe2c23dfda"
@@ -342,7 +247,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "c7dc96234fea057b7d14a2c3f6c370b7"
+        "md5": "091fa7c9024ac06782a4c3db6c597a1b"
     },
     {
         "path": "sitemap.xsl",
@@ -357,16 +262,11 @@
     {
         "path": "/tags/index.html",
         "type": "file",
-        "md5": "d09b50982aebee91e3f02e7aaa87f395"
+        "md5": "54793b03c8c66766193a0a3ee2ed2615"
     },
     {
         "path": "the-science-of-language-learning.html",
         "type": "file",
-        "md5": "ef6a5c0f04ae49e3f49240ae92a99446"
-    },
-    {
-        "path": "this-is-my-first-post.html",
-        "type": "file",
-        "md5": "73fba1f182f0f08d8da4ecb921c88b18"
+        "md5": "bbaf5e7082af33e55e5f058815f942f6"
     }
 ]

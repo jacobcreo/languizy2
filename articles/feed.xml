@@ -93,31 +93,4 @@
             ]]>
         </content>
     </entry>
-    <entry>
-        <title>This is my first post!</title>
-        <author>
-            <name>Jacob</name>
-        </author>
-        <link href="https://languizy.com/articles/this-is-my-first-post.html"/>
-        <id>https://languizy.com/articles/this-is-my-first-post.html</id>
-        <media:content url="https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2.png" medium="image" />
-
-        <updated>2024-11-12T21:35:55+02:00</updated>
-            <summary>
-                <![CDATA[
-                        <img src="https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2.png" alt="brain learning" />
-                    Hi, so this is how my first post looks. And this is a picture of a brain just checking
-                ]]>
-            </summary>
-        <content type="html">
-            <![CDATA[
-                    <p><img src="https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2.png" class="type:primaryImage" alt="brain learning" /></p>
-                <p>Hi, so this is how my first post looks.</p>
-<figure class="post__image"><img loading="lazy"  src="https://languizy.com/articles/media/posts/1/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3.png" alt="brain" width="1232" height="928" sizes="(max-width: 1920px) 100vw, 1920px" srcset="https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-xs.png 640w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-sm.png 768w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-md.png 1024w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-lg.png 1366w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-xl.png 1600w ,https://languizy.com/articles/media/posts/1/responsive/kobyof_A_vibrant_illustration_of_a_brain_with_interconnected__8ce27ace-01b1-4bbf-a535-b19340b72296_3-2xl.png 1920w"></figure>
-<p>And this is a picture of a brain</p>
-<h2>subtitle</h2>
-<p>just checking</p>
-            ]]>
-        </content>
-    </entry>
 </feed>
