@@ -310,19 +310,33 @@ async function showTopicModal(course, topic) {
 // Populate course selector
 async function populateCourseSelector(user) {
   const userDocRef = db.collection('users').doc(user.uid);
+  const userDoc = await userDocRef.get();
+  const currentCourse = userDoc.data().currentCourse.toLowerCase();
   const grammarSnapshot = await userDocRef.collection('grammar').get();
   const courseSelector = document.getElementById('courseSelector');
   courseSelector.innerHTML = ''; // Clear options
+
+  let courseExists = false;
 
   grammarSnapshot.forEach(doc => {
     const option = document.createElement('option');
     option.value = doc.id;
     option.textContent = doc.id.toUpperCase();
-    if (doc.id === selectedCourse) {
+    if (doc.id.toLowerCase() === currentCourse) {
       option.selected = true;
+      courseExists = true;
     }
     courseSelector.appendChild(option);
   });
+
+  // If the current course is missing, add it to the dropdown
+  if (!courseExists) {
+    const option = document.createElement('option');
+    option.value = currentCourse;
+    option.textContent = currentCourse.toUpperCase();
+    option.selected = true;
+    courseSelector.appendChild(option);
+  }
 }
 
 // Filter topics by course
