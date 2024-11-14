@@ -556,10 +556,14 @@ function loadNewQuestion(user, lessonId) {
 function fetchAndLoadQuestions(languagePair, topic) {
     console.log(`Fetching questions for language pair: ${languagePair} and topic: ${topic}`);
     
+    const [knownLanguage, language] = languagePair.split('-');
+
     return new Promise((resolve, reject) => {
         // Fetch questions from grammar_questions collection based on the topic
         db.collection('grammar_questions')
             .where('topic', '==', parseInt(topic))
+            .where('language', '==', language)
+            .where('knownLanguage', '==', knownLanguage)
             .limit(100) // Limit to 20 questions per lesson
             .get()
             .then(questionSnapshot => {
