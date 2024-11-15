@@ -178,7 +178,7 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
     ? `<a href="/story.html?storyId=${storyId}" class="btn btn-primary">Read Story</a>`
     : `<button class="btn btn-secondary" disabled>Locked</button>`;
 
-  let storyImg = 'https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/stories/'+storyData.knownLanguage + '-' + storyData.language + '-' + storyId + '.png' + '/public';
+  let storyImg = 'https://languizy.com/myimages/stories/'+storyData.knownLanguage + '-' + storyData.language + '-' + storyId + '.png' + '/public';
 
   const cardHTML = `
     <div class="card h-100">

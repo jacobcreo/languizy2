@@ -222,7 +222,7 @@ function createTopicCard(topicData, course, isUnlocked) {
     const cardHTML = `
       <div class="card h-100 ${opacityClass}" ${action}>
         <div class="card-img-wrapper lockbox position-relative">
-          <img src="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/grammar/${course}-grammar-${topicData.topic}.png/public" class="card-img-top" alt="Topic Image">
+          <img src="https://languizy.com/myimages/grammar/${course}-grammar-${topicData.topic}.png/public" class="card-img-top" alt="Topic Image">
           ${!isUnlocked ? '<svg class="svg-inline--fa fa-lock lock-icon position-absolute" style="top: 5%; left: 95%; transform: translate(-50%, -50%);" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="lock" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M144 144v48H304V144c0-44.2-35.8-80-80-80s-80 35.8-80 80zM80 192V144C80 64.5 144.5 0 224 0s144 64.5 144 144v48h16c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V256c0-35.3 28.7-64 64-64H80z"></path></svg>' : ''}
           ${'<span class="topicNum">'}${topicData.topic}${'</span>'}
           ${tooltip}

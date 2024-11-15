@@ -242,7 +242,8 @@ function createTopicCard(topic) {
       <div class="card-img-wrapper">
         ${lockIcon}
         
-        <img src="https://languizy.com/cdn-cgi/imagedelivery/j9E4LWp3y7gI6dhWlQbOtw/chats/chat-topic-${topic.order}.png/public" class="card-img-top" alt="Topic Image">
+        <img src="https://languizy.com/myimages/chats/chat-topic-${topic.order}.png/public" class="card-img-top" alt="Topic Image">
+        
 
       </div>
       <div class="card-body">
