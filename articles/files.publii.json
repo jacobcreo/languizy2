@@ -127,17 +127,22 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "c22a1b334f57a30611df7400abc4f60a"
+        "md5": "2d160d6358acb3ad84ea4386d15d6edf"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "39844b02ea0c4e8847a537aecf2ebd13"
+        "md5": "672edb8a365692ac4ee4f0e42c268224"
     },
     {
         "path": "index.html",
         "type": "file",
-        "md5": "4d6f1f6fec3d9dc75e22e6b2f3d11b49"
+        "md5": "72096014da4e734525d04cd3ff5f8e03"
+    },
+    {
+        "path": "language-learning-myths-debunked.html",
+        "type": "file",
+        "md5": "f911c206d331895321cd5586c974dbd0"
     },
     {
         "path": "media",
@@ -195,6 +200,51 @@
         "md5": "1eb33b3c76150f03822b999ec480aba7"
     },
     {
+        "path": "media/posts/4",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/4/mythbuster.png",
+        "type": "file",
+        "md5": "48bbf6cfd44edf6f31649a0388e906e8"
+    },
+    {
+        "path": "media/posts/4/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/4/responsive/mythbuster-2xl.png",
+        "type": "file",
+        "md5": "2d97f9e0adbb60322b3c7c449cfdeb9a"
+    },
+    {
+        "path": "/media/posts/4/responsive/mythbuster-lg.png",
+        "type": "file",
+        "md5": "2d97f9e0adbb60322b3c7c449cfdeb9a"
+    },
+    {
+        "path": "/media/posts/4/responsive/mythbuster-md.png",
+        "type": "file",
+        "md5": "72b75465761aa35f9d5edaa75a34c592"
+    },
+    {
+        "path": "/media/posts/4/responsive/mythbuster-sm.png",
+        "type": "file",
+        "md5": "669cf32f872004751c447dd9fbd74429"
+    },
+    {
+        "path": "/media/posts/4/responsive/mythbuster-xl.png",
+        "type": "file",
+        "md5": "2d97f9e0adbb60322b3c7c449cfdeb9a"
+    },
+    {
+        "path": "/media/posts/4/responsive/mythbuster-xs.png",
+        "type": "file",
+        "md5": "1b2ee4970f9a6d6a3206182a9dd2593c"
+    },
+    {
         "path": "media/website",
         "type": "directory",
         "md5": false
@@ -247,7 +297,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "091fa7c9024ac06782a4c3db6c597a1b"
+        "md5": "07a6dea52ed5d2dc1c39074bfd9e2e89"
     },
     {
         "path": "sitemap.xsl",
