@@ -245,6 +245,11 @@ function filterStoriesByCourse() {
 // Authentication state listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
+const urlParams = new URLSearchParams(window.location.search);
+const courseId = urlParams.get('courseId');
+if (courseId) {
+  selectedCourse = courseId;
+}
     populateCourseSelector(user);
     loadStories(user);
     loadUserAvatar(user);  // Load user avatar in the navbar
