@@ -929,7 +929,7 @@ if (translationsText) {
 
         // Replace '_____' with the correct answer in the question and style it
         var answerToDisplay = `<span class="correct-answer">${question.missingWord}</span>`;
-        var questionHTML = question.sentence.replace('___', answerToDisplay);
+        var questionHTML = question.sentence.replace(/_{3,}/g, answerToDisplay);
         $('#sentence').html(questionHTML);
 
         // Feedback to user
@@ -949,7 +949,7 @@ if (translationsText) {
 
         // Play feedback sound and audio
         playFeedbackSound(isCorrect, () => {
-            var completeLesson = question.sentence.replace('___', question.missingWord);
+            var completeLesson = question.sentence.replace(/_{3,}/g, question.missingWord);
             var targetLanguage = question.targetLanguage;
             playAudio(questionId, completeLesson, targetLanguage);
         });
