@@ -10,6 +10,8 @@ let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
 
+let uid = null;
+
 // Global variable to track the current mode (multiple-choice or text input)
 let isMultipleChoice;
 
@@ -115,6 +117,7 @@ const countryToLanguage = {
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
     const userRef = db.collection('users').doc(user.uid);
+    uid = user.uid;
 
     userRef.get().then((doc) => {
         if (doc.exists) {
@@ -1815,3 +1818,46 @@ function backToSelection(what) {
     }
   }
   
+
+   // Event listener for the Report button
+   $('#report-button').on('click', function () {
+    $('#report-question-id').val(window.currentQuestionId); // Set the current question ID
+    $('#reportModal').modal('show'); // Show the report modal
+  });
+
+  // Event listener for the Submit button in the report modal
+  $('#submit-report').on('click', function () {
+    const comment = $('#report-comment').val().trim();
+    const questionId = $('#report-question-id').val();
+    const user = firebase.auth().currentUser;
+    const currentTime = new Date().toISOString();
+
+    if (comment && questionId && user) {
+      // Prepare the report data
+      const reportData = {
+        questionType: "grammar",
+        questionId: questionId,
+        timeOfUpdate: currentTime,
+        comment: comment,
+        language: window.currentQuestionData.language,
+        knownLanguage: window.currentQuestionData.knownLanguage,
+        isMultipleChoice: isMultipleChoice,
+        userId: uid,
+        status: 'created'
+      };
+
+      // Insert the report into Firestore
+      db.collection('reports').add(reportData)
+        .then(() => {
+          $('#reportForm')[0].reset(); // Clear the form
+          $('#reportModal').modal('hide'); // Close the modal
+          alert('Report submitted successfully.');
+        })
+        .catch(error => {
+          console.error('Error submitting report:', error);
+          alert('Failed to submit report. Please try again.');
+        });
+    } else {
+      alert('Please enter a comment before submitting.');
+    }
+  });

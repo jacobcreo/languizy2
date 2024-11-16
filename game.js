@@ -1631,7 +1631,8 @@ function backToCourseSelection() {
         language: window.currentQuestionData.language,
         knownLanguage: window.currentQuestionData.knownLanguage,
         isMultipleChoice: isMultipleChoice,
-        userId: uid
+        userId: uid,
+        status: 'created'
       };
 
       // Insert the report into Firestore
