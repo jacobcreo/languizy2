@@ -760,6 +760,12 @@ function displayQuestion(question, questionId, currentLesson) {
     }
 
     var inputLength = question.missingWord.length;
+    if (window.currentQuestionData.language == 'de') {
+        if (question.missingWord.includes('ß')) {
+            inputLength += 1;
+        }
+
+    }
 
     // Calculate input width dynamically to match the expected answer length
     var inputWidth = inputLength * 1.2;
@@ -1166,7 +1172,8 @@ function getLanguageAndVoice(countryCode) {
 
 // Normalization function to ignore special characters
 function normalizeString(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ß/g, "ss").replace(/ẞ/g, "Ss").toLowerCase();
+    
 }
 
 // Update user progress in the database
