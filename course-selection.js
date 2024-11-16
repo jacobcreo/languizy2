@@ -96,6 +96,7 @@ async function loadCurrentCoach(coachId) {
             $('#currentCoachImage').css('visibility', 'visible');
             $('#currentCoachName').text(coachData.coachName);
             console.log(`Loaded coach details for coach ID: ${coachId}`);
+            document.querySelector('#CurrentCoachCard .fill-effect').style.animation = 'none';
         } else {
             console.error(`Coach with ID ${coachId} does not exist.`);
         }
@@ -130,6 +131,9 @@ async function loadHeadline(user) {
             document.getElementById('headline').textContent = "Have a great day learning!";
             console.log(`No headline found for date ${todayString}. Using default message.`);
         }
+        document.querySelector('#headlineCard .fill-effect').style.animation = 'none';
+
+        
     } catch (error) {
         console.error("Error fetching headline: ", error);
     }
@@ -196,6 +200,8 @@ async function loadStreak(user) {
             messageElement.innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> ${hoursLeft} hours left to extend your streak!`;
             console.log(`Streak not extended today for user ${user.uid}. ${hoursLeft} hours left to extend.`);
         }
+        document.querySelector('#CurrentStreakCard .fill-effect').style.animation = 'none';
+
 
     } catch (error) {
         console.error("Error fetching streak: ", error);
@@ -584,6 +590,7 @@ function updateRecommendationCard(recommendationObj) {
     // Update button color and icon
     recommendationBtn.className = `btn btn-${recommendation.buttonColor}`;
     recommendationBtn.innerHTML = `<i class="${recommendation.icon} me-2"></i> Go to ${recommendation.name}`;
+    recommendationBtn.style.visibility = 'visible';
 
     // Add click event to navigate to the relevant section
     recommendationBtn.onclick = () => {
@@ -604,6 +611,8 @@ function updateRecommendationCard(recommendationObj) {
                 console.warn('Unknown recommendation category');
         }
     };
+    
+    document.querySelector('#CurrentRecommendationCard .fill-effect').style.animation = 'none';
 
     console.log(`Recommendation Updated: ${recommendation.name} - ${reason}`);
 }
@@ -615,6 +624,10 @@ async function loadCardData(user, currentCourse) {
     const targetLanguage = languageShorts[targetLanguageCode] || targetLanguageCode;
     document.getElementById('currentCourseName').textContent = `${languageShorts[courseParts[0]]} to ${languageShorts[courseParts[1]]}`;
     document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
+    
+    
+    document.querySelector('#CurrentCourseCard .fill-effect').style.animation = 'none';
+
 
     // Initialize variables to store percentages
     let vocabPercentage = 0;
@@ -633,6 +646,8 @@ async function loadCardData(user, currentCourse) {
                     document.getElementById('vocabProgress').style.width = `${vocabPercentage}%`;
                     document.getElementById('vocabProgress').setAttribute('aria-valuenow', vocabPercentage);
                     console.log(`Loaded Vocabulary Percentage: ${vocabPercentage}%`);
+                    document.querySelector('#CurrentPracticeCard .fill-effect').style.animation = 'none';
+
                 }
             })
             .catch((error) => {
@@ -648,6 +663,8 @@ async function loadCardData(user, currentCourse) {
                     document.getElementById('grammarProgress').style.width = `${grammarPercentage}%`;
                     document.getElementById('grammarProgress').setAttribute('aria-valuenow', grammarPercentage);
                     console.log(`Loaded Grammar Percentage: ${grammarPercentage}%`);
+                    document.querySelector('#CurrentGrammarCard .fill-effect').style.animation = 'none';
+
                 }
             })
             .catch((error) => {
@@ -662,6 +679,8 @@ async function loadCardData(user, currentCourse) {
                 document.getElementById('chatProgress').style.width = `${chatPercentage}%`;
                 document.getElementById('chatProgress').setAttribute('aria-valuenow', chatPercentage);
                 console.log(`Loaded Chat Percentage: ${chatPercentage}%`);
+                document.querySelector('#CurrentChatCard .fill-effect').style.animation = 'none';
+
             })
             .catch((error) => {
                 console.error("Error fetching chat stats:", error);
@@ -675,6 +694,8 @@ async function loadCardData(user, currentCourse) {
                 document.getElementById('storiesProgress').style.width = `${storiesPercentage}%`;
                 document.getElementById('storiesProgress').setAttribute('aria-valuenow', storiesPercentage);
                 console.log(`Loaded Stories Percentage: ${storiesPercentage}%`);
+                document.querySelector('#CurrentStoriesCard .fill-effect').style.animation = 'none';
+
             })
             .catch((error) => {
                 console.error("Error fetching stories stats:", error);

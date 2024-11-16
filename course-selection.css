@@ -290,3 +290,25 @@ button i {
 .card.border-left-success .card-title i {
     margin-right: 8px;
 }
+
+.fill-effect {
+    width: 0;
+    background-color: rgba(0, 123, 255, 0.2); /* Adjust the color and transparency */
+    animation: fill-animation 3s linear infinite;
+  }
+
+  @keyframes fill-animation {
+    0% {
+      width: 0;
+    }
+    50% {
+      width: 100%;
+    }
+    100% {
+      width: 0;
+    }
+  }
+
+  #recommendationBtn {
+    visibility: hidden;
+  }
