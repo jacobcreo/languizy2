@@ -514,6 +514,7 @@ function loadQuestionData(questionId, currentLesson) {
     db.collection('grammar_questions').doc(questionId).get()
     .then(questionDoc => {
         if (questionDoc.exists) {
+            
             displayQuestion(questionDoc.data(), questionId, currentLesson);
         } else {
             console.error('Question not found:', questionId);
@@ -727,6 +728,13 @@ function displayQuestion(question, questionId, currentLesson) {
     currentQuestionId = questionId;
     currentQuestionData = question;
     currentLesson = question.topic;
+    if (currentQuestionData.sentence.indexOf('___') > 0) {
+        const index = currentQuestionData.sentence.indexOf('___');
+        if (currentQuestionData.sentence[index - 1] !== ' ') {
+            currentQuestionData.sentence = currentQuestionData.sentence.slice(0, index) + ' ' + currentQuestionData.sentence.slice(index);
+        }
+    }
+
 
     // Store questionId and current question data globally for use in other functions
     if (typeof questionId !== 'undefined') {
@@ -758,7 +766,7 @@ function displayQuestion(question, questionId, currentLesson) {
 
     // Determine whether to show input field or placeholder based on mode
     const inputField = isMultipleChoice ? '_____' : `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
-    var questionHTML = question.sentence.replace(/(\S)___/, '$1 ___').replace('___', inputField);
+    var questionHTML = question.sentence.replace(/_{3,}/g, inputField);
 
     $('.option-btn').removeClass('selected'); // Remove selected class from all options (relevant to multiple choice, but in case user switches)
     $('.option-btn').prop('disabled', false);
