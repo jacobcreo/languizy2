@@ -202,7 +202,7 @@
               class="fas fa-chart-line"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button class="btn btn-danger w-100">Report <i class="fas fa-flag"></i></button>
+          <button id="report-button" class="btn btn-danger w-100">Report <i class="fas fa-flag"></i></button>
         </div>
 
         
@@ -230,6 +230,35 @@
     </div>
   </div>
 </div>
+
+</div>
+ 
+<!-- Report Modal -->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="reportModalLabel">Report Issue</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="reportForm">
+          <input type="hidden" id="report-question-id">
+          <div class="mb-3">
+            <label for="report-comment" class="form-label">Describe your issue with the question:</label>
+            <textarea class="form-control" id="report-comment" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submit-report">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
 
 
   <!-- Scripts -->
