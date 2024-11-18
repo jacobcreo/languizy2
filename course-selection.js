@@ -202,11 +202,14 @@ async function loadStreak(user) {
             console.log(`Streak not extended today for user ${user.uid}. ${hoursLeft} hours left to extend.`);
         }
         document.querySelector('#CurrentStreakCard .fill-effect').style.animation = 'none';
+    document.getElementById('streakCount').style.visibility = 'visible';
 
 
     } catch (error) {
         console.error("Error fetching streak: ", error);
         document.getElementById('streakCount').textContent = "0 Days";
+        document.getElementById('streakCount').style.visibility = 'visible';
+
     }
 }
 
@@ -650,6 +653,8 @@ async function loadCardData(user, currentCourse) {
                     console.log(`Loaded Vocabulary Percentage: ${vocabPercentage}%`);
                     document.querySelector('#CurrentPracticeCard .fill-effect').style.animation = 'none';
 
+                } else {
+                    document.querySelector('#CurrentPracticeCard .fill-effect').style.animation = 'none';
                 }
             })
             .catch((error) => {
@@ -667,6 +672,8 @@ async function loadCardData(user, currentCourse) {
                     console.log(`Loaded Grammar Percentage: ${grammarPercentage}%`);
                     document.querySelector('#CurrentGrammarCard .fill-effect').style.animation = 'none';
 
+                } else {
+                    document.querySelector('#CurrentGrammarCard .fill-effect').style.animation = 'none';
                 }
             })
             .catch((error) => {
