@@ -195,7 +195,7 @@
               class="fas fa-volume-up"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button class="btn btn-secondary w-100">Help <i class="fas fa-question-circle"></i></button>
+          <button id="help-button" class="btn btn-secondary w-100">Help <i class="fas fa-question-circle"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3  d-flex justify-content-center">
           <button class="btn btn-warning w-100" onclick="buttonClick('stats')">Stats <i
@@ -253,6 +253,65 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" id="submit-report">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="helpModalLabel">Help & Instructions</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6>Welcome to the Vocabulary Practice Screen!</h6>
+        <p>Here, you can enhance your language skills by practicing vocabulary in a fun and interactive way. Below are some tips and instructions to help you make the most of this experience.</p>
+
+        <h6>Navigation</h6>
+        <ul>
+          <li><strong>Logout:</strong> Click the "Logout" button in the top-right corner to safely exit your session.</li>
+          <li><strong>Course Selection:</strong> Use the back arrow in the stats bar to return to the course selection screen.</li>
+        </ul>
+
+        <h6>Understanding the Interface</h6>
+        <ul>
+          <li><strong>Question Area:</strong> This is where your current question is displayed. Fill in the blank with the correct word.</li>
+          <li><strong>Multiple Choice Mode:</strong> If enabled, select the correct answer from the given options.</li>
+          <li><strong>Text Input Mode:</strong> Type your answer in the input field provided.</li>
+        </ul>
+
+        <h6>Buttons and Features</h6>
+        <ul>
+          <li><strong>Submit Answer:</strong> Click this button to submit your answer for evaluation.</li>
+          <li><strong>Next Question:</strong> Move to the next question after submitting your answer.</li>
+          <li><strong>Toggle Mode:</strong> Switch between multiple-choice and text input modes to adjust the difficulty level.</li>
+          <li><strong>Replay Audio:</strong> Listen to the pronunciation of the sentence again.</li>
+          <li><strong>Explain Sentence:</strong> Get a detailed explanation of the sentence and the missing word.</li>
+          <li><strong>Special Characters:</strong> Use these buttons to insert special characters into your answer.</li>
+          <li><strong>Report:</strong> If you encounter an issue with a question, use this button to report it.</li>
+        </ul>
+
+        <h6>Stats and Feedback</h6>
+        <ul>
+          <li><strong>Score:</strong> Your current score is displayed in the stats bar. Aim to improve it with each correct answer!</li>
+          <li><strong>Correct/Wrong Count:</strong> Keep track of your correct and incorrect answers.</li>
+          <li><strong>Last 5 Answers:</strong> Visual feedback on your recent performance is shown with colored boxes.</li>
+        </ul>
+
+        <h6>Tips for Success</h6>
+        <ul>
+          <li>Take your time to understand each question and use the "Explain Sentence" feature for additional insights.</li>
+          <li>Switch between modes to challenge yourself and enhance your learning experience.</li>
+          <li>Use the "Replay Audio" feature to improve your pronunciation and listening skills.</li>
+        </ul>
+
+        <p>We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel free to reach out to our support team. Happy learning!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
   </div>

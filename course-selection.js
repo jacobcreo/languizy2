@@ -1,5 +1,6 @@
 // Initialize Firebase Firestore
 const db = firebase.firestore();
+let languageLearned = '';
 
 const languageShorts = {
     'en': 'English',
@@ -624,6 +625,7 @@ async function loadCardData(user, currentCourse) {
     const targetLanguage = languageShorts[targetLanguageCode] || targetLanguageCode;
     document.getElementById('currentCourseName').textContent = `${languageShorts[courseParts[0]]} to ${languageShorts[courseParts[1]]}`;
     document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
+    document.getElementById('currentCourseFlag').style.visibility = 'visible';
     
     
     document.querySelector('#CurrentCourseCard .fill-effect').style.animation = 'none';
@@ -678,6 +680,8 @@ async function loadCardData(user, currentCourse) {
                 document.getElementById('chatPercentage').textContent = `${chatPercentage}%`;
                 document.getElementById('chatProgress').style.width = `${chatPercentage}%`;
                 document.getElementById('chatProgress').setAttribute('aria-valuenow', chatPercentage);
+                document.getElementById('chatBtn').textContent = 'Chat in ' + languageShorts[courseParts[1]];
+                
                 console.log(`Loaded Chat Percentage: ${chatPercentage}%`);
                 document.querySelector('#CurrentChatCard .fill-effect').style.animation = 'none';
 

@@ -1608,6 +1608,10 @@ function backToCourseSelection() {
   window.location.href = '/course_selection.html';
 }
 
+$('#help-button').on('click', function () {
+  $('#helpModal').modal('show'); // Show the report modal
+});
+
    // Event listener for the Report button
    $('#report-button').on('click', function () {
     $('#report-question-id').val(window.currentQuestionId); // Set the current question ID

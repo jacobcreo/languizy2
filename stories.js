@@ -4,9 +4,10 @@ let selectedCourse = null;
 let maxFrequencySeen = 0;
 
 // Load Stories for the user based on the current course
+
 async function loadStories(user) {
   try {
-    hidePracticeMoreCard();
+    
     const userDocRef = db.collection('users').doc(user.uid);
     const userDoc = await userDocRef.get();
 
@@ -61,6 +62,7 @@ async function loadStories(user) {
         completedStoryIds.add(doc.id);
       }
     });
+
     if (window.innerWidth <= 700) { // Check if screen width is 'sm' or less
       const style = document.createElement('style');
       style.innerHTML = `
@@ -96,6 +98,32 @@ async function loadStories(user) {
 
     // Sort stories by wordsRequired in ascending order
     sortedStories.sort((a, b) => a.storyData.wordsRequired - b.storyData.wordsRequired);
+
+    // Remove existing alert if present
+    const existingAlert = document.querySelector('.alert-dismissible');
+    if (existingAlert) {
+      existingAlert.remove();
+    }
+
+    // Find the first inaccessible story
+    const firstInaccessibleStory = sortedStories.find(story => !story.isAccessible);
+    if (firstInaccessibleStory) {
+      const wordsNeeded = firstInaccessibleStory.storyData.wordsRequired - maxFrequencySeen;
+      const alertHTML = `
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <strong>Keep Practicing!</strong> You need ${wordsNeeded} more words to unlock "<strong>${firstInaccessibleStory.storyData.storyTitle}</strong>".
+          <a href="/practice.html" class="alert-link">Practice more vocabulary</a>.
+          <button type="button" class="btn-close" aria-label="Close"></button>
+        </div>
+      `;
+      storiesList.insertAdjacentHTML('beforebegin', alertHTML);
+
+      // Add event listener to close button
+      const closeButton = document.querySelector('.btn-close');
+      closeButton.addEventListener('click', () => {
+        closeButton.parentElement.remove();
+      });
+    }
 
     // Append sorted stories to the DOM
     sortedStories.forEach(({ storyData, storyId, isAccessible, isCompleted }) => {
@@ -186,6 +214,7 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
       <div class="card-body">
         <h5 class="card-title">${storyData.storyTitle}${statusIcon}</h5>
         <p class="card-text">Words required: ${storyData.wordsRequired}</p>
+        
         ${readButton}
       </div>
     </div>
@@ -197,17 +226,8 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
   return cardDiv;
 }
 
-// Display a card prompting the user to practice more
-function displayPracticeMoreCard() {
-  document.getElementById('practiceMoreCard').style.display = 'block';
-  const practiceMoreMessage = document.getElementById('practiceMoreMessage');
-  practiceMoreMessage.innerText = `You need to practice more words! See ${maxFrequencySeen + 1} words to unlock the next story.`;
-  document.getElementById('practiceMoreBtn').setAttribute('onclick', `window.location.href='/practice.html?courseId=${selectedCourse}'`);
-}
 
-function hidePracticeMoreCard() {
-  document.getElementById('practiceMoreCard').style.display = 'none';
-}
+
 
 // Populate course selector
 async function populateCourseSelector(user) {
