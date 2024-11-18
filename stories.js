@@ -33,7 +33,7 @@ async function loadStories(user) {
 
     if (!highestFrequency) {
       console.log('No maxFrequency found, prompting the user to practice more.');
-      displayPracticeMoreCard();
+      
       return;
     }
 
@@ -132,7 +132,7 @@ async function loadStories(user) {
     });
 
     if (!storiesAvailable) {
-      displayPracticeMoreCard();
+      
     }
 
   } catch (error) {
