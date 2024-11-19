@@ -4,6 +4,8 @@ let currentUser = null;
 let currentCoach = null;
 let knownLanguage = '';
 let language = '';
+let chatStartTime;
+let chatElapsedTime = 0;
 
 // Array to hold the entire conversation history
 let conversationHistory = [];
@@ -134,6 +136,10 @@ async function loadCurrentCourse(user) {
 // Initialize Chat with Bot's First Message
 function initializeChat(tid) {
     conversationHistory = []; // Reset conversation history
+
+    // Start the timer when the chat begins
+    chatStartTime = Date.now();
+
 
     // Show rotating loading indicator with coach image
     const typingIndicatorId = showTypingIndicator();
@@ -412,6 +418,9 @@ function logout() {
 
 // Show Summary View
 function showSummaryView(summaryText, corrections) {
+     // Stop the timer and calculate elapsed time
+     chatElapsedTime = Math.min(Math.floor((Date.now() - chatStartTime) / 1000), 600);
+
     // Hide chat area and input area
     document.getElementById('chatArea').style.display = 'none';
     document.getElementById('inputArea').style.display = 'none';
@@ -469,6 +478,9 @@ function showSummaryView(summaryText, corrections) {
         });
 
         card.appendChild(correctionsSection);
+
+        updateChatStats();
+
     }
 
     // Add buttons
@@ -501,6 +513,39 @@ function restartConversation() {
 
     // Initialize chat with bot's first message
     initializeChat(tid);
+}
+
+async function updateChatStats() {
+    try {
+        const userDocRef = db.collection('users').doc(currentUser.uid);
+        const course = knownLanguage + "-" + language;
+
+        // Get today's date in the format YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+
+        // Reference to today's stats document
+        const todayStatsRef = userDocRef
+            .collection('courses').doc(course)
+            .collection('stats').doc(today);
+
+        // Reference to all-time stats document
+        const allTimeStatsRef = userDocRef
+            .collection('courses').doc(course)
+            .collection('stats').doc('all-time');
+
+        // Update today's stats
+        await todayStatsRef.set({
+            chatTimeSpent: firebase.firestore.FieldValue.increment(chatElapsedTime) // Add chat time spent
+        }, { merge: true });
+
+        // Update all-time stats
+        await allTimeStatsRef.set({
+            chatTimeSpent: firebase.firestore.FieldValue.increment(chatElapsedTime) // Add chat time spent
+        }, { merge: true });
+
+    } catch (error) {
+        console.error("Error updating chat stats:", error);
+    }
 }
 
 // Exit Conversation

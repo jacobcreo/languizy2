@@ -10,6 +10,8 @@ let speechPartBreakdownChartInstance;
 let performanceOverTimeChartInstance;
 let dailyScoreBreakdownChartInstance;
 let vocabGrammarAccuracyChartInstance;
+let timeSpentDistributionChartInstance;
+let timeSpentChartInstance; // Add this line
 
 
 // Initialize selectedCourse to 'all' for showing all course stats by default
@@ -60,9 +62,14 @@ function loadUserAvatar(user) {
  * Load Statistics for the Authenticated User
  * @param {Object} user - The authenticated user object
  */
+/**
+ * Load Statistics for the Authenticated User
+ * @param {Object} user - The authenticated user object
+ */
 async function loadStats(user) {
   try {
     const userDocRef = db.collection('users').doc(user.uid);
+    const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
 
     // Display loading messages for each chart
     setLoadingState('speechPartBreakdownChart', 'speechPartBreakdownLoading');
@@ -73,6 +80,7 @@ async function loadStats(user) {
     setLoadingState('performanceOverTimeChart', 'performanceOverTimeLoading');
     setLoadingState('dailyScoreBreakdownChart', 'dailyScoreBreakdownLoading');
     setLoadingState('vocabGrammarAccuracyChart', 'vocabGrammarAccuracyLoading');
+    setLoadingState('timeSpentChart', 'timeSpentLoading');
 
     // Fetch user courses and stats concurrently
     const [userDoc, coursesSnapshot] = await Promise.all([
@@ -107,13 +115,25 @@ async function loadStats(user) {
       statsSnapshot.forEach(doc => {
         const data = doc.data();
         const dateId = doc.id;
-    
+
+        // Filter by time interval
+        if (selectedTimeInterval === 'last-7-days') {
+          const date = new Date(dateId);
+          const today = new Date();
+          const sevenDaysAgo = new Date(today);
+          sevenDaysAgo.setDate(today.getDate() - 6);
+
+          if (date < sevenDaysAgo || date > today) {
+            return; // Skip dates outside the last 7 days
+          }
+        }
+
         if (dateId === 'all-time') {
           totalCorrectAnswers += data.totalCorrectAnswers || 0;
           totalWrongAnswers += data.totalWrongAnswers || 0;
           totalScore += data.totalScore || 0;
           totalDrills += data.totalDrills || 0;
-    
+
           // Use the correct field names for "all-time" document
           vocabCorrect += data.vocabulary_totalCorrectAnswers || 0;
           vocabWrong += data.vocabulary_totalWrongAnswers || 0;
@@ -122,7 +142,7 @@ async function loadStats(user) {
         } else {
           const date = new Date(dateId);
           if (!earliestDate || date < earliestDate) earliestDate = date;
-    
+
           dailyStats.push({
             date: dateId,
             correctAnswers: data.correctAnswers || 0,
@@ -132,13 +152,13 @@ async function loadStats(user) {
             vocabularyScore: data.vocabulary_score || 0,
             grammarScore: data.grammar_score || 0
           });
-    
+
           // Aggregate daily stats for vocabulary and grammar accuracy
           vocabCorrect += data.vocabulary_correctAnswers || 0;
           vocabWrong += data.vocabulary_wrongAnswers || 0;
           grammarCorrect += data.grammar_correctAnswers || 0;
           grammarWrong += data.grammar_wrongAnswers || 0;
-    
+
           datesSet.add(dateId);
         }
       });
@@ -187,6 +207,8 @@ async function loadStats(user) {
 
     // Display Charts and Heatmap
     await Promise.all([
+      displayTimeSpentChart(userDocRef, selectedCourse, dateRange), // Pass dateRange here
+      displayTimeSpentDistributionChart(userDocRef, selectedCourse, dateRange),
       displaySpeechPartBreakdownChart(userDocRef, selectedCourse),
       displayAnswersOverTimeChart(answersOverTimeData),
       displayAccuracyChart(totalCorrectAnswers, totalWrongAnswers),
@@ -196,12 +218,15 @@ async function loadStats(user) {
       displayPerformanceOverTimeChart(filledDailyStats),
       displayDailyScoreBreakdownChart(filledDailyStats),
       displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorrect, grammarWrong)
+      
+
     ]);
 
   } catch (error) {
     console.error('Error loading stats:', error);
   }
 }
+
 
 
 /**
@@ -964,4 +989,217 @@ function displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorre
     }
   });
   clearLoadingState('vocabGrammarAccuracyChart', 'vocabGrammarAccuracyLoading');
+}
+
+async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
+  const ctx = document.getElementById('timeSpentChart').getContext('2d');
+
+  if (timeSpentChartInstance) {
+    timeSpentChartInstance.destroy();
+  }
+
+  // Initialize time spent data
+  const timeSpentData = {};
+
+  // Get the selected time interval
+  const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 6);
+
+  // Fetch stats for all courses or a specific course
+  const coursesSnapshot = currentCourse === 'all' 
+    ? await userDocRef.collection('courses').get()
+    : [{ id: currentCourse }];
+
+  for (const courseDoc of coursesSnapshot.docs || coursesSnapshot) {
+    const statsSnapshot = await userDocRef.collection('courses').doc(courseDoc.id).collection('stats').get();
+
+    statsSnapshot.forEach(doc => {
+      const data = doc.data();
+      const dateId = doc.id;
+
+      // Filter by time interval
+      if (selectedTimeInterval === 'last-7-days') {
+        const date = new Date(dateId);
+        if (date < sevenDaysAgo || date > today) {
+          return; // Skip dates outside the last 7 days
+        }
+      }
+
+      if (dateId !== 'all-time') {
+        if (!timeSpentData[dateId]) {
+          timeSpentData[dateId] = { vocabulary: 0, grammar: 0, stories: 0, chat: 0 };
+        }
+
+        timeSpentData[dateId].vocabulary += data.DailyTime || 0;
+        timeSpentData[dateId].grammar += data.grammar_DailyTime || 0;
+        timeSpentData[dateId].stories += data.timeSpentStories || 0;
+        timeSpentData[dateId].chat += data.chatTimeSpent || 0;
+      }
+    });
+  }
+
+  // Ensure all dates in dateRange are present in timeSpentData
+  for (const date of dateRange) {
+    if (!timeSpentData[date]) {
+      timeSpentData[date] = { vocabulary: 0, grammar: 0, stories: 0, chat: 0 };
+    }
+  }
+
+  // Prepare data for the chart
+  const dates = dateRange.sort();
+  const vocabularyData = dates.map(date => timeSpentData[date].vocabulary);
+  const grammarData = dates.map(date => timeSpentData[date].grammar);
+  const storiesData = dates.map(date => timeSpentData[date].stories);
+  const chatData = dates.map(date => timeSpentData[date].chat);
+
+  // Create the stacked bar chart
+  timeSpentChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dates,
+      datasets: [
+        {
+          label: 'Vocabulary',
+          data: vocabularyData,
+          backgroundColor: '#007bff'
+        },
+        {
+          label: 'Grammar',
+          data: grammarData,
+          backgroundColor: '#28a745'
+        },
+        {
+          label: 'Stories',
+          data: storiesData,
+          backgroundColor: '#ffc107'
+        },
+        {
+          label: 'Chat',
+          data: chatData,
+          backgroundColor: '#dc3545'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true,
+          title: {
+            display: true,
+            text: 'Date'
+          }
+        },
+        y: {
+          stacked: true,
+          title: {
+            display: true,
+            text: 'Time Spent (seconds)'
+          },
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+
+  clearLoadingState('timeSpentChart', 'timeSpentLoading');
+}
+
+async function displayTimeSpentDistributionChart(userDocRef, currentCourse, dateRange) {
+  const ctx = document.getElementById('timeSpentDistributionChart').getContext('2d');
+
+  if (timeSpentDistributionChartInstance) {
+    timeSpentDistributionChartInstance.destroy();
+  }
+
+  // Initialize total time spent data
+  let totalTimeSpent = { vocabulary: 0, grammar: 0, stories: 0, chat: 0 };
+
+  // Get the selected time interval
+  const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
+  const today = new Date();
+  const sevenDaysAgo = new Date(today);
+  sevenDaysAgo.setDate(today.getDate() - 6);
+
+  // Fetch stats for all courses or a specific course
+  const coursesSnapshot = currentCourse === 'all' 
+    ? await userDocRef.collection('courses').get()
+    : [{ id: currentCourse }];
+
+  for (const courseDoc of coursesSnapshot.docs || coursesSnapshot) {
+    const statsSnapshot = await userDocRef.collection('courses').doc(courseDoc.id).collection('stats').get();
+
+    statsSnapshot.forEach(doc => {
+      const data = doc.data();
+      const dateId = doc.id;
+
+      // Filter by time interval
+      if (selectedTimeInterval === 'last-7-days') {
+        const date = new Date(dateId);
+        if (date < sevenDaysAgo || date > today) {
+          return; // Skip dates outside the last 7 days
+        }
+      }
+
+      if (dateId !== 'all-time') {
+        totalTimeSpent.vocabulary += data.DailyTime || 0;
+        totalTimeSpent.grammar += data.grammar_DailyTime || 0;
+        totalTimeSpent.stories += data.timeSpentStories || 0;
+        totalTimeSpent.chat += data.chatTimeSpent || 0;
+      }
+    });
+  }
+
+  // Prepare data for the pie chart
+  const labels = ['Vocabulary', 'Grammar', 'Stories', 'Chat'];
+  const data = [
+    totalTimeSpent.vocabulary,
+    totalTimeSpent.grammar,
+    totalTimeSpent.stories,
+    totalTimeSpent.chat
+  ];
+
+  timeSpentDistributionChartInstance = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const label = context.label || '';
+              const value = context.raw || 0;
+              const total = context.chart._metasets[context.datasetIndex].total;
+              const percentage = ((value / total) * 100).toFixed(2);
+              return `${label}: ${value} seconds (${percentage}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  clearLoadingState('timeSpentDistributionChart', 'timeSpentDistributionLoading');
+}
+
+
+function filterByTimeInterval() {
+  loadStats(firebase.auth().currentUser); // Reload stats when time interval is selected
 }

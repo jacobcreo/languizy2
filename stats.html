@@ -1,55 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <!-- Start cookieyes banner --> <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/fc96f1fb836f71137cecbc97/script.js"></script> <!-- End cookieyes banner -->
+  <!-- Start cookieyes banner -->
+  <script id="cookieyes" type="text/javascript"
+    src="https://cdn-cookieyes.com/client_data/fc96f1fb836f71137cecbc97/script.js"></script>
+  <!-- End cookieyes banner -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Language Learning Stats</title>
-  
+
   <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- FontAwesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="stats.css">
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-  gtag('config', 'G-K8GMWBXC5J');
-</script>
+    gtag('config', 'G-K8GMWBXC5J');
+  </script>
 </head>
+
 <body>
   <!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid d-flex justify-content-between align-items-center">
-    <a class="navbar-brand" href="/course_selection.html">
-            <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
-  </a>      
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <a class="navbar-brand" href="/course_selection.html">
+        <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40"
+          class="d-inline-block align-text-top" alt="Languizy Language Learning Logo"
+          title="Languizy, Language Learning for Real">
+      </a>
       <!-- Wrap the logout button and avatar inside a flex container -->
       <div class="d-flex align-items-center">
-          <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
-          <div id="userAvatar" class="avatar"></div>
+        <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+        <div id="userAvatar" class="avatar"></div>
       </div>
-  </div>
-</nav>
-  <!-- Main Container -->
-  <div class="container my-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>Your Statistics</h2>
-      <select id="courseSelector" class="form-select w-auto" onchange="filterByCourse()">
-        <option value="all">All Courses</option>
-        <!-- Options will be dynamically loaded here -->
-      </select>
     </div>
-    
-    <!-- Data Boxes Row -->
+  </nav>
+  <!-- Main Container -->
+  <div class="container mt-3 mb-5">
     <div class="row mb-4">
+      <div class="col-12 col-md-6">
+        <h2>Your Statistics</h2>
+      </div>
+      <div class="col-12 col-md-6 mb-3">
+        <div class="d-flex flex-column flex-md-row">
+          <select id="courseSelector" class="form-select mb-2 mb-md-0 me-md-2" onchange="filterByCourse()">
+            <option value="all">All Courses</option>
+            <!-- Options will be dynamically loaded here -->
+          </select>
+          <select id="timeIntervalSelector" class="form-select" onchange="filterByTimeInterval()">
+            <option value="all-time">All Time</option>
+            <option value="last-7-days">Last 7 Days</option>
+          </select>
+        </div>
+      </div>
+    
+  
+
+    <!-- Data Boxes Row -->
+    
       <div class="col-md-4 mb-3">
         <div class="card text-white bg-success h-100">
           <div class="card-body d-flex align-items-center">
@@ -124,127 +142,129 @@
 
     <!-- Charts Row -->
     <div class="row mb-4">
-      <div class="col-lg-6 mb-4">
+      <!-- Time Spent Chart -->
+      <div class="col mb-4">
         <div class="card shadow-sm">
           <div class="card-body">
-            <h5 class="card-title">Answers Over Time</h5>
-            <div id="answersOverTimeLoading">Loading...</div>
-            <canvas id="answersOverTimeChart" style="display:none;"></canvas>
+            <h5 class="card-title">Time Spent on Activities</h5>
+            <div id="timeSpentLoading">Loading...</div>
+            <canvas id="timeSpentChart" style="display:none;"></canvas>
           </div>
         </div>
       </div>
-      <div class="col-lg-6 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Accuracy</h5>
-            <div id="accuracyLoading">Loading...</div>
-            <canvas id="accuracyChart" style="display:none;"></canvas>
-          </div>
-        </div>
-      </div>
+    </div>
     
-    <!-- Heatmap Row -->
-    
+    <div class="row mb-4">
+
       <div class="col-lg-6">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Time Spent Distribution</h5>
+            <div id="timeSpentDistributionLoading">Loading...</div>
+            <canvas id="timeSpentDistributionChart" style="display:none;"></canvas>
+          </div>
+        </div>
+        <!-- Heatmap Row -->
+        <div class="card shadow-sm mb-4">
           <div class="card-body">
             <h5 class="card-title">Daily Practice Heatmap</h5>
             <div id="heatmapContainer" class="d-flex flex-wrap"></div>
           </div>
         </div>
-      </div>
-    
-
-    <!-- Speech Parts Breakdown Row -->
-   
-      <div class="col-lg-6">
-        <div class="card shadow-sm">
+        <!-- Performance Over Time Chart -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Performance Over Time</h5>
+            <div id="performanceOverTimeLoading">Loading...</div>
+            <canvas id="performanceOverTimeChart" style="display:none;"></canvas>
+          </div>
+        </div>
+        <!-- Speech Parts Breakdown Row -->
+        <div class="card shadow-sm mb-4">
           <div class="card-body">
             <h5 class="card-title">Speech Parts Breakdown</h5>
             <div id="speechPartBreakdownLoading">Loading...</div>
             <canvas id="speechPartBreakdownChart" style="display:none;"></canvas>
           </div>
         </div>
+        <!-- Vocabulary and Grammar Accuracy Chart -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Vocabulary and Grammar Accuracy</h5>
+            <div id="vocabGrammarAccuracyLoading">Loading...</div>
+            <canvas id="vocabGrammarAccuracyChart" style="display:none;"></canvas>
+          </div>
+        </div>
       </div>
-    
 
-    <!-- Cumulative Score Row -->
-    
       <div class="col-lg-6">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Answers Over Time</h5>
+            <div id="answersOverTimeLoading">Loading...</div>
+            <canvas id="answersOverTimeChart" style="display:none;"></canvas>
+          </div>
+        </div>
+        <!-- Cumulative Score Row -->
+
+        <div class="card shadow-sm mb-4">
           <div class="card-body">
             <h5 class="card-title">Cumulative Score Over Time</h5>
             <div id="cumulativeScoreLoading">Loading...</div>
             <canvas id="cumulativeScoreChart" style="display:none;"></canvas>
           </div>
         </div>
-      </div>
-    
-
-    <!-- Performance Over Time Chart -->
-
-  <div class="col-lg-6 mb-4">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Performance Over Time</h5>
-        <div id="performanceOverTimeLoading">Loading...</div>
-        <canvas id="performanceOverTimeChart" style="display:none;"></canvas>
-      </div>
-    </div>
-  </div>
-
-
-<!-- Daily Score Breakdown Chart -->
-
-  <div class="col-lg-6 mb-4">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Daily Score Breakdown</h5>
-        <div id="dailyScoreBreakdownLoading">Loading...</div>
-        <canvas id="dailyScoreBreakdownChart" style="display:none;"></canvas>
-      </div>
-    </div>
-  </div>
-
-
-<!-- Vocabulary and Grammar Accuracy Chart -->
-
-  <div class="col-lg-6 mb-4">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title">Vocabulary and Grammar Accuracy</h5>
-        <div id="vocabGrammarAccuracyLoading">Loading...</div>
-        <canvas id="vocabGrammarAccuracyChart" style="display:none;"></canvas>
-      </div>
-    </div>
-  </div>
-
-
-
-    <!-- Question Difficulty Breakdown Row -->
-    
-      <div class="col-12">
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <h5 class="card-title">Accuracy</h5>
+            <div id="accuracyLoading">Loading...</div>
+            <canvas id="accuracyChart" style="display:none;"></canvas>
+          </div>
+        </div>
+        <!-- Daily Score Breakdown Chart -->
         <div class="card shadow-sm">
           <div class="card-body">
-            <h5 class="card-title">Questions by Difficulty Level</h5>
-            <div id="difficultyLevelLoading">Loading...</div>
-            <canvas id="difficultyLevelChart" style="display:none;"></canvas>
+            <h5 class="card-title">Daily Score Breakdown</h5>
+            <div id="dailyScoreBreakdownLoading">Loading...</div>
+            <canvas id="dailyScoreBreakdownChart" style="display:none;"></canvas>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+        <!-- Question Difficulty Breakdown Row -->
+
+        <div class="col-12">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title">Questions by Difficulty Level</h5>
+              <div id="difficultyLevelLoading">Loading...</div>
+              <canvas id="difficultyLevelChart" style="display:none;"></canvas>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    </div>
   </div>
 
-  <!-- Firebase and External Libraries -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <!-- Custom JavaScript -->
-  <script src="firebase-config.js"></script>
-  <script src="auth.js"></script>
-  <script src="stats.js"></script>
+
+    <!-- Firebase and External Libraries -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="stats.js"></script>
 </body>
+
 </html>

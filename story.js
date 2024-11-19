@@ -12,6 +12,8 @@ let currentStoryData; // Store the loaded story data
 let isShowingTranslation = false; // Track translation toggle state
 let language = '';
 let knownLanguage = '';
+let startTime;
+let elapsedTime = 0;
 
 
 
@@ -77,6 +79,9 @@ async function loadStory() {
 
         // Re-attach event listener for "Test Your Knowledge" button
         document.getElementById('testYourKnowledgeBtn').onclick = startTest;
+
+        startTime = Date.now();
+
 
     } catch (error) {
         console.error("Error loading story:", error);
@@ -235,6 +240,11 @@ function submitAnswer(userAnswer) {
   if (userAnswer === correctAnswer) {
       correctAnswersCount++;
   }
+  if (currentQuestionIndex >= totalQuestions) {
+    // Stop the timer and calculate elapsed time
+    elapsedTime = Math.min(Math.floor((Date.now() - startTime) / 1000), 300);
+    debugger;
+}
 
   currentQuestionIndex++;
   loadNextQuestion();  // Load the next question
@@ -269,17 +279,55 @@ async function updateUserProgress(isCompleted) {
       const course = knownLanguage + "-" + language;
       const storyProgressRef = userDocRef.collection('stories').doc(course).collection(course).doc(storyId);
 
+      // Update story progress
       await storyProgressRef.set({
           lastAnswered: new Date().toISOString(),
           questionsAnsweredCorrect: correctAnswersCount,
           questionsAnsweredWrong: totalQuestions - correctAnswersCount,
-          finished: isCompleted
+          finished: isCompleted,
+          timeSpentStories: firebase.firestore.FieldValue.increment(elapsedTime) // Add time spent
+
       }, { merge: true });
 
       if (isCompleted) {
           await userDocRef.update({
               totalPoints: firebase.firestore.FieldValue.increment(200)
           });
+
+          // Get today's date in the format YYYY-MM-DD
+          const today = new Date().toISOString().split('T')[0];
+
+          // Reference to today's stats document
+          
+          const todayStatsRef = userDocRef
+    .collection('courses').doc(course)
+    .collection('stats').doc(today);
+
+
+          // Reference to all-time stats document
+          const allTimeStatsRef = userDocRef
+    .collection('courses').doc(course)
+    .collection('stats').doc('all-time');
+
+          // Update today's stats
+          await todayStatsRef.set({
+              storiesRead: firebase.firestore.FieldValue.increment(1),
+              storiesFinished: firebase.firestore.FieldValue.increment(1),
+              storyQuestionsAnsweredCorrect: firebase.firestore.FieldValue.increment(correctAnswersCount),
+              storyQuestionsAnsweredWrong: firebase.firestore.FieldValue.increment(totalQuestions - correctAnswersCount),
+              timeSpentStories: firebase.firestore.FieldValue.increment(elapsedTime) // Add time spent
+
+          }, { merge: true });
+
+          // Update all-time stats
+          await allTimeStatsRef.set({
+              storiesRead: firebase.firestore.FieldValue.increment(1),
+              storiesFinished: firebase.firestore.FieldValue.increment(1),
+              storyQuestionsAnsweredCorrect: firebase.firestore.FieldValue.increment(correctAnswersCount),
+              storyQuestionsAnsweredWrong: firebase.firestore.FieldValue.increment(totalQuestions - correctAnswersCount),
+              timeSpentStories: firebase.firestore.FieldValue.increment(elapsedTime) // Add time spent
+
+          }, { merge: true });
       }
 
   } catch (error) {
@@ -292,6 +340,8 @@ document.getElementById('retryTestBtn').onclick = function() {
   document.getElementById('testFeedback').style.display = 'none';
   correctAnswersCount = 0;  // Reset correct answers count
   currentQuestionIndex = 1;  // Reset to first question
+  elapsedTime = 0;  // Reset elapsed time
+  startTime = Date.now();  // Restart the timer
   startTest();  // Start the test again
 };
 
