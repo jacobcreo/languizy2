@@ -8,6 +8,8 @@ let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
 let previousQuestionId = null; // Ensure this is correctly initialized
+let questionStartTime; // Variable to store the start time of the question
+
 
 let uid = null;
 
@@ -496,6 +498,7 @@ function loadQuestionData(questionId, currentCourse) {
       if (questionDoc.exists) {
         displayQuestion(questionDoc.data(), questionId, currentCourse); // Pass currentCourse as a parameter
         previousQuestionId = questionId; // Ensure previousQuestionId is updated
+        
       } else {
         console.error('Question not found:', questionId);
       }
@@ -683,6 +686,8 @@ function hideLoadingProgress() {
   clearInterval($('#loading-progress').data('interval'));
   // Make the question area content visible again
   $('#question-area').css('visibility', 'visible').addClass('visible');
+  // Start the timer when the question is loaded
+  questionStartTime = new Date();
 }
 
 // Display the question on the page
@@ -876,6 +881,11 @@ function displayMissingWordTranslations(translationsArray) {
     $('#submit-answer').hide();
     $('#next-question').show();
 
+    const questionEndTime = new Date();
+  let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
+  timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
+  debugger;
+
     // Disable the toggle button after submission
     $('#toggle-mode').prop('disabled', true);
 
@@ -893,7 +903,7 @@ function displayMissingWordTranslations(translationsArray) {
 
     // Update visual stats and progress
     updateVisualStats(isCorrect);
-    updateUserProgress(questionId, isCorrect, currentCourse);
+    updateUserProgress(questionId, isCorrect, currentCourse, timeTaken);
 
     // Hide toggle-mode button and show explain-sentence button after answer is submitted
 $('#toggle-mode').hide();
@@ -1130,7 +1140,7 @@ function normalizeString(str) {
 }
 
 // Update user progress in the database
-function updateUserProgress(questionId, isCorrect, currentCourse) {
+function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
   var user = firebase.auth().currentUser;
 
   var userProgressRef = db.collection('users').doc(user.uid)
@@ -1177,7 +1187,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
             data.timesIncorrectInARow = 0; // Reset incorrect streak
             var daysToAdd = data.initialAppearance ? 28 : 2 * data.timesCorrectInARow;
             data.nextDue = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-            updateStats(userStatsRef, today, points, true);
+            updateStats(userStatsRef, today, points, true, timeTaken); // Pass timeTaken
             dailyScore += points; // Update the daily score
             $('#score').text(dailyScore); // Update the score on screen
           } else {
@@ -1187,7 +1197,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse) {
             data.timesCorrectInARow = 0; // Reset correct streak
             data.timesIncorrectInARow += 1; // Increment incorrect streak
             data.nextDue = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes
-            updateStats(userStatsRef, today, points, false);
+            updateStats(userStatsRef, today, points, false, timeTaken); // Pass timeTaken
           }
 
           // Update `lastAnswered` to the current time
@@ -1323,7 +1333,7 @@ function updateLastFiveAnswers() {
 }
 
 // Update stats in the database
-function updateStats(userStatsRef, date, score, isCorrect) {
+function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
   const dailyStatsRef = userStatsRef.doc(date);
   const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -1344,7 +1354,8 @@ function updateStats(userStatsRef, date, score, isCorrect) {
           vocabulary_correctAnswers: 0,
           vocabulary_wrongAnswers: 0,
           vocabulary_totalDrills: 0,
-          vocabulary_score: 0
+          vocabulary_score: 0,
+          DailyTime: 0 // Initialize DailyTime
         };
 
         // Ensure all fields are numbers
@@ -1356,12 +1367,16 @@ function updateStats(userStatsRef, date, score, isCorrect) {
         dailyData.vocabulary_score = ensureNumber(dailyData.vocabulary_score);
         dailyData.vocabulary_correctAnswers = ensureNumber(dailyData.vocabulary_correctAnswers);
         dailyData.vocabulary_wrongAnswers = ensureNumber(dailyData.vocabulary_wrongAnswers);
+        dailyData.DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
+
 
         // Update stats safely
         dailyData.totalDrills += 1;
         dailyData.score += score;
         dailyData.vocabulary_totalDrills += 1;
         dailyData.vocabulary_score += score;
+        dailyData.DailyTime += timeTaken; // Add time taken to DailyTime
+
 
         if (isCorrect) {
           dailyData.correctAnswers += 1;
@@ -1380,7 +1395,9 @@ function updateStats(userStatsRef, date, score, isCorrect) {
           vocabulary_totalCorrectAnswers: 0,
           vocabulary_totalWrongAnswers: 0,
           vocabulary_totalDrills: 0,
-          vocabulary_totalScore: 0
+          vocabulary_totalScore: 0,
+          TimeSpent: 0 // Initialize TimeSpent
+
         };
 
         // Ensure all fields are numbers
@@ -1392,12 +1409,16 @@ function updateStats(userStatsRef, date, score, isCorrect) {
         allTimeData.vocabulary_totalScore = ensureNumber(allTimeData.vocabulary_totalScore);
         allTimeData.vocabulary_totalCorrectAnswers = ensureNumber(allTimeData.vocabulary_totalCorrectAnswers);
         allTimeData.vocabulary_totalWrongAnswers = ensureNumber(allTimeData.vocabulary_totalWrongAnswers);
+        allTimeData.TimeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
+
 
         // Update stats safely
         allTimeData.totalDrills += 1;
         allTimeData.totalScore += score;
         allTimeData.vocabulary_totalDrills += 1;
         allTimeData.vocabulary_totalScore += score;
+        allTimeData.TimeSpent += timeTaken; // Add time taken to TimeSpent
+
 
         if (isCorrect) {
           allTimeData.totalCorrectAnswers += 1;

@@ -10,6 +10,9 @@ let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
 
+let questionStartTime; // Variable to store the start time of the question
+
+
 let uid = null;
 
 // Global variable to track the current mode (multiple-choice or text input)
@@ -722,6 +725,9 @@ function hideLoadingProgress() {
     clearInterval($('#loading-progress').data('interval'));
     // Make the question area content visible again
     $('#question-area').css('visibility', 'visible').addClass('visible');
+    // Start the timer when the question is loaded
+    questionStartTime = new Date();
+
 }
 
 // Display the question on the page
@@ -933,6 +939,11 @@ if (translationsText) {
         $('#submit-answer').hide();
         $('#next-question').show();
 
+        // Calculate the time taken to answer the question
+  const questionEndTime = new Date();
+  let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
+  timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
+
         // Disable the toggle button after submission
         $('#toggle-mode').prop('disabled', true);
 
@@ -950,7 +961,7 @@ if (translationsText) {
 
         // Update visual stats and progress
         updateVisualStats(isCorrect);
-        updateUserProgress(questionId, isCorrect, currentLesson);
+        updateUserProgress(questionId, isCorrect, currentLesson, timeTaken);
 
         // Hide toggle-mode button and show explain-lesson button after answer is submitted
         $('#toggle-mode').hide();
@@ -1180,7 +1191,7 @@ function normalizeString(str) {
 }
 
 // Update user progress in the database
-function updateUserProgress(questionId, isCorrect, languagePair) {
+function updateUserProgress(questionId, isCorrect, languagePair, timeTaken) {
     const user = firebase.auth().currentUser;
 
     const questionProgressRef = db.collection('users').doc(user.uid)
@@ -1231,7 +1242,7 @@ function updateUserProgress(questionId, isCorrect, languagePair) {
                 data.timesCorrectInARow++;
                 data.timesIncorrectInARow = 0; // Reset incorrect streak
                 data.nextDue = new Date(now.getTime() + (data.timesCorrectInARow * 24 * 60 * 60 * 1000)); // Add more days
-                updateStats(userStatsRef, today, points, true);
+                updateStats(userStatsRef, today, points, true, timeTaken);
 
                 dailyScore += points; // Update the daily score
                 $('#score').text(dailyScore); // Update the score on screen
@@ -1242,7 +1253,7 @@ function updateUserProgress(questionId, isCorrect, languagePair) {
                 data.timesIncorrectInARow++;
                 data.timesCorrectInARow = 0; // Reset correct streak
                 data.nextDue = new Date(now.getTime() + (5 * 60 * 1000)); // Next review in 5 minutes
-                updateStats(userStatsRef, today, points, true);
+                updateStats(userStatsRef, today, points, false, timeTaken);
 
             }
 
@@ -1349,7 +1360,7 @@ function updateLastFiveAnswers() {
 }
 
 // Update stats in the database
-function updateStats(userStatsRef, date, score, isCorrect) {
+function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
     debugger;
     const dailyStatsRef = userStatsRef.doc(date);
     const allTimeStatsRef = userStatsRef.doc('all-time');
@@ -1371,7 +1382,8 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                     grammar_correctAnswers: 0,
                     grammar_wrongAnswers: 0,
                     grammar_totalDrills: 0,
-                    grammar_score: 0
+                    grammar_score: 0,
+                    grammar_DailyTime: 0 // Initialize DailyTime
                 };
 
                 // Ensure all fields are numbers
@@ -1383,12 +1395,16 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                 dailyData.grammar_score = ensureNumber(dailyData.grammar_score);
                 dailyData.grammar_correctAnswers = ensureNumber(dailyData.grammar_correctAnswers);
                 dailyData.grammar_wrongAnswers = ensureNumber(dailyData.grammar_wrongAnswers);
+                dailyData.grammar_DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
+
 
                 // Update stats safely
                 dailyData.totalDrills += 1;
                 dailyData.score += score;
                 dailyData.grammar_totalDrills += 1;
                 dailyData.grammar_score += score;
+                dailyData.grammar_DailyTime += timeTaken; // Add time taken to DailyTime
+
 
                 if (isCorrect) {
                     dailyData.correctAnswers += 1;
@@ -1407,7 +1423,9 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                     grammar_totalCorrectAnswers: 0,
                     grammar_totalWrongAnswers: 0,
                     grammar_totalDrills: 0,
-                    grammar_totalScore: 0
+                    grammar_totalScore: 0,
+                    grammar_timeSpent: 0 // Initialize TimeSpent
+
                 };
 
                 // Ensure all fields are numbers
@@ -1419,12 +1437,16 @@ function updateStats(userStatsRef, date, score, isCorrect) {
                 allTimeData.grammar_totalScore = ensureNumber(allTimeData.grammar_totalScore);
                 allTimeData.grammar_totalCorrectAnswers = ensureNumber(allTimeData.grammar_totalCorrectAnswers);
                 allTimeData.grammar_totalWrongAnswers = ensureNumber(allTimeData.grammar_totalWrongAnswers);
+                allTimeData.grammar_timeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
+
 
                 // Update stats safely
                 allTimeData.totalDrills += 1;
                 allTimeData.totalScore += score;
                 allTimeData.grammar_totalDrills += 1;
                 allTimeData.grammar_totalScore += score;
+                allTimeData.grammar_timeSpent += timeTaken; // Add time taken to TimeSpent
+
 
                 if (isCorrect) {
                     allTimeData.totalCorrectAnswers += 1;

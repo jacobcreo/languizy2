@@ -29,12 +29,12 @@ async function loadStories(user) {
     console.log(`Current course: ${selectedCourse}`);
 
     // Fetch maxFrequency directly from the user's document under all-time stats
-    const highestFrequency = await getMaxFrequency(userDocRef, selectedCourse);
+    let highestFrequency = await getMaxFrequency(userDocRef, selectedCourse);
 
     if (!highestFrequency) {
-      console.log('No maxFrequency found, prompting the user to practice more.');
+      console.log('No maxFrequency found, defaulting to 0');
+      highestFrequency = 0;
       
-      return;
     }
 
     maxFrequencySeen = highestFrequency;
@@ -214,6 +214,7 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
       <div class="card-body">
         <h5 class="card-title">${storyData.storyTitle}${statusIcon}</h5>
         <p class="card-text">Words required: ${storyData.wordsRequired}</p>
+        <p class="card-text"> ${storyId}</p>
         
         ${readButton}
       </div>
