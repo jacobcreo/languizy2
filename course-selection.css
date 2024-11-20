@@ -312,3 +312,11 @@ button i {
   #recommendationBtn {
     visibility: hidden;
   }
+
+  #drillsAlert {
+    margin-bottom: 20px;
+}
+
+#drillsCard {
+    display: none; /* Initially hidden */
+}

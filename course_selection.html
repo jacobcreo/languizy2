@@ -44,6 +44,8 @@
         <!-- Cards Row -->
         <div class="row mb-0">
 
+            <div id="drillsAlert" style="display: none;"></div>
+
             <!-- Current Course Card -->
             <div class="col-xl-3 col-md-6 mb-4">
                 <div id="CurrentCourseCard" class="card border-left-primary shadow h-100 py-0">
@@ -70,7 +72,7 @@
             </div>
 
             <!-- **New Recommendation Card Starts Here** -->
-            <div class="col-xl-9 col-md-6 mb-4">
+            <div id="recCol" class="col-xl-6 col-md-6 mb-4">
                 <div id="CurrentRecommendationCard" class="card border-left-success shadow h-100 py-0">
                     <div class="fill-effect position-absolute top-0 start-0 h-100"></div>
                     <div class="card-body">
@@ -88,6 +90,9 @@
                 </div>
             </div>
             <!-- **New Recommendation Card Ends Here** -->
+
+            <div id="drillsCard" style="display: none;" class="col-xl-3 mb-4"></div>
+
 
             <!-- Vocabulary Covered Card -->
             <div class="col-xl-3 col-md-6 mb-4">
@@ -318,6 +323,21 @@
     </div>
 
 
+    </div>
+
+    <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="upgradeModalLabel">Upgrade Your Plan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Upgrade to a premium plan to unlock unlimited drills!</p>
+                    <button class="btn btn-primary" onclick="upgradePlan()">Upgrade Now</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal modal-lg fade" id="courseModal" tabindex="-1" aria-labelledby="courseModalLabel"

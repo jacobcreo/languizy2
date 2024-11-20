@@ -374,6 +374,75 @@ function loadTrainingOptions(currentCourse, userId) {
     console.log(`Enabled Chat button for course ${currentCourse}.`);
 }
 
+async function loadTodaysDrills(user, currentCourse) {
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const userDocRef = db.collection('users').doc(user.uid);
+    const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
+    
+    try {
+        const statsDoc = await courseDocRef.collection('stats').doc(today).get();
+        if (statsDoc.exists) {
+            const data = statsDoc.data();
+            const totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
+            const drillsMessage = `You have completed ${totalDrills} out of 50 drills today.`;
+            updateDrillsUI(totalDrills);
+        } else {
+            console.warn('No stats found for today.');
+        }
+    } catch (error) {
+        console.error("Error loading today's drills:", error);
+    }
+}
+
+// Update the UI based on the drills count
+function updateDrillsUI(totalDrills) {
+    const userLevel = 'Free'; // Assume you get this from user data
+    const drillsAlert = document.getElementById('drillsAlert');
+    const drillsCard = document.getElementById('drillsCard');
+
+    if (userLevel === 'Free') {
+        if (window.innerWidth >= 1200) { // For xl devices
+            drillsCard.innerHTML = `
+                <div class="card border-left-warning shadow h-100 py-0">
+                    <div class="card-body">
+                        <h5 class="card-title text-danger text-uppercase">   <i class="fas fa-check-circle fa-fw"></i> Today's Drills</h5>
+                        <p>${totalDrills} out of 50 drills completed today.</p>
+                    </div>
+                    <div class="card-footer">
+                        <button class="btn btn-warning" onclick="showUpgradeModal() id="recommendationBtn">
+                            <i class="fas fa-arrow-right"></i> Upgrade
+                        </button>
+                    </div>
+                </div>
+            `;
+            drillsCard.style.display = 'block';
+        } else { // For smaller devices
+            drillsAlert.innerHTML = `
+                <div class="alert alert-warning" role="alert">
+                    ${totalDrills} out of 50 drills completed today. 
+                    <a href="#" onclick="showUpgradeModal()">Upgrade</a> to continue.
+                </div>
+            `;
+            drillsAlert.style.display = 'block';
+        }
+    } else {
+        if (window.innerWidth >= 1200) { // For xl devices
+    const recCol = document.getElementById('recCol');
+    recCol.classList.remove('col-xl-6');
+    recCol.classList.add('col-xl-9');
+    }
+}
+}
+
+function showUpgradeModal() {
+    const modalElement = document.getElementById('upgradeModal');
+    const modalInstance = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+    modalInstance.show();
+}
+
 // Logout function
 function logout() {
     firebase.auth().signOut().then(() => {
@@ -748,6 +817,9 @@ async function loadCardData(user, currentCourse) {
 
         // Wait for all category data to be fetched
         await Promise.all([vocabPromise, grammarPromise, chatPromise, storiesPromise]);
+        
+        await loadTodaysDrills(user, currentCourse); // Load today's drills
+
 
         // Calculate and display recommendation
         calculateAndDisplayRecommendation();
