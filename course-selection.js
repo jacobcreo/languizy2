@@ -1,6 +1,7 @@
 // Initialize Firebase Firestore
 const db = firebase.firestore();
 let languageLearned = '';
+let drillsLimitReached = false;
 
 const languageShorts = {
     'en': 'English',
@@ -204,20 +205,20 @@ async function loadStreak(user) {
 
 
         // Get today's date
-    /*    
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const todayDateStr = today.toLocaleDateString('en-CA');
-
-        // Determine if the streak was extended today
-        const streakExtendedToday = datesSet.has(todayDateStr);
-
-        // Calculate time left to extend the streak (until midnight)
-        const now = new Date();
-        const midnight = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-        const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
-*/
+        /*    
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+    
+            const todayDateStr = today.toLocaleDateString('en-CA');
+    
+            // Determine if the streak was extended today
+            const streakExtendedToday = datesSet.has(todayDateStr);
+    
+            // Calculate time left to extend the streak (until midnight)
+            const now = new Date();
+            const midnight = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+            const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
+    */
 
         // Update streak display
         document.getElementById('streakCount').textContent = `${currentStreak || 0} Days`;
@@ -321,7 +322,11 @@ function loadTrainingOptions(currentCourse, userId) {
 
     // Set up button actions
     continueCourseBtn.onclick = function () {
+        if (!drillsLimitReached) {
         window.location.href = `practice.html?courseId=${currentCourse}`;
+        } else {
+            showUpgradeModal();
+        }
     };
     document.getElementById('statsBtn').disabled = false;
     document.getElementById('statsBtn').onclick = function () {
@@ -358,7 +363,11 @@ function loadTrainingOptions(currentCourse, userId) {
             if (!grammarSnap.empty) {
                 grammarBtn.disabled = false;
                 grammarBtn.onclick = function () {
+                    if (!drillsLimitReached) {
                     window.location.href = 'grammar-topics.html';
+                    } else {
+                        showUpgradeModal();
+                    }
                 };
                 console.log(`Grammar topics available for course ${currentCourse}. Enabled Grammar button.`);
             } else {
@@ -378,7 +387,7 @@ async function loadTodaysDrills(user, currentCourse) {
     const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
     const userDocRef = db.collection('users').doc(user.uid);
     const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
-    
+
     try {
         const statsDoc = await courseDocRef.collection('stats').doc(today).get();
         if (statsDoc.exists) {
@@ -400,7 +409,13 @@ function updateDrillsUI(totalDrills) {
     const drillsAlert = document.getElementById('drillsAlert');
     const drillsCard = document.getElementById('drillsCard');
 
+
+
     if (userLevel === 'Free') {
+        if (totalDrills >= 50) {
+
+            drillsLimitReached = true;
+        }
         if (window.innerWidth >= 1200) { // For xl devices
             drillsCard.innerHTML = `
                 <div class="card border-left-warning shadow h-100 py-0">
@@ -409,7 +424,7 @@ function updateDrillsUI(totalDrills) {
                         <p>${totalDrills} out of 50 drills completed today.</p>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-warning" onclick="showUpgradeModal() id="recommendationBtn">
+                        <button class="btn btn-warning" onclick="showUpgradeModal()" id="upgBtn">
                             <i class="fas fa-arrow-right"></i> Upgrade
                         </button>
                     </div>
@@ -427,11 +442,11 @@ function updateDrillsUI(totalDrills) {
         }
     } else {
         if (window.innerWidth >= 1200) { // For xl devices
-    const recCol = document.getElementById('recCol');
-    recCol.classList.remove('col-xl-6');
-    recCol.classList.add('col-xl-9');
+            const recCol = document.getElementById('recCol');
+            recCol.classList.remove('col-xl-6');
+            recCol.classList.add('col-xl-9');
+        }
     }
-}
 }
 
 function showUpgradeModal() {
@@ -570,6 +585,19 @@ function calculateRecommendation(vocab, grammar, stories, chat) {
     // Initialize variables to determine recommendation
     let recommendation = null;
     let reason = '';
+    debugger;
+    if (drillsLimitReached) {
+        recommendation = {
+            name: 'Upgrade',
+            buttonColor: 'success',
+            buttonId: 'upgradeBtn',
+            icon: 'fas fa-exclamation-triangle',
+            onClick: 'showUpgradeModal'
+        };
+        reason = 'I would normally recommend you to continue practicing, but as a user on the Free Plan, you are limited to 50 exercises per day. Consider upgrading for unlimited use, or come back tomorrow for more in-depth practice.';
+        console.log(`Recommendation Reason: All categories are at 0%. Recommending Vocabulary to initiate your learning journey.`);
+        return { recommendation, reason };
+    }
 
     // Check if all categories are 0%
     if (vocab === 0 && grammar === 0 && stories === 0 && chat === 0) {
@@ -688,6 +716,9 @@ function updateRecommendationCard(recommendationObj) {
         case 'Chat':
             message = "Engaging in conversations will boost your speaking and listening skills. Let's start chatting!";
             break;
+        case 'Upgrade':
+            message = "I would normally recommend you to continue practicing, but as a user on the Free Plan, you are limited to 50 exercises per day. Consider upgrading for unlimited use, or come back tomorrow for more in-depth practice."; 
+            break;
         default:
             message = "Let's continue your learning journey!";
     }
@@ -713,6 +744,9 @@ function updateRecommendationCard(recommendationObj) {
                 break;
             case 'Chat':
                 window.location.href = 'chat.html';
+                break;
+            case 'Upgrade':
+                showUpgradeModal();
                 break;
             default:
                 console.warn('Unknown recommendation category');
@@ -817,7 +851,7 @@ async function loadCardData(user, currentCourse) {
 
         // Wait for all category data to be fetched
         await Promise.all([vocabPromise, grammarPromise, chatPromise, storiesPromise]);
-        
+
         await loadTodaysDrills(user, currentCourse); // Load today's drills
 
 
@@ -860,4 +894,24 @@ function checkReg(user) {
             'tier': 'Free'
         });
     }
+}
+
+function selectPlan(planType) {
+    if (planType === 'monthly') {
+        // Logic to handle monthly plan selection
+        console.log("Monthly plan selected");
+    } else if (planType === 'yearly') {
+        // Logic to handle yearly plan selection
+        console.log("Yearly plan selected");
+    }
+    // Redirect to payment or confirmation page
+}
+
+function continueFree() {
+    // Logic to continue with the free plan
+    console.log("Continuing with the free plan");
+    // Close the modal
+    const modalElement = document.getElementById('upgradeModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    modalInstance.hide();
 }

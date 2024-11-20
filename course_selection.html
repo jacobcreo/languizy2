@@ -326,15 +326,55 @@
     </div>
 
     <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="upgradeModalLabel">Upgrade Your Plan</h5>
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title" id="upgradeModalLabel">Unlock Your Full Potential</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Upgrade to a premium plan to unlock unlimited drills!</p>
-                    <button class="btn btn-primary" onclick="upgradePlan()">Upgrade Now</button>
+                    <p>Upgrade to our Pro Plan and transform your language learning journey. Enjoy unlimited access to all features and take your skills to the next level!</p>
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Free Plan</th>
+                                <th>Pro Plan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Daily Exercises per Course</td>
+                                <td>50</td>
+                                <td>Unlimited</td>
+                            </tr>
+                            <tr>
+                                <td>Stories</td>
+                                <td>Limited</td>
+                                <td>All Stories</td>
+                            </tr>
+                            <tr>
+                                <td>AI Chats</td>
+                                <td>Short Conversations</td>
+                                <td>Longer Conversations</td>
+                            </tr>
+                            <tr>
+                                <td>Stats</td>
+                                <td>Limited</td>
+                                <td>Full Stats</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="alert alert-info mt-4">
+                        <strong>Special Offer:</strong> Get 25% off with our yearly plan - only $63!
+                    </div>
+                </div>
+                <div class="modal-footer flex-column flex-sm-row">
+                    <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue Free</button>
+                    <div class="d-flex flex-column flex-sm-row">
+                        <button class="btn btn-primary me-sm-2 mb-2 mb-sm-0" onclick="selectPlan('monthly')">Pro Plan - $6.99/month</button>
+                        <button class="btn btn-success mb-2 mb-sm-0" onclick="selectPlan('yearly')">Pro Plan - $63/year</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -465,6 +465,8 @@ function loadQuestion(user, currentLesson) {
         window.location.href = 'course_selection.html';
         return;
     }
+debugger;
+    checkDrillsLimit(user, window.currentLanguagePair);
 
     // Show a random encouragement message when loading a new question
     showEncouragementMessage();
@@ -1423,7 +1425,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 
 
                 // Update stats safely
-                dailyData.totalDrills += 1;
+                
                 dailyData.score += score;
                 dailyData.grammar_totalDrills += 1;
                 dailyData.grammar_score += score;
@@ -1431,10 +1433,10 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 
 
                 if (isCorrect) {
-                    dailyData.correctAnswers += 1;
+                    
                     dailyData.grammar_correctAnswers += 1;
                 } else {
-                    dailyData.wrongAnswers += 1;
+                    
                     dailyData.grammar_wrongAnswers += 1;
                 }
 
@@ -1465,18 +1467,18 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 
 
                 // Update stats safely
-                allTimeData.totalDrills += 1;
+                
                 allTimeData.totalScore += score;
                 allTimeData.grammar_totalDrills += 1;
-                allTimeData.grammar_totalScore += score;
+                
                 allTimeData.grammar_timeSpent += timeTaken; // Add time taken to TimeSpent
 
 
                 if (isCorrect) {
-                    allTimeData.totalCorrectAnswers += 1;
+                    
                     allTimeData.grammar_totalCorrectAnswers += 1;
                 } else {
-                    allTimeData.totalWrongAnswers += 1;
+                    
                     allTimeData.grammar_totalWrongAnswers += 1;
                 }
 
@@ -1907,3 +1909,54 @@ function backToSelection(what) {
       alert('Please enter a comment before submitting.');
     }
   });
+
+  // Function to check drills and show modal if limit is reached
+async function checkDrillsLimit(user, currentCourse) {
+
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+    // Create a date object for the current date
+    const now = new Date();
+    
+    // Format the date according to the user's timezone
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+    
+    // Split the formatted date into parts
+    const [month, day, year] = formattedDate.split('/');
+    
+    // Create the date in yyyy-mm-dd format
+    var today = `${year}-${month}-${day}`;
+    
+    const userDocRef = db.collection('users').doc(user.uid);
+    const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
+    
+    try {
+        const statsDoc = await courseDocRef.collection('stats').doc(today).get();
+        let totalDrills = 0;
+  
+        if (statsDoc.exists) {
+            const data = statsDoc.data();
+            totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
+        }
+  
+        // Check subscription level
+        const userData = await userDocRef.get();
+        const subLevel = userData.data().subLevel;
+        
+        if (subLevel === 'Free' && totalDrills >= 50) {
+            // Show modal if drills limit is reached
+            const modalElement = new bootstrap.Modal(document.getElementById('drillsLimitModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            modalElement.show();
+        } else {
+            // Proceed with loading drills or questions
+            // loadQuestions(user, currentCourse);
+        }
+    } catch (error) {
+        console.error("Error checking drills limit:", error);
+    }
+  }
+  

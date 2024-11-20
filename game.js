@@ -260,6 +260,7 @@ firebase.auth().onAuthStateChanged(function (user) {
           window.location.href = 'course_selection.html';
           return;
         }
+        
         loadDailyScore(user, currentCourse);
         initializeDefaultMode();
         loadQuestion(user, currentCourse);
@@ -463,6 +464,8 @@ function loadQuestion(user, currentCourse) {
     window.location.href = 'course_selection.html';
     return;
   }
+
+  checkDrillsLimit(user, currentCourse);
 
   // Show a random encouragement message when loading a new question
   showEncouragementMessage();
@@ -1706,3 +1709,57 @@ $('#help-button').on('click', function () {
       alert('Please enter a comment before submitting.');
     }
   });
+
+  // Function to check drills and show modal if limit is reached
+async function checkDrillsLimit(user, currentCourse) {
+
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Create a date object for the current date
+  const now = new Date();
+  
+  // Format the date according to the user's timezone
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+  
+  // Split the formatted date into parts
+  const [month, day, year] = formattedDate.split('/');
+  
+  // Create the date in yyyy-mm-dd format
+  var today = `${year}-${month}-${day}`;
+  
+  const userDocRef = db.collection('users').doc(user.uid);
+  const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
+  
+  try {
+      const statsDoc = await courseDocRef.collection('stats').doc(today).get();
+      let totalDrills = 0;
+
+      if (statsDoc.exists) {
+          const data = statsDoc.data();
+          totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
+      }
+
+      // Check subscription level
+      const userData = await userDocRef.get();
+      const subLevel = userData.data().subLevel;
+      
+      if (subLevel === 'Free' && totalDrills >= 50) {
+          // Show modal if drills limit is reached
+          const modalElement = new bootstrap.Modal(document.getElementById('drillsLimitModal'), {
+              backdrop: 'static',
+              keyboard: false
+          });
+          modalElement.show();
+      } else {
+          // Proceed with loading drills or questions
+          // loadQuestions(user, currentCourse);
+      }
+  } catch (error) {
+      console.error("Error checking drills limit:", error);
+  }
+}
+
+function afterDrillCompleted(user, currentCourse) {
+  checkDrillsLimit(user, currentCourse);
+}
