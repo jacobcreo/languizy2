@@ -134,7 +134,7 @@ async function loadHeadline(user) {
         }
         document.querySelector('#headlineCard .fill-effect').style.animation = 'none';
 
-        
+
     } catch (error) {
         console.error("Error fetching headline: ", error);
     }
@@ -171,7 +171,40 @@ async function loadStreak(user) {
         const streakInfo = calculateStreaks(Array.from(datesSet));
         const currentStreak = streakInfo.currentStreak;
 
+        // new 
+
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        // const userTimezone = 'America/New_York';
+
+
+        // Create a date object for the current date
+        const now = new Date();
+
+        // Format the date according to the user's timezone
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+
+        // Split the formatted date into parts
+        const [month, day, year] = formattedDate.split('/');
+
+        // Create the date in yyyy-mm-dd format
+        var today = `${year}-${month}-${day}`;
+
+        const streakExtendedToday = datesSet.has(today);
+
+        const midnight = new Date(today);
+        midnight.setDate(midnight.getDate() + 1); // Move to the next day
+
+        // Calculate time left to extend the streak (until midnight)
+        const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
+
+        debugger;
+        // end new
+
+
+
         // Get today's date
+    /*    
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -184,6 +217,7 @@ async function loadStreak(user) {
         const now = new Date();
         const midnight = new Date(today.getTime() + 24 * 60 * 60 * 1000);
         const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
+*/
 
         // Update streak display
         document.getElementById('streakCount').textContent = `${currentStreak || 0} Days`;
@@ -202,7 +236,7 @@ async function loadStreak(user) {
             console.log(`Streak not extended today for user ${user.uid}. ${hoursLeft} hours left to extend.`);
         }
         document.querySelector('#CurrentStreakCard .fill-effect').style.animation = 'none';
-    document.getElementById('streakCount').style.visibility = 'visible';
+        document.getElementById('streakCount').style.visibility = 'visible';
 
 
     } catch (error) {
@@ -615,7 +649,7 @@ function updateRecommendationCard(recommendationObj) {
                 console.warn('Unknown recommendation category');
         }
     };
-    
+
     document.querySelector('#CurrentRecommendationCard .fill-effect').style.animation = 'none';
 
     console.log(`Recommendation Updated: ${recommendation.name} - ${reason}`);
@@ -629,8 +663,8 @@ async function loadCardData(user, currentCourse) {
     document.getElementById('currentCourseName').textContent = `${languageShorts[courseParts[0]]} to ${languageShorts[courseParts[1]]}`;
     document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
     document.getElementById('currentCourseFlag').style.visibility = 'visible';
-    
-    
+
+
     document.querySelector('#CurrentCourseCard .fill-effect').style.animation = 'none';
 
 
@@ -688,7 +722,7 @@ async function loadCardData(user, currentCourse) {
                 document.getElementById('chatProgress').style.width = `${chatPercentage}%`;
                 document.getElementById('chatProgress').setAttribute('aria-valuenow', chatPercentage);
                 document.getElementById('chatBtn').textContent = 'Chat in ' + languageShorts[courseParts[1]];
-                
+
                 console.log(`Loaded Chat Percentage: ${chatPercentage}%`);
                 document.querySelector('#CurrentChatCard .fill-effect').style.animation = 'none';
 
@@ -744,14 +778,14 @@ async function loadCardData(user, currentCourse) {
 }
 
 function checkReg(user) {
-const urlParams = new URLSearchParams(window.location.search);
-const regParam = urlParams.get('reg');
+    const urlParams = new URLSearchParams(window.location.search);
+    const regParam = urlParams.get('reg');
 
-if (regParam && regParam.length > 2) {
-    gtag('event', 'Signup', {
-        'method': 'google_login',
-        'user_id': user.uid,
-        'tier': 'Free'
-    });
-}
+    if (regParam && regParam.length > 2) {
+        gtag('event', 'Signup', {
+            'method': 'google_login',
+            'user_id': user.uid,
+            'tier': 'Free'
+        });
+    }
 }

@@ -416,8 +416,21 @@ function validateLesson(lessonId, language, knownLanguage) {
 
 // Function to load daily score from Firestore
 function loadDailyScore(user, currentCourse) {
-    debugger;
-    var today = new Date().toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// Create a date object for the current date
+const now = new Date();
+
+// Format the date according to the user's timezone
+const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+
+// Split the formatted date into parts
+const [month, day, year] = formattedDate.split('/');
+
+// Create the date in yyyy-mm-dd format
+var today = `${year}-${month}-${day}`;
+    
 
     // Fetch user's current lesson stats from the "grammar" sub-collection
     var userStatsRef = db.collection('users').doc(user.uid)
@@ -1222,10 +1235,21 @@ function updateUserProgress(questionId, isCorrect, languagePair, timeTaken) {
             console.log('before the update data: ');
             console.log(data);
 
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+            // Create a date object for the current date
             const now = new Date();
-            var today = now.toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
-
+            
+            // Format the date according to the user's timezone
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+            const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+            
+            // Split the formatted date into parts
+            const [month, day, year] = formattedDate.split('/');
+            
+            // Create the date in yyyy-mm-dd format
+            var today = `${year}-${month}-${day}`;
+            
             
 
             var points = isCorrect ? 10 : 0;

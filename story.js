@@ -295,7 +295,20 @@ async function updateUserProgress(isCompleted) {
           });
 
           // Get today's date in the format YYYY-MM-DD
-          const today = new Date().toISOString().split('T')[0];
+          const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// Create a date object for the current date
+const now = new Date();
+
+// Format the date according to the user's timezone
+const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+
+// Split the formatted date into parts
+const [month, day, year] = formattedDate.split('/');
+
+// Create the date in yyyy-mm-dd format
+var today = `${year}-${month}-${day}`;
 
           // Reference to today's stats document
           
