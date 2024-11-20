@@ -95,6 +95,7 @@ function handleUserLogin(user) {
         displayName: user.displayName,
         photoURL: user.photoURL,
         lastLogin: firebase.firestore.Timestamp.now(),
+        joinDate: firebase.firestore.Timestamp.now(),
         subLevel: 'Free'
       }).then(() => {
         console.log('New user data saved.');

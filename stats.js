@@ -72,17 +72,14 @@ async function loadStats(user) {
     const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
 
     // Display loading messages for each chart
-    setLoadingState('speechPartBreakdownChart', 'speechPartBreakdownLoading');
-    setLoadingState('answersOverTimeChart', 'answersOverTimeLoading');
-    setLoadingState('accuracyChart', 'accuracyLoading');
-    setLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
-    setLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
-    setLoadingState('performanceOverTimeChart', 'performanceOverTimeLoading');
-    setLoadingState('dailyScoreBreakdownChart', 'dailyScoreBreakdownLoading');
-    setLoadingState('vocabGrammarAccuracyChart', 'vocabGrammarAccuracyLoading');
-    setLoadingState('timeSpentChart', 'timeSpentLoading');
+    const chartIds = [
+      'speechPartBreakdownChart', 'answersOverTimeChart', 'accuracyChart',
+      'cumulativeScoreChart', 'difficultyLevelChart', 'performanceOverTimeChart',
+      'dailyScoreBreakdownChart', 'vocabGrammarAccuracyChart', 'timeSpentChart'
+    ];
+    chartIds.forEach(id => setLoadingState(id, `${id}Loading`));
 
-    // Fetch user courses and stats concurrently
+    // Fetch user document and courses in parallel
     const [userDoc, coursesSnapshot] = await Promise.all([
       userDocRef.get(),
       userDocRef.collection('courses').get()
@@ -91,143 +88,182 @@ async function loadStats(user) {
     if (!userDoc.exists) return console.error('No such user!');
     if (coursesSnapshot.empty) return console.warn('No courses found for this user.');
 
-    // Variables for stats aggregation
-    let earliestDate = null;
-    let totalCorrectAnswers = 0;
-    let totalWrongAnswers = 0;
-    let totalScore = 0;
-    let totalDrills = 0;
-    let dailyStats = [];
-    let datesSet = new Set();
-    let vocabCorrect = 0, vocabWrong = 0, grammarCorrect = 0, grammarWrong = 0;
-
-    // Fetch stats for all courses at once
-    const courseStatsPromises = coursesSnapshot.docs.map(courseDoc => {
-      if (selectedCourse !== 'all' && courseDoc.id !== selectedCourse) return null;
-      return userDocRef.collection('courses').doc(courseDoc.id).collection('stats').get();
+    // Prepare to fetch stats for all courses
+    const courseIds = coursesSnapshot.docs.map(doc => doc.id);
+    const statsPromises = courseIds.map(courseId => {
+      if (selectedCourse !== 'all' && courseId !== selectedCourse) return null;
+      return userDocRef.collection('courses').doc(courseId).collection('stats').get();
     });
 
-    const statsSnapshots = await Promise.all(courseStatsPromises);
+    const statsSnapshots = await Promise.all(statsPromises);
 
-    statsSnapshots.forEach(statsSnapshot => {
-      if (!statsSnapshot) return;
+    // Process stats data
+    const statsData = processStatsData(statsSnapshots, selectedTimeInterval);
 
-      statsSnapshot.forEach(doc => {
-        const data = doc.data();
-        const dateId = doc.id;
+    // Fetch and display the "Day Joined" date
+    const dayJoined = userDoc.data().joinDate; // Assuming 'dayJoined' is stored in the user document
+    debugger;
+    displayDayJoined(dayJoined);
 
-        // Filter by time interval
-        if (selectedTimeInterval === 'last-7-days') {
-          const date = new Date(dateId);
-          const today = new Date();
-          const sevenDaysAgo = new Date(today);
-          sevenDaysAgo.setDate(today.getDate() - 6);
+    // Update UI with processed data
+    updateUIWithStats(statsData);
 
-          if (date < sevenDaysAgo || date > today) {
-            return; // Skip dates outside the last 7 days
-          }
-        }
-
-        if (dateId === 'all-time') {
-          totalCorrectAnswers += data.totalCorrectAnswers || 0;
-          totalWrongAnswers += data.totalWrongAnswers || 0;
-          totalScore += data.totalScore || 0;
-          totalDrills += data.totalDrills || 0;
-
-          // Use the correct field names for "all-time" document
-          vocabCorrect += data.vocabulary_totalCorrectAnswers || 0;
-          vocabWrong += data.vocabulary_totalWrongAnswers || 0;
-          grammarCorrect += data.grammar_totalCorrectAnswers || 0;
-          grammarWrong += data.grammar_totalWrongAnswers || 0;
-        } else {
-          const date = new Date(dateId);
-          if (!earliestDate || date < earliestDate) earliestDate = date;
-
-          dailyStats.push({
-            date: dateId,
-            correctAnswers: data.correctAnswers || 0,
-            wrongAnswers: data.wrongAnswers || 0,
-            score: data.score || 0,
-            totalDrills: data.totalDrills || 0,
-            vocabularyScore: data.vocabulary_score || 0,
-            grammarScore: data.grammar_score || 0
-          });
-
-          // Aggregate daily stats for vocabulary and grammar accuracy
-          vocabCorrect += data.vocabulary_correctAnswers || 0;
-          vocabWrong += data.vocabulary_wrongAnswers || 0;
-          grammarCorrect += data.grammar_correctAnswers || 0;
-          grammarWrong += data.grammar_wrongAnswers || 0;
-
-          datesSet.add(dateId);
-        }
-      });
-    });
-
-    // Determine Day Joined
-    const dayJoined = earliestDate ? earliestDate.toLocaleDateString() : 'N/A';
-
-    // Calculate Streaks
-    const streakInfo = calculateStreaks(Array.from(datesSet));
-    const currentStreak = streakInfo.currentStreak;
-    const longestStreak = streakInfo.longestStreak;
-
-    const totalDaysPracticed = datesSet.size;
-
-    // Calculate Average Score
-    const averageScore = totalDaysPracticed > 0 ? (totalScore / totalDaysPracticed).toFixed(2) : 0;
-
-    // Update HTML Elements with Calculated Statistics
-    document.getElementById('dayJoined').innerText = `Day Joined: ${dayJoined}`;
-    document.getElementById('currentStreak').innerText = `Current Streak: ${currentStreak}`;
-    document.getElementById('longestStreak').innerText = `Longest Streak: ${longestStreak}`;
-    document.getElementById('totalDaysPracticed').innerText = `Total Days Practiced: ${totalDaysPracticed}`;
-    document.getElementById('averageScore').innerText = `Average Score: ${averageScore}`;
-    document.getElementById('totalWrongAnswers').innerText = `Total Wrong Answers: ${totalWrongAnswers}`;
-
-    // Generate a Complete Date Range and Fill Missing Dates
-    const latestDate = new Date(); // Assume latest date is today
-    if (!earliestDate) earliestDate = latestDate; // If there's no earliest date, set it to today
-
-    const sortedDailyStats = dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
-    const dateRange = generateDateRange(earliestDate, latestDate);
-
-    // Fill in missing dates in dailyStats with zero values
-    const filledDailyStats = dateRange.map(date => {
-      const existingStat = sortedDailyStats.find(stat => stat.date === date);
-      return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0, vocabularyScore: 0, grammarScore: 0 };
-    });
-
-    // Prepare Data for Charts
-    const answersOverTimeData = filledDailyStats.map(stat => ({
-      date: stat.date,
-      correctAnswers: stat.correctAnswers,
-      wrongAnswers: stat.wrongAnswers
-    }));
-
-    // Display Charts and Heatmap
-    await Promise.all([
-      displayTimeSpentChart(userDocRef, selectedCourse, dateRange), // Pass dateRange here
-      displayTimeSpentDistributionChart(userDocRef, selectedCourse, dateRange),
-      displaySpeechPartBreakdownChart(userDocRef, selectedCourse),
-      displayAnswersOverTimeChart(answersOverTimeData),
-      displayAccuracyChart(totalCorrectAnswers, totalWrongAnswers),
-      displayCumulativeScoreChart(filledDailyStats),
-      displayDifficultyLevelChart(userDocRef, selectedCourse),
-      displayHeatmap(Array.from(datesSet)),
-      displayPerformanceOverTimeChart(filledDailyStats),
-      displayDailyScoreBreakdownChart(filledDailyStats),
-      displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorrect, grammarWrong)
-      
-
-    ]);
+    // Display charts
+    await displayCharts(userDocRef, selectedCourse, statsData);
 
   } catch (error) {
     console.error('Error loading stats:', error);
   }
 }
 
+function displayDayJoined(dayJoined) {
+  const formattedDayJoined = dayJoined ? dayJoined.toDate().toLocaleDateString() : 'N/A';
+  document.getElementById('dayJoined').innerText = `Day Joined: ${formattedDayJoined}`;
+}
 
+async function displayCharts(userDocRef, selectedCourse, statsData) {
+  const { dailyStats, datesSet, vocabCorrect, vocabWrong, grammarCorrect, grammarWrong } = statsData;
+
+  // Generate a Complete Date Range and Fill Missing Dates
+  const latestDate = new Date(); // Assume latest date is today
+  const earliestDate = statsData.earliestDate || latestDate; // If there's no earliest date, set it to today
+
+  const sortedDailyStats = dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
+  const dateRange = generateDateRange(earliestDate, latestDate);
+
+  // Fill in missing dates in dailyStats with zero values
+  const filledDailyStats = dateRange.map(date => {
+    const existingStat = sortedDailyStats.find(stat => stat.date === date);
+    return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0, vocabularyScore: 0, grammarScore: 0 };
+  });
+
+  // Prepare Data for Charts
+  const answersOverTimeData = filledDailyStats.map(stat => ({
+    date: stat.date,
+    correctAnswers: stat.correctAnswers,
+    wrongAnswers: stat.wrongAnswers
+  }));
+
+  // Display Charts and Heatmap
+  await Promise.all([
+    displayTimeSpentChart(userDocRef, selectedCourse, dateRange), // Pass dateRange here
+    displayTimeSpentDistributionChart(userDocRef, selectedCourse, dateRange),
+    displaySpeechPartBreakdownChart(userDocRef, selectedCourse),
+    displayAnswersOverTimeChart(answersOverTimeData),
+    displayAccuracyChart(statsData.totalCorrectAnswers, statsData.totalWrongAnswers),
+    displayCumulativeScoreChart(filledDailyStats),
+    displayDifficultyLevelChart(userDocRef, selectedCourse),
+    displayHeatmap(Array.from(datesSet)),
+    displayPerformanceOverTimeChart(filledDailyStats),
+    displayDailyScoreBreakdownChart(filledDailyStats),
+    displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorrect, grammarWrong)
+  ]);
+}
+
+function processStatsData(statsSnapshots, selectedTimeInterval) {
+  let earliestDate = null;
+  let totalCorrectAnswers = 0;
+  let totalWrongAnswers = 0;
+  let totalScore = 0;
+  let totalDrills = 0;
+  let dailyStats = [];
+  let datesSet = new Set();
+  let vocabCorrect = 0, vocabWrong = 0, grammarCorrect = 0, grammarWrong = 0;
+
+  statsSnapshots.forEach(statsSnapshot => {
+    if (!statsSnapshot) return;
+
+    statsSnapshot.forEach(doc => {
+      const data = doc.data();
+      const dateId = doc.id;
+
+      // Filter by time interval
+      if (selectedTimeInterval === 'last-7-days') {
+        const date = new Date(dateId);
+        const today = new Date();
+        const sevenDaysAgo = new Date(today);
+        sevenDaysAgo.setDate(today.getDate() - 6);
+
+        if (date < sevenDaysAgo || date > today) {
+          return; // Skip dates outside the last 7 days
+        }
+      }
+
+      if (dateId === 'all-time') {
+        totalCorrectAnswers += data.totalCorrectAnswers || 0;
+        totalWrongAnswers += data.totalWrongAnswers || 0;
+        totalScore += data.totalScore || 0;
+        totalDrills += data.totalDrills || 0;
+
+        // Use the correct field names for "all-time" document
+        vocabCorrect += data.vocabulary_totalCorrectAnswers || 0;
+        vocabWrong += data.vocabulary_totalWrongAnswers || 0;
+        grammarCorrect += data.grammar_totalCorrectAnswers || 0;
+        grammarWrong += data.grammar_totalWrongAnswers || 0;
+      } else {
+        const date = new Date(dateId);
+        if (!earliestDate || date < earliestDate) earliestDate = date;
+
+        dailyStats.push({
+          date: dateId,
+          correctAnswers: data.correctAnswers || 0,
+          wrongAnswers: data.wrongAnswers || 0,
+          score: data.score || 0,
+          totalDrills: data.totalDrills || 0,
+          vocabularyScore: data.vocabulary_score || 0,
+          grammarScore: data.grammar_score || 0
+        });
+
+        // Aggregate daily stats for vocabulary and grammar accuracy
+        vocabCorrect += data.vocabulary_correctAnswers || 0;
+        vocabWrong += data.vocabulary_wrongAnswers || 0;
+        grammarCorrect += data.grammar_correctAnswers || 0;
+        grammarWrong += data.grammar_wrongAnswers || 0;
+
+        datesSet.add(dateId);
+      }
+    });
+  });
+
+  return {
+    earliestDate,
+    totalCorrectAnswers,
+    totalWrongAnswers,
+    totalScore,
+    totalDrills,
+    dailyStats,
+    datesSet,
+    vocabCorrect,
+    vocabWrong,
+    grammarCorrect,
+    grammarWrong
+  };
+}
+
+function updateUIWithStats(statsData) {
+  const { earliestDate, totalCorrectAnswers, totalWrongAnswers, totalScore, dailyStats, datesSet } = statsData;
+
+  // Determine Day Joined
+  // const dayJoined = earliestDate ? earliestDate.toLocaleDateString() : 'N/A';
+
+  // Calculate Streaks
+  const streakInfo = calculateStreaks(Array.from(datesSet));
+  const currentStreak = streakInfo.currentStreak;
+  const longestStreak = streakInfo.longestStreak;
+
+  const totalDaysPracticed = datesSet.size;
+
+  // Calculate Average Score
+  const averageScore = totalDaysPracticed > 0 ? (totalScore / totalDaysPracticed).toFixed(2) : 0;
+
+  // Update HTML Elements with Calculated Statistics
+  // document.getElementById('dayJoined').innerText = `Day Joined: ${dayJoined}`;
+  document.getElementById('currentStreak').innerText = `Current Streak: ${currentStreak}`;
+  document.getElementById('longestStreak').innerText = `Longest Streak: ${longestStreak}`;
+  document.getElementById('totalDaysPracticed').innerText = `Total Days Practiced: ${totalDaysPracticed}`;
+  document.getElementById('averageScore').innerText = `Average Score: ${averageScore}`;
+  document.getElementById('totalWrongAnswers').innerText = `Total Wrong Answers: ${totalWrongAnswers}`;
+}
 
 /**
  * Set a loading state for the chart containers
