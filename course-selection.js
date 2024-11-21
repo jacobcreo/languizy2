@@ -323,7 +323,7 @@ function loadTrainingOptions(currentCourse, userId) {
     // Set up button actions
     continueCourseBtn.onclick = function () {
         if (!drillsLimitReached) {
-        window.location.href = `practice.html?courseId=${currentCourse}`;
+            window.location.href = `practice.html?courseId=${currentCourse}`;
         } else {
             showUpgradeModal();
         }
@@ -364,7 +364,7 @@ function loadTrainingOptions(currentCourse, userId) {
                 grammarBtn.disabled = false;
                 grammarBtn.onclick = function () {
                     if (!drillsLimitReached) {
-                    window.location.href = 'grammar-topics.html';
+                        window.location.href = 'grammar-topics.html';
                     } else {
                         showUpgradeModal();
                     }
@@ -389,23 +389,26 @@ async function loadTodaysDrills(user, currentCourse) {
     const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
 
     try {
+        var totalDrills = 0;
         const statsDoc = await courseDocRef.collection('stats').doc(today).get();
         if (statsDoc.exists) {
             const data = statsDoc.data();
-            const totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
-            const drillsMessage = `You have completed ${totalDrills} out of 50 drills today.`;
-            updateDrillsUI(totalDrills);
-        } else {
-            console.warn('No stats found for today.');
+            totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
         }
-    } catch (error) {
-        console.error("Error loading today's drills:", error);
-    }
+
+        const userDoc = await userDocRef.get();
+        const subLevel = userDoc.exists ? userDoc.data().subLevel : 'Free';
+        updateDrillsUI(totalDrills, subLevel);
+     
+
+}  catch (error) {
+    console.error("Error loading today's drills:", error);
+}
 }
 
 // Update the UI based on the drills count
-function updateDrillsUI(totalDrills) {
-    const userLevel = 'Free'; // Assume you get this from user data
+function updateDrillsUI(totalDrills, userLevel) {
+
     const drillsAlert = document.getElementById('drillsAlert');
     const drillsCard = document.getElementById('drillsCard');
 
@@ -540,29 +543,59 @@ function populateModalCourses(user) {
         renderCourseList(filteredCourses);
     });
 
-    selectButton.addEventListener('click', () => {
+    selectButton.addEventListener('click', async () => {
         if (selectedCourse) {
-            db.collection('users').doc(user.uid).update({
-                currentCourse: selectedCourse
-            }).then(() => {
+            const userDocRef = db.collection('users').doc(user.uid);
+            const courseDocRef = userDocRef.collection('courses').doc(selectedCourse);
+            const [knownLanguage, targetLanguage] = selectedCourse.split('-');
+
+            try {
+                // Check and update the course document
+                const courseDoc = await courseDocRef.get();
+                if (!courseDoc.exists) {
+                    await courseDocRef.set({
+                        knownLanguage: knownLanguage,
+                        targetLanguage: targetLanguage
+                    });
+                } else {
+                    const courseData = courseDoc.data();
+                    if (!courseData.knownLanguage || !courseData.targetLanguage) {
+                        await courseDocRef.update({
+                            knownLanguage: knownLanguage,
+                            targetLanguage: targetLanguage
+                        });
+                    }
+                }
+
+                // Check and update the 'all-time' stats document
+                const statsDocRef = courseDocRef.collection('stats').doc('all-time');
+                const statsDoc = await statsDocRef.get();
+                if (!statsDoc.exists) {
+                    await statsDocRef.set({ maxFrequency: 0 });
+                }
+
+                // Update the current course
+                await userDocRef.update({
+                    currentCourse: selectedCourse
+                });
+
                 // Fire the gtag event and simulate waiting for it to complete
-                return new Promise((resolve) => {
+                await new Promise((resolve) => {
                     gtag('event', 'Course Selection', {
                         'user_id': user.uid,
                         'course': selectedCourse
                     });
-                    // Simulate a delay to ensure gtag has time to process
                     setTimeout(resolve, 500); // Adjust the timeout as needed
                 });
-            }).then(() => {
+
                 const modalElement = document.getElementById('courseModal');
                 const modalInstance = bootstrap.Modal.getInstance(modalElement);
                 modalInstance.hide();
                 console.log(`Updated current course to ${selectedCourse} for user ${user.uid}. Reloading page.`);
                 window.location.reload();
-            }).catch((error) => {
+            } catch (error) {
                 console.error("Error setting current course:", error);
-            });
+            }
         }
     });
 }
@@ -717,7 +750,7 @@ function updateRecommendationCard(recommendationObj) {
             message = "Engaging in conversations will boost your speaking and listening skills. Let's start chatting!";
             break;
         case 'Upgrade':
-            message = "I would normally recommend you to continue practicing, but as a user on the Free Plan, you are limited to 50 exercises per day. Consider upgrading for unlimited use, or come back tomorrow for more in-depth practice."; 
+            message = "I would normally recommend you to continue practicing, but as a user on the Free Plan, you are limited to 50 exercises per day. Consider upgrading for unlimited use, or come back tomorrow for more in-depth practice.";
             break;
         default:
             message = "Let's continue your learning journey!";
@@ -760,6 +793,7 @@ function updateRecommendationCard(recommendationObj) {
 
 // Function to load data for the cards
 async function loadCardData(user, currentCourse) {
+    debugger;
     const courseParts = currentCourse.split('-');
     const targetLanguageCode = courseParts[1];
     const targetLanguage = languageShorts[targetLanguageCode] || targetLanguageCode;
