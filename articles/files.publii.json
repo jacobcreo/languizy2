@@ -127,12 +127,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "48d344d1f5f6978268a3b0578cda6940"
+        "md5": "196aa74a9b5ef62c632a7755b424837e"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "5de1679b1c77aedfb910d8767d7e1358"
+        "md5": "ff29700772124e3c23d6d641aa3fec63"
     },
     {
         "path": "how-to-learn-a-language-without-feeling-overwhelmed.html",
@@ -142,7 +142,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "a5e34677cf438f3e40dbbd3461a75ddf"
+        "md5": "d4ca54354ea81a7d85953a28eb234b5b"
     },
     {
         "path": "language-learning-myths-debunked.html",
@@ -295,6 +295,51 @@
         "md5": "38a5c95376706532c65dafebe438bac8"
     },
     {
+        "path": "media/posts/6",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "media/posts/6/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/6/responsive/storytelling-2xl.png",
+        "type": "file",
+        "md5": "846e22adfd9f7ec5074bacc14380fdbc"
+    },
+    {
+        "path": "/media/posts/6/responsive/storytelling-lg.png",
+        "type": "file",
+        "md5": "846e22adfd9f7ec5074bacc14380fdbc"
+    },
+    {
+        "path": "/media/posts/6/responsive/storytelling-md.png",
+        "type": "file",
+        "md5": "846e22adfd9f7ec5074bacc14380fdbc"
+    },
+    {
+        "path": "/media/posts/6/responsive/storytelling-sm.png",
+        "type": "file",
+        "md5": "da06c96d63eb80e8ee9a610b8d0b88de"
+    },
+    {
+        "path": "/media/posts/6/responsive/storytelling-xl.png",
+        "type": "file",
+        "md5": "846e22adfd9f7ec5074bacc14380fdbc"
+    },
+    {
+        "path": "/media/posts/6/responsive/storytelling-xs.png",
+        "type": "file",
+        "md5": "30cebed5dda7d50c05e3608d67cbf9df"
+    },
+    {
+        "path": "/media/posts/6/storytelling.png",
+        "type": "file",
+        "md5": "f33a3f8ea05fd768e928f97bccbadcb3"
+    },
+    {
         "path": "media/website",
         "type": "directory",
         "md5": false
@@ -347,7 +392,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "d4aba70fb72eefd5b4f0092745182c99"
+        "md5": "819192213365f6a768fa990e8e5eb764"
     },
     {
         "path": "sitemap.xsl",
@@ -363,6 +408,11 @@
         "path": "/tags/index.html",
         "type": "file",
         "md5": "54793b03c8c66766193a0a3ee2ed2615"
+    },
+    {
+        "path": "the-power-of-storytelling-in-language-learning.html",
+        "type": "file",
+        "md5": "dee8fd47b0fc9da3b318b4772d79728e"
     },
     {
         "path": "the-science-of-language-learning.html",
