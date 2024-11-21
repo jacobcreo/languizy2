@@ -25,30 +25,28 @@ firebase.auth().onAuthStateChanged(async (user) => {
         await loadStreak(user);
         await fetchOrAssignCoach(user);
         await loadUserAvatar(user); // Load user avatar in the navbar
-        db.collection('users').doc(user.uid).get().then(async (doc) => {
-            if (doc.exists) {
-                populateModalCourses(user); // Populate modal with course options
-                const currentCourse = doc.data().currentCourse;
-                if (currentCourse) {
-                    await loadCardData(user, currentCourse);
-                    loadTrainingOptions(currentCourse, user.uid);
-                } else {
-                    showCourseModal(user);
-                }
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+            populateModalCourses(user); // Populate modal with course options
+            const currentCourse = userDoc.data().currentCourse;
+            if (currentCourse) {
+                await loadCardData(user, currentCourse);
+                loadTrainingOptions(currentCourse, user.uid);
+            } else {
+                showCourseModal(user);
             }
-        });
+        }
     } else {
         window.location.href = '/';
     }
 });
 
 // Load User Avatar or Initials into Navbar
-function loadUserAvatar(user) {
-    const userRef = db.collection('users').doc(user.uid);
-
-    userRef.get().then((doc) => {
-        if (doc.exists) {
-            const userData = doc.data();
+async function loadUserAvatar(user) {
+    try {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
             const photoURL = userData.photoURL;
             const displayName = userData.displayName || '';
             const email = userData.email || '';
@@ -67,9 +65,9 @@ function loadUserAvatar(user) {
         } else {
             console.error('User data does not exist in Firestore');
         }
-    }).catch((error) => {
+    } catch (error) {
         console.error('Error loading user avatar:', error);
-    });
+    }
 }
 
 // Fetch or assign the coach for the user
@@ -134,8 +132,6 @@ async function loadHeadline(user) {
             console.log(`No headline found for date ${todayString}. Using default message.`);
         }
         document.querySelector('#headlineCard .fill-effect').style.animation = 'none';
-
-
     } catch (error) {
         console.error("Error fetching headline: ", error);
     }
@@ -172,23 +168,11 @@ async function loadStreak(user) {
         const streakInfo = calculateStreaks(Array.from(datesSet));
         const currentStreak = streakInfo.currentStreak;
 
-        // new 
-
         const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        // const userTimezone = 'America/New_York';
-
-
-        // Create a date object for the current date
         const now = new Date();
-
-        // Format the date according to the user's timezone
         const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
         const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
-
-        // Split the formatted date into parts
         const [month, day, year] = formattedDate.split('/');
-
-        // Create the date in yyyy-mm-dd format
         var today = `${year}-${month}-${day}`;
 
         const streakExtendedToday = datesSet.has(today);
@@ -198,27 +182,6 @@ async function loadStreak(user) {
 
         // Calculate time left to extend the streak (until midnight)
         const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
-
-        debugger;
-        // end new
-
-
-
-        // Get today's date
-        /*    
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-    
-            const todayDateStr = today.toLocaleDateString('en-CA');
-    
-            // Determine if the streak was extended today
-            const streakExtendedToday = datesSet.has(todayDateStr);
-    
-            // Calculate time left to extend the streak (until midnight)
-            const now = new Date();
-            const midnight = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-            const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
-    */
 
         // Update streak display
         document.getElementById('streakCount').textContent = `${currentStreak || 0} Days`;
@@ -238,13 +201,10 @@ async function loadStreak(user) {
         }
         document.querySelector('#CurrentStreakCard .fill-effect').style.animation = 'none';
         document.getElementById('streakCount').style.visibility = 'visible';
-
-
     } catch (error) {
         console.error("Error fetching streak: ", error);
         document.getElementById('streakCount').textContent = "0 Days";
         document.getElementById('streakCount').style.visibility = 'visible';
-
     }
 }
 
@@ -399,24 +359,18 @@ async function loadTodaysDrills(user, currentCourse) {
         const userDoc = await userDocRef.get();
         const subLevel = userDoc.exists ? userDoc.data().subLevel : 'Free';
         updateDrillsUI(totalDrills, subLevel);
-     
-
-}  catch (error) {
-    console.error("Error loading today's drills:", error);
-}
+    } catch (error) {
+        console.error("Error loading today's drills:", error);
+    }
 }
 
 // Update the UI based on the drills count
 function updateDrillsUI(totalDrills, userLevel) {
-
     const drillsAlert = document.getElementById('drillsAlert');
     const drillsCard = document.getElementById('drillsCard');
 
-
-
     if (userLevel === 'Free') {
         if (totalDrills >= 50) {
-
             drillsLimitReached = true;
         }
         if (window.innerWidth >= 1200) { // For xl devices
@@ -612,13 +566,11 @@ function showCourseModal(user) {
     });
 }
 
-
 // **New Function: Calculate Recommendation**
 function calculateRecommendation(vocab, grammar, stories, chat) {
     // Initialize variables to determine recommendation
     let recommendation = null;
     let reason = '';
-    debugger;
     if (drillsLimitReached) {
         recommendation = {
             name: 'Upgrade',
@@ -793,7 +745,6 @@ function updateRecommendationCard(recommendationObj) {
 
 // Function to load data for the cards
 async function loadCardData(user, currentCourse) {
-    debugger;
     const courseParts = currentCourse.split('-');
     const targetLanguageCode = courseParts[1];
     const targetLanguage = languageShorts[targetLanguageCode] || targetLanguageCode;
@@ -801,9 +752,7 @@ async function loadCardData(user, currentCourse) {
     document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
     document.getElementById('currentCourseFlag').style.visibility = 'visible';
 
-
     document.querySelector('#CurrentCourseCard .fill-effect').style.animation = 'none';
-
 
     // Initialize variables to store percentages
     let vocabPercentage = 0;
@@ -823,7 +772,6 @@ async function loadCardData(user, currentCourse) {
                     document.getElementById('vocabProgress').setAttribute('aria-valuenow', vocabPercentage);
                     console.log(`Loaded Vocabulary Percentage: ${vocabPercentage}%`);
                     document.querySelector('#CurrentPracticeCard .fill-effect').style.animation = 'none';
-
                 } else {
                     document.querySelector('#CurrentPracticeCard .fill-effect').style.animation = 'none';
                 }
@@ -842,7 +790,6 @@ async function loadCardData(user, currentCourse) {
                     document.getElementById('grammarProgress').setAttribute('aria-valuenow', grammarPercentage);
                     console.log(`Loaded Grammar Percentage: ${grammarPercentage}%`);
                     document.querySelector('#CurrentGrammarCard .fill-effect').style.animation = 'none';
-
                 } else {
                     document.querySelector('#CurrentGrammarCard .fill-effect').style.animation = 'none';
                 }
@@ -862,7 +809,6 @@ async function loadCardData(user, currentCourse) {
 
                 console.log(`Loaded Chat Percentage: ${chatPercentage}%`);
                 document.querySelector('#CurrentChatCard .fill-effect').style.animation = 'none';
-
             })
             .catch((error) => {
                 console.error("Error fetching chat stats:", error);
@@ -877,7 +823,6 @@ async function loadCardData(user, currentCourse) {
                 document.getElementById('storiesProgress').setAttribute('aria-valuenow', storiesPercentage);
                 console.log(`Loaded Stories Percentage: ${storiesPercentage}%`);
                 document.querySelector('#CurrentStoriesCard .fill-effect').style.animation = 'none';
-
             })
             .catch((error) => {
                 console.error("Error fetching stories stats:", error);
@@ -888,10 +833,8 @@ async function loadCardData(user, currentCourse) {
 
         await loadTodaysDrills(user, currentCourse); // Load today's drills
 
-
         // Calculate and display recommendation
         calculateAndDisplayRecommendation();
-
     } catch (error) {
         console.error("Error loading card data:", error);
     }
@@ -932,10 +875,10 @@ function checkReg(user) {
 
 function selectPlan(planType) {
     if (planType === 'monthly') {
-        // Logic to handle monthly plan selection
+        alert('You have selected the ' + planType + ' plan. Upgrade options coming soon. Enjoy your extended Free plan for now.');
         console.log("Monthly plan selected");
     } else if (planType === 'yearly') {
-        // Logic to handle yearly plan selection
+        alert('You have selected the ' + planType + ' plan. Upgrade options coming soon. Enjoy your extended Free plan for now.');
         console.log("Yearly plan selected");
     }
     // Redirect to payment or confirmation page
@@ -943,6 +886,7 @@ function selectPlan(planType) {
 
 function continueFree() {
     // Logic to continue with the free plan
+    alert('You have selected the ' + planType + ' plan. Upgrade options coming soon. Enjoy your extended Free plan for now.');
     console.log("Continuing with the free plan");
     // Close the modal
     const modalElement = document.getElementById('upgradeModal');
