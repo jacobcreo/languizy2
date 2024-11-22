@@ -127,12 +127,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "196aa74a9b5ef62c632a7755b424837e"
+        "md5": "c25b9512e8279d1b8b780a66dab8de63"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "ff29700772124e3c23d6d641aa3fec63"
+        "md5": "427c829e734eec9947a4de969dcd3b8d"
     },
     {
         "path": "how-to-learn-a-language-without-feeling-overwhelmed.html",
@@ -142,12 +142,17 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "d4ca54354ea81a7d85953a28eb234b5b"
+        "md5": "939b186eb72bb0e085e6867a6f32e367"
     },
     {
         "path": "language-learning-myths-debunked.html",
         "type": "file",
         "md5": "bb8ba7eb10bf40cea8b2daacbd386829"
+    },
+    {
+        "path": "language-learning-through-music.html",
+        "type": "file",
+        "md5": "e69f9a2916124780f3d8c7bb24fec63d"
     },
     {
         "path": "media",
@@ -340,6 +345,51 @@
         "md5": "f33a3f8ea05fd768e928f97bccbadcb3"
     },
     {
+        "path": "media/posts/7",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/7/music_language.png",
+        "type": "file",
+        "md5": "8d1e6ffee146a7d6cc3cd170c4e92208"
+    },
+    {
+        "path": "media/posts/7/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/7/responsive/music_language-2xl.png",
+        "type": "file",
+        "md5": "fc41d0acfe2e40940b77e30321a4ede6"
+    },
+    {
+        "path": "/media/posts/7/responsive/music_language-lg.png",
+        "type": "file",
+        "md5": "fc41d0acfe2e40940b77e30321a4ede6"
+    },
+    {
+        "path": "/media/posts/7/responsive/music_language-md.png",
+        "type": "file",
+        "md5": "fc41d0acfe2e40940b77e30321a4ede6"
+    },
+    {
+        "path": "/media/posts/7/responsive/music_language-sm.png",
+        "type": "file",
+        "md5": "d749e1999f40ea585f6aee8957d1eb79"
+    },
+    {
+        "path": "/media/posts/7/responsive/music_language-xl.png",
+        "type": "file",
+        "md5": "fc41d0acfe2e40940b77e30321a4ede6"
+    },
+    {
+        "path": "/media/posts/7/responsive/music_language-xs.png",
+        "type": "file",
+        "md5": "fe6b5a0c12b0b1d7dcd8cb904de3fa98"
+    },
+    {
         "path": "media/website",
         "type": "directory",
         "md5": false
@@ -392,7 +442,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "819192213365f6a768fa990e8e5eb764"
+        "md5": "c0e4fd103ac162a7a61921d990684f50"
     },
     {
         "path": "sitemap.xsl",
