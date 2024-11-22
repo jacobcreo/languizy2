@@ -927,7 +927,8 @@ function displayQuestion(question, questionId, currentCourse) {
       'question_type': 'Vocabulary',
       'user_id': uid,
       'answer': isCorrect,
-      'course': window.currentCourse
+      'course': window.currentCourse,
+      'mode': isMultipleChoice ? 'Multiple_Choice' : 'Cloze'
   });
 
     const questionEndTime = new Date();
