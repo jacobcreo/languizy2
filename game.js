@@ -90,22 +90,22 @@ let interimMessageInterval;
 
 var audioElement = new Audio(); // Create a new audio element
 const countryToLanguage = {
-    cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
-    in: { languageCode: "hi-IN", voice: "Aditi" },         // India
-    us: { languageCode: "en-US", voice: "Joanna" },        // United States
-    br: { languageCode: "pt-BR", voice: "Camila" },        // Brazil
-    ru: { languageCode: "ru-RU", voice: "Tatyana" },       // Russia
-    jp: { languageCode: "ja-JP", voice: "Mizuki" },        // Japan
-    eg: { languageCode: "arb", voice: "Zeina" },           // Egypt (Arabic)
-    tr: { languageCode: "tr-TR", voice: "Filiz" },         // Turkey
-    de: { languageCode: "de-DE", voice: "Marlene" },       // Germany
-    fr: { languageCode: "fr-FR", voice: "Celine" },        // France
-    es: { languageCode: "es-ES", voice: "Conchita" },      // Spain
-    it: { languageCode: "it-IT", voice: "Carla" },         // Italy
-    nl: { languageCode: "nl-NL", voice: "Lotte" },         // Netherlands
-    sv: { languageCode: "sv-SE", voice: "Astrid" },        // Sweden
-    no: { languageCode: "nb-NO", voice: "Liv" },           // Norway
-    dk: { languageCode: "da-DK", voice: "Naja" }           // Denmark
+  cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
+  in: { languageCode: "hi-IN", voice: "Aditi" },         // India
+  us: { languageCode: "en-US", voice: "Joanna" },        // United States
+  br: { languageCode: "pt-BR", voice: "Camila" },        // Brazil
+  ru: { languageCode: "ru-RU", voice: "Tatyana" },       // Russia
+  jp: { languageCode: "ja-JP", voice: "Mizuki" },        // Japan
+  eg: { languageCode: "arb", voice: "Zeina" },           // Egypt (Arabic)
+  tr: { languageCode: "tr-TR", voice: "Filiz" },         // Turkey
+  de: { languageCode: "de-DE", voice: "Marlene" },       // Germany
+  fr: { languageCode: "fr-FR", voice: "Celine" },        // France
+  es: { languageCode: "es-ES", voice: "Conchita" },      // Spain
+  it: { languageCode: "it-IT", voice: "Carla" },         // Italy
+  nl: { languageCode: "nl-NL", voice: "Lotte" },         // Netherlands
+  sv: { languageCode: "sv-SE", voice: "Astrid" },        // Sweden
+  no: { languageCode: "nb-NO", voice: "Liv" },           // Norway
+  dk: { languageCode: "da-DK", voice: "Naja" }           // Denmark
 };
 
 const languageToSpecialChars = {
@@ -127,37 +127,37 @@ function loadUserAvatar(user) {
   uid = user.uid;
 
   userRef.get().then((doc) => {
-      if (doc.exists) {
-          const userData = doc.data();
-          const photoURL = userData.photoURL;
-          const displayName = userData.displayName || '';
-          const email = userData.email || '';
-          
-          // Get the avatar element in the navbar
-          const userAvatar = document.getElementById('userAvatar');
+    if (doc.exists) {
+      const userData = doc.data();
+      const photoURL = userData.photoURL;
+      const displayName = userData.displayName || '';
+      const email = userData.email || '';
 
-          if (photoURL) {
-              // If photoURL exists, display the user's profile image
-              userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
-          } else {
-              // If no photoURL, create a circle with initials
-              const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
-              userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
-          }
-          userAvatar.onclick = () => {
-            window.location.href = '/settings.html';
-        };
+      // Get the avatar element in the navbar
+      const userAvatar = document.getElementById('userAvatar');
+
+      if (photoURL) {
+        // If photoURL exists, display the user's profile image
+        userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
       } else {
-          console.error('User data does not exist in Firestore');
+        // If no photoURL, create a circle with initials
+        const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
+        userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
       }
+      userAvatar.onclick = () => {
+        window.location.href = '/settings.html';
+      };
+    } else {
+      console.error('User data does not exist in Firestore');
+    }
   }).catch((error) => {
-      console.error('Error loading user avatar:', error);
+    console.error('Error loading user avatar:', error);
   });
 }
 
 async function fetchOrAssignCoach(user) {
   const userRef = db.collection('users').doc(user.uid);
-  
+
   try {
     // Get user document to find coach ID
     const userDoc = await userRef.get();
@@ -223,66 +223,66 @@ function setCoachImage(imageFilename) {
 
 
 function updateFlagIcons(currentCourse) {
-    const flagCard = document.getElementById('flag-card');
-    if (!flagCard) return;
+  const flagCard = document.getElementById('flag-card');
+  if (!flagCard) return;
 
-    // Clear existing flags
-    flagCard.innerHTML = '';
+  // Clear existing flags
+  flagCard.innerHTML = '';
 
-    // Define a mapping of course IDs to flag icons
-    const courseToFlags = {
-        'en-de': ['assets/icons/en-flag.png', 'assets/icons/de-flag.png'],
-        'en-es': ['assets/icons/en-flag.png', 'assets/icons/es-flag.png'],
-        'en-fr': ['assets/icons/en-flag.png', 'assets/icons/fr-flag.png'],
-        'en-it': ['assets/icons/en-flag.png', 'assets/icons/it-flag.png'],
-        'en-ru': ['assets/icons/en-flag.png', 'assets/icons/ru-flag.png'],
-        'en-cn': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],        
-        'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
-        'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
-        // Add more courses and their corresponding flags here
-    };
+  // Define a mapping of course IDs to flag icons
+  const courseToFlags = {
+    'en-de': ['assets/icons/en-flag.png', 'assets/icons/de-flag.png'],
+    'en-es': ['assets/icons/en-flag.png', 'assets/icons/es-flag.png'],
+    'en-fr': ['assets/icons/en-flag.png', 'assets/icons/fr-flag.png'],
+    'en-it': ['assets/icons/en-flag.png', 'assets/icons/it-flag.png'],
+    'en-ru': ['assets/icons/en-flag.png', 'assets/icons/ru-flag.png'],
+    'en-cn': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],
+    'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
+    'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
+    // Add more courses and their corresponding flags here
+  };
 
-    const flags = courseToFlags[currentCourse];
-    if (flags) {
-      
-        flags.forEach(flagSrc => {
-            const img = document.createElement('img');
-            img.src = flagSrc;
-            img.alt = 'Flag';
-            img.width = 32;
-            if (flagCard.children.length === 0) {
-                img.classList.add('me-2');
-                img.classList.add('d-none');
-                img.classList.add('d-lg-inline');
-            }
-            flagCard.appendChild(img);
-            
-        });
-    } else {
-        console.warn(`No flags found for course: ${currentCourse}`);
-    }
+  const flags = courseToFlags[currentCourse];
+  if (flags) {
+
+    flags.forEach(flagSrc => {
+      const img = document.createElement('img');
+      img.src = flagSrc;
+      img.alt = 'Flag';
+      img.width = 32;
+      if (flagCard.children.length === 0) {
+        img.classList.add('me-2');
+        img.classList.add('d-none');
+        img.classList.add('d-lg-inline');
+      }
+      flagCard.appendChild(img);
+
+    });
+  } else {
+    console.warn(`No flags found for course: ${currentCourse}`);
+  }
 }
 
 firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     fetchOrAssignCoach(user).then(() => {
       fetchCurrentCourse(user).then((currentCourse) => {
-        loadUserAvatar(user); 
+        loadUserAvatar(user);
         if (!currentCourse) {
           console.error('No valid current course found.');
           window.location.href = 'course_selection.html';
           return;
         }
-        
+
         loadDailyScore(user, currentCourse);
         initializeDefaultMode();
         loadQuestion(user, currentCourse);
         updateFlagIcons(currentCourse);
         updateMaxFrequency(user, currentCourse);
 
-         const targetLanguage = currentCourse.split('-')[1];
-         updateSpecialCharacters(targetLanguage);
- 
+        const targetLanguage = currentCourse.split('-')[1];
+        updateSpecialCharacters(targetLanguage);
+
       }).catch((error) => {
         console.error('Error fetching current course:', error);
         window.location.href = 'course_selection.html';
@@ -317,66 +317,72 @@ function updateMaxFrequency(user, currentCourse) {
 }
 // Function to initialize the default mode based on screen size
 function initializeDefaultMode() {
-    if (window.innerWidth < 768) { // Mobile devices
-        isMultipleChoice = true; // Set to multiple-choice
-        $('#toggle-mode').text('Make it harder');
-    } else {
-        isMultipleChoice = false; // Set to text input
-        $('#toggle-mode').text('Make it easier');
-    }
+  if (window.innerWidth < 768) { // Mobile devices
+    isMultipleChoice = true; // Set to multiple-choice
+    $('#toggle-mode').text('Make it harder');
+  } else {
+    isMultipleChoice = false; // Set to text input
+    $('#toggle-mode').text('Make it easier');
+  }
 
-    // Add an event listener for the toggle button
-    $('#toggle-mode').off('click').on('click', toggleMode);
+  // Add an event listener for the toggle button
+  $('#toggle-mode').off('click').on('click', toggleMode);
 }
 
 // Function to toggle between modes
 function toggleMode() {
-    isMultipleChoice = !isMultipleChoice; // Toggle the mode
-    $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
-    // Reload the current question with the new mode
-    displayQuestion(currentQuestionData, currentQuestionId, currentCourse);
+  isMultipleChoice = !isMultipleChoice; // Toggle the mode
+  $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
+  gtag('event', 'Toggle Mode', {
+    'question_type': 'Vocabulary',
+    'user_id': user.uid,
+    'user_pressed': isMultipleChoice ? 'Make it easier' : 'Make it harder',
+    'course': window.currentCourse
+});
+  // Reload the current question with the new mode
+  displayQuestion(currentQuestionData, currentQuestionId, currentCourse);
 }
 
 // Function to fetch the current course based on URL or Firestore
 function fetchCurrentCourse(user) {
   return new Promise((resolve, reject) => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const courseIdFromUrl = urlParams.get('courseId');
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseIdFromUrl = urlParams.get('courseId');
 
-      if (courseIdFromUrl) {
-          console.log(`Course ID found in URL: ${courseIdFromUrl}`);
+    if (courseIdFromUrl) {
+      console.log(`Course ID found in URL: ${courseIdFromUrl}`);
 
-          // Check if the course exists (validate that questions exist for this course)
-          validateCourse(courseIdFromUrl).then((isValidCourse) => {
-              if (isValidCourse) {
-                  // If the course exists, register it under the user's 'courses' sub-collection
-                  registerUserCourse(user, courseIdFromUrl).then(() => {
-                      // Also update the `currentCourse` field in Firestore for the user
-                      updateCurrentCourseInFirestore(user, courseIdFromUrl).then(() => {
-                          resolve(courseIdFromUrl); // Now resolve the promise
-                      }).catch(reject);
-                  }).catch(reject);
-              } else {
-                  // If the URL course is invalid, fall back to Firestore course
-                  console.warn('Invalid course ID in URL, falling back to Firestore currentCourse.');
-                  getFirestoreCurrentCourse(user).then(resolve).catch(reject);
-              }
+      // Check if the course exists (validate that questions exist for this course)
+      validateCourse(courseIdFromUrl).then((isValidCourse) => {
+        if (isValidCourse) {
+          // If the course exists, register it under the user's 'courses' sub-collection
+          registerUserCourse(user, courseIdFromUrl).then(() => {
+            // Also update the `currentCourse` field in Firestore for the user
+            updateCurrentCourseInFirestore(user, courseIdFromUrl).then(() => {
+              resolve(courseIdFromUrl); // Now resolve the promise
+            }).catch(reject);
           }).catch(reject);
-      } else {
-          // No course in URL, fallback to Firestore
+        } else {
+          // If the URL course is invalid, fall back to Firestore course
+          console.warn('Invalid course ID in URL, falling back to Firestore currentCourse.');
           getFirestoreCurrentCourse(user).then(resolve).catch(reject);
-      }
+        }
+      }).catch(reject);
+    } else {
+      // No course in URL, fallback to Firestore
+      getFirestoreCurrentCourse(user).then(resolve).catch(reject);
+    }
   });
 }
 
 // Function to update Firestore with the new course selection
 function updateCurrentCourseInFirestore(user, newCourseId) {
   return db.collection('users').doc(user.uid).update({
-      currentCourse: newCourseId
+    currentCourse: newCourseId
   }).then(() => {
-      console.log(`Updated currentCourse in Firestore to: ${newCourseId}`);
+    console.log(`Updated currentCourse in Firestore to: ${newCourseId}`);
   }).catch((error) => {
-      console.error('Error updating current course in Firestore:', error);
+    console.error('Error updating current course in Firestore:', error);
   });
 }
 
@@ -386,66 +392,66 @@ function registerUserCourse(user, courseId) {
   const targetLanguage = courseId.split('-')[1];
 
   return db.collection('users').doc(user.uid)
-      .collection('courses').doc(courseId)
-      .set({
-          knownLanguage: knownLanguage,
-          targetLanguage: targetLanguage,
-      }).then(() => {
-          console.log(`Course ${courseId} successfully registered in Firestore.`);
-      }).catch((error) => {
-          console.error('Error registering course in Firestore:', error);
-          throw error; // Pass the error up the chain
-      });
+    .collection('courses').doc(courseId)
+    .set({
+      knownLanguage: knownLanguage,
+      targetLanguage: targetLanguage,
+    }).then(() => {
+      console.log(`Course ${courseId} successfully registered in Firestore.`);
+    }).catch((error) => {
+      console.error('Error registering course in Firestore:', error);
+      throw error; // Pass the error up the chain
+    });
 }
 
 // Function to get the current course from Firestore
 function getFirestoreCurrentCourse(user) {
-    return new Promise((resolve, reject) => {
-        db.collection('users').doc(user.uid).get().then((doc) => {
-            if (doc.exists && doc.data().currentCourse) {
-                console.log(`Fetched currentCourse from Firestore: ${doc.data().currentCourse}`);
-                resolve(doc.data().currentCourse);
-            } else {
-                resolve(null);
-            }
-        }).catch((error) => {
-            console.error('Error fetching current course from Firestore:', error);
-            reject(error);
-        });
+  return new Promise((resolve, reject) => {
+    db.collection('users').doc(user.uid).get().then((doc) => {
+      if (doc.exists && doc.data().currentCourse) {
+        console.log(`Fetched currentCourse from Firestore: ${doc.data().currentCourse}`);
+        resolve(doc.data().currentCourse);
+      } else {
+        resolve(null);
+      }
+    }).catch((error) => {
+      console.error('Error fetching current course from Firestore:', error);
+      reject(error);
     });
+  });
 }
 
 // Function to validate if the course exists (i.e., there are questions for it)
 function validateCourse(courseId) {
-    return db.collection('questions')
-        .where('knownLanguage', '==', courseId.split('-')[0])  // Example: 'en' from 'en-es'
-        .where('language', '==', courseId.split('-')[1])  // Example: 'es' from 'en-es'
-        .limit(1)  // Check if at least one question exists
-        .get()
-        .then(snapshot => !snapshot.empty)
-        .catch(error => {
-            console.error('Error validating course:', error);
-            return false;
-        });
+  return db.collection('questions')
+    .where('knownLanguage', '==', courseId.split('-')[0])  // Example: 'en' from 'en-es'
+    .where('language', '==', courseId.split('-')[1])  // Example: 'es' from 'en-es'
+    .limit(1)  // Check if at least one question exists
+    .get()
+    .then(snapshot => !snapshot.empty)
+    .catch(error => {
+      console.error('Error validating course:', error);
+      return false;
+    });
 }
 
 // Function to load daily score from Firestore
 function loadDailyScore(user, currentCourse) {
   // Get the user's local timezone
-const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-// Create a date object for the current date
-const now = new Date();
+  // Create a date object for the current date
+  const now = new Date();
 
-// Format the date according to the user's timezone
-const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
-const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+  // Format the date according to the user's timezone
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
 
-// Split the formatted date into parts
-const [month, day, year] = formattedDate.split('/');
+  // Split the formatted date into parts
+  const [month, day, year] = formattedDate.split('/');
 
-// Create the date in yyyy-mm-dd format
-var today = `${year}-${month}-${day}`;
+  // Create the date in yyyy-mm-dd format
+  var today = `${year}-${month}-${day}`;
 
   // var today = new Date().toISOString().split('T')[0]; // Get date in yyyy-mm-dd format
 
@@ -534,7 +540,7 @@ function loadQuestionData(questionId, currentCourse) {
       if (questionDoc.exists) {
         displayQuestion(questionDoc.data(), questionId, currentCourse); // Pass currentCourse as a parameter
         previousQuestionId = questionId; // Ensure previousQuestionId is updated
-        
+
       } else {
         console.error('Question not found:', questionId);
       }
@@ -545,87 +551,87 @@ function loadQuestionData(questionId, currentCourse) {
 function loadNewQuestion(user, courseId) {
   // Fetch user's selected course details (knownLanguage and targetLanguage)
   db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
-  .then(courseDoc => {
+    .then(courseDoc => {
       var courseData = courseDoc.data();
 
       if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
-          // Course data might not be ready, let's retry once after a short delay
-          console.warn('Course data not found. Retrying...');
-          setTimeout(() => {
-            if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined')) {
-              // Retry fetching course data
-              db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
+        // Course data might not be ready, let's retry once after a short delay
+        console.warn('Course data not found. Retrying...');
+        setTimeout(() => {
+          if ((typeof (courseData.targetLanguage) !== 'undefined') && (typeof (courseData.knownLanguage) !== 'undefined')) {
+            // Retry fetching course data
+            db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
               .then(retryDoc => {
-                  courseData = retryDoc.data();
-                  if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
-                      console.error('User has not selected a course after retry.');
-                      window.location.href = 'course_selection.html';
-                  } else {
-                      // Proceed with loading questions after retry
-                      fetchAndLoadQuestions(courseData);
-                  }
-              }).catch(error => {
-                  console.error('Error fetching course data during retry:', error);
+                courseData = retryDoc.data();
+                if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
+                  console.error('User has not selected a course after retry.');
                   window.location.href = 'course_selection.html';
+                } else {
+                  // Proceed with loading questions after retry
+                  fetchAndLoadQuestions(courseData);
+                }
+              }).catch(error => {
+                console.error('Error fetching course data during retry:', error);
+                window.location.href = 'course_selection.html';
               });
-            } else {
-              console.error('User has not selected a course correctly.');
-              window.location.href = 'course_selection.html';
-            }
-          }, 1000);  // 1-second delay for retry
+          } else {
+            console.error('User has not selected a course correctly.');
+            window.location.href = 'course_selection.html';
+          }
+        }, 1000);  // 1-second delay for retry
       } else {
-          // Proceed if course data is available
-          fetchAndLoadQuestions(courseData);
+        // Proceed if course data is available
+        fetchAndLoadQuestions(courseData);
       }
-  }).catch(error => {
+    }).catch(error => {
       console.error('Error loading user course data:', error);
-  });
+    });
 }
 
 // Helper function to fetch and load questions
 function fetchAndLoadQuestions(courseData) {
-  if ((typeof(courseData.targetLanguage) !== 'undefined') && (typeof(courseData.knownLanguage) !== 'undefined')) {
+  if ((typeof (courseData.targetLanguage) !== 'undefined') && (typeof (courseData.knownLanguage) !== 'undefined')) {
     courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
   }
   db.collection('questions')
-      .where('language', '==', courseData.targetLanguage)
-      .where('knownLanguage', '==', courseData.knownLanguage)
-      .orderBy('frequency', 'asc')  // Order by frequency in ascending order
-      .get()
-      .then(questionSnapshot => {
-          var questions = [];
-          questionSnapshot.forEach(doc => {
-              questions.push({ id: doc.id, data: doc.data() });
-          });
-
-          // Filter out questions the user has already answered (progress collection)
-          db.collection('users').doc(firebase.auth().currentUser.uid)
-              .collection('courses').doc(courseData.courseId)
-              .collection('progress').get()
-              .then(progressSnapshot => {
-                  var seenQuestions = progressSnapshot.docs.map(doc => doc.id);
-                  var unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
-
-                  // Shuffle unseenQuestions to add randomness
-                  // shuffleArray(unseenQuestions);
-
-                  // Find the first question that is not the same as previousQuestionId
-                  let selectedQuestion = unseenQuestions.find(q => q.id !== previousQuestionId);
-
-                  if (!selectedQuestion && unseenQuestions.length > 0) {
-                      // If all unseen questions are same as previous (unlikely), select the first one
-                      selectedQuestion = unseenQuestions[0];
-                  }
-
-                  if (selectedQuestion) {
-                      displayQuestion(selectedQuestion.data, selectedQuestion.id, courseData.courseId); 
-                      previousQuestionId = selectedQuestion.id; // Update the previousQuestionId
-                  } else {
-                      console.log('No new questions available. Loading next early question.');
-                      loadNextEarlyQuestion(firebase.auth().currentUser, courseData.courseId); // Load the next question even if it's not yet due
-                  }
-              });
+    .where('language', '==', courseData.targetLanguage)
+    .where('knownLanguage', '==', courseData.knownLanguage)
+    .orderBy('frequency', 'asc')  // Order by frequency in ascending order
+    .get()
+    .then(questionSnapshot => {
+      var questions = [];
+      questionSnapshot.forEach(doc => {
+        questions.push({ id: doc.id, data: doc.data() });
       });
+
+      // Filter out questions the user has already answered (progress collection)
+      db.collection('users').doc(firebase.auth().currentUser.uid)
+        .collection('courses').doc(courseData.courseId)
+        .collection('progress').get()
+        .then(progressSnapshot => {
+          var seenQuestions = progressSnapshot.docs.map(doc => doc.id);
+          var unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
+
+          // Shuffle unseenQuestions to add randomness
+          // shuffleArray(unseenQuestions);
+
+          // Find the first question that is not the same as previousQuestionId
+          let selectedQuestion = unseenQuestions.find(q => q.id !== previousQuestionId);
+
+          if (!selectedQuestion && unseenQuestions.length > 0) {
+            // If all unseen questions are same as previous (unlikely), select the first one
+            selectedQuestion = unseenQuestions[0];
+          }
+
+          if (selectedQuestion) {
+            displayQuestion(selectedQuestion.data, selectedQuestion.id, courseData.courseId);
+            previousQuestionId = selectedQuestion.id; // Update the previousQuestionId
+          } else {
+            console.log('No new questions available. Loading next early question.');
+            loadNextEarlyQuestion(firebase.auth().currentUser, courseData.courseId); // Load the next question even if it's not yet due
+          }
+        });
+    });
 }
 
 // Load the next question even if it's not yet due
@@ -633,7 +639,7 @@ function loadNextEarlyQuestion(user, courseId) {
   db.collection('users').doc(user.uid)
     .collection('courses').doc(courseId)
     .collection('progress')
-    .orderBy('nextDue','asc')
+    .orderBy('nextDue', 'asc')
     .limit(2) // Fetch two to handle potential duplicates
     .get()
     .then(progressSnapshot => {
@@ -741,15 +747,15 @@ function displayQuestion(question, questionId, currentCourse) {
   }
 
   // Show the toggle button (Make it Easier/Harder) when a new question is displayed
-$('#toggle-mode').show();
-$('#explain-sentence-btn').hide(); // Hide the explain button initially
-  
+  $('#toggle-mode').show();
+  $('#explain-sentence-btn').hide(); // Hide the explain button initially
+
   if (typeof question !== 'undefined') {
     window.currentQuestionData = question;
   } else {
     question = window.currentQuestionData;
   }
-  
+
   if (typeof currentCourse !== 'undefined') {
     window.currentCourse = currentCourse;
   } else {
@@ -759,7 +765,7 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
   var inputLength = question.missingWord.length;
 
   // Calculate input width dynamically to match the expected answer length
-  var inputWidth = inputLength * 1.2 ;
+  var inputWidth = inputLength * 1.2;
 
   // Determine whether to show input field or placeholder based on mode
   const inputField = isMultipleChoice ? '_____' : `<input type="text" autocomplete="off" id="user-answer" class="fill-in-blank" maxlength="${inputLength}" style="width: ${inputWidth}ch;">`;
@@ -769,15 +775,15 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
   $('.option-btn').prop('disabled', false);
 
   $('#sentence').html(sentenceHTML);
-    if (sentenceHTML.length > 68) {
-        $('#sentence').removeClass('size2 size175').addClass('size15');
-    } else if (sentenceHTML.length > 51) {
-        $('#sentence').removeClass('size2 size15').addClass('size175');
-    } else if (sentenceHTML.length > 34) {
-        $('#sentence').removeClass('size175 size15').addClass('size2');
-    } else {
-        $('#sentence').removeClass('size2 size175 size15');
-    }
+  if (sentenceHTML.length > 68) {
+    $('#sentence').removeClass('size2 size175').addClass('size15');
+  } else if (sentenceHTML.length > 51) {
+    $('#sentence').removeClass('size2 size15').addClass('size175');
+  } else if (sentenceHTML.length > 34) {
+    $('#sentence').removeClass('size175 size15').addClass('size2');
+  } else {
+    $('#sentence').removeClass('size2 size175 size15');
+  }
 
   // Display the sentence with the appropriate input field or placeholder
   $('#sentence').html(sentenceHTML);
@@ -828,12 +834,12 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
     $('#translation').append(` <span class="text-muted">${phraseStatus}</span>`);
 
     // Display the translations of the missing word in the feedback area
-  displayMissingWordTranslations(question.missingWordTranslation);
+    displayMissingWordTranslations(question.missingWordTranslation);
 
 
     // Automatically focus on the input field if in text input mode
     if (!isMultipleChoice) {
-        $('#user-answer').focus();
+      $('#user-answer').focus();
     }
   });
 
@@ -841,33 +847,33 @@ $('#explain-sentence-btn').hide(); // Hide the explain button initially
   $('#coach-feedback').hide(); // Hide coach feedback when a new question is loaded
 
   // Show or hide the submit button based on the current mode
-if (isMultipleChoice) {
-  $('#submit-answer').hide();
-  $('#special-characters').hide();
-} else {
-  $('#special-characters').show();
-  $('#submit-answer').show();
-}
+  if (isMultipleChoice) {
+    $('#submit-answer').hide();
+    $('#special-characters').hide();
+  } else {
+    $('#special-characters').show();
+    $('#submit-answer').show();
+  }
   $('#next-question').hide();
 
   // Hide or show elements based on the current mode
   if (isMultipleChoice) {
-      $('#user-answer').hide();
-      $('#multiple-choice-options').show();
-      displayMultipleChoiceOptions(question);
-      // Add keydown event for keys 1-4
+    $('#user-answer').hide();
+    $('#multiple-choice-options').show();
+    displayMultipleChoiceOptions(question);
+    // Add keydown event for keys 1-4
     $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
       if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
       const key = e.which - 48; // For top number keys
       if (key >= 1 && key <= 4) {
-          e.preventDefault();
-          $('.option-btn').eq(key - 1).click();
+        e.preventDefault();
+        $('.option-btn').eq(key - 1).click();
       }
-  });
+    });
   } else {
-      $('#user-answer').show();
-      $('#multiple-choice-options').hide();
-      // Remove multiple-choice keydown event
+    $('#user-answer').show();
+    $('#multiple-choice-options').hide();
+    // Remove multiple-choice keydown event
     $(document).off('keydown.multipleChoice');
   }
 
@@ -891,25 +897,25 @@ if (isMultipleChoice) {
   }
 
   // Function to display missing word translations
-function displayMissingWordTranslations(translationsArray) {
-  
-  // Ensure translationsArray is an array and limit to 3 entries
-  const translations = Array.isArray(translationsArray) ? translationsArray.slice(0, 3) : [];
+  function displayMissingWordTranslations(translationsArray) {
 
-  if (translations.length > 0) {
-    // Create a comma-separated string of translations
-    const translationsText = translations.join(', ');
+    // Ensure translationsArray is an array and limit to 3 entries
+    const translations = Array.isArray(translationsArray) ? translationsArray.slice(0, 3) : [];
 
-    // Update the #feedback area with the translations
-    $('#feedback')
-    .html(`<span class="missing-word-translations">${translationsText}</span>`)
-    .addClass('visible')
-    .removeClass('text-success text-danger'); // Remove any previous feedback classes
-} else {
-  // Hide the feedback area if there are no translations
-  $('#feedback').removeClass('visible').html('');
-}
-}
+    if (translations.length > 0) {
+      // Create a comma-separated string of translations
+      const translationsText = translations.join(', ');
+
+      // Update the #feedback area with the translations
+      $('#feedback')
+        .html(`<span class="missing-word-translations">${translationsText}</span>`)
+        .addClass('visible')
+        .removeClass('text-success text-danger'); // Remove any previous feedback classes
+    } else {
+      // Hide the feedback area if there are no translations
+      $('#feedback').removeClass('visible').html('');
+    }
+  }
 
 
   // Common function to handle after answer submission
@@ -917,10 +923,17 @@ function displayMissingWordTranslations(translationsArray) {
     $('#submit-answer').hide();
     $('#next-question').show();
 
+    gtag('event', 'User Answered', {
+      'question_type': 'Vocabulary',
+      'user_id': user.uid,
+      'answer': isCorrect,
+      'course': window.currentCourse
+  });
+
     const questionEndTime = new Date();
-  let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
-  timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
-  debugger;
+    let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
+    timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
+    debugger;
 
     // Disable the toggle button after submission
     $('#toggle-mode').prop('disabled', true);
@@ -942,8 +955,8 @@ function displayMissingWordTranslations(translationsArray) {
     updateUserProgress(questionId, isCorrect, currentCourse, timeTaken);
 
     // Hide toggle-mode button and show explain-sentence button after answer is submitted
-$('#toggle-mode').hide();
-$('#explain-sentence-btn').show();
+    $('#toggle-mode').hide();
+    $('#explain-sentence-btn').show();
 
     // Play feedback sound and audio
     playFeedbackSound(isCorrect, () => {
@@ -952,13 +965,13 @@ $('#explain-sentence-btn').show();
       var targetLanguage = question.language;
       playAudio(questionId, completeSentence, targetLanguage);
     });
-    
-
-}
 
 
+  }
 
-if (isMultipleChoice) {
+
+
+  if (isMultipleChoice) {
     // Event listener for multiple-choice option buttons
     $('.option-btn').off('click').on('click', function () {
       const selectedOption = $(this).data('option');
@@ -976,17 +989,17 @@ if (isMultipleChoice) {
 
     // Add keydown event for keys 1-4
     $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
-        if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
-        const key = e.which - 48; // For top number keys
-        if (key >= 1 && key <= 4) {
-            e.preventDefault();
-            const optionBtn = $('.option-btn').eq(key - 1);
+      if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
+      const key = e.which - 48; // For top number keys
+      if (key >= 1 && key <= 4) {
+        e.preventDefault();
+        const optionBtn = $('.option-btn').eq(key - 1);
 
-            // Trigger click on the option button
-            optionBtn.click();
-        }
+        // Trigger click on the option button
+        optionBtn.click();
+      }
     });
-} else {
+  } else {
     // Remove multiple-choice keydown event
     $(document).off('keydown.multipleChoice');
 
@@ -1001,7 +1014,7 @@ if (isMultipleChoice) {
     $('#submit-answer').off('click').on('click', function () {
       handleDebounce(handleSubmit);
     });
-}
+  }
 
 
 
@@ -1026,9 +1039,9 @@ if (isMultipleChoice) {
   // Replay audio button event
   $('#replay-audio').off('click').on('click', function () {
     // Ensure completeSentence and targetLanguage are passed correctly
-    var completeSentence = question.sentence.replace('___', question.missingWord); 
+    var completeSentence = question.sentence.replace('___', question.missingWord);
     var targetLanguage = question.language;
-    playAudio(questionId, completeSentence, targetLanguage); 
+    playAudio(questionId, completeSentence, targetLanguage);
   });
 }
 
@@ -1053,8 +1066,8 @@ function displayMultipleChoiceOptions(question) {
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
 
@@ -1067,24 +1080,24 @@ function playAudio(questionId, completeSentence, targetLanguage) {
 
   audioElement.src = audioUrl;
   audioElement.play()
-      .then(() => {
-          console.log("Audio playback started successfully.");
-      })
-      .catch((error) => {
-          console.error("Error playing audio:", error);
-          console.log("Attempting to generate audio since playback failed.");
-          generateAudio(questionId, completeSentence, targetLanguage);
-      });
+    .then(() => {
+      console.log("Audio playback started successfully.");
+    })
+    .catch((error) => {
+      console.error("Error playing audio:", error);
+      console.log("Attempting to generate audio since playback failed.");
+      generateAudio(questionId, completeSentence, targetLanguage);
+    });
 
   audioElement.onended = function () {
-      console.log("Audio playback ended.");
-      $('#replay-audio').prop('disabled', false); // Re-enable the button
+    console.log("Audio playback ended.");
+    $('#replay-audio').prop('disabled', false); // Re-enable the button
   };
 
   audioElement.onerror = function () {
-      console.error("Error loading audio from S3:", audioUrl);
-      console.log("Attempting to generate audio due to loading error.");
-      generateAudio(questionId, completeSentence, targetLanguage);
+    console.error("Error loading audio from S3:", audioUrl);
+    console.log("Attempting to generate audio due to loading error.");
+    generateAudio(questionId, completeSentence, targetLanguage);
   };
 }
 
@@ -1100,38 +1113,38 @@ function generateAudio(questionId, completeSentence, targetLanguage) {
   const [languageCode, voice] = getLanguageAndVoice(targetLanguage);
 
   if (!languageCode || !voice) {
-      console.error(`Error: No language and voice found for language: ${targetLanguage}`);
-      return;
+    console.error(`Error: No language and voice found for language: ${targetLanguage}`);
+    return;
   }
 
   console.log(`Generating new audio using AWS Polly with language: ${languageCode} and voice: ${voice}`);
 
   $.ajax({
-      url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
-      type: 'GET',
-      data: {
-          filename: questionId,
-          text: completeSentence,
-          language: languageCode,
-          voice: voice
-      },
-      success: function (response) {
-          console.log("AWS Polly audio generation request succeeded.");
-          const audioUrl = JSON.parse(response).url;
+    url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
+    type: 'GET',
+    data: {
+      filename: questionId,
+      text: completeSentence,
+      language: languageCode,
+      voice: voice
+    },
+    success: function (response) {
+      console.log("AWS Polly audio generation request succeeded.");
+      const audioUrl = JSON.parse(response).url;
 
-          console.log(`Audio generated successfully and available at: ${audioUrl}`);
-          audioElement.src = audioUrl;
-          audioElement.play()
-              .then(() => {
-                  console.log("Generated audio playback started successfully.");
-              })
-              .catch((error) => {
-                  console.error("Error playing generated audio:", error);
-              });
-      },
-      error: function (error) {
-          console.error('Error generating audio using AWS Polly:', error);
-      }
+      console.log(`Audio generated successfully and available at: ${audioUrl}`);
+      audioElement.src = audioUrl;
+      audioElement.play()
+        .then(() => {
+          console.log("Generated audio playback started successfully.");
+        })
+        .catch((error) => {
+          console.error("Error playing generated audio:", error);
+        });
+    },
+    error: function (error) {
+      console.error('Error generating audio using AWS Polly:', error);
+    }
   });
 }
 
@@ -1139,15 +1152,15 @@ function generateAudio(questionId, completeSentence, targetLanguage) {
 function playFeedbackSound(isCorrect, callback) {
   const feedbackAudio = new Audio();
   feedbackAudio.src = isCorrect ? '/assets/audio/correct.mp3' : '/assets/audio/wrong.mp3';
-  
+
   // Play the feedback sound
   feedbackAudio.play()
-      .then(() => {
-          console.log("Feedback sound played successfully.");
-      })
-      .catch((error) => {
-          console.error("Error playing feedback sound:", error);
-      });
+    .then(() => {
+      console.log("Feedback sound played successfully.");
+    })
+    .catch((error) => {
+      console.error("Error playing feedback sound:", error);
+    });
 
   // After feedback sound ends, call the callback to play the full sentence audio
   feedbackAudio.onended = callback;
@@ -1155,19 +1168,19 @@ function playFeedbackSound(isCorrect, callback) {
 
 // Function to get the language code and female voice based on the target language
 function getLanguageAndVoice(countryCode) {
-    console.log(`Attempting to find language and voice for country code: ${countryCode}`);
-    
-    const entry = countryToLanguage[countryCode.toLowerCase()];
-    
-    if (!entry) {
-        console.error(`No language and voice found for country code: ${countryCode}`);
-        return [null, null]; // Return null values to indicate failure
-    }
+  console.log(`Attempting to find language and voice for country code: ${countryCode}`);
 
-    const { languageCode, voice } = entry;
-    console.log(`Success: Found language code '${languageCode}' and voice '${voice}' for country code '${countryCode}'`);
-    
-    return [languageCode, voice];
+  const entry = countryToLanguage[countryCode.toLowerCase()];
+
+  if (!entry) {
+    console.error(`No language and voice found for country code: ${countryCode}`);
+    return [null, null]; // Return null values to indicate failure
+  }
+
+  const { languageCode, voice } = entry;
+  console.log(`Success: Found language code '${languageCode}' and voice '${voice}' for country code '${countryCode}'`);
+
+  return [languageCode, voice];
 }
 
 // Normalization function to ignore special characters
@@ -1208,26 +1221,26 @@ function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
           };
 
 
-                    // Get the user's local timezone
-const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          // Get the user's local timezone
+          const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-// Create a date object for the current date
-const now = new Date();
+          // Create a date object for the current date
+          const now = new Date();
 
-// Format the date according to the user's timezone
-const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
-const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+          // Format the date according to the user's timezone
+          const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+          const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
 
-// Split the formatted date into parts
-const [month, day, year] = formattedDate.split('/');
+          // Split the formatted date into parts
+          const [month, day, year] = formattedDate.split('/');
 
-// Create the date in yyyy-mm-dd format
-var today = `${year}-${month}-${day}`;
+          // Create the date in yyyy-mm-dd format
+          var today = `${year}-${month}-${day}`;
 
           var points = isCorrect ? 10 : 0;
 
           if (isMultipleChoice) {
-              points = Math.ceil(points / 2); // Half points for multiple choice
+            points = Math.ceil(points / 2); // Half points for multiple choice
           }
 
           if (isCorrect) {
@@ -1257,35 +1270,35 @@ var today = `${year}-${month}-${day}`;
 
           // Fetch the current maxFrequency and update if necessary
           return transaction.get(allTimeStatsRef).then(allTimeDoc => {
-              var allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {};
-            
-              // Ensure maxFrequency is set, even if the document exists but the field is missing
-              if (typeof allTimeData.maxFrequency === 'undefined') {
-                allTimeData.maxFrequency = 0;
-              }
-            
-              // Compare question frequency and update if necessary
-              if (questionFrequency > allTimeData.maxFrequency) {
-                allTimeData.maxFrequency=questionFrequency;
-                
+            var allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {};
+
+            // Ensure maxFrequency is set, even if the document exists but the field is missing
+            if (typeof allTimeData.maxFrequency === 'undefined') {
+              allTimeData.maxFrequency = 0;
+            }
+
+            // Compare question frequency and update if necessary
+            if (questionFrequency > allTimeData.maxFrequency) {
+              allTimeData.maxFrequency = questionFrequency;
+
               var maxFrequencyPercentage = (questionFrequency / 10000 * 100).toFixed(2) + '%';
               $('#proficiencyLevel').text(maxFrequencyPercentage);
               $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
-              
-              }
-              debugger;
-              // Write the updated progress and stats back to Firestore
-              transaction.set(userProgressRef, data);
-              transaction.set(allTimeStatsRef, allTimeData);
 
-              return Promise.resolve(data); // Return updated data
-            });
+            }
+            debugger;
+            // Write the updated progress and stats back to Firestore
+            transaction.set(userProgressRef, data);
+            transaction.set(allTimeStatsRef, allTimeData);
+
+            return Promise.resolve(data); // Return updated data
+          });
         });
       }).then((data) => {
         console.log('Transaction successful');
         // Now data contains the updated progress data
         // We can call a function to update the coach feedback
-        
+
         updateCoachFeedback(streakCorrect, streakWrong);
       }).catch(error => {
         console.error('Transaction failed:', error);
@@ -1362,7 +1375,7 @@ function updateVisualStats(isCorrect) {
   // Update UI for correct/wrong counts
   $('#correct-count').text(correctAnswers);
   $('#wrong-count').text(wrongAnswers);
-  
+
   // Update last 5 answers (display boxes)
   updateLastFiveAnswers();
 }
@@ -1529,7 +1542,7 @@ function timeDifference(lastAnswered) {
 
 function buttonClick(which) {
   if (which === 'stats') {
-      window.location.href = 'stats.html';
+    window.location.href = 'stats.html';
   }
 }
 
@@ -1546,7 +1559,7 @@ async function generateExplanation(questionId, fullSentence, missingWord, target
         missingWord,
         targetLanguage,
         userLanguage,
-        grammar: false 
+        grammar: false
       })
     });
 
@@ -1609,6 +1622,12 @@ function showExplanationModal(explanationData) {
   // Populate the modal content with the final explanation
   $('#explanation-content').html(explanationHtml);
 
+  gtag('event', 'Explain Answer', {
+    'question_type': 'Vocabulary',
+    'user_id': user.uid,
+    'course': window.currentCourse
+});
+
   // Show the modal
   $('#explanationModal').modal('show');
 }
@@ -1616,7 +1635,7 @@ function showExplanationModal(explanationData) {
 
 
 
-$('#explain-sentence-btn').off('click').on('click', async function() {
+$('#explain-sentence-btn').off('click').on('click', async function () {
   try {
     // Show loading messages while fetching the explanation
     showLoadingMessages();
@@ -1684,96 +1703,96 @@ $('#help-button').on('click', function () {
   $('#helpModal').modal('show'); // Show the report modal
 });
 
-   // Event listener for the Report button
-   $('#report-button').on('click', function () {
-    $('#report-question-id').val(window.currentQuestionId); // Set the current question ID
-    $('#reportModal').modal('show'); // Show the report modal
-  });
+// Event listener for the Report button
+$('#report-button').on('click', function () {
+  $('#report-question-id').val(window.currentQuestionId); // Set the current question ID
+  $('#reportModal').modal('show'); // Show the report modal
+});
 
-  // Event listener for the Submit button in the report modal
-  $('#submit-report').on('click', function () {
-    const comment = $('#report-comment').val().trim();
-    const questionId = $('#report-question-id').val();
-    const user = firebase.auth().currentUser;
-    const currentTime = new Date().toISOString();
+// Event listener for the Submit button in the report modal
+$('#submit-report').on('click', function () {
+  const comment = $('#report-comment').val().trim();
+  const questionId = $('#report-question-id').val();
+  const user = firebase.auth().currentUser;
+  const currentTime = new Date().toISOString();
 
-    if (comment && questionId && user) {
-      // Prepare the report data
-      const reportData = {
-        questionType: "vocabulary",
-        questionId: questionId,
-        timeOfUpdate: currentTime,
-        comment: comment,
-        language: window.currentQuestionData.language,
-        knownLanguage: window.currentQuestionData.knownLanguage,
-        isMultipleChoice: isMultipleChoice,
-        userId: uid,
-        status: 'created'
-      };
+  if (comment && questionId && user) {
+    // Prepare the report data
+    const reportData = {
+      questionType: "vocabulary",
+      questionId: questionId,
+      timeOfUpdate: currentTime,
+      comment: comment,
+      language: window.currentQuestionData.language,
+      knownLanguage: window.currentQuestionData.knownLanguage,
+      isMultipleChoice: isMultipleChoice,
+      userId: uid,
+      status: 'created'
+    };
 
-      // Insert the report into Firestore
-      db.collection('reports').add(reportData)
-        .then(() => {
-          $('#reportForm')[0].reset(); // Clear the form
-          $('#reportModal').modal('hide'); // Close the modal
-          alert('Report submitted successfully.');
-        })
-        .catch(error => {
-          console.error('Error submitting report:', error);
-          alert('Failed to submit report. Please try again.');
-        });
-    } else {
-      alert('Please enter a comment before submitting.');
-    }
-  });
+    // Insert the report into Firestore
+    db.collection('reports').add(reportData)
+      .then(() => {
+        $('#reportForm')[0].reset(); // Clear the form
+        $('#reportModal').modal('hide'); // Close the modal
+        alert('Report submitted successfully.');
+      })
+      .catch(error => {
+        console.error('Error submitting report:', error);
+        alert('Failed to submit report. Please try again.');
+      });
+  } else {
+    alert('Please enter a comment before submitting.');
+  }
+});
 
-  // Function to check drills and show modal if limit is reached
+// Function to check drills and show modal if limit is reached
 async function checkDrillsLimit(user, currentCourse) {
 
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   // Create a date object for the current date
   const now = new Date();
-  
+
   // Format the date according to the user's timezone
   const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
   const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
-  
+
   // Split the formatted date into parts
   const [month, day, year] = formattedDate.split('/');
-  
+
   // Create the date in yyyy-mm-dd format
   var today = `${year}-${month}-${day}`;
-  
+
   const userDocRef = db.collection('users').doc(user.uid);
   const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
-  
+
   try {
-      const statsDoc = await courseDocRef.collection('stats').doc(today).get();
-      let totalDrills = 0;
+    const statsDoc = await courseDocRef.collection('stats').doc(today).get();
+    let totalDrills = 0;
 
-      if (statsDoc.exists) {
-          const data = statsDoc.data();
-          totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
-      }
+    if (statsDoc.exists) {
+      const data = statsDoc.data();
+      totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
+    }
 
-      // Check subscription level
-      const userData = await userDocRef.get();
-      const subLevel = userData.data().subLevel;
-      
-      if (subLevel === 'Free' && totalDrills >= 50) {
-          // Show modal if drills limit is reached
-          const modalElement = new bootstrap.Modal(document.getElementById('drillsLimitModal'), {
-              backdrop: 'static',
-              keyboard: false
-          });
-          modalElement.show();
-      } else {
-          // Proceed with loading drills or questions
-          // loadQuestions(user, currentCourse);
-      }
+    // Check subscription level
+    const userData = await userDocRef.get();
+    const subLevel = userData.data().subLevel;
+
+    if (subLevel === 'Free' && totalDrills >= 50) {
+      // Show modal if drills limit is reached
+      const modalElement = new bootstrap.Modal(document.getElementById('drillsLimitModal'), {
+        backdrop: 'static',
+        keyboard: false
+      });
+      modalElement.show();
+    } else {
+      // Proceed with loading drills or questions
+      // loadQuestions(user, currentCourse);
+    }
   } catch (error) {
-      console.error("Error checking drills limit:", error);
+    console.error("Error checking drills limit:", error);
   }
 }
 
