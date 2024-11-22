@@ -28,6 +28,15 @@ firebase.auth().onAuthStateChanged(async (user) => {
         if (userDoc.exists) {
             const userData = userDoc.data();
             const currentCourse = userData.currentCourse;
+            populateModalCourses(user); // Populate modal with course options
+
+            if (currentCourse) {
+                await loadCardData(user, currentCourse);
+                loadTrainingOptions(currentCourse, user.uid);
+                await loadTodaysDrills(user, currentCourse); // Load today's drills
+            } else {
+                showCourseModal(user);
+            }
 
             // Run independent functions in parallel
             await Promise.all([
@@ -37,14 +46,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
                 loadUserAvatar(userData),
             ]);
 
-            populateModalCourses(user); // Populate modal with course options
-
-            if (currentCourse) {
-                await loadCardData(user, currentCourse);
-                loadTrainingOptions(currentCourse, user.uid);
-            } else {
-                showCourseModal(user);
-            }
+           
         }
     } else {
         window.location.href = '/';
@@ -854,7 +856,7 @@ async function loadCardData(user, currentCourse) {
         // Wait for all category data to be fetched
         await Promise.all([vocabPromise, grammarPromise, chatPromise, storiesPromise]);
 
-        await loadTodaysDrills(user, currentCourse); // Load today's drills
+        
 
         // Calculate and display recommendation
         calculateAndDisplayRecommendation();
