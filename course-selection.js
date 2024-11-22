@@ -21,14 +21,24 @@ const languageShorts = {
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
         checkReg(user);
-        await loadHeadline(user);
-        await loadStreak(user);
-        await fetchOrAssignCoach(user);
-        await loadUserAvatar(user); // Load user avatar in the navbar
-        const userDoc = await db.collection('users').doc(user.uid).get();
+
+        // Fetch the user document once
+        const userDocRef = db.collection('users').doc(user.uid);
+        const userDoc = await userDocRef.get();
         if (userDoc.exists) {
+            const userData = userDoc.data();
+            const currentCourse = userData.currentCourse;
+
+            // Run independent functions in parallel
+            await Promise.all([
+                loadHeadline(),
+                loadStreak(user, userDocRef),
+                fetchOrAssignCoach(user, userDocRef, userData),
+                loadUserAvatar(userData),
+            ]);
+
             populateModalCourses(user); // Populate modal with course options
-            const currentCourse = userDoc.data().currentCourse;
+
             if (currentCourse) {
                 await loadCardData(user, currentCourse);
                 loadTrainingOptions(currentCourse, user.uid);
@@ -42,48 +52,39 @@ firebase.auth().onAuthStateChanged(async (user) => {
 });
 
 // Load User Avatar or Initials into Navbar
-async function loadUserAvatar(user) {
+async function loadUserAvatar(userData) {
     try {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (userDoc.exists) {
-            const userData = userDoc.data();
-            const photoURL = userData.photoURL;
-            const displayName = userData.displayName || '';
-            const email = userData.email || '';
+        const photoURL = userData.photoURL;
+        const displayName = userData.displayName || '';
+        const email = userData.email || '';
 
-            const userAvatar = document.getElementById('userAvatar');
+        const userAvatar = document.getElementById('userAvatar');
 
-            if (photoURL) {
-                userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
-            } else {
-                const fallbackLetter = (displayName.charAt(0) || email.charAt(0)).toUpperCase();
-                userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
-            }
-            userAvatar.onclick = () => {
-                window.location.href = '/settings.html';
-            };
+        if (photoURL) {
+            userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
         } else {
-            console.error('User data does not exist in Firestore');
+            const fallbackLetter = (displayName.charAt(0) || email.charAt(0)).toUpperCase();
+            userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
         }
+        userAvatar.onclick = () => {
+            window.location.href = '/settings.html';
+        };
     } catch (error) {
         console.error('Error loading user avatar:', error);
     }
 }
 
 // Fetch or assign the coach for the user
-async function fetchOrAssignCoach(user) {
-    const userRef = db.collection('users').doc(user.uid);
-    const userDoc = await userRef.get();
-
-    let coachId = userDoc.exists && userDoc.data().coach;
+async function fetchOrAssignCoach(user, userDocRef, userData) {
+    let coachId = userData.coach;
     if (!coachId) {
         coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
-        await userRef.update({ coach: coachId });
+        await userDocRef.update({ coach: coachId });
         console.log(`Assigned default coach ID: ${coachId} to user ${user.uid}`);
     } else {
         console.log(`Fetched existing coach ID: ${coachId} for user ${user.uid}`);
     }
-    loadCurrentCoach(coachId);
+    await loadCurrentCoach(coachId);
 }
 
 // Load the current coach details
@@ -111,7 +112,7 @@ function openCoachSelection() {
 }
 
 // Load daily headline based on current date
-async function loadHeadline(user) {
+async function loadHeadline() {
     const today = new Date();
     const todayString = today.toLocaleDateString('en-US', {
         month: 'long',
@@ -120,13 +121,12 @@ async function loadHeadline(user) {
     });
 
     try {
-        const querySnapshot = await db.collection('headlines').where('date', '==', todayString).get();
+        const querySnapshot = await db.collection('headlines').where('date', '==', todayString).limit(1).get();
         if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
-                const headlineData = doc.data();
-                document.getElementById('headline').textContent = headlineData.headline;
-                console.log(`Loaded headline for date ${todayString}: ${headlineData.headline}`);
-            });
+            const doc = querySnapshot.docs[0];
+            const headlineData = doc.data();
+            document.getElementById('headline').textContent = headlineData.headline;
+            console.log(`Loaded headline for date ${todayString}: ${headlineData.headline}`);
         } else {
             document.getElementById('headline').textContent = "Have a great day learning!";
             console.log(`No headline found for date ${todayString}. Using default message.`);
@@ -138,31 +138,34 @@ async function loadHeadline(user) {
 }
 
 // Load current streak data and update UI based on whether the streak was extended today
-async function loadStreak(user) {
+async function loadStreak(user, userDocRef) {
     try {
-        const userDocRef = db.collection('users').doc(user.uid);
         const coursesSnapshot = await userDocRef.collection('courses').get();
 
         if (coursesSnapshot.empty) {
             console.warn('No courses found for this user.');
-            document.getElementById('streakCount').textContent = "0 Days in a Row";
+            document.getElementById('streakCount').textContent = "0 Days";
+            document.getElementById('streakCount').style.visibility = 'visible';
             return;
         }
 
         let datesSet = new Set();
+        let statsPromises = [];
 
-        // Iterate through each course and collect dates when the user practiced
-        for (const courseDoc of coursesSnapshot.docs) {
+        // Collect stats promises for all courses
+        coursesSnapshot.docs.forEach((courseDoc) => {
             const statsRef = userDocRef.collection('courses').doc(courseDoc.id).collection('stats');
-            const statsSnapshot = await statsRef.get();
+            const statsPromise = statsRef.where(firebase.firestore.FieldPath.documentId(), '!=', 'all-time').get()
+                .then(statsSnapshot => {
+                    statsSnapshot.forEach(doc => {
+                        datesSet.add(doc.id);
+                    });
+                });
+            statsPromises.push(statsPromise);
+        });
 
-            statsSnapshot.forEach(doc => {
-                const dateId = doc.id;
-                if (dateId !== 'all-time') {
-                    datesSet.add(dateId); // Store all dates the user practiced
-                }
-            });
-        }
+        // Wait for all stats to be fetched
+        await Promise.all(statsPromises);
 
         // Calculate streaks
         const streakInfo = calculateStreaks(Array.from(datesSet));
@@ -297,12 +300,21 @@ function loadTrainingOptions(currentCourse, userId) {
         window.location.href = 'vocabulary.html?course=' + currentCourse;
     };
 
-    // Check stories availability and set navigation
-    db.collection('stories')
+    // Check stories and grammar availability in parallel
+    const storiesQuery = db.collection('stories')
         .where('knownLanguage', '==', knownLanguage)
         .where('language', '==', language)
-        .get()
-        .then((storySnap) => {
+        .limit(1)
+        .get();
+
+    const grammarQuery = db.collection('grammar')
+        .where('knownLanguage', '==', knownLanguage)
+        .where('language', '==', language)
+        .limit(1)
+        .get();
+
+    Promise.all([storiesQuery, grammarQuery])
+        .then(([storySnap, grammarSnap]) => {
             if (!storySnap.empty) {
                 storiesBtn.disabled = false;
                 storiesBtn.onclick = function () {
@@ -312,14 +324,7 @@ function loadTrainingOptions(currentCourse, userId) {
             } else {
                 console.log(`No stories available for course ${currentCourse}. Stories button remains disabled.`);
             }
-        });
 
-    // Check grammar availability and set navigation
-    db.collection('grammar')
-        .where('knownLanguage', '==', knownLanguage)
-        .where('language', '==', language)
-        .get()
-        .then((grammarSnap) => {
             if (!grammarSnap.empty) {
                 grammarBtn.disabled = false;
                 grammarBtn.onclick = function () {
@@ -333,6 +338,9 @@ function loadTrainingOptions(currentCourse, userId) {
             } else {
                 console.log(`No grammar topics available for course ${currentCourse}. Grammar button remains disabled.`);
             }
+        })
+        .catch(error => {
+            console.error("Error checking training options: ", error);
         });
 
     // Chat
@@ -439,8 +447,10 @@ function populateModalCourses(user) {
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                const courseCombo = `${data.knownLanguage}-${data.language}`;
-                courses.add(courseCombo);
+                if (data.knownLanguage && data.language) { // Ensure fields exist
+                    const courseCombo = `${data.knownLanguage}-${data.language}`;
+                    courses.add(courseCombo);
+                }
             });
 
             coursesData = Array.from(courses).sort();
@@ -553,6 +563,19 @@ function populateModalCourses(user) {
         }
     });
 }
+
+function showCourseModal(user) {
+    const modalElement = document.getElementById('courseModal');
+    const modalInstance = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+    modalInstance.show();
+    gtag('event', 'Course Selection Modal Launch', {
+        'user_id': user.uid
+    });
+}
+
 
 function showCourseModal(user) {
     const modalElement = document.getElementById('courseModal');
