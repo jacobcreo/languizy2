@@ -108,6 +108,19 @@ const countryToLanguage = {
     dk: { languageCode: "da-DK", voice: "Naja" }           // Denmark
 };
 
+const languageToSpecialChars = {
+  de: ['ä', 'ö', 'ü', 'ß'], // German
+  fr: ['é', 'è', 'ç', 'à'], // French
+  es: ['ñ', 'á', 'é', 'í'], // Spanish
+  pt: ['ã', 'ç', 'é', 'õ'], // Portuguese
+  it: ['à', 'è', 'ì', 'ò'], // Italian
+  sv: ['å', 'ä', 'ö'],      // Swedish
+  nl: ['é', 'ë', 'ï', 'ü'], // Dutch
+  da: ['æ', 'ø', 'å'],      // Danish
+  no: ['æ', 'ø', 'å'],      // Norwegian
+  pl: ['ą', 'ć', 'ę', 'ł']  // Polish
+};
+
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
   const userRef = db.collection('users').doc(user.uid);
@@ -266,6 +279,10 @@ firebase.auth().onAuthStateChanged(function (user) {
         loadQuestion(user, currentCourse);
         updateFlagIcons(currentCourse);
         updateMaxFrequency(user, currentCourse);
+
+         const targetLanguage = currentCourse.split('-')[1];
+         updateSpecialCharacters(targetLanguage);
+ 
       }).catch((error) => {
         console.error('Error fetching current course:', error);
         window.location.href = 'course_selection.html';
@@ -1762,4 +1779,29 @@ async function checkDrillsLimit(user, currentCourse) {
 
 function afterDrillCompleted(user, currentCourse) {
   checkDrillsLimit(user, currentCourse);
+}
+
+function updateSpecialCharacters(targetLanguage) {
+  debugger;
+  const specialChars = languageToSpecialChars[targetLanguage] || [];
+  const specialCharsContainer = document.getElementById('special-characters');
+
+  // Clear existing buttons
+  specialCharsContainer.innerHTML = '';
+
+  // Create buttons for each special character
+  specialChars.forEach(char => {
+    const button = document.createElement('button');
+    button.className = 'btn btn-light';
+    button.textContent = char;
+    button.onclick = () => addCharacter(char);
+    specialCharsContainer.appendChild(button);
+  });
+
+  // Show the special characters container if there are characters to display
+  if (specialChars.length > 0) {
+    specialCharsContainer.style.display = 'block';
+  } else {
+    specialCharsContainer.style.display = 'none';
+  }
 }
