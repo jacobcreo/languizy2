@@ -335,7 +335,7 @@ function toggleMode() {
   $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
   gtag('event', 'Toggle Mode', {
     'question_type': 'Vocabulary',
-    'user_id': user.uid,
+    'user_id': uid,
     'user_pressed': isMultipleChoice ? 'Make it easier' : 'Make it harder',
     'course': window.currentCourse
 });
@@ -925,7 +925,7 @@ function displayQuestion(question, questionId, currentCourse) {
 
     gtag('event', 'User Answered', {
       'question_type': 'Vocabulary',
-      'user_id': user.uid,
+      'user_id': uid,
       'answer': isCorrect,
       'course': window.currentCourse
   });
@@ -1624,7 +1624,7 @@ function showExplanationModal(explanationData) {
 
   gtag('event', 'Explain Answer', {
     'question_type': 'Vocabulary',
-    'user_id': user.uid,
+    'user_id': uid,
     'course': window.currentCourse
 });
 
