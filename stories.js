@@ -214,9 +214,9 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
       <div class="card-body">
         <h5 class="card-title">${storyData.storyTitle}${statusIcon}</h5>
         <p class="card-text">Words required: ${storyData.wordsRequired}</p>
-        <p class="card-text"> ${storyId}</p>
-        
-        ${readButton}
+      </div>
+      <div class="card-footer">
+      ${readButton}
       </div>
     </div>
   `;

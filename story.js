@@ -161,6 +161,11 @@ function createTranslationToggleButton() {
         toggleButton.innerText = 'Show Translation';
       } else {
         // Show translated story
+        gtag('event', 'Show Translation', {
+          'question_type': 'Story',
+          'user_id': uid,
+          'course': knownLanguage + "-" + language
+      });
         titleElement.innerText = currentStoryData.storyTitleTranslation;
         document.getElementById('storyText').innerHTML = formatStoryText(currentStoryData.storyTextTranslation);
         toggleButton.innerText = 'Show Original';
@@ -186,8 +191,14 @@ function formatStoryText(text) {
 
 // Start Test function
 function startTest() {
+  
   document.getElementById('testYourKnowledgeBtn').style.display = 'none';
   document.getElementById('testSection').style.display = 'block';
+  gtag('event', 'Start Test', {
+    'question_type': 'Story',
+    'user_id': uid,
+    'course': knownLanguage + "-" + language
+});
   loadNextQuestion();
 }
 
@@ -240,6 +251,12 @@ function submitAnswer(userAnswer) {
   if (userAnswer === correctAnswer) {
       correctAnswersCount++;
   }
+  gtag('event', 'User Answered', {
+    'question_type': 'Story',
+    'answer' : userAnswer === correctAnswer,
+    'user_id': uid,
+    'course': knownLanguage + "-" + language
+});
   if (currentQuestionIndex >= totalQuestions) {
     // Stop the timer and calculate elapsed time
     elapsedTime = Math.min(Math.floor((Date.now() - startTime) / 1000), 300);
@@ -350,6 +367,11 @@ var today = `${year}-${month}-${day}`;
 
 // Retry test logic
 document.getElementById('retryTestBtn').onclick = function() {
+  gtag('event', 'Retake Test', {
+    'question_type': 'Story',
+    'user_id': uid,
+    'course': knownLanguage + "-" + language
+});
   document.getElementById('testFeedback').style.display = 'none';
   correctAnswersCount = 0;  // Reset correct answers count
   currentQuestionIndex = 1;  // Reset to first question
@@ -388,6 +410,11 @@ function handleAudioPlayback(storyId, storyText, languageCode, voice, storyTitle
     audioElement.play()
       .then(() => {
         console.log("Audio playback started successfully.");
+        gtag('event', 'Play Audio', {
+          'question_type': 'Story',
+          'user_id': uid,
+          'course': knownLanguage + "-" + language
+      });
       })
       .catch((error) => {
         console.error("Error playing audio, attempting to generate audio:", error);
