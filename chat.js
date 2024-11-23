@@ -202,6 +202,12 @@ async function sendMessage() {
     const userInput = document.getElementById('userInput');
     const message = userInput.value.trim();
     if (!message) return;
+        gtag('event', 'User Message', {
+            'question_type': 'Chat',
+            'user_id': currentUser.uid,
+            'course': knownLanguage + '-' + language,
+            'chat_topic' : new URLSearchParams(window.location.search).get('t') || '',
+        });
 
     addMessage('user', message);
     userInput.value = '';

@@ -222,7 +222,7 @@ function createTopicCard(topic) {
 
   const opacityClass = topic.isAccessible ? '' : 'disabled-card';
   const lockIcon = topic.isAccessible ? '' : '<i class="fas fa-lock lock-icon"></i>';
-  const action = topic.isAccessible ? `onclick="startChat('${topic.id}')" ` : '';
+  const action = topic.isAccessible ? `onclick="startChat('${topic.id}', '${topic.topic}')" ` : '';
 
   // Determine the status icon and text
   let statusIcon = '';
@@ -258,8 +258,8 @@ function createTopicCard(topic) {
 }
 
 // Start Chat
-function startChat(topicId) {
-  window.location.href = `/chat.html?tid=${topicId}`;
+function startChat(topicId,topicName) {
+  window.location.href = `/chat.html?tid=${topicId}&t=${encodeURIComponent(topicName)}`;
 }
 
 // Update Pagination Controls
