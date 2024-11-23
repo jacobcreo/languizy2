@@ -174,7 +174,7 @@ async function getFirstBotMessage() {
                 messages: [
                     {
                         role: 'system',
-                        content: 'You are a friendly and helpful language tutor. Start the conversation with a friendly greeting and an introductory question.'
+                        content: ''
                     }
                 ],
                 knownLanguage,
