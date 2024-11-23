@@ -333,6 +333,12 @@ function initializeDefaultMode() {
 function toggleMode() {
     isMultipleChoice = !isMultipleChoice; // Toggle the mode
     $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
+    gtag('event', 'Toggle Mode', {
+        'question_type': 'Grammar',
+        'user_id': uid,
+        'user_pressed': isMultipleChoice ? 'Make it easier' : 'Make it harder',
+        'course': window.currentLanguagePair
+    });
     // Reload the current question with the new mode
     displayQuestion(currentQuestionData, currentQuestionId, currentLesson);
 }
@@ -970,6 +976,14 @@ if (translationsText) {
     function afterAnswerSubmission(isCorrect, selectedOption) {
         $('#submit-answer').hide();
         $('#next-question').show();
+
+        gtag('event', 'User Answered', {
+            'question_type': 'Grammar',
+            'user_id': uid,
+            'answer': isCorrect,
+            'course': window.currentLanguagePair,
+            'mode': isMultipleChoice ? 'Multiple_Choice' : 'Cloze'
+        });
 
         // Calculate the time taken to answer the question
   const questionEndTime = new Date();
@@ -1629,6 +1643,12 @@ function showExplanationModal(explanationData) {
 
     // Populate the modal content with the final explanation
     $('#explanation-content').html(explanationHtml);
+
+    gtag('event', 'Explain Answer', {
+        'question_type': 'Grammar',
+        'user_id': uid,
+        'course': window.currentLanguagePair
+    });
 
     // Show the modal
     $('#explanationModal').modal('show');
