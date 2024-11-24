@@ -296,7 +296,7 @@ function emailLogin() {
   var actionCodeSettings = {
     // URL you want to redirect back to after email verification.
     // Ensure this URL is whitelisted in the Firebase console.
-    url: window.location.origin + '/course_selection.html',
+    url: window.location.origin + '/',
     handleCodeInApp: true,
   };
   firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
