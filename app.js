@@ -56,6 +56,25 @@ function googleLogin() {
     });
 }
 
+if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+  var email = window.localStorage.getItem('emailForSignIn');
+  if (!email) {
+    // If email is not available (e.g., user opened the link on a different device)
+    email = window.prompt('Please provide your email for confirmation');
+  }
+
+  firebase.auth().signInWithEmailLink(email, window.location.href)
+    .then((result) => {
+      // Clear email from storage
+      window.localStorage.removeItem('emailForSignIn');
+      // Handle the sign-in process
+      handleUserLogin(result.user);
+    })
+    .catch((error) => {
+      console.error('Error signing in with email link:', error);
+    });
+}
+
 // Monitor auth state changes
 auth.onAuthStateChanged(user => {
   if (user) {
@@ -92,8 +111,8 @@ function handleUserLogin(user) {
       // New user: Set user data and call onboarding function
       userRef.set({
         email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
+        displayName: user.displayName || user.email.split('@')[0],
+        photoURL: user.photoURL || '',
         lastLogin: firebase.firestore.Timestamp.now(),
         joinDate: firebase.firestore.Timestamp.now(),
         subLevel: 'Free'
@@ -264,6 +283,30 @@ function pingOnboardFunction(userId, user) {
 function logout() {
   auth.signOut().then(() => {
     window.location.href = '/';
+  });
+}
+
+function emailLogin() {
+  var email = prompt('Please enter your email:');
+  if (!email) {
+    // User canceled the prompt
+    return;
+  }
+
+  var actionCodeSettings = {
+    // URL you want to redirect back to after email verification.
+    // Ensure this URL is whitelisted in the Firebase console.
+    url: window.location.origin + '/course_selection.html',
+    handleCodeInApp: true,
+  };
+  firebase.auth().sendSignInLinkToEmail(email, actionCodeSettings)
+  .then(() => {
+    // Save the email locally so you don't need to ask the user for it again
+    window.localStorage.setItem('emailForSignIn', email);
+    alert('A sign-in link has been sent to your email.');
+  })
+  .catch((error) => {
+    console.error('Email Sign-In error:', error);
   });
 }
 

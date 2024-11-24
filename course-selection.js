@@ -3,6 +3,9 @@ const db = firebase.firestore();
 let languageLearned = '';
 let drillsLimitReached = false;
 
+
+
+
 const languageShorts = {
     'en': 'English',
     'de': 'German',
@@ -23,8 +26,12 @@ firebase.auth().onAuthStateChanged(async (user) => {
         checkReg(user);
 
         // Fetch the user document once
+        console.time('Fetch User Document');
+
         const userDocRef = db.collection('users').doc(user.uid);
         const userDoc = await userDocRef.get();
+        console.timeEnd('Fetch User Document');
+
         if (userDoc.exists) {
             const userData = userDoc.data();
             const currentCourse = userData.currentCourse;
@@ -91,6 +98,7 @@ async function fetchOrAssignCoach(user, userDocRef, userData) {
 
 // Load the current coach details
 async function loadCurrentCoach(coachId) {
+    console.time('Load Current Coach');
     try {
         const coachDoc = await db.collection('coaches').doc(coachId).get();
         if (coachDoc.exists) {
@@ -98,6 +106,7 @@ async function loadCurrentCoach(coachId) {
             $('#currentCoachImage').attr('src', `assets/images/${coachData.image}`);
             $('#currentCoachImage').css('visibility', 'visible');
             $('#currentCoachName').text(coachData.coachName);
+            console.log(`Loaded coach details for coach ID: ${coachId}`);
             console.log(`Loaded coach details for coach ID: ${coachId}`);
             document.querySelector('#CurrentCoachCard .fill-effect').style.animation = 'none';
         } else {
@@ -115,6 +124,7 @@ function openCoachSelection() {
 
 // Load daily headline based on current date
 async function loadHeadline() {
+    console.time('Load Headline');
     const today = new Date();
     const todayString = today.toLocaleDateString('en-US', {
         month: 'long',
@@ -137,10 +147,12 @@ async function loadHeadline() {
     } catch (error) {
         console.error("Error fetching headline: ", error);
     }
+    console.timeEnd('Load Headline');
 }
 
 // Load current streak data and update UI based on whether the streak was extended today
 async function loadStreak(user, userDocRef) {
+    console.time('Load Streak');
     try {
         const coursesSnapshot = await userDocRef.collection('courses').get();
 
@@ -211,6 +223,8 @@ async function loadStreak(user, userDocRef) {
         document.getElementById('streakCount').textContent = "0 Days";
         document.getElementById('streakCount').style.visibility = 'visible';
     }
+    console.timeEnd('Load Streak');
+
 }
 
 function calculateStreaks(dates) {
@@ -354,6 +368,8 @@ function loadTrainingOptions(currentCourse, userId) {
 }
 
 async function loadTodaysDrills(user, currentCourse) {
+    console.time('Load Today\'s Drills');
+
     const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
     const userDocRef = db.collection('users').doc(user.uid);
     const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
@@ -372,6 +388,8 @@ async function loadTodaysDrills(user, currentCourse) {
     } catch (error) {
         console.error("Error loading today's drills:", error);
     }
+    console.timeEnd('Load Today\'s Drills');
+
 }
 
 // Update the UI based on the drills count
@@ -770,6 +788,8 @@ function updateRecommendationCard(recommendationObj) {
 
 // Function to load data for the cards
 async function loadCardData(user, currentCourse) {
+    console.time('Load Card Data');
+
     const courseParts = currentCourse.split('-');
     const targetLanguageCode = courseParts[1];
     const targetLanguage = languageShorts[targetLanguageCode] || targetLanguageCode;
@@ -852,6 +872,8 @@ async function loadCardData(user, currentCourse) {
             .catch((error) => {
                 console.error("Error fetching stories stats:", error);
             });
+            console.timeEnd('Load Card Data');
+
 
         // Wait for all category data to be fetched
         await Promise.all([vocabPromise, grammarPromise, chatPromise, storiesPromise]);
