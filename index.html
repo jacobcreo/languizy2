@@ -466,7 +466,7 @@
         <form id="emailSignInForm">
           <div class="mb-3">
             <label for="emailInput" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="emailInput" placeholder="Enter your email" required>
+            <input type="email" class="form-control" id="emailInput" placeholder="Enter your email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address.">
           </div>
           <button type="submit" class="btn btn-primary w-100">Get Sign-In Link</button>
         </form>
