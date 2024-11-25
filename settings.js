@@ -1,5 +1,7 @@
 // Initialize Firebase Firestore
 const db = firebase.firestore();
+let userSubLevel = ''; // Declare a variable to hold subLevel
+
 
 // Load User Profile Information
 firebase.auth().onAuthStateChanged((user) => {
@@ -22,6 +24,8 @@ function loadUserProfile(user) {
             if (userData.photoURL) {
                 document.getElementById('profileImage').src = userData.photoURL;
             }
+            userSubLevel = userData.subLevel || 'Free';
+
             // Update email
             document.getElementById('userEmail').textContent = userData.email || 'user@example.com';
             // Update input fields
@@ -200,7 +204,11 @@ function saveProfileChanges() {
         marketingMail: document.getElementById('marketingMail').checked
     };
 
-    userRef.update(updatedData)
+    userRef.update(updatedData).then(() => {
+        // After updating the profile, call the sendToLoops function
+        return sendToLoops(updatedData, user);
+      })
+      
         .then(() => {
             alert('Profile updated successfully.');
             // Optionally, reload the profile to reflect changes
@@ -211,3 +219,36 @@ function saveProfileChanges() {
             alert('Error updating profile: ' + error.message);
         });
 }
+
+function sendToLoops(updatedData, user) {
+    const sendToLoopsData = {
+        email: user.email,
+        userId: user.uid,
+        firstName: updatedData.displayName || '',
+        progressMail: updatedData.progressMail,
+        marketingMail: updatedData.marketingMail,
+        subLevel: userSubLevel || 'Free' // Include subLevel
+    };
+  
+    return fetch('https://us-central1-languizy2.cloudfunctions.net/updateUserProfile', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sendToLoopsData),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return response.text();
+      })
+      .then((data) => {
+        console.log('sendToLoops response:', data);
+      })
+      .catch((error) => {
+        console.error('Error calling sendToLoops:', error);
+      });
+  }
