@@ -18,11 +18,17 @@ function loadUserProfile(user) {
     userRef.get().then((doc) => {
         if (doc.exists) {
             const userData = doc.data();
-            document.getElementById('userName').textContent = userData.displayName || 'User Name';
-            document.getElementById('userEmail').textContent = userData.email || 'user@example.com';
+            // Update profile image
             if (userData.photoURL) {
                 document.getElementById('profileImage').src = userData.photoURL;
             }
+            // Update email
+            document.getElementById('userEmail').textContent = userData.email || 'user@example.com';
+            // Update input fields
+            document.getElementById('displayName').value = userData.displayName || '';
+            document.getElementById('fullName').value = userData.fullName || '';
+            document.getElementById('progressMail').checked = userData.progressMail || false;
+            document.getElementById('marketingMail').checked = userData.marketingMail || false;
         } else {
             console.error('User data does not exist in Firestore');
         }
@@ -173,4 +179,35 @@ function logout() {
     }).catch((error) => {
         console.error("Logout failed: ", error);
     });
+}
+
+document.getElementById('profileForm').addEventListener('submit', function(e) {
+    debugger;
+    e.preventDefault();
+    saveProfileChanges();
+});
+
+function saveProfileChanges() {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+
+    const userRef = db.collection('users').doc(user.uid);
+
+    const updatedData = {
+        displayName: document.getElementById('displayName').value.trim(),
+        fullName: document.getElementById('fullName').value.trim(),
+        progressMail: document.getElementById('progressMail').checked,
+        marketingMail: document.getElementById('marketingMail').checked
+    };
+
+    userRef.update(updatedData)
+        .then(() => {
+            alert('Profile updated successfully.');
+            // Optionally, reload the profile to reflect changes
+            loadUserProfile(user);
+        })
+        .catch((error) => {
+            console.error('Error updating profile:', error);
+            alert('Error updating profile: ' + error.message);
+        });
 }

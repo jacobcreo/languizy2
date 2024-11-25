@@ -48,28 +48,57 @@
                         <div>
                             <h5 id="userName" class="card-title">User Name</h5>
                             <p id="userEmail" class="card-text">user@example.com</p>
-                            <button class="btn btn-outline-primary mt-3" onclick="updateProfile()">Edit Profile</button>
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Settings Options Section -->
-        <div class="row mb-4">
-            <!-- Update Profile Information -->
-            <div class="col-md-6">
-                <div class="card bg-info text-white text-center">
+        <!-- Edit Profile Form -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <form id="profileForm">
+                <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Profile Information</h5>
-                        <p>Edit your display name, email, or password</p>
-                        <button class="btn btn-light" onclick="editProfile()">Edit Information</button>
+                        <h5 class="card-title">Edit Profile</h5>
+                        <div class="mb-3">
+                            <label for="displayName" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="displayName" placeholder="Enter Display Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name">
+                        </div>
+                        <!-- Email Preferences -->
+                        <h5 class="card-title">Email Preferences</h5>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="progressMail">
+                            <label class="form-check-label" for="progressMail">
+                                Progress Updates
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="marketingMail">
+                            <label class="form-check-label" for="marketingMail">
+                                Offers, News, and Marketing Communication
+                            </label>
+                        </div>
+                        <!-- Save Button -->
+                        <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
                     </div>
                 </div>
-            </div>
+            </form>
+        </div>
+    </div>
+
+        <!-- Settings Options Section -->
+        <div class="row mb-4">
+            
+            
 
             <!-- Reset Progress -->
-            <div class="col-md-6">
+            <div class="col-12">
                 <div class="card bg-danger text-white text-center">
                     <div class="card-body">
                         <h5 class="card-title">Reset Progress</h5>
