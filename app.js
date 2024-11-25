@@ -5,36 +5,28 @@ var db = firebase.firestore();
 // Add Firestore settings if needed (optional)
 db.settings({ timestampsInSnapshots: true });
 
-// // User settings (default values)
-// var userSettings = {
-//   firstAppearanceDaysCorrect: 28,
-//   firstAppearanceDaysIncorrect: 0.0035, // 5 minutes in days
-//   repeatDaysCorrectMultiplier: 2,
-//   repeatDaysIncorrect: 0.0035 // 5 minutes in days
-// };
+function sendSignInLink(email) {
+  var actionCodeSettings = {
+    url: window.location.origin + '/',
+    handleCodeInApp: true,
+  };
 
-// // Monitor auth state
-// auth.onAuthStateChanged(user => {
-//   if (user) {
-//     console.log('User logged in:', user.email);
-//     saveUserData(user);
-
-//     // Load user settings
-//     loadUserSettings().then(() => {
-//       // Load question if on practice page
-//       if (window.location.pathname.endsWith('practice.html')) {
-//         loadQuestion();
-//       }
-//     });
-//   } else {
-//     console.log('User logged out');
-//     // Redirect to login if not authenticated
-//     if (!window.location.pathname.endsWith('login.html')) {
-//       window.location.href = 'login.html';
-//     }
-//   }
-// });
-
+  auth.sendSignInLinkToEmail(email, actionCodeSettings)
+    .then(() => {
+      window.localStorage.setItem('emailForSignIn', email);
+      gtag('event', 'registration_started', {
+        'method': 'email_login',
+        'source': 'homepage_button'
+      });
+      alert('A sign-in link has been sent to your email.');
+      // Optionally, close the modal
+      $('#loginModal').modal('hide');
+    })
+    .catch((error) => {
+      console.error('Email Sign-In error:', error.code, error.message);
+      alert('Error sending sign-in link: ' + error.message);
+    });
+}
 
 
 // Google Sign-In
@@ -136,120 +128,7 @@ function redirectToCourseSelection(paramType) {
   window.location.href = `course_selection.html?${param}`;
 }
 
-/*
 
-// Google Sign-In
-function googleLogin() {
-  gtag('event', 'registration_started', {
-    'method': 'google_login',
-    'source': 'homepage_button'
-  });
-  
-  var provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(result => {
-      console.log('Google Sign-In successful:', result.user);
-
-      // Save user data to Firestore
-      saveUserData(result.user);
-
-      
-    })
-    .catch(error => {
-      console.error('Google Sign-In error:', error);
-    });
-}
-
-// Email Link Authentication
-function emailLogin() {
-  var email = prompt('Please enter your email:');
-  var actionCodeSettings = {
-    url: window.location.origin + '/course_selection.html',
-    handleCodeInApp: true,
-  };
-  auth.sendSignInLinkToEmail(email, actionCodeSettings)
-    .then(() => {
-      window.localStorage.setItem('emailForSignIn', email);
-      alert('A sign-in link has been sent to your email.');
-    })
-    .catch(error => {
-      console.error('Email Sign-In error:', error);
-    });
-}
-
-// Function to save user data to Firestore and update profile image if changed
-function saveUserData(user) {
-  debugger;
-  var userRef = db.collection('users').doc(user.uid);
-
-  // Check if the user's Firestore document exists
-  userRef.get().then(doc => {
-    if (doc.exists) {
-      debugger;
-      const userData = doc.data();
-      gtag('event', 'signin_completed', {
-        'method': 'google_login',
-        'user_id': doc.id,
-        'tier': doc.subLevel || 'Free'
-      }); 
-      const storedPhotoURL = userData.photoURL;  // Get the stored photoURL
-
-      // Check if the stored photoURL is different from the Google photoURL
-      if (user.photoURL && (!storedPhotoURL || storedPhotoURL !== user.photoURL)) {
-        debugger;
-        // If photoURL has changed or is missing, update the Firestore document
-        userRef.update({
-          photoURL: user.photoURL,  // Update the profile image
-          lastLogin: firebase.firestore.Timestamp.now()  // Update the last login timestamp
-        }).then(() => {
-          console.log('Profile image updated in Firestore.');
-          window.location.href = 'course_selection.html';
-        }).catch(error => {
-          console.error('Error updating profile image:', error);
-        });
-        
-      } else {
-        // Just update the lastLogin if no photoURL changes
-        userRef.update({
-          lastLogin: firebase.firestore.Timestamp.now()
-        });
-        window.location.href = 'course_selection.html';
-      }
-    } else {
-      // If the document doesn't exist (new user), create it with the profile image
-      userRef.set({
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,  // Save the profile image for new users
-        lastLogin: firebase.firestore.Timestamp.now(),
-        subLevel : 'Free'
-      }).then(() => {
-        console.log('New user data saved successfully with profile image.');
-        
-        // Fetch the newly created document to ensure the userId exists
-        debugger;
-        userRef.get().then(newDoc => {
-          if (newDoc.exists) {
-           
-
-            pingOnboardFunction(newDoc.id, user);
-          }
-          const randomValue = Math.random().toString(36).substring(2, 15); // Generate a random string
-          window.location.href = `course_selection.html?reg=${randomValue}`;
-          
-        }).catch(error => {
-          console.error('Error fetching new user document:', error);
-        });
-      }).catch(error => {
-        console.error('Error saving new user data:', error);
-      });
-    }
-  }).catch(error => {
-    console.error('Error fetching user data from Firestore:', error);
-  });
-}
-
-*/
 
 // Function to ping the onboard Google function
 function pingOnboardFunction(userId, user) {
@@ -503,3 +382,148 @@ function updateUserProgress(questionId, isCorrect) {
   */
 
 // Logout function
+
+/*
+
+// Google Sign-In
+function googleLogin() {
+  gtag('event', 'registration_started', {
+    'method': 'google_login',
+    'source': 'homepage_button'
+  });
+  
+  var provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+    .then(result => {
+      console.log('Google Sign-In successful:', result.user);
+
+      // Save user data to Firestore
+      saveUserData(result.user);
+
+      
+    })
+    .catch(error => {
+      console.error('Google Sign-In error:', error);
+    });
+}
+
+// Email Link Authentication
+function emailLogin() {
+  var email = prompt('Please enter your email:');
+  var actionCodeSettings = {
+    url: window.location.origin + '/course_selection.html',
+    handleCodeInApp: true,
+  };
+  auth.sendSignInLinkToEmail(email, actionCodeSettings)
+    .then(() => {
+      window.localStorage.setItem('emailForSignIn', email);
+      alert('A sign-in link has been sent to your email.');
+    })
+    .catch(error => {
+      console.error('Email Sign-In error:', error);
+    });
+}
+
+// Function to save user data to Firestore and update profile image if changed
+function saveUserData(user) {
+  debugger;
+  var userRef = db.collection('users').doc(user.uid);
+
+  // Check if the user's Firestore document exists
+  userRef.get().then(doc => {
+    if (doc.exists) {
+      debugger;
+      const userData = doc.data();
+      gtag('event', 'signin_completed', {
+        'method': 'google_login',
+        'user_id': doc.id,
+        'tier': doc.subLevel || 'Free'
+      }); 
+      const storedPhotoURL = userData.photoURL;  // Get the stored photoURL
+
+      // Check if the stored photoURL is different from the Google photoURL
+      if (user.photoURL && (!storedPhotoURL || storedPhotoURL !== user.photoURL)) {
+        debugger;
+        // If photoURL has changed or is missing, update the Firestore document
+        userRef.update({
+          photoURL: user.photoURL,  // Update the profile image
+          lastLogin: firebase.firestore.Timestamp.now()  // Update the last login timestamp
+        }).then(() => {
+          console.log('Profile image updated in Firestore.');
+          window.location.href = 'course_selection.html';
+        }).catch(error => {
+          console.error('Error updating profile image:', error);
+        });
+        
+      } else {
+        // Just update the lastLogin if no photoURL changes
+        userRef.update({
+          lastLogin: firebase.firestore.Timestamp.now()
+        });
+        window.location.href = 'course_selection.html';
+      }
+    } else {
+      // If the document doesn't exist (new user), create it with the profile image
+      userRef.set({
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,  // Save the profile image for new users
+        lastLogin: firebase.firestore.Timestamp.now(),
+        subLevel : 'Free'
+      }).then(() => {
+        console.log('New user data saved successfully with profile image.');
+        
+        // Fetch the newly created document to ensure the userId exists
+        debugger;
+        userRef.get().then(newDoc => {
+          if (newDoc.exists) {
+           
+
+            pingOnboardFunction(newDoc.id, user);
+          }
+          const randomValue = Math.random().toString(36).substring(2, 15); // Generate a random string
+          window.location.href = `course_selection.html?reg=${randomValue}`;
+          
+        }).catch(error => {
+          console.error('Error fetching new user document:', error);
+        });
+      }).catch(error => {
+        console.error('Error saving new user data:', error);
+      });
+    }
+  }).catch(error => {
+    console.error('Error fetching user data from Firestore:', error);
+  });
+}
+
+*/
+
+// // User settings (default values)
+// var userSettings = {
+//   firstAppearanceDaysCorrect: 28,
+//   firstAppearanceDaysIncorrect: 0.0035, // 5 minutes in days
+//   repeatDaysCorrectMultiplier: 2,
+//   repeatDaysIncorrect: 0.0035 // 5 minutes in days
+// };
+
+// // Monitor auth state
+// auth.onAuthStateChanged(user => {
+//   if (user) {
+//     console.log('User logged in:', user.email);
+//     saveUserData(user);
+
+//     // Load user settings
+//     loadUserSettings().then(() => {
+//       // Load question if on practice page
+//       if (window.location.pathname.endsWith('practice.html')) {
+//         loadQuestion();
+//       }
+//     });
+//   } else {
+//     console.log('User logged out');
+//     // Redirect to login if not authenticated
+//     if (!window.location.pathname.endsWith('login.html')) {
+//       window.location.href = 'login.html';
+//     }
+//   }
+// });

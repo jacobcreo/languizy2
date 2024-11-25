@@ -460,16 +460,16 @@ function populateModalCourses(user) {
 
     let coursesData = [];
 
-    db.collection('questions')
+    db.collection('courses')
         .get()
         .then((snapshot) => {
             const courses = new Set();
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                if (data.knownLanguage && data.language) { // Ensure fields exist
-                    const courseCombo = `${data.knownLanguage}-${data.language}`;
-                    courses.add(courseCombo);
+                const courseField = data.course; // Get the course field
+                if (courseField && typeof courseField === 'string' && /^[a-z]{2}-[a-z]{2}$/.test(courseField)) { // Check if it exists and matches the format XX-XX
+                    courses.add(courseField);
                 }
             });
 

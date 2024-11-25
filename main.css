@@ -580,3 +580,55 @@ h1, h3 {
 .close i {
   cursor:pointer;
 }
+
+* Center the modal header text */
+.modal-header .modal-title {
+  margin: 0 auto;
+}
+
+/* Style the Google Sign-In button */
+#googleSignInBtn {
+  background-color: #4285F4;
+  color: white;
+}
+
+#googleSignInBtn:hover {
+  background-color: #357ae8;
+  color: white;
+}
+
+/* Style the divider */
+.modal-body .text-center span {
+  position: relative;
+  display: inline-block;
+}
+
+.modal-body .text-center span::before,
+.modal-body .text-center span::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 45%;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.modal-body .text-center span::before {
+  left: -50%;
+}
+
+.modal-body .text-center span::after {
+  right: -50%;
+}
+
+/* Style the email input */
+#emailInput {
+  height: 45px;
+  font-size: 1rem;
+}
+
+/* Style the 'Get Sign-In Link' button */
+#emailSignInForm button {
+  height: 45px;
+  font-size: 1rem;
+}

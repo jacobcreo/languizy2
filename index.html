@@ -53,10 +53,10 @@
             <a href="/about.html" class="nav-link">About</a>
           </li>
           <li class="nav-item me-3">
-            <a class="nav-link google-login">Sign In</a>
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#loginModal">Sign In</a>
           </li>
           <li class="nav-item ">
-            <a class="btn btn-primary google-login">Get Started</a>
+            <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Get Started</a>
           </li>
         </ul>
       </div>
@@ -78,9 +78,11 @@
     <div class="container text-center text-white">
       <h1 class="display-4 fw-bold">Language Learning for Real.</h1>
       <p class="lead my-4">Dive deep into our trio of immersive courses with expert guidance.</p>
-      <a class="google-login btn btn-lg btn-primary me-3">Join Now</a>
+      <!-- <a class="google-login btn btn-lg btn-primary me-3">Join Now</a>
       <a class="google-login btn btn-lg btn-outline-light">Sign In</a>
-      <a class="email-login btn btn-lg btn-outline-light">Sign In with Email</a>
+      <a class="email-login btn btn-lg btn-outline-light">Sign In with Email</a> -->
+      <a class="btn btn-lg btn-outline-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+
     </div>
   </section>
   
@@ -441,21 +443,60 @@
       </div>
     </div>
   </footer>
+
+  <!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="loginModalLabel">Welcome Back!</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Login with Google -->
+        <button type="button" class="btn btn-outline-primary w-100 mb-3" id="googleSignInBtn">
+          <i class="fab fa-google me-2"></i> Sign in with Google
+        </button>
+        <!-- Divider -->
+        <div class="text-center my-3">
+          <span>or</span>
+        </div>
+        <!-- Email Sign-In Form -->
+        <form id="emailSignInForm">
+          <div class="mb-3">
+            <label for="emailInput" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="emailInput" placeholder="Enter your email" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Get Sign-In Link</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
   
   <!-- Bootstrap JS Bundle (Includes Popper) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Firebase and jQuery -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-config.js"></script>
   <!-- Custom JS -->
   <script src="app.js"></script>
-  <script>
+  <!-- <script>
     $('.google-login').click(googleLogin);
     $('.email-login').click(emailLogin);
+  </script> -->
+  <script>
+    // Event listeners for modal buttons
+  $('#googleSignInBtn').click(googleLogin);
+  $('#emailSignInForm').submit(function(e) {
+    e.preventDefault();
+    var email = $('#emailInput').val();
+    sendSignInLink(email);
+  });
   </script>
 </body>
 </html>
