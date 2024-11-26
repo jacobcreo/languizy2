@@ -14,6 +14,7 @@ let language = '';
 let knownLanguage = '';
 let startTime;
 let elapsedTime = 0;
+let uid;
 
 
 
@@ -384,6 +385,7 @@ document.getElementById('retryTestBtn').onclick = function() {
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
+    uid = user.uid;
     loadStory(); // Load the story when user is authenticated
     loadUserAvatar(user);  // Load user avatar in the navbar
 
