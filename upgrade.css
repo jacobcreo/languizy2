@@ -1,0 +1,332 @@
+/* Basic Styling */
+body {
+    background-color: #f8f9fa;
+}
+
+/* Navigation Bar */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Headline Row */
+.card.bg-warning {
+    border-radius: 10px;
+}
+
+/* Streak and Training Options */
+.card.bg-success,
+.card.bg-info,
+.card.bg-light,
+.card.border-left-secondary {
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+#flameIcon {
+    margin-right: 5px;
+}
+
+/* Training Buttons */
+button {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 10px;
+}
+
+button i {
+    margin-right: 8px;
+}
+
+.btn-light {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn-light:hover {
+    background-color: #ccc;
+}
+
+/* Streak Card Icon */
+.fa-fire {
+    color: #fff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    /* Stack Cards on Smaller Screens */
+    .row.mb-4 {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Avatar Circle for Initials */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #6f42c1; /* Purple background */
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px; /* Vertically center the text */
+    border-radius: 50%; /* Circle shape */
+    display: inline-block;
+}
+
+/* Avatar Image (Profile Photo) */
+#userAvatar img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Ensure the avatar and logout button are aligned properly */
+.navbar .d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between the button and the avatar */
+}
+
+/* Adjust the size of the profile image */
+#userAvatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* Ensure logout button and avatar are aligned */
+.me-3 {
+    margin-right: 15px; /* Add margin to the right of the logout button */
+}
+
+/* Headline Row - Responsive Two Columns */
+.card.bg-light,
+.card.bg-warning {
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+#currentCoachImage {
+    object-fit: cover; /* Ensures the image maintains its aspect ratio */
+}
+
+@media (max-width: 768px) {
+    /* Stack the columns vertically on smaller screens */
+    .row.mb-4 {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.card-footer {
+    border-top: none;
+    text-align: center;
+}
+
+.card-footer a,
+.card-footer button {
+    min-width: 50%;
+}
+
+/* Modal Styling */
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Progress Bars */
+.progress {
+    height: 10px;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+/* Additional Styles for Fifth Card */
+.card.border-left-secondary {
+    border-left-width: 0.25rem;
+    border-left-color: #6c757d !important;
+}
+
+/* Enhanced Modal Styles */
+.modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    background: linear-gradient(45deg, #6f42c1, #007bff);
+    color: white;
+}
+
+.modal-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+}
+
+.modal-body {
+    background-color: #f1f1f1;
+}
+
+.list-group-item {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+    cursor: pointer;
+}
+
+.list-group-item.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Search Input Styling */
+#searchCourseInput {
+    border-radius: 20px;
+    padding: 10px 20px;
+    border: 1px solid #ced4da;
+}
+
+#searchCourseInput:focus {
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    border-color: #80bdff;
+}
+
+/* Course List Styling */
+#courseList {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+#courseList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#courseList::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#courseList::-webkit-scrollbar-thumb {
+    background: #6f42c1;
+    border-radius: 10px;
+}
+
+.course-item {
+    display: flex;
+    align-items: center;
+}
+
+/* Button Styling */
+#modalSelectCourseBtn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 25px;
+    transition: background-color 0.3s ease;
+}
+
+#modalSelectCourseBtn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+#modalSelectCourseBtn:not(:disabled):hover {
+    background-color: #5a6268;
+}
+
+/* Optional: Add a checkmark icon when a course is selected */
+.course-item.active::after {
+    content: '\2713'; /* Unicode checkmark */
+    font-size: 1.2rem;
+    color: white;
+    margin-left: auto;
+}
+
+/* **New: Recommendation Card Specific Styling (Optional)** */
+.card.border-left-success {
+    border-left-width: 0.25rem;
+    border-left-color: #28a745 !important;
+}
+
+.card.border-left-success .card-title {
+    display: flex;
+    align-items: center;
+}
+
+.card.border-left-success .card-title i {
+    margin-right: 8px;
+}
+
+.fill-effect {
+    width: 0;
+    background-color: rgba(0, 123, 255, 0.2); /* Adjust the color and transparency */
+    animation: fill-animation 3s linear infinite;
+  }
+
+  @keyframes fill-animation {
+    0% {
+      width: 0;
+    }
+    50% {
+      width: 100%;
+    }
+    100% {
+      width: 0;
+    }
+  }
+
+  #recommendationBtn {
+    visibility: hidden;
+  }
+
+  #drillsAlert {
+    margin-bottom: 20px;
+}
+
+#drillsCard {
+    display: none; /* Initially hidden */
+}
+/* Success Message Styling */
+#successMessage {
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#subscribedPlan {
+    color: #28a745; /* Green color for emphasis */
+}

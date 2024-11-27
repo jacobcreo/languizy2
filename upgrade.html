@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade to Pro - Language Learning App</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="upgrade.css">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-K8GMWBXC5J');
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="/course_selection.html">
+                <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
+            </a>
+
+            <!-- Wrap the logout button and avatar inside a flex container -->
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+                <div id="userAvatar" class="avatar"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Upgrade to Pro</h2>
+
+        <!-- Subscription Options -->
+        <div class="row justify-content-center">
+            <!-- Monthly Plan Card -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-body text-center">
+                        <h4 class="card-title text-primary">Monthly Pro Plan</h4>
+                        <h2 class="card-price">$6.99<span class="period">/month</span></h2>
+                        <hr>
+                        <ul class="fa-ul text-start">
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Unlimited Daily Exercises</li>
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Access to All Stories</li>
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Advanced AI Chats</li>
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Full Practice Stats</li>
+                        </ul>
+                        <button data-fsc-item-path-value="monthly-pro" data-fsc-action="Add, Checkout" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-credit-card"></i> Subscribe to Monthly Plan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yearly Plan Card -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow h-100">
+                    <div class="card-body text-center">
+                        <h4 class="card-title text-success">Yearly Pro Plan</h4>
+                        <h2 class="card-price">$63<span class="period">/year</span></h2>
+                        <hr>
+                        <ul class="fa-ul text-start">
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Unlimited Daily Exercises</li>
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Access to All Stories</li>
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Advanced AI Chats</li>
+                            <li><span class="fa-li"><i class="fas fa-check-circle text-success"></i></span> Full Practice Stats</li>
+                        </ul>
+                        <button data-fsc-item-path-value="yearly-pro" data-fsc-action="Add, Checkout" class="btn btn-success w-100 mb-2">
+                            <i class="fas fa-credit-card"></i> Subscribe to Yearly Plan
+                        </button>
+                        <div class="alert alert-info mt-3">
+                            <strong>Special Offer:</strong> Get 25% off with our yearly plan - only $63!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center mt-4">
+            <button class="btn btn-outline-secondary me-3" onclick="continueFree()">Continue Free</button>
+            <button class="btn btn-outline-danger" onclick="exitUpgrade()">Exit</button>
+        </div>
+
+        <!-- Success Message (Hidden Initially) -->
+        <div id="successMessage" class="alert alert-success text-center mt-5" style="display: none;">
+            <h4 class="alert-heading">Congratulations!</h4>
+            <p>You are now subscribed to the <strong id="subscribedPlan"></strong> Pro Plan.</p>
+            <hr>
+            <button class="btn btn-primary" onclick="redirectToCourseSelection()">Start Practicing</button>
+        </div>
+    </div>
+
+    <!-- FastSpring Store Builder -->
+    <script 
+        id="fsc-api"
+        src="https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js"
+        type="text/javascript"
+        data-storefront="languizy.test.onfastspring.com/popup-languizy"
+        data-popup-closed="onFSPopupClosed"
+        data-debug="true">
+    </script>
+
+    <!-- Firebase, jQuery, and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <!-- Custom JS -->
+    <script src="upgrade.js"></script>
+</body>
+
+</html>
