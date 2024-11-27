@@ -3,17 +3,20 @@
 // Initialize Firebase Firestore
 const db = firebase.firestore();
 
+// Variable to store user email after first retrieval
+let userEmail = '';
+
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
         try {
-            // Fetch the user document
+            // Fetch the user document once
             const userDocRef = db.collection('users').doc(user.uid);
             const userDoc = await userDocRef.get();
 
             if (userDoc.exists) {
                 const userData = userDoc.data();
-                const userEmail = userData.email;
+                userEmail = userData.email;
 
                 if (!userEmail) {
                     console.error('User email not found in Firestore.');
@@ -49,10 +52,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
 function onFSPopupClosed(orderReference) {
     if (orderReference && orderReference.id) {
         console.log("Order Reference ID:", orderReference.id);
-        // Optionally, you can verify the order on your server here
-
-        // Update Firestore to reflect the subscription
-        updateUserSubscription(orderReference);
+        // Firestore is updated via webhook; verify subscription status
+        verifySubscription(orderReference.id);
     } else {
         console.log("No order ID. Popup was closed without completing a purchase.");
     }
@@ -61,82 +62,61 @@ function onFSPopupClosed(orderReference) {
     fastspring.builder.reset();
 
     // Re-recognize the user to ensure email is updated after reset
-    const user = firebase.auth().currentUser;
-    if (user) {
-        db.collection('users').doc(user.uid).get().then((doc) => {
-            if (doc.exists) {
-                const userData = doc.data();
-                const userEmail = userData.email;
-                if (userEmail) {
-                    fastspring.builder.recognize({
-                        email: userEmail
-                    });
-                    console.log(`FastSpring re-recognized user with email: ${userEmail}`);
-                }
-            }
-        }).catch((error) => {
-            console.error('Error re-recognizing user:', error);
+    if (userEmail) {
+        fastspring.builder.recognize({
+            email: userEmail
         });
+        console.log(`FastSpring re-recognized user with email: ${userEmail}`);
     }
 }
 
-// Function to update user's subscription in Firestore
-async function updateUserSubscription(orderReference) {
+// Function to verify subscription status from Firestore
+async function verifySubscription(subscriptionId) {
     try {
-        const user = firebase.auth().currentUser;
-        if (!user) {
-            console.error('No user is currently logged in.');
-            return;
-        }
-
-        // Fetch the user document
-        const userDocRef = db.collection('users').doc(user.uid);
-        const userDoc = await userDocRef.get();
-
-        if (!userDoc.exists) {
-            console.error('User document does not exist.');
-            return;
-        }
-
-        const userData = userDoc.data();
-        const subscriptionId = orderReference.id; // Assuming orderReference.id is the subscription ID
-
-        // Fetch the subscription document to determine the plan type
+        // Fetch the subscription document
         const subscriptionDocRef = db.collection('subscriptions').doc(subscriptionId);
         const subscriptionDoc = await subscriptionDocRef.get();
 
         if (!subscriptionDoc.exists) {
             console.error('Subscription document does not exist.');
-            // Optionally, handle this case by alerting the user
             displayErrorMessage();
             return;
         }
 
         const subscriptionData = subscriptionDoc.data();
 
-        // Verify the subscription status and plan
+        // Verify the subscription details
         if (
             subscriptionData &&
             subscriptionData.plan &&
             (subscriptionData.plan === 'Monthly Pro' || subscriptionData.plan === 'Yearly Pro') &&
             subscriptionData.status === 'active'
         ) {
-            // Update user's currentSubscription field if not already updated
-            await userDocRef.update({
-                currentSubscription: subscriptionData,
-                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            // Fetch the user document to update UI
+            const userDocRef = db.collection('users').doc(subscriptionData.userId);
+            const userDoc = await userDocRef.get();
 
-            console.log(`Subscription activated for userId: ${user.uid}, subscriptionId: ${subscriptionId}, plan: ${subscriptionData.plan}`);
+            if (!userDoc.exists) {
+                console.error('User document does not exist.');
+                displayErrorMessage();
+                return;
+            }
 
-            // Show success message
-            showSuccessMessage(subscriptionData.plan);
+            // Optionally, you can further verify if the subscription belongs to the current user
+            // Assuming user.uid === subscriptionData.userId
+            const currentUser = firebase.auth().currentUser;
+            if (currentUser && currentUser.uid === subscriptionData.userId) {
+                showSuccessMessage(subscriptionData.plan);
+            } else {
+                console.error('Subscription does not belong to the current user.');
+                displayErrorMessage();
+            }
         } else {
             console.error('Subscription verification failed. Status not active or plan invalid.');
             displayErrorMessage();
         }
     } catch (error) {
-        console.error('Error updating user subscription:', error);
+        console.error('Error verifying subscription:', error);
         displayErrorMessage();
     }
 }
@@ -150,7 +130,7 @@ function showSuccessMessage(planType) {
 
     successMessageDiv.style.display = 'block';
 
-    // Optionally, hide the subscription options and action buttons
+    // Hide subscription options and action buttons
     const subscriptionOptions = document.querySelector('.row.justify-content-center');
     if (subscriptionOptions) {
         subscriptionOptions.style.display = 'none';
@@ -177,7 +157,7 @@ function displayErrorMessage() {
 
     errorMessageDiv.style.display = 'block';
 
-    // Optionally, hide the subscription options and action buttons
+    // Hide subscription options and action buttons
     const subscriptionOptions = document.querySelector('.row.justify-content-center');
     if (subscriptionOptions) {
         subscriptionOptions.style.display = 'none';
