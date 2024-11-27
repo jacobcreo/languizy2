@@ -101,6 +101,14 @@
             <hr>
             <button class="btn btn-primary" onclick="redirectToCourseSelection()">Start Practicing</button>
         </div>
+
+        <!-- Error Message (Hidden Initially) -->
+        <div id="errorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
+            <h4 class="alert-heading">Subscription Failed</h4>
+            <p>There was an issue processing your subscription. Please try again.</p>
+            <hr>
+            <button class="btn btn-warning" onclick="resetSubscription()">Try Again</button>
+        </div>
     </div>
 
     <!-- FastSpring Store Builder -->

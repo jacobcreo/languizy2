@@ -25,7 +25,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
                 // Initialize FastSpring Builder with user email
                 fastspring.builder.recognize({
                     email: userEmail
-                    // Note: Not prepopulating firstName and lastName as per requirements
+                    // Not prepopulating firstName and lastName as per requirements
                 });
 
                 console.log(`FastSpring recognized user with email: ${userEmail}`);
@@ -59,6 +59,25 @@ function onFSPopupClosed(orderReference) {
 
     // Reset FastSpring Builder
     fastspring.builder.reset();
+
+    // Re-recognize the user to ensure email is updated after reset
+    const user = firebase.auth().currentUser;
+    if (user) {
+        db.collection('users').doc(user.uid).get().then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                const userEmail = userData.email;
+                if (userEmail) {
+                    fastspring.builder.recognize({
+                        email: userEmail
+                    });
+                    console.log(`FastSpring re-recognized user with email: ${userEmail}`);
+                }
+            }
+        }).catch((error) => {
+            console.error('Error re-recognizing user:', error);
+        });
+    }
 }
 
 // Function to update user's subscription in Firestore
@@ -82,63 +101,43 @@ async function updateUserSubscription(orderReference) {
         const userData = userDoc.data();
         const subscriptionId = orderReference.id; // Assuming orderReference.id is the subscription ID
 
-        // Determine the plan type based on the orderReference or additional data if available
-        // For simplicity, let's assume the plan type is encoded in the order ID or use a separate field
-        // You might need to adjust this based on your FastSpring setup
+        // Fetch the subscription document to determine the plan type
+        const subscriptionDocRef = db.collection('subscriptions').doc(subscriptionId);
+        const subscriptionDoc = await subscriptionDocRef.get();
 
-        // Here, we will assume that the 'product' is identifiable via the orderReference
-        // For demonstration, let's fetch the product details from FastSpring API or include it in the webhook
+        if (!subscriptionDoc.exists) {
+            console.error('Subscription document does not exist.');
+            // Optionally, handle this case by alerting the user
+            displayErrorMessage();
+            return;
+        }
 
-        // **Note:** In a production environment, you should verify the order on the server side using FastSpring's API
+        const subscriptionData = subscriptionDoc.data();
 
-        // For now, we'll simulate the plan type
-        const planType = determinePlanType(subscriptionId);
+        // Verify the subscription status and plan
+        if (
+            subscriptionData &&
+            subscriptionData.plan &&
+            (subscriptionData.plan === 'Monthly Pro' || subscriptionData.plan === 'Yearly Pro') &&
+            subscriptionData.status === 'active'
+        ) {
+            // Update user's currentSubscription field if not already updated
+            await userDocRef.update({
+                currentSubscription: subscriptionData,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            });
 
-        // Prepare subscription data
-        const subscriptionData = {
-            subscriptionId: subscriptionId,
-            userId: user.uid,
-            productId: planType === 'monthly' ? 'monthly-pro' : 'yearly-pro',
-            plan: planType === 'monthly' ? 'Monthly' : 'Yearly',
-            status: 'active',
-            startDate: new Date(), // Current date
-            nextBillingDate: planType === 'monthly' ?
-                new Date(new Date().setMonth(new Date().getMonth() + 1)) :
-                new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        };
+            console.log(`Subscription activated for userId: ${user.uid}, subscriptionId: ${subscriptionId}, plan: ${subscriptionData.plan}`);
 
-        // Update subscriptions collection
-        await db.collection('subscriptions').doc(subscriptionId).set(subscriptionData, { merge: true });
-
-        // Update user's currentSubscription field
-        await userDocRef.update({
-            currentSubscription: subscriptionData,
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        console.log(`Subscription activated for userId: ${user.uid}, subscriptionId: ${subscriptionId}, plan: ${subscriptionData.plan}`);
-
-        // Show success message
-        showSuccessMessage(subscriptionData.plan);
+            // Show success message
+            showSuccessMessage(subscriptionData.plan);
+        } else {
+            console.error('Subscription verification failed. Status not active or plan invalid.');
+            displayErrorMessage();
+        }
     } catch (error) {
         console.error('Error updating user subscription:', error);
-        alert('There was an issue processing your subscription. Please contact support.');
-    }
-}
-
-// Function to determine plan type based on subscriptionId
-// **Adjust this function based on how you identify plan types from orderReference**
-function determinePlanType(subscriptionId) {
-    // Example logic: if subscriptionId contains 'monthly', it's monthly; otherwise, yearly
-    // Adjust according to your FastSpring configuration
-    if (subscriptionId.includes('monthly')) {
-        return 'monthly';
-    } else if (subscriptionId.includes('yearly')) {
-        return 'yearly';
-    } else {
-        // Default to monthly if undetermined
-        return 'monthly';
+        displayErrorMessage();
     }
 }
 
@@ -147,21 +146,77 @@ function showSuccessMessage(planType) {
     const successMessageDiv = document.getElementById('successMessage');
     const subscribedPlanSpan = document.getElementById('subscribedPlan');
 
-    subscribedPlanSpan.textContent = planType === 'monthly' ? 'Monthly' : 'Yearly';
+    subscribedPlanSpan.textContent = planType === 'Monthly Pro' ? 'Monthly' : 'Yearly';
 
     successMessageDiv.style.display = 'block';
 
-    // Optionally, hide the subscription options
+    // Optionally, hide the subscription options and action buttons
     const subscriptionOptions = document.querySelector('.row.justify-content-center');
     if (subscriptionOptions) {
         subscriptionOptions.style.display = 'none';
     }
 
-    // Optionally, hide the action buttons
     const actionButtons = document.querySelector('.text-center.mt-4');
     if (actionButtons) {
         actionButtons.style.display = 'none';
     }
+
+    // Hide error message if visible
+    const errorMessageDiv = document.getElementById('errorMessage');
+    if (errorMessageDiv) {
+        errorMessageDiv.style.display = 'none';
+    }
+
+    console.log(`Displayed success message for plan: ${planType}`);
+}
+
+// Function to display error message
+function displayErrorMessage() {
+    const errorMessageDiv = document.getElementById('errorMessage');
+    const successMessageDiv = document.getElementById('successMessage');
+
+    errorMessageDiv.style.display = 'block';
+
+    // Optionally, hide the subscription options and action buttons
+    const subscriptionOptions = document.querySelector('.row.justify-content-center');
+    if (subscriptionOptions) {
+        subscriptionOptions.style.display = 'none';
+    }
+
+    const actionButtons = document.querySelector('.text-center.mt-4');
+    if (actionButtons) {
+        actionButtons.style.display = 'none';
+    }
+
+    // Hide success message if visible
+    if (successMessageDiv) {
+        successMessageDiv.style.display = 'none';
+    }
+
+    console.log(`Displayed error message: Subscription did not go through.`);
+}
+
+// Function to reset the subscription process (allow user to try again)
+function resetSubscription() {
+    const subscriptionOptions = document.querySelector('.row.justify-content-center');
+    const actionButtons = document.querySelector('.text-center.mt-4');
+    const errorMessageDiv = document.getElementById('errorMessage');
+
+    // Show subscription options and action buttons
+    if (subscriptionOptions) {
+        subscriptionOptions.style.display = 'flex';
+    }
+
+    if (actionButtons) {
+        actionButtons.style.display = 'block';
+    }
+
+    // Hide error message
+    if (errorMessageDiv) {
+        errorMessageDiv.style.display = 'none';
+    }
+
+    console.log(`Reset subscription process for user to try again.`);
 }
 
 // Function to redirect to course-selection.html

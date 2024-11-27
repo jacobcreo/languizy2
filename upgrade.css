@@ -1,3 +1,5 @@
+/* course-selection.css */
+
 /* Basic Styling */
 body {
     background-color: #f8f9fa;
@@ -8,71 +10,112 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Headline Row */
-.card.bg-warning {
-    border-radius: 10px;
+/* Subscription Cards */
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-/* Streak and Training Options */
-.card.bg-success,
-.card.bg-info,
-.card.bg-light,
-.card.border-left-secondary {
-    border-radius: 10px;
-    padding: 1.5rem;
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
-.card-title {
-    font-size: 1.25rem;
-    font-weight: bold;
+.card-price {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
 }
 
-.card-body {
-    padding: 1.5rem;
+.period {
+    font-size: 1rem;
+    color: #6c757d;
 }
 
-#flameIcon {
-    margin-right: 5px;
-}
-
-/* Training Buttons */
-button {
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 10px;
-}
-
-button i {
-    margin-right: 8px;
-}
-
-.btn-light {
-    background-color: #e0e0e0;
-    color: #333;
-    border: none;
+/* Subscription Buttons */
+.btn-primary,
+.btn-success {
+    font-size: 1.1rem;
+    padding: 12px;
+    border-radius: 25px;
     transition: background-color 0.3s ease;
 }
 
-.btn-light:hover {
-    background-color: #ccc;
+.btn-primary:hover,
+.btn-success:hover {
+    opacity: 0.9;
 }
 
-/* Streak Card Icon */
-.fa-fire {
-    color: #fff;
+/* Success and Error Messages */
+#successMessage,
+#errorMessage {
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#successMessage h4,
+#errorMessage h4 {
+    font-size: 1.75rem;
+}
+
+/* Action Buttons */
+.btn-outline-secondary,
+.btn-outline-danger {
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-danger:hover {
+    background-color: #e2e6ea;
+    color: #000;
+}
+
+/* Alert Customization */
+.alert-success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+/* List Icons */
+.fa-ul {
+    padding-left: 2em;
+}
+
+.fa-li i {
+    color: #28a745; /* Green color for check icons */
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    /* Stack Cards on Smaller Screens */
-    .row.mb-4 {
+    /* Stack the subscription cards vertically on smaller screens */
+    .row.justify-content-center {
         flex-direction: column;
         align-items: center;
     }
-}
 
-.hidden {
-    display: none !important;
+    .card-price {
+        font-size: 2rem;
+    }
+
+    .period {
+        font-size: 0.9rem;
+    }
 }
 
 /* Avatar Circle for Initials */
@@ -93,6 +136,8 @@ button i {
 #userAvatar img {
     border-radius: 50%;
     object-fit: cover;
+    width: 40px;
+    height: 40px;
 }
 
 /* Ensure the avatar and logout button are aligned properly */
@@ -102,58 +147,9 @@ button i {
     gap: 10px; /* Add spacing between the button and the avatar */
 }
 
-/* Adjust the size of the profile image */
-#userAvatar img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-
 /* Ensure logout button and avatar are aligned */
 .me-3 {
     margin-right: 15px; /* Add margin to the right of the logout button */
-}
-
-/* Headline Row - Responsive Two Columns */
-.card.bg-light,
-.card.bg-warning {
-    border-radius: 10px;
-    padding: 1.5rem;
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-
-#currentCoachImage {
-    object-fit: cover; /* Ensures the image maintains its aspect ratio */
-}
-
-@media (max-width: 768px) {
-    /* Stack the columns vertically on smaller screens */
-    .row.mb-4 {
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-.card-footer {
-    border-top: none;
-    text-align: center;
-}
-
-.card-footer a,
-.card-footer button {
-    min-width: 50%;
-}
-
-/* Modal Styling */
-.modal-header {
-    border-bottom: 1px solid #dee2e6;
-}
-
-.modal-footer {
-    border-top: 1px solid #dee2e6;
 }
 
 /* Progress Bars */
@@ -165,13 +161,7 @@ button i {
     transition: width 0.6s ease;
 }
 
-/* Additional Styles for Fifth Card */
-.card.border-left-secondary {
-    border-left-width: 0.25rem;
-    border-left-color: #6c757d !important;
-}
-
-/* Enhanced Modal Styles */
+/* Modal Styling */
 .modal-content {
     border-radius: 15px;
     overflow: hidden;
@@ -291,42 +281,36 @@ button i {
     margin-right: 8px;
 }
 
+/* Fill Effect Animation */
 .fill-effect {
     width: 0;
     background-color: rgba(0, 123, 255, 0.2); /* Adjust the color and transparency */
     animation: fill-animation 3s linear infinite;
-  }
+}
 
-  @keyframes fill-animation {
+@keyframes fill-animation {
     0% {
-      width: 0;
+        width: 0;
     }
     50% {
-      width: 100%;
+        width: 100%;
     }
     100% {
-      width: 0;
+        width: 0;
     }
-  }
+}
 
-  #recommendationBtn {
+/* Ensure recommendation button is visible */
+#recommendationBtn {
     visibility: hidden;
-  }
+}
 
-  #drillsAlert {
+/* Drills Alert */
+#drillsAlert {
     margin-bottom: 20px;
 }
 
+/* Drills Card */
 #drillsCard {
     display: none; /* Initially hidden */
-}
-/* Success Message Styling */
-#successMessage {
-    border-radius: 10px;
-    padding: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-#subscribedPlan {
-    color: #28a745; /* Green color for emphasis */
 }
