@@ -4,82 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Test</title>
+    <!-- Include the FastSpring Store Builder Library -->
     <script 
         id="fsc-api"
         src="https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js"
         type="text/javascript"
-        data-storefront="languizy.test.onfastspring.com/popup-languizy">
+        data-storefront="languizy.test.onfastspring.com/popup-languizy"
+        data-debug="true">
     </script>
-    
 </head>
 <body>
-    <!-- Button for Subscription Plan A -->
-    <button id="subscribePlanA">Subscribe to Plan A</button>
-
-    <!-- Button for Subscription Plan B -->
-    <button id="subscribePlanB">Subscribe to Plan B</button>
-
-    
+    <!-- Buttons for Subscription Plans -->
+    <button data-fsc-item-path-value="monthly-pro" data-fsc-action="Add, Checkout">
+        Subscribe to Monthly Plan
+    </button>
+    <button data-fsc-item-path-value="yearly-pro" data-fsc-action="Add, Checkout">
+        Subscribe to Yearly Plan
+    </button>
 
     <script type="text/javascript">
-        // Predefined email address
+        // Predefined user information
         const userEmail = "user@example.com"; // Replace this with the actual user's email.
+        const userFirstName = "John"; // Replace with the actual user's first name.
+        const userLastName = "Doe"; // Replace with the actual user's last name.
 
-        document.getElementById("subscribePlanA").addEventListener("click", function () {
-            fastspring.builder.checkout({
-                products: [
-                    {
-                        path: "monthly-pro", // Replace with the correct product path from your FastSpring dashboard
-                    },
-                ],
-                customer: {
-                    email: userEmail, // Pre-fill the email field
-                },
-                onPopupClosed: onPopupClosed
+        // Recognize the user with pre-filled details
+        document.addEventListener("DOMContentLoaded", function () {
+            fastspring.builder.recognize({
+                email: userEmail,
+                firstName: userFirstName,
+                lastName: userLastName,
             });
         });
 
-        document.getElementById("subscribePlanB").addEventListener("click", function () {
-            fastspring.builder.checkout({
-                products: [
-                    {
-                        path: "yearly-pro", // Replace with the correct product path from your FastSpring dashboard
-                    },
-                ],
-                customer: {
-                    email: userEmail, // Pre-fill the email field
+        // Event Listeners for FastSpring Events
+        fastspring.builder.on("order.complete", function (data) {
+            console.log("Order completed:", data);
+
+            // Notify your backend about the successful payment
+            fetch("/api/fastspring-webhook", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-                onPopupClosed: onPopupClosed
+                body: JSON.stringify({ orderReference: data.reference }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Database updated successfully:", data);
+                // Redirect user to a success page
+                window.location.href = "/success.html";
+            })
+            .catch((error) => {
+                console.error("Error updating database:", error);
             });
         });
 
-        function onPopupClosed(orderReference) {
-            if (orderReference) {
-                console.log("Order completed:", orderReference);
-
-                // Notify your backend about the successful payment
-                fetch("/api/fastspring-webhook", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ orderReference }),
-                })
-                .then((response) => response.json())
-                .then((data) => {
-                    console.log("Database updated successfully:", data);
-                    // Redirect user to a success page
-                    window.location.href = "/success.html";
-                })
-                .catch((error) => {
-                    console.error("Error updating database:", error);
-                });
-            } else {
-                console.log("Checkout popup closed without purchase.");
-                // Redirect user to a failure page or show a message
-                window.location.href = "/failure.html";
-            }
-        }
+        fastspring.builder.on("popup.closed", function () {
+            console.log("Checkout popup closed without purchase.");
+            window.location.href = "/failure.html";
+        });
     </script>
 </body>
 </html>
