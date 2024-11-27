@@ -10,6 +10,7 @@
         src="https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js"
         type="text/javascript"
         data-storefront="languizy.test.onfastspring.com/popup-languizy"
+        data-popup-closed="onFSPopupClosed"
         data-debug="true">
     </script>
 </head>
@@ -37,33 +38,39 @@
             });
         });
 
-        // Event Listeners for FastSpring Events
-        fastspring.builder.on("order.complete", function (data) {
-            console.log("Order completed:", data);
+        // // Event Listeners for FastSpring Events
+        // fastspring.builder.on("order.complete", function (data) {
+        //     console.log("Order completed:", data);
 
-            // Notify your backend about the successful payment
-            fetch("/api/fastspring-webhook", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ orderReference: data.reference }),
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Database updated successfully:", data);
-                // Redirect user to a success page
-                window.location.href = "/success.html";
-            })
-            .catch((error) => {
-                console.error("Error updating database:", error);
-            });
-        });
+        //     // Notify your backend about the successful payment
+        //     fetch("/api/fastspring-webhook", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify({ orderReference: data.reference }),
+        //     })
+        //     .then((response) => response.json())
+        //     .then((data) => {
+        //         console.log("Database updated successfully:", data);
+        //         // Redirect user to a success page
+        //         window.location.href = "/success.html";
+        //     })
+        //     .catch((error) => {
+        //         console.error("Error updating database:", error);
+        //     });
+        // });
 
-        fastspring.builder.on("popup.closed", function () {
-            console.log("Checkout popup closed without purchase.");
-            window.location.href = "/failure.html";
-        });
+        function onFSPopupClosed(orderReference) {
+            if (orderReference) {
+                console.log("Order Reference ID:", orderReference.id);
+                console.log("Order Reference:", orderReference);
+                fastspring.builder.reset();
+                // window.location.replace("http://languizy.test.onfastspring.com/?orderId=" + orderReference.id);
+            } else {
+                console.log("No order ID");
+            }
+        }
     </script>
 </body>
 </html>
