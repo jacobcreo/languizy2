@@ -142,32 +142,37 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "aa5bebeb02686481f0c11b6c00c6f8d8"
+        "md5": "17280ba07c136f88c3fff584bea36ebc"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "e06f5c52d6763a49eb9b8b30250b20a5"
+        "md5": "ce75a7623b954f51560db7eed8c61653"
     },
     {
         "path": "how-to-learn-a-language-without-feeling-overwhelmed.html",
         "type": "file",
-        "md5": "cadae0a31e76b96ca390fc3dad4d5ddd"
+        "md5": "abb707328d6f73e058295cd1faff4922"
+    },
+    {
+        "path": "how-to-stay-consistent-with-language-practice.html",
+        "type": "file",
+        "md5": "fd751f9d27d65293b524713db306dfc7"
     },
     {
         "path": "index.html",
         "type": "file",
-        "md5": "86080cadcb76a9b986d666654ef5f18d"
+        "md5": "d673d9edc16dff01695dff67559308fb"
     },
     {
         "path": "language-learning-myths-debunked.html",
         "type": "file",
-        "md5": "8f2c1b035db840831d00a63dc46e0852"
+        "md5": "bb8ba7eb10bf40cea8b2daacbd386829"
     },
     {
         "path": "language-learning-through-music.html",
         "type": "file",
-        "md5": "afb759947236f192cac400d928727382"
+        "md5": "e69f9a2916124780f3d8c7bb24fec63d"
     },
     {
         "path": "media",
@@ -450,6 +455,51 @@
         "md5": "43905e6617a7f8cf595a1e40f4097d97"
     },
     {
+        "path": "media/posts/9",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/9/focused.png",
+        "type": "file",
+        "md5": "31eb3302e3476c86618c0d26656f64d9"
+    },
+    {
+        "path": "media/posts/9/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/9/responsive/focused-2xl.png",
+        "type": "file",
+        "md5": "4b9774cc9690351a9f5242896fcc8a3f"
+    },
+    {
+        "path": "/media/posts/9/responsive/focused-lg.png",
+        "type": "file",
+        "md5": "4b9774cc9690351a9f5242896fcc8a3f"
+    },
+    {
+        "path": "/media/posts/9/responsive/focused-md.png",
+        "type": "file",
+        "md5": "4b9774cc9690351a9f5242896fcc8a3f"
+    },
+    {
+        "path": "/media/posts/9/responsive/focused-sm.png",
+        "type": "file",
+        "md5": "c2830d5b5cba85e710680b1b82961da7"
+    },
+    {
+        "path": "/media/posts/9/responsive/focused-xl.png",
+        "type": "file",
+        "md5": "4b9774cc9690351a9f5242896fcc8a3f"
+    },
+    {
+        "path": "/media/posts/9/responsive/focused-xs.png",
+        "type": "file",
+        "md5": "bbf43b5088091b27613e0934f4de929d"
+    },
+    {
         "path": "media/website",
         "type": "directory",
         "md5": false
@@ -502,7 +552,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "7ccde97c013289c580d9b0f754597c9a"
+        "md5": "480f136e27c6f869c9fbedd1d8c3e2de"
     },
     {
         "path": "sitemap.xsl",
@@ -522,16 +572,16 @@
     {
         "path": "the-power-of-storytelling-in-language-learning.html",
         "type": "file",
-        "md5": "75e5269c6dd5d99541643b60b5f257b4"
+        "md5": "dee8fd47b0fc9da3b318b4772d79728e"
     },
     {
         "path": "the-science-of-language-learning.html",
         "type": "file",
-        "md5": "c89b3b993350f503c61d383a14aad57e"
+        "md5": "bbaf5e7082af33e55e5f058815f942f6"
     },
     {
         "path": "why-learning-a-language-without-culture-is-like-eating-pasta-without-sauce.html",
         "type": "file",
-        "md5": "77fb5fe452b1dc6a39a128a09b1c500e"
+        "md5": "aa5baa9be60c0c61447984a1c1d51bde"
     }
 ]
