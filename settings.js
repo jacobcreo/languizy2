@@ -20,17 +20,39 @@ function loadUserProfile(user) {
     userRef.get().then((doc) => {
         if (doc.exists) {
             const userData = doc.data();
+            // Update subscription level
+            const subLevel = userData.subLevel || 'Free';
+            const currentPlan = userData.currentSubscription?.plan || '';
+
+            document.getElementById('subscriptionLevel').textContent = `Subscription Level: ${subLevel}`;
+            if (subLevel === 'Pro') {
+                document.getElementById('subscriptionBenefits').textContent = `You are subscribed to the ${currentPlan}. Enjoy unlimited access to all features!`;
+                document.getElementById('upgradeButton').style.display = 'none';
+                document.getElementById('cancelButton').style.display = 'inline-block';
+            } else {
+                document.getElementById('subscriptionBenefits').textContent = 'Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!';
+                document.getElementById('upgradeButton').style.display = 'inline-block';
+                document.getElementById('cancelButton').style.display = 'none';
+            }
+
             // Update profile image
             if (userData.photoURL) {
                 document.getElementById('profileImage').src = userData.photoURL;
             }
             userSubLevel = userData.subLevel || 'Free';
 
+            // Update user name
+            const displayName = userData.displayName;
+            const fullName = userData.fullName;
+            const email = userData.email || 'user@example.com';
+            const userName = displayName || fullName || email.split('@')[0] || 'User Name';
+            document.getElementById('userName').textContent = userName;
+
             // Update email
-            document.getElementById('userEmail').textContent = userData.email || 'user@example.com';
+            document.getElementById('userEmail').textContent = email;
             // Update input fields
-            document.getElementById('displayName').value = userData.displayName || '';
-            document.getElementById('fullName').value = userData.fullName || '';
+            document.getElementById('displayName').value = displayName || '';
+            document.getElementById('fullName').value = fullName || '';
             document.getElementById('progressMail').checked = userData.progressMail || false;
             document.getElementById('marketingMail').checked = userData.marketingMail || false;
         } else {
@@ -252,3 +274,14 @@ function sendToLoops(updatedData, user) {
         console.error('Error calling sendToLoops:', error);
       });
   }
+
+// Function to cancel subscription
+function cancelSubscription() {
+gtag('event', 'cancel_subscription', {
+    'event_category': 'Subscription',
+    'event_label': 'User started cancellation process'
+});
+
+// Redirect the user to the FastSpring account page
+window.location.href = 'https://languizy.test.onfastspring.com/account/';
+}

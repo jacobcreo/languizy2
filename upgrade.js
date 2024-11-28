@@ -21,7 +21,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
                 if (!userEmail) {
                     console.error('User email not found in Firestore.');
                     alert('User email not found. Please contact support.');
-                    window.location.href = '/course-selection.html';
+                    window.location.href = '/course_selection.html';
                     return;
                 }
 
@@ -30,17 +30,18 @@ firebase.auth().onAuthStateChanged(async (user) => {
                     email: userEmail
                     // Not prepopulating firstName and lastName as per requirements
                 });
+                debugger;
 
                 console.log(`FastSpring recognized user with email: ${userEmail}`);
             } else {
                 console.error('User document does not exist.');
                 alert('User data not found. Please contact support.');
-                window.location.href = '/course-selection.html';
+                window.location.href = '/course_selection.html';
             }
         } catch (error) {
             console.error('Error fetching user data:', error);
             alert('An error occurred. Please try again later.');
-            window.location.href = '/course-selection.html';
+            window.location.href = '/course_selection.html';
         }
     } else {
         // If user is not logged in, redirect to home or login page
@@ -59,15 +60,16 @@ function onFSPopupClosed(orderReference) {
     }
 
     // Reset FastSpring Builder
-    fastspring.builder.reset();
+    // fastspring.builder.reset();
 
-    // Re-recognize the user to ensure email is updated after reset
-    if (userEmail) {
-        fastspring.builder.recognize({
-            email: userEmail
-        });
-        console.log(`FastSpring re-recognized user with email: ${userEmail}`);
-    }
+    // // Re-recognize the user to ensure email is updated after reset
+    // if (userEmail) {
+    //     debugger;
+    //     fastspring.builder.recognize({
+    //         email: userEmail
+    //     });
+    //     console.log(`FastSpring re-recognized user with email: ${userEmail}`);
+    // }
 }
 
 // Function to verify subscription status from Firestore
@@ -199,19 +201,19 @@ function resetSubscription() {
     console.log(`Reset subscription process for user to try again.`);
 }
 
-// Function to redirect to course-selection.html
+// Function to redirect to course_selection.html
 function redirectToCourseSelection() {
-    window.location.href = '/course-selection.html';
+    window.location.href = '/course_selection.html';
 }
 
 // Function to continue with the free plan
 function continueFree() {
-    window.location.href = '/course-selection.html';
+    window.location.href = '/course_selection.html';
 }
 
 // Function to exit the upgrade page
 function exitUpgrade() {
-    window.location.href = '/course-selection.html';
+    window.location.href = '/course_selection.html';
 }
 
 // Logout function (reuse from course-selection.js)
