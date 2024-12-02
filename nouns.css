@@ -437,4 +437,13 @@
     .example-sentence-text {
         font-style: italic;
     }
-    
+    #four-images-container {
+        max-width:512px;
+        margin:auto;
+    }
+    .red-border {
+        border: 3px solid red !important;
+    }
+    .green-border {
+        border: 3px solid green !important;
+    }
