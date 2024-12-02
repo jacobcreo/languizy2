@@ -235,7 +235,7 @@ function createTopicCard(topicData, course, isUnlocked) {
         </div>
       </div>
     `;
-
+    
     cardDiv.innerHTML = cardHTML;
     return cardDiv;
 }
