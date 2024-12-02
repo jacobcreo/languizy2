@@ -297,6 +297,7 @@ function loadTrainingOptions(currentCourse, userId) {
     const grammarBtn = document.getElementById('learnGrammarBtn');
     const chatBtn = document.getElementById('chatBtn');
     const continueCourseBtn = document.getElementById('learnVocabBtn');
+    const basicsBtn = document.getElementById('basicsBtn');
     const continueCourseAlert = document.getElementById('continueCourseAlert');
 
     // Set up button actions
@@ -329,8 +330,14 @@ function loadTrainingOptions(currentCourse, userId) {
         .limit(1)
         .get();
 
-    Promise.all([storiesQuery, grammarQuery])
-        .then(([storySnap, grammarSnap]) => {
+    const basicsQuery = db.collection('nouns').
+    where('knownLanguage', '==', knownLanguage).
+    where('language', '==', language).
+    limit(1).
+    get();
+
+    Promise.all([storiesQuery, grammarQuery, basicsQuery])
+        .then(([storySnap, grammarSnap, basicsSnap]) => {
             if (!storySnap.empty) {
                 storiesBtn.disabled = false;
                 storiesBtn.onclick = function () {
@@ -353,6 +360,20 @@ function loadTrainingOptions(currentCourse, userId) {
                 console.log(`Grammar topics available for course ${currentCourse}. Enabled Grammar button.`);
             } else {
                 console.log(`No grammar topics available for course ${currentCourse}. Grammar button remains disabled.`);
+            }
+
+            if (!basicsSnap.empty) {
+                basicsBtn.disabled = false;
+                basicsBtn.onclick = function () {
+                    if (!drillsLimitReached) {
+                        window.location.href = 'nouns.html';
+                    } else {
+                        showUpgradeModal();
+                    }
+                };
+                console.log(`Baiscs are available for course ${currentCourse}. Enabled Basics button.`);
+            } else {
+                console.log(`No basics available for course ${currentCourse}. Basics button remains disabled.`);
             }
         })
         .catch(error => {
@@ -804,6 +825,7 @@ async function loadCardData(user, currentCourse) {
     let grammarPercentage = 0;
     let chatPercentage = 0;
     let storiesPercentage = 0;
+    let basicsPercentage = 0;
 
     try {
         // Create promises for each category
@@ -872,11 +894,30 @@ async function loadCardData(user, currentCourse) {
             .catch((error) => {
                 console.error("Error fetching stories stats:", error);
             });
+
+            const basicsPromise = db.collection('users').doc(user.uid).collection('courses').doc(currentCourse).collection('stats').doc('all-time').get()
+            .then((doc) => {
+                if (doc.exists) {
+                    const maxNouns = doc.data().maxOrder || 0;
+                    basicsPercentage = Math.min((maxNouns / 2500) * 100, 100).toFixed(2);
+                    document.getElementById('basicsPercentage').textContent = `${basicsPercentage}%`;
+                    document.getElementById('basicsProgress').style.width = `${basicsPercentage}%`;
+                    document.getElementById('basicsProgress').setAttribute('aria-valuenow', basicsPercentage);
+                    console.log(`Loaded Basics Percentage: ${basicsPercentage}%`);
+                    document.querySelector('#CurrentBasicsCard .fill-effect').style.animation = 'none';
+                } else {
+                    document.querySelector('#CurrentBasicsCard .fill-effect').style.animation = 'none';
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching basics stats:", error);
+            });
+            
             console.timeEnd('Load Card Data');
 
 
         // Wait for all category data to be fetched
-        await Promise.all([vocabPromise, grammarPromise, chatPromise, storiesPromise]);
+        await Promise.all([vocabPromise, grammarPromise, chatPromise, storiesPromise, basicsPromise]);
 
         
 
