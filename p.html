@@ -1,0 +1,30 @@
+<html>
+<script>
+
+// Simulate the current date and time
+let now = new Date();
+
+// Simulate the logic for calculating days to add
+let isCorrect = true; // Change this to false to test the incorrect path
+let initialAppearance = false; // Change this to true to test the initial appearance logic
+let timesCorrectInARow = 3; // Example value for times correct in a row
+
+// Calculate days to add based on conditions
+let daysToAdd = initialAppearance ? 28 : 2 * timesCorrectInARow;
+
+// Calculate the future date
+
+    nextDue = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+
+// Log the results
+console.log('Current time:', now);
+console.log('Days to add:', daysToAdd);
+console.log('Calculated nextDue:', nextDue);
+
+// If using Firestore, convert to Timestamp
+// Uncomment the following line if you want to simulate Firestore Timestamp conversion
+// nextDue = firebase.firestore.Timestamp.fromDate(nextDue);
+// console.log('Firestore Timestamp:', nextDue);
+</script>
+
+</html>

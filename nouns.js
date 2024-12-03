@@ -11,6 +11,8 @@ let previousNounId = null; // Ensure this is correctly initialized
 let questionStartTime; // Variable to store the start time of the question
 let nounDisplayMode;
 
+let fourImagesToLoad = [];
+
 let uid = null;
 
 // Global variable to track the current mode (multiple-choice or text input)
@@ -170,6 +172,7 @@ window.location.href = 'course_selection.html';
 return;
 }
 
+loadRandomImages(0);
 loadDailyScore(user, currentCourse);
 initializeDefaultMode();
 loadNoun(user, currentCourse);
@@ -336,7 +339,7 @@ function loadDailyScore(user, currentCourse) {
 const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 // Create a date object for the current date
-const now = new Date();
+let now = new Date();
 
 // Format the date according to the user's timezone
 const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
@@ -370,7 +373,7 @@ console.error('Error loading daily score:', error);
 function loadNoun(user, currentCourse) {
 showLoadingProgress();
 
-nounDisplayMode = Math.random() < 0.66 ? "four-images" : "regular";
+nounDisplayMode = Math.random() < 0.99 ? "four-images" : "regular";
 // nounDisplayMode = "four-images";
 
 if (!user) {
@@ -603,67 +606,119 @@ $('#question-area').css('visibility', 'visible').addClass('visible');
 questionStartTime = new Date();
 }
 
-function displayFourImages(noun) {
-    const currentOrder = noun.order;
-    const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4'];
-    let imagesToLoad = [];
-    let foundImages = 0;
-
-    // Add the current noun's image to the imagesToLoad array
-    const correctImageUrl = `https://languizy.com/myimages/nouns/nouns-${currentOrder}.png/smaller`;
-    imagesToLoad.push(correctImageUrl);
+function displayFourImagesNew(noun) {
     
-    function loadRandomImage() {
-        // Generate a random number in the range of currentOrder - 20 to currentOrder + 20
-        const randomOrder = Math.floor(Math.random() * 41) + (currentOrder - 20);
-        debugger;
 
-        if (randomOrder !== currentOrder && randomOrder >= 1) { // Skip the current noun's order and ensure it's within bounds
-            const imgUrl = `https://languizy.com/myimages/nouns/nouns-${randomOrder}.png/smaller`;
-            if (!imagesToLoad.includes(imgUrl)) { // Check if the image URL is not already in the array
-                const img = new Image();
-                img.src = imgUrl;
-                img.onload = () => {
-                    imagesToLoad.push(imgUrl);
-                    foundImages++;
-                    if (foundImages === 3) {
-                        displayImages();
-                    } else {
-                        loadRandomImage(); // Load the next image
-                    }
-                };
-                img.onerror = () => {
-                    loadRandomImage(); // Retry loading another image if there's an error
-                };
-            } else {
-                loadRandomImage(); // Retry loading another image if the URL is already in the array
-            }
-        } else {
-            loadRandomImage(); // Retry loading another image if the random order is invalid
+    while (fourImagesToLoad.length < 4) {
+        const randomNumber = Math.floor(Math.random() * 66) + 1; // Generate a random number between 1 and 99
+        const imgUrl = `https://languizy.com/myimages/nouns/noun-${randomNumber}.png/smaller`;
+        if (!fourImagesToLoad.includes(imgUrl)) {
+            fourImagesToLoad.push(imgUrl); // Add the URL if it's not already in the array
         }
+        
     }
+    displaytheImages(noun); // Call the function to display images once we have enough
 
-    // Start loading images
-    loadRandomImage();
+    
+    
+
 
     // Function to display the images in random order
-    function displayImages() {
-        // Shuffle the images array
-        imagesToLoad = imagesToLoad.sort(() => Math.random() - 0.5);
-        
-        // Set the images to the respective elements
-        imageElements.forEach((selector, index) => {
-            debugger;
-            if (index < imagesToLoad.length) {
-                $(selector).attr('src', imagesToLoad[index]);
-                // Add data attribute for the correct noun image
-                if (imagesToLoad[index] === correctImageUrl) {
-                    $(selector).attr('data-correct', true)
-                }
-            }
-        });
+function displaytheImages(noun) {
+    const currentOrder = noun.order;
+    const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4']; 
+    let imagesToLoad = fourImagesToLoad;
+    fourImagesToLoad = [];
+    const correctImageUrl = `https://languizy.com/myimages/nouns/noun-${currentOrder}.png/smaller`;
+    if (!imagesToLoad.includes(correctImageUrl)) {
+        imagesToLoad[3] = correctImageUrl;
     }
+    // Shuffle the images array
+    imagesToLoad = imagesToLoad.sort(() => Math.random() - 0.5);
+    
+    // Set the images to the respective elements
+    imageElements.forEach((selector, index) => {
+        
+        if (index < imagesToLoad.length) {
+            $(selector).attr('src', imagesToLoad[index]);
+            // Add data attribute for the correct noun image
+            if (imagesToLoad[index] === correctImageUrl) {
+                $(selector).attr('data-correct', true)
+            }
+        }
+    });
+    loadRandomImages(0);
+
+
 }
+}
+
+// function displayFourImages(noun) {
+    
+//     const currentOrder = noun.order;
+//     const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4'];
+//     let imagesToLoad = [];
+//     let foundImages = 0;
+
+//     // Add the current noun's image to the imagesToLoad array
+//     const correctImageUrl = `https://languizy.com/myimages/nouns/nouns-${currentOrder}.png/smaller`;
+//     imagesToLoad.push(correctImageUrl);
+
+
+
+
+
+//     function loadRandomImage() {
+//         // Generate a random number in the range of currentOrder - 20 to currentOrder + 20
+//         const randomOrder = Math.floor(Math.random() * 41) + (currentOrder - 20);
+//         
+
+//         if (randomOrder !== currentOrder && randomOrder >= 1) { // Skip the current noun's order and ensure it's within bounds
+//             const imgUrl = `https://languizy.com/myimages/nouns/nouns-${randomOrder}.png/smaller`;
+//             if (!imagesToLoad.includes(imgUrl)) { // Check if the image URL is not already in the array
+//                 const img = new Image();
+//                 img.src = imgUrl;
+//                 img.onload = () => {
+//                     imagesToLoad.push(imgUrl);
+//                     foundImages++;
+//                     if (foundImages === 3) {
+//                         displayImages();
+//                     } else {
+//                         loadRandomImage(); // Load the next image
+//                     }
+//                 };
+//                 img.onerror = () => {
+//                     loadRandomImage(); // Retry loading another image if there's an error
+//                 };
+//             } else {
+//                 loadRandomImage(); // Retry loading another image if the URL is already in the array
+//             }
+//         } else {
+//             loadRandomImage(); // Retry loading another image if the random order is invalid
+//         }
+//     }
+
+//     // Start loading images
+//     loadRandomImage();
+
+//     // Function to display the images in random order
+//     function displayImages() {
+//         // Shuffle the images array
+//         imagesToLoad = imagesToLoad.sort(() => Math.random() - 0.5);
+        
+//         // Set the images to the respective elements
+//         imageElements.forEach((selector, index) => {
+//             
+//             if (index < imagesToLoad.length) {
+//                 $(selector).attr('src', imagesToLoad[index]);
+//                 // Add data attribute for the correct noun image
+//                 if (imagesToLoad[index] === correctImageUrl) {
+//                     $(selector).attr('data-correct', true)
+//                 }
+//             }
+//         });
+//     }
+// }
 
 
 // Display the noun on the page
@@ -671,13 +726,15 @@ function displayNoun(noun, nounId, currentCourse) {
     
 console.log(noun);
 hideLoadingProgress(); // Hide progress bar when the noun loads
-debugger;
+
 // Adjust input field based on the noun
 adjustInputField(noun.noun,currentCourse);
 $("#noun-translation").text(noun.missingWordTranslation);
 
 if (nounDisplayMode === "four-images") {
-    displayFourImages(noun);
+    // displayFourImages(noun);
+    
+    displayFourImagesNew(noun);
 }
 
 // Store nounId and current noun data globally for use in other functions
@@ -722,7 +779,13 @@ $('#noun-image').attr('src', imageUrl);
 $('#four-images-container').hide();
 $('#noun-image').show();
 } else {
-    $('#four-images-container').show();
+    const imageUrl = `https://languizy.com/myimages/nouns/nouns-${noun.order}.png/smaller`;
+    const pimg = new Image();
+    pimg.src = imageUrl;
+    pimg.onload = () => {
+        $('#four-images-container').show();
+    };
+    // $('#four-images-container').show();
     $('#noun-image').hide();
     $('#noun-four-images-text').text(noun.noun);
 }
@@ -818,14 +881,13 @@ $('#multiple-choice-options').hide();
 // Remove multiple-choice keydown event
 $(document).off('keydown.multipleChoice');
 } else if (nounDisplayMode === "four-images") {
-    debugger;
+    
     $(document).off('keydown.fourImages').on('keydown.fourImages', function (e) {
-        debugger;
+        
         if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
         const key = e.which - 48; // For top number keys
         if (key >= 1 && key <= 4) {
         e.preventDefault();
-    alert(key);
         handleFourImagesSubmit(key);
         }
     });
@@ -869,7 +931,7 @@ function handleFourImagesSubmit(imgNumber) {
         selectedImage.addClass('green-border');
     } else {
         selectedImage.addClass('red-border');
-        debugger;
+        
         for (let i = 1; i <= 4; i++) {
             const imgElement = $(`#noun-img${i}`);
             if (imgElement.attr('data-correct') === 'true') {
@@ -940,12 +1002,12 @@ $('#feedback').text(`Incorrect. The correct answer was "${noun.noun}".`).removeC
 
 // Update visual stats and progress
 updateVisualStats(isCorrect);
-updateUserProgress(nounId, isCorrect, currentCourse, timeTaken);
+updateUserProgress(window.currentNounId, isCorrect, currentCourse, timeTaken);
 
 // Hide toggle-mode button after answer is submitted
 $('#toggle-mode').hide();
 
-debugger;
+
 // Play noun audio after submission
 playNounAudio(window.currentNounId, window.currentNounData.noun);
 }
@@ -1067,7 +1129,7 @@ const j = Math.floor(Math.random() * (i + 1));
  * @param {string} nounWord - The noun word to be pronounced.
  */
 function playNounAudio(nounId, nounWord) {
-    debugger;
+    
     var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${nounId}.mp3`;
 
     const targetLanguage = window.currentCourse.split('-')[1];
@@ -1167,7 +1229,7 @@ function normalizeString(str) {
 // Update user progress in the database
 function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
 var user = firebase.auth().currentUser;
-
+debugger;
 var userProgressRef = db.collection('users').doc(user.uid)
 .collection('nouns').doc(currentCourse)
 .collection('nouns').doc(nounId);
@@ -1200,7 +1262,7 @@ initialAppearance: true
 const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 // Create a date object for the current date
-const now = new Date();
+let now = new Date();
 
 // Format the date according to the user's timezone
 const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
@@ -1362,6 +1424,7 @@ container.append(box);
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
+    
 const dailyStatsRef = userStatsRef.doc(date);
 const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -1471,7 +1534,7 @@ if (!lastAnswered) {
 return "(new noun)";
 }
 
-const now = new Date();
+let now = new Date();
 const diff = now - lastAnswered.toDate(); // Calculate time difference in milliseconds
 
 const seconds = Math.floor(diff / 1000);
@@ -1588,7 +1651,7 @@ async function checkDrillsLimit(user, currentCourse) {
 const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 // Create a date object for the current date
-const now = new Date();
+let now = new Date();
 
 // Format the date according to the user's timezone
 const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
@@ -1660,7 +1723,7 @@ specialCharsContainer.style.display = 'none';
 }
 
 function adjustInputField(noun,currentCourse) {
-    debugger;
+    
 
     const inputField = document.getElementById('user-answer');
     const padding = 2; // Additional padding in 'rem' for better appearance
@@ -1695,3 +1758,39 @@ function adjustInputField(noun,currentCourse) {
     // Set the width of the input field
     inputField.style.width = `${calculatedWidth}rem`;
 }
+
+
+
+function loadRandomImages(imgNumber) {
+    // Generate a random number in the range of currentOrder - 20 to currentOrder + 20
+    // const randomOrder = Math.floor(Math.random() * 41) + (currentOrder - 20);
+    const randomOrder = Math.floor(Math.random() * 98) + 1; // Generate a random number between 1 and 98
+    
+    
+
+    
+        const imgUrl = `https://languizy.com/myimages/nouns/noun-${randomOrder}.png/smaller`;
+        if (!fourImagesToLoad.includes(imgUrl)) { // Check if the image URL is not already in the array
+            const img = new Image();
+            img.src = imgUrl;
+            img.onload = () => {
+                
+                fourImagesToLoad.push(imgUrl);
+                imgNumber++;
+                if (imgNumber === 4) {
+                    
+                    // displayImages();
+                } else {
+                    
+                    loadRandomImages(imgNumber); // Load the next image
+                }
+            };
+            img.onerror = () => {
+                loadRandomImages(imgNumber); // Retry loading another image if there's an error
+            };
+        } else {
+            loadRandomImages(imgNumber); // Retry loading another image if the URL is already in the array
+        }
+    
+}
+

@@ -893,6 +893,7 @@ function displayQuestion(question, questionId, currentCourse) {
   function handleSubmit() {
     var userAnswer = $('#user-answer').val().trim();
     var isCorrect = normalizeString(userAnswer) === normalizeString(question.missingWord);
+    
     afterAnswerSubmission(isCorrect);
   }
 
@@ -934,7 +935,7 @@ function displayQuestion(question, questionId, currentCourse) {
     const questionEndTime = new Date();
     let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
     timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
-    debugger;
+    
 
     // Disable the toggle button after submission
     $('#toggle-mode').prop('disabled', true);
@@ -1104,7 +1105,7 @@ function playAudio(questionId, completeSentence, targetLanguage) {
 
 // Function to stop the audio
 function stopAudio() {
-  debugger;
+  
   audioElement.pause();
   audioElement.currentTime = 0; // Reset the audio playback
 }
@@ -1191,6 +1192,7 @@ function normalizeString(str) {
 
 // Update user progress in the database
 function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
+  
   var user = firebase.auth().currentUser;
 
   var userProgressRef = db.collection('users').doc(user.uid)
@@ -1211,6 +1213,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
       // Now, run the transaction to update progress and stats
       db.runTransaction(transaction => {
         return transaction.get(userProgressRef).then(doc => {
+          
           var data = doc.exists ? doc.data() : {
             timesCorrect: 0,
             timesIncorrect: 0,
@@ -1287,7 +1290,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
               $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
 
             }
-            debugger;
+            
             // Write the updated progress and stats back to Firestore
             transaction.set(userProgressRef, data);
             transaction.set(allTimeStatsRef, allTimeData);
@@ -1399,6 +1402,7 @@ function updateLastFiveAnswers() {
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
+  debugger;
   const dailyStatsRef = userStatsRef.doc(date);
   const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -1802,7 +1806,7 @@ function afterDrillCompleted(user, currentCourse) {
 }
 
 function updateSpecialCharacters(targetLanguage) {
-  debugger;
+  
   const specialChars = languageToSpecialChars[targetLanguage] || [];
   const specialCharsContainer = document.getElementById('special-characters');
 
