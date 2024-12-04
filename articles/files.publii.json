@@ -142,12 +142,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "17280ba07c136f88c3fff584bea36ebc"
+        "md5": "c8f64680baac94f34a2419b298dc7d67"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "ce75a7623b954f51560db7eed8c61653"
+        "md5": "aa67ee87b7e230e83c454891f9b43b7d"
     },
     {
         "path": "how-to-learn-a-language-without-feeling-overwhelmed.html",
@@ -162,7 +162,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "d673d9edc16dff01695dff67559308fb"
+        "md5": "3a0573ed721fb382c9447870124fe52a"
     },
     {
         "path": "language-learning-myths-debunked.html",
@@ -183,6 +183,51 @@
         "path": "media/posts",
         "type": "directory",
         "md5": false
+    },
+    {
+        "path": "media/posts/10",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/10/games4learning.png",
+        "type": "file",
+        "md5": "d586ba4f0eead2044690dbfb6e600168"
+    },
+    {
+        "path": "media/posts/10/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/10/responsive/games4learning-2xl.png",
+        "type": "file",
+        "md5": "a70950a4efbd7d466e281616e9c26c16"
+    },
+    {
+        "path": "/media/posts/10/responsive/games4learning-lg.png",
+        "type": "file",
+        "md5": "a70950a4efbd7d466e281616e9c26c16"
+    },
+    {
+        "path": "/media/posts/10/responsive/games4learning-md.png",
+        "type": "file",
+        "md5": "a70950a4efbd7d466e281616e9c26c16"
+    },
+    {
+        "path": "/media/posts/10/responsive/games4learning-sm.png",
+        "type": "file",
+        "md5": "b014f91e00381aababa2224cdbfa0e38"
+    },
+    {
+        "path": "/media/posts/10/responsive/games4learning-xl.png",
+        "type": "file",
+        "md5": "a70950a4efbd7d466e281616e9c26c16"
+    },
+    {
+        "path": "/media/posts/10/responsive/games4learning-xs.png",
+        "type": "file",
+        "md5": "a9269307b81c0c4c5f09985e6b6f449c"
     },
     {
         "path": "media/posts/2",
@@ -552,7 +597,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "480f136e27c6f869c9fbedd1d8c3e2de"
+        "md5": "b86f5c40137c1c4fc746be6d279c1d90"
     },
     {
         "path": "sitemap.xsl",
@@ -573,6 +618,11 @@
         "path": "the-power-of-storytelling-in-language-learning.html",
         "type": "file",
         "md5": "dee8fd47b0fc9da3b318b4772d79728e"
+    },
+    {
+        "path": "the-role-of-games-and-gamification-in-language-learning.html",
+        "type": "file",
+        "md5": "5c9adc6185704880d20dd2305e6c6f43"
     },
     {
         "path": "the-science-of-language-learning.html",
