@@ -927,6 +927,7 @@ $('.noun-img').on('click', function() {
 function handleFourImagesSubmit(imgNumber) {
     var selectedImage = $(`#noun-img${imgNumber}`);
     var isCorrect = selectedImage.attr('data-correct') === 'true';
+    selectedImage.removeAttr('data-correct');
     if (isCorrect) {
         selectedImage.addClass('green-border');
     } else {
@@ -1446,6 +1447,7 @@ nouns_correctAnswers: 0,
 nouns_wrongAnswers: 0,
 nouns_totalDrills: 0,
 nouns_score: 0,
+nouns_DailyTime: 0, // Initialize DailyTime
 DailyTime: 0 // Initialize DailyTime
 };
 
@@ -1459,12 +1461,14 @@ dailyData.nouns_score = ensureNumber(dailyData.nouns_score);
 dailyData.nouns_correctAnswers = ensureNumber(dailyData.nouns_correctAnswers);
 dailyData.nouns_wrongAnswers = ensureNumber(dailyData.nouns_wrongAnswers);
 dailyData.DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
+dailyData.nouns_DailyTime = ensureNumber(dailyData.nouns_DailyTime); // Ensure DailyTime is a number
 
 // Update stats safely
 dailyData.totalDrills += 1;
 dailyData.score += score;
 dailyData.nouns_totalDrills += 1;
 dailyData.nouns_score += score;
+dailyData.nouns_DailyTime += timeTaken; // Add time taken to DailyTime
 dailyData.DailyTime += timeTaken; // Add time taken to DailyTime
 
 if (isCorrect) {
@@ -1485,6 +1489,7 @@ nouns_totalCorrectAnswers: 0,
 nouns_totalWrongAnswers: 0,
 nouns_totalDrills: 0,
 nouns_totalScore: 0,
+nouns_TimeSpent: 0, // Initialize TimeSpent
 TimeSpent: 0 // Initialize TimeSpent
 };
 
@@ -1497,13 +1502,16 @@ allTimeData.nouns_totalDrills = ensureNumber(allTimeData.nouns_totalDrills);
 allTimeData.nouns_totalScore = ensureNumber(allTimeData.nouns_totalScore);
 allTimeData.nouns_totalCorrectAnswers = ensureNumber(allTimeData.nouns_totalCorrectAnswers);
 allTimeData.nouns_totalWrongAnswers = ensureNumber(allTimeData.nouns_totalWrongAnswers);
+allTimeData.nouns_TimeSpent = ensureNumber(allTimeData.nouns_TimeSpent); // Ensure TimeSpent is a number
 allTimeData.TimeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
+ 
 
 // Update stats safely
 allTimeData.totalDrills += 1;
 allTimeData.totalScore += score;
 allTimeData.nouns_totalDrills += 1;
 allTimeData.nouns_totalScore += score;
+allTimeData.nouns_TimeSpent += timeTaken; // Add time taken to TimeSpent
 allTimeData.TimeSpent += timeTaken; // Add time taken to TimeSpent
 
 if (isCorrect) {

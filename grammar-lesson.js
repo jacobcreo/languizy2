@@ -1440,6 +1440,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
                     grammar_wrongAnswers: 0,
                     grammar_totalDrills: 0,
                     grammar_score: 0,
+                    DailyTime: 0, // Initialize DailyTime
                     grammar_DailyTime: 0 // Initialize DailyTime
                 };
 
@@ -1453,21 +1454,24 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
                 dailyData.grammar_correctAnswers = ensureNumber(dailyData.grammar_correctAnswers);
                 dailyData.grammar_wrongAnswers = ensureNumber(dailyData.grammar_wrongAnswers);
                 dailyData.grammar_DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
+                dailyData.DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
 
 
                 // Update stats safely
                 
                 dailyData.score += score;
+                dailyData.totalDrills += 1;
                 dailyData.grammar_totalDrills += 1;
                 dailyData.grammar_score += score;
                 dailyData.grammar_DailyTime += timeTaken; // Add time taken to DailyTime
+                dailyData.DailyTime += timeTaken; // Add time taken to DailyTime
 
 
                 if (isCorrect) {
-                    
+                    dailyData.correctAnswers += 1;
                     dailyData.grammar_correctAnswers += 1;
                 } else {
-                    
+                    dailyData.wrongAnswers += 1;
                     dailyData.grammar_wrongAnswers += 1;
                 }
 
@@ -1481,8 +1485,8 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
                     grammar_totalWrongAnswers: 0,
                     grammar_totalDrills: 0,
                     grammar_totalScore: 0,
-                    grammar_timeSpent: 0 // Initialize TimeSpent
-
+                    grammar_timeSpent: 0, // Initialize TimeSpent
+                    TimeSpent: 0 // Initialize TimeSpent
                 };
 
                 // Ensure all fields are numbers
@@ -1495,21 +1499,24 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
                 allTimeData.grammar_totalCorrectAnswers = ensureNumber(allTimeData.grammar_totalCorrectAnswers);
                 allTimeData.grammar_totalWrongAnswers = ensureNumber(allTimeData.grammar_totalWrongAnswers);
                 allTimeData.grammar_timeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
+                allTimeData.TimeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
 
 
                 // Update stats safely
                 
                 allTimeData.totalScore += score;
+                allTimeData.grammar_totalScore += score;
                 allTimeData.grammar_totalDrills += 1;
-                
+                allTimeData.totalDrills += 1;
                 allTimeData.grammar_timeSpent += timeTaken; // Add time taken to TimeSpent
-
+                allTimeData.TimeSpent += timeTaken; // Add time taken to TimeSpent
+                
 
                 if (isCorrect) {
-                    
+                    allTimeData.totalCorrectAnswers += 1;
                     allTimeData.grammar_totalCorrectAnswers += 1;
                 } else {
-                    
+                    allTimeData.totalWrongAnswers += 1;
                     allTimeData.grammar_totalWrongAnswers += 1;
                 }
 

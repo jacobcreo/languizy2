@@ -1424,6 +1424,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
           vocabulary_wrongAnswers: 0,
           vocabulary_totalDrills: 0,
           vocabulary_score: 0,
+          vocabulary_DailyTime: 0, // Initialize DailyTime
           DailyTime: 0 // Initialize DailyTime
         };
 
@@ -1437,6 +1438,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
         dailyData.vocabulary_correctAnswers = ensureNumber(dailyData.vocabulary_correctAnswers);
         dailyData.vocabulary_wrongAnswers = ensureNumber(dailyData.vocabulary_wrongAnswers);
         dailyData.DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
+        dailyData.vocabulary_DailyTime = ensureNumber(dailyData.vocabulary_DailyTime); // Ensure DailyTime is a number
 
 
         // Update stats safely
@@ -1445,6 +1447,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
         dailyData.vocabulary_totalDrills += 1;
         dailyData.vocabulary_score += score;
         dailyData.DailyTime += timeTaken; // Add time taken to DailyTime
+        dailyData.vocabulary_DailyTime += timeTaken; // Add time taken to DailyTime
 
 
         if (isCorrect) {
@@ -1465,6 +1468,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
           vocabulary_totalWrongAnswers: 0,
           vocabulary_totalDrills: 0,
           vocabulary_totalScore: 0,
+          vocabulary_TimeSpent: 0, // Initialize TimeSpent
           TimeSpent: 0 // Initialize TimeSpent
 
         };
@@ -1479,6 +1483,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
         allTimeData.vocabulary_totalCorrectAnswers = ensureNumber(allTimeData.vocabulary_totalCorrectAnswers);
         allTimeData.vocabulary_totalWrongAnswers = ensureNumber(allTimeData.vocabulary_totalWrongAnswers);
         allTimeData.TimeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
+        allTimeData.vocabulary_TimeSpent = ensureNumber(allTimeData.vocabulary_TimeSpent); // Ensure TimeSpent is a number
 
 
         // Update stats safely
@@ -1487,7 +1492,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
         allTimeData.vocabulary_totalDrills += 1;
         allTimeData.vocabulary_totalScore += score;
         allTimeData.TimeSpent += timeTaken; // Add time taken to TimeSpent
-
+        allTimeData.vocabulary_TimeSpent += timeTaken; // Add time taken to TimeSpent
 
         if (isCorrect) {
           allTimeData.totalCorrectAnswers += 1;

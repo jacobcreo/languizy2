@@ -168,7 +168,7 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
   let totalDrills = 0;
   let dailyStats = [];
   let datesSet = new Set();
-  let vocabCorrect = 0, vocabWrong = 0, grammarCorrect = 0, grammarWrong = 0;
+  let vocabCorrect = 0, vocabWrong = 0, grammarCorrect = 0, grammarWrong = 0, nounsCorrect = 0, nounsWrong = 0;
 
   statsSnapshots.forEach(statsSnapshot => {
     if (!statsSnapshot) return;
@@ -200,6 +200,8 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
         vocabWrong += data.vocabulary_totalWrongAnswers || 0;
         grammarCorrect += data.grammar_totalCorrectAnswers || 0;
         grammarWrong += data.grammar_totalWrongAnswers || 0;
+        nounsCorrect += data.nouns_totalCorrectAnswers || 0;
+        nounsWrong += data.nouns_totalWrongAnswers || 0;
       } else {
         const date = new Date(dateId);
         if (!earliestDate || date < earliestDate) earliestDate = date;
@@ -211,7 +213,18 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
           score: data.score || 0,
           totalDrills: data.totalDrills || 0,
           vocabularyScore: data.vocabulary_score || 0,
-          grammarScore: data.grammar_score || 0
+          grammarScore: data.grammar_score || 0,
+          nounsScore: data.nouns_score || 0,
+          nounsCorrect: data.nouns_correctAnswers || 0,
+          nounsWrong: data.nouns_wrongAnswers || 0,
+          nounsTotalDrills: data.nouns_totalDrills || 0,
+          vocabularyTotalDrills: data.vocabulary_totalDrills || 0,
+          vocabularyCorrect: data.vocabulary_correctAnswers || 0,
+          vocabularyWrong: data.vocabulary_wrongAnswers || 0,
+          grammarTotalDrills: data.grammar_totalDrills || 0,
+          grammarCorrect: data.grammar_correctAnswers || 0,
+          grammarWrong: data.grammar_wrongAnswers || 0
+
         });
 
         // Aggregate daily stats for vocabulary and grammar accuracy
@@ -219,6 +232,8 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
         vocabWrong += data.vocabulary_wrongAnswers || 0;
         grammarCorrect += data.grammar_correctAnswers || 0;
         grammarWrong += data.grammar_wrongAnswers || 0;
+        nounsCorrect += data.nouns_correctAnswers || 0;
+        nounsWrong += data.nouns_wrongAnswers || 0;
 
         datesSet.add(dateId);
       }
@@ -236,7 +251,9 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
     vocabCorrect,
     vocabWrong,
     grammarCorrect,
-    grammarWrong
+    grammarWrong,
+    nounsCorrect,
+    nounsWrong
   };
 }
 
@@ -1065,13 +1082,14 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
 
       if (dateId !== 'all-time') {
         if (!timeSpentData[dateId]) {
-          timeSpentData[dateId] = { vocabulary: 0, grammar: 0, stories: 0, chat: 0 };
+          timeSpentData[dateId] = { vocabulary: 0, grammar: 0, stories: 0, chat: 0, basics: 0 };
         }
 
-        timeSpentData[dateId].vocabulary += data.DailyTime || 0;
+        timeSpentData[dateId].vocabulary += data.vocabulary_DailyTime || 0;
         timeSpentData[dateId].grammar += data.grammar_DailyTime || 0;
         timeSpentData[dateId].stories += data.timeSpentStories || 0;
         timeSpentData[dateId].chat += data.chatTimeSpent || 0;
+        timeSpentData[dateId].basics += data.nouns_DailyTime || 0;
       }
     });
   }
@@ -1089,6 +1107,7 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
   const grammarData = dates.map(date => timeSpentData[date].grammar);
   const storiesData = dates.map(date => timeSpentData[date].stories);
   const chatData = dates.map(date => timeSpentData[date].chat);
+  const basicsData = dates.map(date => timeSpentData[date].basics);
 
   // Create the stacked bar chart
   timeSpentChartInstance = new Chart(ctx, {
@@ -1115,6 +1134,11 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
           label: 'Chat',
           data: chatData,
           backgroundColor: '#dc3545'
+        },
+        {
+          label: 'Basics',
+          data: basicsData,
+          backgroundColor: '#6c757d'
         }
       ]
     },
@@ -1156,7 +1180,7 @@ async function displayTimeSpentDistributionChart(userDocRef, currentCourse, date
   }
 
   // Initialize total time spent data
-  let totalTimeSpent = { vocabulary: 0, grammar: 0, stories: 0, chat: 0 };
+  let totalTimeSpent = { vocabulary: 0, grammar: 0, stories: 0, chat: 0, basics: 0 };
 
   // Get the selected time interval
   const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
@@ -1185,21 +1209,23 @@ async function displayTimeSpentDistributionChart(userDocRef, currentCourse, date
       }
 
       if (dateId !== 'all-time') {
-        totalTimeSpent.vocabulary += data.DailyTime || 0;
+        totalTimeSpent.vocabulary += data.vocabulary_DailyTime || 0;
         totalTimeSpent.grammar += data.grammar_DailyTime || 0;
         totalTimeSpent.stories += data.timeSpentStories || 0;
         totalTimeSpent.chat += data.chatTimeSpent || 0;
+        totalTimeSpent.basics += data.nouns_DailyTime || 0;
       }
     });
   }
 
   // Prepare data for the pie chart
-  const labels = ['Vocabulary', 'Grammar', 'Stories', 'Chat'];
+  const labels = ['Vocabulary', 'Grammar', 'Stories', 'Chat', 'Basics'];
   const data = [
     totalTimeSpent.vocabulary,
     totalTimeSpent.grammar,
     totalTimeSpent.stories,
-    totalTimeSpent.chat
+    totalTimeSpent.chat,
+    totalTimeSpent.basics
   ];
 
   timeSpentDistributionChartInstance = new Chart(ctx, {
@@ -1208,7 +1234,7 @@ async function displayTimeSpentDistributionChart(userDocRef, currentCourse, date
       labels: labels,
       datasets: [{
         data: data,
-        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545']
+        backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d']
       }]
     },
     options: {
