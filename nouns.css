@@ -437,10 +437,7 @@
     .example-sentence-text {
         font-style: italic;
     }
-    #four-images-container {
-        max-width:512px;
-        margin:auto;
-    }
+    
     .red-border {
         border: 3px solid red !important;
     }
@@ -472,4 +469,8 @@
         .img-number {
             display: none; /* Hide on smaller screens */
         }
+    }
+    #four-images-container {
+        max-width:512px;
+        margin:auto;
     }
