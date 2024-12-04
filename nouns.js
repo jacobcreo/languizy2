@@ -373,7 +373,7 @@ console.error('Error loading daily score:', error);
 function loadNoun(user, currentCourse) {
 showLoadingProgress();
 
-nounDisplayMode = Math.random() < 0.99 ? "four-images" : "regular";
+nounDisplayMode = Math.random() < 0.33 ? "four-images" : "regular";
 // nounDisplayMode = "four-images";
 
 if (!user) {
@@ -406,7 +406,7 @@ if (!progressSnapshot.empty) {
 let selectedNounDoc = null; 
 progressSnapshot.forEach(doc => {
 if (doc.id !== previousNounId && !selectedNounDoc) {
-    let imgToLoad = `https://languizy.com/myimages/nouns/nouns-${doc.data().order}.png/smaller`;
+    let imgToLoad = `https://languizy.com/myimages/nouns/noun-${doc.data().order}.png/smaller`;
 let img = new Image();
 img.src = imgToLoad; // Prefetch the image
 
@@ -774,12 +774,12 @@ setupReplayButton(nounId, noun.noun);
 
 if (nounDisplayMode !== "four-images") {
 // Set the image source
-const imageUrl = `https://languizy.com/myimages/nouns/nouns-${noun.order}.png/smaller`;
+const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
 $('#noun-image').attr('src', imageUrl);
 $('#four-images-container').hide();
 $('#noun-image').show();
 } else {
-    const imageUrl = `https://languizy.com/myimages/nouns/nouns-${noun.order}.png/smaller`;
+    const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
     const pimg = new Image();
     pimg.src = imageUrl;
     pimg.onload = () => {
