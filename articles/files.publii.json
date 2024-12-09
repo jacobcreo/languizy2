@@ -142,12 +142,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "c8f64680baac94f34a2419b298dc7d67"
+        "md5": "54bb5ee0c9cfdaf3db5300d983439eca"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "aa67ee87b7e230e83c454891f9b43b7d"
+        "md5": "e12cd48eebefdd20d5235743650476df"
     },
     {
         "path": "how-to-learn-a-language-without-feeling-overwhelmed.html",
@@ -162,7 +162,12 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "3a0573ed721fb382c9447870124fe52a"
+        "md5": "0deaa58a23158fa792a4a35a1fefbfe0"
+    },
+    {
+        "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
+        "type": "file",
+        "md5": "de528ecf42ac341aa59828a1b524bdac"
     },
     {
         "path": "language-learning-myths-debunked.html",
@@ -228,6 +233,51 @@
         "path": "/media/posts/10/responsive/games4learning-xs.png",
         "type": "file",
         "md5": "a9269307b81c0c4c5f09985e6b6f449c"
+    },
+    {
+        "path": "media/posts/11",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "media/posts/11/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/11/responsive/tutor-2xl.webp",
+        "type": "file",
+        "md5": "b9a3f8f5c4e77fd30b28f457244bcbdb"
+    },
+    {
+        "path": "/media/posts/11/responsive/tutor-lg.webp",
+        "type": "file",
+        "md5": "b9a3f8f5c4e77fd30b28f457244bcbdb"
+    },
+    {
+        "path": "/media/posts/11/responsive/tutor-md.webp",
+        "type": "file",
+        "md5": "b9a3f8f5c4e77fd30b28f457244bcbdb"
+    },
+    {
+        "path": "/media/posts/11/responsive/tutor-sm.webp",
+        "type": "file",
+        "md5": "17639ef6de5225b0c7f5523a65078f6e"
+    },
+    {
+        "path": "/media/posts/11/responsive/tutor-xl.webp",
+        "type": "file",
+        "md5": "b9a3f8f5c4e77fd30b28f457244bcbdb"
+    },
+    {
+        "path": "/media/posts/11/responsive/tutor-xs.webp",
+        "type": "file",
+        "md5": "8fda852e6a21c276884dc8823817ce22"
+    },
+    {
+        "path": "/media/posts/11/tutor.webp",
+        "type": "file",
+        "md5": "37003926cb04e4465a24caec1425c327"
     },
     {
         "path": "media/posts/2",
@@ -597,7 +647,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "b86f5c40137c1c4fc746be6d279c1d90"
+        "md5": "ffbcb710ca243bc3ed7cdb3aa8fb5ae9"
     },
     {
         "path": "sitemap.xsl",
