@@ -389,6 +389,11 @@ function loadNoun(user, currentCourse) {
         nounDisplayMode = "matching-mode";
     } else if (randVal < 0.66) {
         nounDisplayMode = "four-images";
+
+    $('#noun-img1').attr('src', '');
+    $('#noun-img2').attr('src', '');
+    $('#noun-img3').attr('src', '');
+    $('#noun-img4').attr('src', '');
     } else {
         nounDisplayMode = "regular";
     }
@@ -404,7 +409,7 @@ function loadNoun(user, currentCourse) {
         return;
     }
 
-    checkDrillsLimit(user, currentCourse);
+
 
     // Show a random encouragement message when loading a new noun
     showEncouragementMessage();
@@ -644,34 +649,57 @@ function displayFourImagesNew(noun) {
 
 
     // Function to display the images in random order
-    function displaytheImages(noun) {
-        const currentOrder = noun.order;
-        const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4'];
-        let imagesToLoad = fourImagesToLoad;
-        fourImagesToLoad = [];
-        const correctImageUrl = `https://languizy.com/myimages/nouns/noun-${currentOrder}.png/smaller`;
-        if (!imagesToLoad.includes(correctImageUrl)) {
-            imagesToLoad[3] = correctImageUrl;
-        }
-        // Shuffle the images array
-        imagesToLoad = imagesToLoad.sort(() => Math.random() - 0.5);
-
-        // Set the images to the respective elements
-        imageElements.forEach((selector, index) => {
-
-            if (index < imagesToLoad.length) {
-                $(selector).attr('src', imagesToLoad[index]);
-                // Add data attribute for the correct noun image
-                if (imagesToLoad[index] === correctImageUrl) {
-                    $(selector).attr('data-correct', true)
-                }
-            }
-        });
-        loadRandomImages(0);
-
-
+   // Function to display the images in random order
+   function displaytheImages(noun) {
+    $('#four-images-container').hide(); // Show the container after all images are loaded
+    const currentOrder = noun.order;
+    const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4'];
+    let imagesToLoad = fourImagesToLoad;
+    fourImagesToLoad = [];
+    const correctImageUrl = `https://languizy.com/myimages/nouns/noun-${currentOrder}.png/smaller`;
+    if (!imagesToLoad.includes(correctImageUrl)) {
+        imagesToLoad[3] = correctImageUrl;
     }
-}
+    // Shuffle the images array
+    imagesToLoad = imagesToLoad.sort(() => Math.random() - 0.5);
+
+    // Preload the correct image
+    const pimg = new Image();
+    pimg.src = correctImageUrl;
+
+    let imagesLoaded = 0; // Counter for loaded images
+    const totalImages = imagesToLoad.length + 1; // +1 for the correct image
+
+    // Function to check if all images are loaded
+    const checkAllImagesLoaded = () => {
+        if (imagesLoaded === totalImages) {
+            $('#four-images-container').show(); // Show the container after all images are loaded
+        }
+    };
+
+    // Preload the correct image
+    pimg.onload = () => {
+        imagesLoaded++;
+        checkAllImagesLoaded();
+    };
+
+    // Set the images to the respective elements
+    imageElements.forEach((selector, index) => {
+        if (index < imagesToLoad.length) {
+            const imgElement = $(selector);
+            imgElement.attr('src', imagesToLoad[index]);
+            // Add data attribute for the correct noun image
+            if (imagesToLoad[index] === correctImageUrl) {
+                imgElement.attr('data-correct', true);
+            }
+            // Wait for each image to load in the DOM
+            imgElement.on('load', () => {
+                imagesLoaded++;
+                checkAllImagesLoaded();
+            });
+        }
+    });
+   }}
 
 // Display the noun on the page
 function displayNoun(noun, nounId, currentCourse) {
@@ -725,6 +753,7 @@ function displayNoun(noun, nounId, currentCourse) {
         $('#toggle-mode').hide();
         $("#submit-answer").css("visibility", "hidden");
         $("#text-input-area").hide();
+        $('#multiple-choice-options').hide();
     }
 
     $('#replay-audio').prop('disabled', true);
