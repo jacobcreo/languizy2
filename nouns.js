@@ -651,7 +651,8 @@ function displayFourImagesNew(noun) {
     // Function to display the images in random order
    // Function to display the images in random order
    function displaytheImages(noun) {
-    $('#four-images-container').hide(); // Show the container after all images are loaded
+    $('.the4images').css("visibility", "hidden");
+     
     const currentOrder = noun.order;
     const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4'];
     let imagesToLoad = fourImagesToLoad;
@@ -673,7 +674,7 @@ function displayFourImagesNew(noun) {
     // Function to check if all images are loaded
     const checkAllImagesLoaded = () => {
         if (imagesLoaded === totalImages) {
-            $('#four-images-container').show(); // Show the container after all images are loaded
+            $('.the4images').css("visibility", "visible"); // Show the container after all images are loaded
         }
     };
 
@@ -729,7 +730,7 @@ function displayNoun(noun, nounId, currentCourse) {
         displayFourImagesNew(noun);
     }
 
-    debugger;
+    
     if (nounDisplayMode !== "four-images" && nounDisplayMode !== "matching-mode") {
         $('#toggle-mode').show();
         $('#toggle-mode').prop('disabled', false);
