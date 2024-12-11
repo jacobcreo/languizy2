@@ -32,6 +32,8 @@ The screen includes:
 
 	•	Image-to-Word: Displays an image, and the user identifies the noun via text input or multiple-choice selection.
 	•	Four Images: Displays four images, and the user selects the one corresponding to the noun.
+	•	Matching-Mode: Displays two columns of words—four target-language words on the left and four origin-language words on the right. The user must match pairs by selecting one word from either column and then its correct counterpart in the other column. This mode uses keys 1-4 for left column words and 5-8 for right column words, and no special characters or images are involved. After all pairs are correctly matched, the drill is considered a success.
+
 
 2.2 Difficulty Modes
 
@@ -49,6 +51,8 @@ The app tracks:
 
 	•	Feedback messages indicate correctness and provide the correct answer for incorrect responses.
 	•	Encouragement messages are dynamically generated based on streaks.
+	•	Matching-mode uses correct/wrong sounds and considers the drill complete only after all pairs are matched.
+
 
 2.5 Data Integration
 
@@ -76,7 +80,7 @@ Main Functions
 	•	Calls loadNounData to fetch the noun details and display it.
 	2.	displayNoun:
 	•	Dynamically updates the UI to display the selected noun.
-	•	Handles logic for both image-to-word and four-images modes.
+	•	Handles image-to-word, four-images, and matching-mode displays.
 	•	Preloads images to ensure smooth transitions.
 	3.	displayMultipleChoiceOptions:
 	•	Generates four options, including the correct noun and three distractors.
@@ -84,6 +88,8 @@ Main Functions
 	4.	displayFourImagesNew:
 	•	Loads four images (including the correct noun’s image).
 	•	Shuffles and displays the images, tracking the correct answer with a data-correct attribute.
+	•	In matching-mode, initializes pairs of words, shuffles them, and sets up event handlers for matching pairs.
+
 
 3. Answer Submission
 
@@ -98,11 +104,15 @@ Main Functions
 	•	handleFourImagesSubmit:
 	•	Evaluates whether the user clicked the correct image.
 	•	Highlights the correct and incorrect answers visually.
+	3.	Matching-Mode:
+	•	Users select words from columns. Correct pairs disappear, and after all four pairs are matched, `afterAllPairsMatched` is called.
+	•	afterAllPairsMatched: Treats the drill as a correct completion and updates stats accordingly.
 	3.	Feedback and Stats:
-	•	afterAnswerSubmission:
-	•	Displays feedback (correct/incorrect).
+	•	afterAnswerSubmission: Displays feedback (correct/incorrect).
 	•	Updates streaks and user progress in Firestore.
 	•	Adjusts difficulty and recommendations.
+	•	For matching-mode, completion is determined once all pairs are matched, always counting as correct in the end.
+
 
 4. Data Persistence
 
@@ -125,7 +135,7 @@ Main Functions
 	2.	generateNounAudio:
 	•	Makes an API call to AWS Polly to generate text-to-speech audio.
 	3.	Replay Button:
-	•	Allows the user to replay the audio using the same functions.
+	•	Lets users replay the noun’s audio except in matching-mode (where no replay is needed).
 
 6. User Interface Interactions
 
@@ -137,6 +147,9 @@ Main Functions
 	3.	Toggle Mode:
 	•	Switches between text input and multiple-choice modes.
 	•	Adjusts difficulty dynamically.
+
+	•	In matching-mode, special keys (1-4, 5-8) select words in columns. Enter does nothing until completion.
+
 
 7. Reporting and Help
 
@@ -260,7 +273,7 @@ Data Flow
 	•	Authenticate and retrieve user stats and preferences.
 	2.	Load and Display Question:
 	•	Fetch noun data from Firestore.
-	•	Display the noun using the appropriate mode.
+	•	Display the noun in text input, multiple-choice, four-images, or matching-mode.
 	3.	Answer Submission:
 	•	Evaluate the answer.
 	•	Provide feedback and update progress.

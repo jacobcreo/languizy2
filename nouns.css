@@ -327,13 +327,11 @@
     
     /* 9. Question Area Visibility */
     #question-area {
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.3s ease-in-out;
     }
     
-    #question-area.visible {
-    opacity: 1;
-    }
+   
     
     /* Modal Header Styles */
     .modal-header {
@@ -497,3 +495,38 @@
         background-color: #007bff;
         color: #fff;
       }
+
+     /* Remove or comment out conflicting styles */
+#matching-images-right-column {
+    /* display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; */
+}
+
+.matching-images-cell {
+    /* flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; */
+}
+
+/* Ensure images are square and maintain aspect ratio */
+.matching-image {
+    object-fit: cover; /* Ensures the image covers the container without distortion */
+    width: 100%;
+    height: 100%;
+    border-radius: 8px; /* Optional: Rounded corners for aesthetics */
+}
+
+/* Style the matching buttons in the left column */
+.matching-btn-left {
+    width: 100%;
+    padding: 15px;
+    font-size: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    height: auto; /* Let height adjust based on content */
+    white-space: normal; /* Allow text to wrap if necessary */
+}

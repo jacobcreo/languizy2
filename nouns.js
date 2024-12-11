@@ -9,9 +9,10 @@ let streakWrong = 0;
 let lastFiveAnswers = [];
 let previousNounId = null; // Ensure this is correctly initialized
 let questionStartTime; // Variable to store the start time of the question
-let nounDisplayMode;
+let nounDisplayMode = "four-images";
 let listOfSeenNouns = [];
 let maxOrder = 0;
+let imagesLoaded = 0;
 
 let matchingPairs = []; // Store {target: "", origin: ""}
 let selectedMatchingBtn = null; // Track the currently selected button
@@ -55,7 +56,7 @@ const loadingMessages = [
     "Fetching some A+ images for your learning pleasure...",
     "Loading... our language squirrel is gathering all the nuts of knowledge!",
     "Meanwhile, in the Land of Nouns... your image is being prepared.",
-    "Ever wonder how images are chosen? Well, you’re about to find out...",
+    "Ever wonder how images are chosen? Well, you're about to find out...",
     "Your noun is coming... it's fashionably late, but worth it.",
     "Patience, grasshopper. Your learning will be worth the wait!",
 ];
@@ -201,7 +202,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 // New function to update maxOrder
 function updateMaxOrder(user, currentCourse) {
-    
+
     const allTimeStatsRef = db.collection('users').doc(user.uid)
         .collection('courses').doc(currentCourse)
         .collection('stats').doc('all-time');
@@ -380,23 +381,55 @@ function loadDailyScore(user, currentCourse) {
 
 // Load a noun from Firestore
 function loadNoun(user, currentCourse) {
+    console.log('loadNoun called: ' + new Date().getTime());
     showLoadingProgress();
+
+    // $('h3').css('visibility', 'hidden');
+    resetAllExerciseUI();
 
     // nounDisplayMode = Math.random() < 0.33 ? "four-images" : "regular";
     // nounDisplayMode = "four-images";
     const randVal = Math.random();
-    if (randVal < 0.33) {
-        nounDisplayMode = "matching-mode";
-    } else if (randVal < 0.66) {
-        nounDisplayMode = "four-images";
-
-    $('#noun-img1').attr('src', '');
-    $('#noun-img2').attr('src', '');
-    $('#noun-img3').attr('src', '');
-    $('#noun-img4').attr('src', '');
-    } else {
-        nounDisplayMode = "regular";
+    let attempts = 0;
+    let lastValue = nounDisplayMode;
+    debugger;
+    while (lastValue === nounDisplayMode && attempts < 5) {
+        console.log('Attempt: ' + attempts);
+        console.log('randVal: ' + randVal);
+        console.log('nounDisplayMode: ' + nounDisplayMode);
+        console.log('lastValue: ' + lastValue);
+        if (randVal < 0.15) {
+            nounDisplayMode = "matching-mode";
+        } else if (randVal < 0.3) {
+            nounDisplayMode = "matching-images-mode"; // our new mode
+            $('.matching-image').attr('src', '');
+        } else if (randVal < 0.55) {
+            nounDisplayMode = "four-images";
+            $('#noun-img1').attr('src', '');
+            $('#noun-img2').attr('src', '');
+            $('#noun-img3').attr('src', '');
+            $('#noun-img4').attr('src', '');
+        } else {
+            nounDisplayMode = "regular";
+        }
+        attempts++;
     }
+
+
+
+    // const randVal = Math.random();
+    // if (randVal < 0.33) {
+    //     nounDisplayMode = "matching-mode";
+    // } else if (randVal < 0.66) {
+    //     nounDisplayMode = "four-images";
+
+    // $('#noun-img1').attr('src', '');
+    // $('#noun-img2').attr('src', '');
+    // $('#noun-img3').attr('src', '');
+    // $('#noun-img4').attr('src', '');
+    // } else {
+    //     nounDisplayMode = "regular";
+    // }
 
     if (!user) {
         console.error("User is not authenticated.");
@@ -515,7 +548,7 @@ function loadNewNoun(user, courseId) {
 
 // Helper function to fetch and load nouns
 function fetchAndLoadNouns(courseData) {
-    debugger;
+
     if ((typeof (courseData.targetLanguage) !== 'undefined') && (typeof (courseData.knownLanguage) !== 'undefined')) {
         courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
     }
@@ -539,7 +572,7 @@ function fetchAndLoadNouns(courseData) {
                 .then(progressSnapshot => {
                     var seenNouns = progressSnapshot.docs.map(doc => doc.id);
                     var unseenNouns = nouns.filter(q => !seenNouns.includes(q.id));
-                    debugger;
+
                     // Shuffle unseenNouns to add randomness
                     // shuffleArray(unseenNouns);
 
@@ -599,6 +632,8 @@ function loadNextEarlyNoun(user, courseId) {
         });
 }
 
+
+
 // Show loading progress
 function showLoadingProgress() {
     // Hide the question area content but keep its space
@@ -631,9 +666,84 @@ function hideLoadingProgress() {
     questionStartTime = new Date();
 }
 
+// Common function to handle after answer submission
+function afterAnswerSubmission(isCorrect, type = "translation") {
+    debugger;
+    $('#submit-answer').hide();
+    $('#next-question').show();
+
+    gtag('event', 'User Answered', {
+        'question_type': 'Nouns',
+        'user_id': uid,
+        'answer': isCorrect,
+        'course': window.currentCourse,
+        'mode': type === "four-images" ? 'four-images' : (isMultipleChoice ? 'Multiple_Choice' : 'Text_Input')
+    });
+
+    const questionEndTime = new Date();
+    let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
+    timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
+
+    // Disable the toggle button after submission
+    $('#toggle-mode').prop('disabled', true);
+
+    if (type !== "four-images") {
+        // Feedback to user
+        if (isCorrect) {
+            $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
+            if (!isMultipleChoice) {
+                $('#user-answer').val(`${window.currentNounData.noun}`).css('font-weight', 'bold');
+            }
+        } else {
+            $('#feedback').text(`Incorrect. The correct answer was "${window.currentNounData.noun}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+        }
+    } else {
+        if (isCorrect) {
+            let correction = 'Correct! <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> is <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
+            $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible');
+        } else {
+            let correction = 'Incorrect. <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> is <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
+            $('#feedback').html(correction).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+        }
+    }
+
+    // Update visual stats and progress
+    updateVisualStats(isCorrect);
+    updateUserProgress(window.currentNounId, isCorrect, currentCourse, timeTaken);
+
+    // Hide toggle-mode button after answer is submitted
+    $('#toggle-mode').hide();
+
+
+    // Play noun audio after submission
+    playNounAudio(window.currentNounId, window.currentNounData.noun);
+}
+
+
+
+function handleFourImagesSubmit(imgNumber) {
+    var selectedImage = $(`#noun-img${imgNumber}`);
+    var isCorrect = selectedImage.attr('data-correct') === 'true';
+    selectedImage.removeAttr('data-correct');
+    if (isCorrect) {
+        selectedImage.addClass('green-border');
+    } else {
+        selectedImage.addClass('red-border');
+
+        for (let i = 1; i <= 4; i++) {
+            const imgElement = $(`#noun-img${i}`);
+            if (imgElement.attr('data-correct') === 'true') {
+                imgElement.addClass('green-border');
+                break;
+            }
+        }
+    }
+    afterAnswerSubmission(isCorrect, "four-images");
+}
+
 function displayFourImagesNew(noun) {
 
-
+    
     while (fourImagesToLoad.length < 4) {
         const randomNumber = Math.floor(Math.random() * 66) + 1; // Generate a random number between 1 and 99
         const imgUrl = `https://languizy.com/myimages/nouns/noun-${randomNumber}.png/smaller`;
@@ -649,115 +759,110 @@ function displayFourImagesNew(noun) {
 
 
     // Function to display the images in random order
-   // Function to display the images in random order
-   function displaytheImages(noun) {
-    $('.the4images').css("visibility", "hidden");
-     
-    const currentOrder = noun.order;
-    const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4'];
-    let imagesToLoad = fourImagesToLoad;
-    fourImagesToLoad = [];
-    const correctImageUrl = `https://languizy.com/myimages/nouns/noun-${currentOrder}.png/smaller`;
-    if (!imagesToLoad.includes(correctImageUrl)) {
-        imagesToLoad[3] = correctImageUrl;
-    }
-    // Shuffle the images array
-    imagesToLoad = imagesToLoad.sort(() => Math.random() - 0.5);
+    // Function to display the images in random order
+    function displaytheImages(noun) {
+        $('.the4images').css("visibility", "hidden");
 
-    // Preload the correct image
-    const pimg = new Image();
-    pimg.src = correctImageUrl;
-
-    let imagesLoaded = 0; // Counter for loaded images
-    const totalImages = imagesToLoad.length + 1; // +1 for the correct image
-
-    // Function to check if all images are loaded
-    const checkAllImagesLoaded = () => {
-        if (imagesLoaded === totalImages) {
-            $('.the4images').css("visibility", "visible"); // Show the container after all images are loaded
+        const currentOrder = noun.order;
+        const imageElements = ['#noun-img1', '#noun-img2', '#noun-img3', '#noun-img4'];
+        let imagesToLoad = fourImagesToLoad;
+        fourImagesToLoad = [];
+        const correctImageUrl = `https://languizy.com/myimages/nouns/noun-${currentOrder}.png/smaller`;
+        if (!imagesToLoad.includes(correctImageUrl)) {
+            imagesToLoad[3] = correctImageUrl;
         }
-    };
+        // Shuffle the images array
+        imagesToLoad = imagesToLoad.sort(() => Math.random() - 0.5);
 
-    // Preload the correct image
-    pimg.onload = () => {
-        imagesLoaded++;
-        checkAllImagesLoaded();
-    };
+        // Preload the correct image
+        const pimg = new Image();
+        pimg.src = correctImageUrl;
 
-    // Set the images to the respective elements
-    imageElements.forEach((selector, index) => {
-        if (index < imagesToLoad.length) {
-            const imgElement = $(selector);
-            imgElement.attr('src', imagesToLoad[index]);
-            // Add data attribute for the correct noun image
-            if (imagesToLoad[index] === correctImageUrl) {
-                imgElement.attr('data-correct', true);
+        // let imagesLoaded = 0; // Counter for loaded images
+        const totalImages = imagesToLoad.length + 1; // +1 for the correct image
+
+        
+
+        // Function to check if all images are loaded
+        const checkAllImagesLoaded = () => {
+            if (imagesLoaded === totalImages) {
+                // $('.the4images').css("visibility", "visible"); // Show the container after all images are loaded
+                pimg.onload = null;
+                imageElements.forEach(selector => {
+                    $(selector).off('load');
+                });
+                hideLoadingProgress(); // Hide progress bar when the noun loads
+                console.log('images.off(load) called: ' + new Date().getTime());
+                $('.the4images').css("visibility", "visible"); // Show the container after all images are loaded
+                console.log('the4images container shown: ' + new Date().getTime());
+                imagesLoaded = 0;
+                $(document).off('keydown.fourImages').on('keydown.fourImages', function (e) {
+
+                    if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
+                    if (nounDisplayMode !== "four-images") return;
+                    const key = e.which - 48; // For top number keys
+                    if (key >= 1 && key <= 4) {
+                        e.preventDefault();
+                        handleFourImagesSubmit(key);
+                    }
+                });
             }
-            // Wait for each image to load in the DOM
-            imgElement.on('load', () => {
-                imagesLoaded++;
-                checkAllImagesLoaded();
-            });
-        }
-    });
-   }}
+        };
+
+        // Preload the correct image
+        pimg.onload = () => {
+            imagesLoaded++;
+            checkAllImagesLoaded();
+        };
+
+        // Set the images to the respective elements
+        imageElements.forEach((selector, index) => {
+            if (index < imagesToLoad.length) {
+                const imgElement = $(selector);
+                imgElement.attr('src', imagesToLoad[index]);
+                // Add data attribute for the correct noun image
+                if (imagesToLoad[index] === correctImageUrl) {
+                    imgElement.attr('data-correct', true);
+                }
+                // Wait for each image to load in the DOM
+                imgElement.on('load', () => {
+                    imagesLoaded++;
+                    checkAllImagesLoaded();
+                });
+            }
+        });
+    }
+}
+
+function resetAllExerciseUI() {
+    $('#matching-images-container').hide();
+    $('#matching-container').hide();
+    $('#four-images-container').hide();
+    $("#question-area").hide();
+    $("#multiple-choice-options").hide();
+    $("#special-characters").hide();
+    $('#replay-audio').prop('disabled', true);
+    $('#text-input-area').hide();
+    $(document).off('keydown.multipleChoice');
+    $(document).off('keydown.matching');
+    $(document).off('keydown.matching-images');
+    $(document).off('keydown.fourImages');
+
+
+}
 
 // Display the noun on the page
 function displayNoun(noun, nounId, currentCourse) {
     // Store nounId and current noun data globally for use in other functions
+    console.log('displayNoun called: ' + new Date().getTime());
+
     if (typeof nounId !== 'undefined') {
         window.currentNounId = nounId;
     } else {
         nounId = window.currentNounId;
     }
     console.log(noun);
-    hideLoadingProgress(); // Hide progress bar when the noun loads
 
-    // Reset matching mode UI if previously enabled
-    $('#matching-container').hide();
-    matchedCount = 0;
-    selectedMatchingBtn = null;
-    $(document).off('keydown.matching'); // Remove matching key bindings
-
-
-    // Adjust input field based on the noun
-    adjustInputField(noun.noun, currentCourse);
-    $("#noun-translation").text(noun.missingWordTranslation);
-
-    if (nounDisplayMode === "four-images") {
-        // displayFourImages(noun);
-
-        displayFourImagesNew(noun);
-    }
-
-    
-    if (nounDisplayMode !== "four-images" && nounDisplayMode !== "matching-mode") {
-        $('#toggle-mode').show();
-        $('#toggle-mode').prop('disabled', false);
-        $("#submit-answer").css("visibility", "visible");
-        $("#text-input-area").show();
-    } if (nounDisplayMode === "matching-mode") {
-        $('#noun-image').hide();
-        $('#four-images-container').hide();
-        $('#text-input-area').hide();
-        $('#multiple-choice-options').hide();
-        $('#special-characters').hide();
-        $('#toggle-mode').hide();
-        $('#submit-answer').hide();
-        // Show matching container
-        $('#matching-container').show();
-        $('#question-area').hide();
-
-        // We will call a function to initialize the matching drill
-        initializeMatchingMode(noun, currentCourse);
-    } else {
-        $('#toggle-mode').hide();
-        $("#submit-answer").css("visibility", "hidden");
-        $("#text-input-area").hide();
-        $('#multiple-choice-options').hide();
-    }
-
-    $('#replay-audio').prop('disabled', true);
 
     if (typeof noun !== 'undefined') {
         window.currentNounData = noun;
@@ -771,35 +876,152 @@ function displayNoun(noun, nounId, currentCourse) {
         currentCourse = window.currentCourse;
     }
 
-    if (nounDisplayMode !== "matching-mode") {
-        setupReplayButton(nounId, noun.noun);
-    }
+    // Reset matching mode UI if previously enabled
+    $('#matching-container').hide();
+    matchedCount = 0;
+    selectedMatchingBtn = null;
+    $(document).off('keydown.matching'); // Remove matching key bindings
 
-    if (nounDisplayMode !== "four-images" && nounDisplayMode !== "matching-mode") {
-        // Set the image source
-        const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
-        $('#noun-image').attr('src', imageUrl);
-        $('#four-images-container').hide();
-        $('#noun-image').show();
-    } else if (nounDisplayMode === "four-images") {
+
+    // Adjust input field based on the noun
+    adjustInputField(noun.noun, currentCourse);
+    $("#noun-translation").text(noun.missingWordTranslation);
+
+    if (nounDisplayMode === "four-images") {
+
+
+        $("#submit-answer").css("visibility", "hidden");
+
         const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
         const pimg = new Image();
         pimg.src = imageUrl;
         pimg.onload = () => {
             $('#four-images-container').show();
         };
-        // $('#four-images-container').show();
+
         $('#noun-image').hide();
         $('#noun-four-images-text').text(noun.noun);
-    }
-    if (nounDisplayMode !== "matching-mode") {
+
         $('#question-area').show();
+        $('#toggle-mode').hide();
+
+        displayFourImagesNew(noun);
+
+    } else if (nounDisplayMode === "matching-mode") {
+
+
+        $('#matching-container').show();
+
+        $('#toggle-mode').hide();
+        $('#submit-answer').hide();
+
+        initializeMatchingMode(noun, currentCourse);
+
+
+    } else if (nounDisplayMode === "matching-images-mode") {
+
+        resetAllExerciseUI();
+
+        // $('#matching-images-container').show();
+
+        $('#toggle-mode').hide();
+        $('#submit-answer').hide();
+
+        const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
+        $('#noun-image').attr('src', imageUrl);
+
+        initializeMatchingImagesMode(noun, currentCourse);
+
+    } else { // regular mode (including multiple choice regular mode)
+
+        
+
+
+        const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
+
+        $('#noun-image').on('load', handleNounImageLoad);
+
+        function handleNounImageLoad() {
+            console.log('Noun image loaded');
+            hideLoadingProgress();
+            $('#question-area').show();
+            $('#question-area').css('visibility', 'visible');
+
+        $('#toggle-mode').show();
+        $('#toggle-mode').prop('disabled', false);
+
+        $("#submit-answer").css("visibility", "visible");
+
+        $("#text-input-area").show();
+
+            $('#toggle-mode').show();
+            $('#toggle-mode').prop('disabled', false);
+            console.log('text input area shown: ' + new Date().getTime());
+
+            $("#submit-answer").css("visibility", "visible");
+
+            $("#text-input-area").show();
+            // Remove the onload event handler
+            $('#noun-image').off('load', handleNounImageLoad);
+            if (!isMultipleChoice) {
+                $('#user-answer').val(''); // Clear the input field
+                $('#user-answer').css('font-weight', 'normal');
+                $('#text-input-area').show();
+                $('#user-answer').focus();
+                $('#multiple-choice-options').hide();
+                // Remove multiple-choice keydown event
+                $(document).off('keydown.multipleChoice');
+                $('#special-characters').show();
+                $('#submit-answer').show();
+            } else {
+                $('#special-characters').hide();
+                $('#text-input-area').hide();
+                $('#submit-answer').hide();
+                $('#multiple-choice-options').show();
+                displayMultipleChoiceOptions(noun);
+                // Add keydown event for keys 1-4
+                $(document).on('keydown.multipleChoice', function (e) {
+                    if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
+                    const key = e.which - 48; // For top number keys
+                    if (key >= 1 && key <= 4) {
+                        e.preventDefault();
+                        $('.option-btn').eq(key - 1).click();
+                    }
+                });
+            }
+        }
+
+        $('#noun-image').attr('src', imageUrl);
+        console.log('noun-image src set to: ' + imageUrl + ' timestamp is: ' + new Date().getTime());
+        $('#noun-image').show();
+
+        displayNounTranslations(noun.translations);
+
+        
+
+
+
+
+
+    }
+
+    $('h3').css('visibility', 'visible');
+
+
+
+
+
+    if (nounDisplayMode !== "matching-mode") {
+        setupReplayButton(nounId, noun.noun);
     }
 
     if (nounDisplayMode !== "four-images" && nounDisplayMode !== "matching-mode") {
-        // Display noun translations in the feedback area
-        displayNounTranslations(noun.translations);
+        // Set the image source
+
+    } else if (nounDisplayMode === "four-images") {
+
     }
+
 
     // Retrieve the progress data for this noun to get `lastAnswered`
     var user = firebase.auth().currentUser;
@@ -843,9 +1065,7 @@ function displayNoun(noun, nounId, currentCourse) {
         $('#feedback').append(` <span class="text-muted">${phraseStatus}</span>`);
 
         // Automatically focus on the input field if in text input mode
-        if (!isMultipleChoice && nounDisplayMode !== "four-images" && nounDisplayMode !== "matching-mode") {
-            $('#user-answer').focus();
-        }
+
     });
 
     $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden');
@@ -853,52 +1073,17 @@ function displayNoun(noun, nounId, currentCourse) {
     $('.option-btn').removeClass('selected'); // Remove selected class from all options (relevant to multiple choice, but in case user switches)
     $('.option-btn').prop('disabled', false);
 
-    // Show or hide the submit button based on the current mode
-    if (isMultipleChoice) {
-        $('#submit-answer').hide();
-        $('#special-characters').hide();
-    } else if (nounDisplayMode !== "four-images" && nounDisplayMode !== "matching-mode") {
-        $('#special-characters').show();
-        $('#submit-answer').show();
-    } else {
-        $('#special-characters').hide();
-    }
+
     $('#next-question').hide();
 
     // Hide or show elements based on the current mode
     if (isMultipleChoice) {
-        $('#text-input-area').hide();
-        $('#multiple-choice-options').show();
-        displayMultipleChoiceOptions(noun);
-        // Add keydown event for keys 1-4
-        $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
-            if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
-            const key = e.which - 48; // For top number keys
-            if (key >= 1 && key <= 4) {
-                e.preventDefault();
-                $('.option-btn').eq(key - 1).click();
-            }
-        });
-    } else if (nounDisplayMode !== "four-images") {
-        $('#user-answer').val(''); // Clear the input field
-        $('#user-answer').css('font-weight', 'normal');
-        $('#text-input-area').show();
 
-        $('#multiple-choice-options').hide();
-        // Remove multiple-choice keydown event
-        $(document).off('keydown.multipleChoice');
+    } else if (nounDisplayMode !== "four-images") {
+
     } else if (nounDisplayMode === "four-images") {
 
-        $(document).off('keydown.fourImages').on('keydown.fourImages', function (e) {
-            debugger;
-            if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
-            if (nounDisplayMode !== "four-images") return;
-            const key = e.which - 48; // For top number keys
-            if (key >= 1 && key <= 4) {
-                e.preventDefault();
-                handleFourImagesSubmit(key);
-            }
-        });
+       
     }
 
 
@@ -932,25 +1117,197 @@ function displayNoun(noun, nounId, currentCourse) {
 
 
     // Handle answer submission for four images mode
-    function handleFourImagesSubmit(imgNumber) {
-        var selectedImage = $(`#noun-img${imgNumber}`);
-        var isCorrect = selectedImage.attr('data-correct') === 'true';
-        selectedImage.removeAttr('data-correct');
-        if (isCorrect) {
-            selectedImage.addClass('green-border');
-        } else {
-            selectedImage.addClass('red-border');
+    
 
-            for (let i = 1; i <= 4; i++) {
-                const imgElement = $(`#noun-img${i}`);
-                if (imgElement.attr('data-correct') === 'true') {
-                    imgElement.addClass('green-border');
-                    break;
+    async function initializeMatchingImagesMode(currentNounData, currentCourse) {
+        console.log('initializeMatchingImagesMode called: ' + new Date().getTime());
+        // matchingPairs already has {target, origin, order} for all pairs
+        // including currentNounData and otherPairs.
+
+        // matchingPairs is already populated in displayNoun or similar logic.
+        // If not, do it similarly to initializeMatchingMode:
+        matchingPairs = [];
+        matchingPairs.push({
+            target: currentNounData.noun,
+            origin: currentNounData.missingWordTranslation,
+            order: currentNounData.order
+        });
+        const otherPairs = await fetchRandomNounPairs(currentCourse, 3, currentNounData.noun);
+        matchingPairs = matchingPairs.concat(otherPairs);
+
+        // Separate target words and their orders, origin words and orders
+        const targetPairs = matchingPairs.map(p => ({ word: p.target, order: p.order }));
+        const originPairs = matchingPairs.map(p => ({ word: p.origin, order: p.order }));
+
+        // Extract just words for shuffling
+        const targetWords = targetPairs.map(p => p.word);
+        const originPairsData = originPairs; // keep order info here
+        const originWords = originPairs.map(p => p.word);
+
+        shuffleArray(targetWords);
+        shuffleArray(originWords);
+
+        displayMatchingImagesColumns(targetWords, originPairsData);
+        setupMatchingImagesKeyBindings();
+    }
+
+
+    // Main function to display matching images and buttons
+    function displayMatchingImagesColumns(targetWords, originPairsData) {
+        console.log('displayMatchingImagesColumns called: ' + new Date().getTime());
+        const container = $('#matching-images-container');
+
+        // Select all buttons within the buttons section
+        const buttons = container.find('.matching-btn-left');
+
+        // Select all images within the images section
+        const images = container.find('.matching-image');
+
+        // Shuffle the target words and origin pairs for randomization
+        shuffleArray(targetWords);
+        shuffleArray(originPairsData);
+
+        // Assign target words to buttons
+        buttons.each(function (index) {
+            if (index < targetWords.length) {
+                const btn = $(this);
+                btn.text(targetWords[index]); // Update button text
+                btn.attr('data-word', targetWords[index]); // Update data-word attribute
+                btn.attr('data-index', index + 1); // Update data-index attribute if needed
+                btn.removeClass('matching-images-exercise').addClass('matching-images-exercise');
+            }
+        });
+
+        // Assign origin pairs to images
+        // let imagesLoaded = 0;
+        // const totalImages = images.length;
+
+        // Hide the images section until all images are loaded
+        // container.find('#matching-images-right-column').css('visibility', 'hidden');
+
+        images.each(function (index) {
+
+            if (index < originPairsData.length) {
+                const img = $(this);
+                const originPair = originPairsData[index];
+                const imgUrl = `https://languizy.com/myimages/nouns/noun-${originPair.order}.png/smaller`;
+
+                // Set image src and data-word
+                img.attr('src', imgUrl);
+                img.attr('data-word', originPair.word);
+                img.removeClass('matching-images-exercise').addClass('matching-images-exercise');
+
+                // Handle image load
+                img.on('load', function () {
+                    console.log('image loaded: ' + imagesLoaded + ' timestamp is: ' + new Date().getTime());
+                    
+                    imagesLoaded++;
+                    if (imagesLoaded >= 4) {
+                        // container.find('#matching-images-right-column').css('visibility', 'visible');                        
+                        images.off('load');
+                        hideLoadingProgress(); // Hide progress bar when the noun loads
+                        console.log('images.off(load) called: ' + new Date().getTime());
+                        $('.matching-image').css('visibility', 'visible').removeClass('matched');
+                        $('.matching-btn').removeClass('matched selected');
+                        $('.matching-btn').css('visibility', 'visible');
+                        $('#matching-images-container').show();
+                        console.log('Matching images container shown: ' + new Date().getTime());
+                        imagesLoaded = 0;
+
+                    }
+                });
+
+                // Handle image error
+                // img.on('error', function() {
+                //     console.error(`Failed to load image: ${imgUrl}`);
+                //     imagesLoaded++;
+                //     if(imagesLoaded === totalImages){
+                //         container.find('#matching-images-right-column').css('visibility', 'visible');
+                //     }
+                // });
+            }
+        });
+
+        // Attach click handlers to images for matching functionality
+        images.off('click').on('click', function () {
+            handleMatchingImagesClick(this);
+        });
+
+        // Attach click handlers to buttons for matching functionality
+        buttons.off('click').on('click', function () {
+            handleMatchingImagesClick(this);
+        });
+    }
+
+
+
+    function handleMatchingImagesClick(elem) {
+        const $btn = $(elem);
+        if ($btn.hasClass('matched')) return; // Already matched
+
+        const word = $btn.attr('data-word');
+        const isImage = $btn.hasClass('matching-image');
+
+        if (!selectedMatchingBtn) {
+            // Select this button/image
+            $btn.addClass('selected');
+            selectedMatchingBtn = $btn;
+        } else {
+            // Already selected something
+            if ($btn[0] === selectedMatchingBtn[0]) {
+                // same element, deselect
+                $btn.removeClass('selected');
+                selectedMatchingBtn = null;
+                return;
+            }
+
+            const word1 = selectedMatchingBtn.attr('data-word');
+            const word2 = $btn.attr('data-word');
+
+            if (isMatchingPair(word1, word2)) {
+                playCorrectSound();
+                selectedMatchingBtn.addClass('matched').css('visibility', 'hidden');
+                $btn.addClass('matched').css('visibility', 'hidden');
+                selectedMatchingBtn = null;
+                matchedCount++;
+                if (matchedCount === 4) {
+                    afterAllPairsMatched();
                 }
+            } else {
+                playWrongSound();
+                selectedMatchingBtn.removeClass('selected');
+                selectedMatchingBtn = null;
             }
         }
-        afterAnswerSubmission(isCorrect, "four-images");
     }
+
+    function setupMatchingImagesKeyBindings() {
+        $(document).off('keydown.fourImages').off('keydown.matching-images').on('keydown.matching-images', function (e) {
+            if ($('#next-question').is(':visible')) return;
+            if (nounDisplayMode !== "matching-images-mode") return;
+            const key = e.which;
+            // 1-4 for left column words, 5-8 for images
+            if (key >= 49 && key <= 56) {
+                e.preventDefault();
+                const index = key - 48;
+                let selector;
+                if (index <= 4) {
+                    selector = `.matching-btn.matching-images-exercise[data-index='${index}']`;
+                } else {
+                    selector = `.matching-image.matching-images-exercise[data-index='${index}']`;
+                }
+
+                const btn = $(selector);
+                if (btn.length > 0 && btn.is(':visible') && !btn.hasClass('matched')) {
+                    handleMatchingImagesClick(btn[0]);
+                }
+            }
+        });
+    }
+
+
+    
+
 
     async function initializeMatchingMode(currentNounData, currentCourse) {
         // currentNounData.noun = target word
@@ -1007,13 +1364,15 @@ function displayNoun(noun, nounId, currentCourse) {
         // Convert to pairs
         const pairs = selected.map(d => ({
             target: d.noun,
-            origin: d.missingWordTranslation
+            origin: d.missingWordTranslation,
+            order: d.order
         }));
 
         return pairs;
     }
 
     function displayMatchingColumns(targetWords, originWords) {
+        hideLoadingProgress(); // Hide progress bar when the noun loads
         const leftCol = $('#matching-left-column');
         const rightCol = $('#matching-right-column');
         leftCol.empty();
@@ -1133,7 +1492,7 @@ function displayNoun(noun, nounId, currentCourse) {
                 // keys '1'-'8' = 49-56 in keycode
                 const index = key - 48;
                 // Find the button with data-index = index
-                const btn = $(`.matching-btn[data-index='${index}']`);
+                const btn = $(`.matching-btn[data-index='${index}']:not(.matching-btn-left)`);
                 if (btn.length > 0 && btn.is(':visible') && !btn.hasClass('matched')) {
                     handleMatchingButtonClick(btn[0]);
                 }
@@ -1174,57 +1533,7 @@ function displayNoun(noun, nounId, currentCourse) {
         }
     }
 
-    // Common function to handle after answer submission
-    function afterAnswerSubmission(isCorrect, type = "translation") {
-        $('#submit-answer').hide();
-        $('#next-question').show();
-
-        gtag('event', 'User Answered', {
-            'question_type': 'Nouns',
-            'user_id': uid,
-            'answer': isCorrect,
-            'course': window.currentCourse,
-            'mode': type === "four-images" ? 'four-images' : (isMultipleChoice ? 'Multiple_Choice' : 'Text_Input')
-        });
-
-        const questionEndTime = new Date();
-        let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
-        timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
-
-        // Disable the toggle button after submission
-        $('#toggle-mode').prop('disabled', true);
-
-        if (type !== "four-images") {
-            // Feedback to user
-            if (isCorrect) {
-                $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
-                if (!isMultipleChoice) {
-                $('#user-answer').val(`${noun.noun}`).css('font-weight', 'bold');
-                }
-            } else {
-                $('#feedback').text(`Incorrect. The correct answer was "${noun.noun}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
-            }
-        } else {
-            if (isCorrect) {
-                let correction = 'Correct! <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> is <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
-                $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible');
-            } else {
-                let correction = 'Incorrect. <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> is <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
-                $('#feedback').html(correction).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
-            }
-        }
-
-        // Update visual stats and progress
-        updateVisualStats(isCorrect);
-        updateUserProgress(window.currentNounId, isCorrect, currentCourse, timeTaken);
-
-        // Hide toggle-mode button after answer is submitted
-        $('#toggle-mode').hide();
-
-
-        // Play noun audio after submission
-        playNounAudio(window.currentNounId, window.currentNounData.noun);
-    }
+    
 
     /**
      * Sets up the Replay Audio button to play the noun audio when clicked.
@@ -1444,7 +1753,7 @@ function normalizeString(str) {
 // Update user progress in the database
 function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
     var user = firebase.auth().currentUser;
-    debugger;
+
     var userProgressRef = db.collection('users').doc(user.uid)
         .collection('nouns').doc(currentCourse)
         .collection('nouns').doc(nounId);
