@@ -630,129 +630,157 @@ function showCourseModal(user) {
     });
 }
 
-// **New Function: Calculate Recommendation**
-function calculateRecommendation(vocab, grammar, stories, chat) {
-    // Initialize variables to determine recommendation
+function calculateRecommendation(vocab, grammar, stories, chat, basics) {
+    /*
+    New Logic:
+    1. If all categories are at 0% => Recommend Basics.
+    2. Ensure Basics vs. Vocabulary advantage:
+       - If basics is NOT at least 2.5% ahead of vocabulary, recommend Basics.
+         (basicsValue - vocabValue < 2.5 means basics is not sufficiently ahead, so we pick basics)
+       - Else, continue checking Vocabulary.
+    3. If Vocab is not at least 2% ahead of Grammar, Stories, and Chat => fallback to weighted selection.
+    4. If no suitable category found during advantage checks => fallback to Basics.
+    */
+
     let recommendation = null;
     let reason = '';
+
+    // 1. Check if drills limit is reached
     if (drillsLimitReached) {
         recommendation = {
             name: 'Upgrade',
             buttonColor: 'success',
             buttonId: 'upgradeBtn',
-            icon: 'fas fa-exclamation-triangle',
-            onClick: 'showUpgradeModal'
+            icon: 'fas fa-exclamation-triangle'
         };
-        reason = 'I would normally recommend you to continue practicing, but as a user on the Free Plan, you are limited to 50 exercises per day. Consider upgrading for unlimited use, or come back tomorrow for more in-depth practice.';
-        console.log(`Recommendation Reason: All categories are at 0%. Recommending Vocabulary to initiate your learning journey.`);
+        reason = 'You have reached the daily limit of 50 exercises on the Free Plan. Consider upgrading for unlimited access or return tomorrow for more practice.';
+        console.log(`Recommendation Reason: Drills limit reached. Recommending Upgrade.`);
         return { recommendation, reason };
     }
 
-    // Check if all categories are 0%
-    if (vocab === 0 && grammar === 0 && stories === 0 && chat === 0) {
+    // 2. If all categories are at 0%
+    if (vocab === 0 && grammar === 0 && stories === 0 && chat === 0 && basics === 0) {
+        recommendation = {
+            name: 'Basics',
+            buttonColor: 'success',
+            buttonId: 'learnBasicsBtn',
+            icon: 'fas fa-book'
+        };
+        reason = 'All your progress areas are at zero. Starting with Basics will help you build a strong foundation.';
+        console.log(`Recommendation Reason: All categories are 0%. Recommending Basics.`);
+        return { recommendation, reason };
+    }
+
+    // Check Basics vs Vocabulary advantage:
+    // Basics should be 2.5% ahead of Vocabulary to even consider recommending Vocabulary or moving on.
+    // If basics is NOT at least 2.5% ahead of vocabulary => recommend Basics.
+    // i.e. if (basics - vocab < 2.5) then basics doesn't have the lead => we pick basics
+    if ((basics - vocab) < 2.5) {
+        recommendation = {
+            name: 'Basics',
+            buttonColor: 'success',
+            buttonId: 'learnBasicsBtn',
+            icon: 'fas fa-book'
+        };
+        reason = `Basics must be at least 2.5% ahead of Vocabulary to consider other recommendations. Basics (${basics}%) - Vocab (${vocab}%) < 2.5%. Recommending Basics.`;
+        console.log(`Recommendation Reason: ${reason}`);
+        return { recommendation, reason };
+    }
+
+    // If we got here, Basics is at least 2.5% ahead of Vocabulary, meaning we can consider Vocabulary next.
+    // Now check if Vocabulary is 2% ahead of Grammar, Stories, and Chat.
+    // If Vocab isn't at least 2% ahead of EACH of grammar, stories, and chat => fallback to weighted selection.
+    const others = [
+        { name: 'Grammar', value: grammar },
+        { name: 'Stories', value: stories },
+        { name: 'Chat', value: chat }
+    ];
+
+    const vocabHasAdvantage = others.every(other => (vocab - other.value) >= 2);
+
+    if (vocabHasAdvantage) {
+        // Recommend Vocabulary
         recommendation = {
             name: 'Vocabulary',
             buttonColor: 'success',
             buttonId: 'learnVocabBtn',
             icon: 'fas fa-book'
         };
-        reason = 'All your progress areas are at zero. Starting with vocabulary will help you build a strong foundation.';
-        console.log(`Recommendation Reason: All categories are at 0%. Recommending Vocabulary to initiate your learning journey.`);
+        reason = `Vocabulary is at least 2% ahead of Grammar, Stories, and Chat. (Vocab: ${vocab}%) Recommending Vocabulary to maintain your lead.`;
+        console.log(`Recommendation Reason: ${reason}`);
         return { recommendation, reason };
     }
 
-    // Define the precedence order
-    const categories = [
-        { name: 'Vocabulary', value: vocab, buttonColor: 'success', buttonId: 'learnVocabBtn', icon: 'fas fa-book' },
-        { name: 'Grammar', value: grammar, buttonColor: 'info', buttonId: 'learnGrammarBtn', icon: 'fas fa-pencil-alt' },
-        { name: 'Stories', value: stories, buttonColor: 'secondary', buttonId: 'storiesBtn', icon: 'fas fa-book-open' },
-        { name: 'Chat', value: chat, buttonColor: 'warning', buttonId: 'chatBtn', icon: 'fas fa-comments' }
+    // If Vocab does not have the 2% lead over all others, fallback to weighted random selection
+    // Weighted selection:
+    // - Always include Basics, Vocab, Grammar in the pool
+    // - Include Stories if Grammar and Vocab ≥ 0.5%
+    // - Include Chat if Grammar, Vocab, Stories, and Basics ≥ 1%
+    // The user requested to try to "balance" the others, but the previous logic still stands. Just keep the same weighting logic.
+
+    let eligibleCategories = [
+        { name: 'Basics', value: basics, weight: 50, buttonColor: 'success', buttonId: 'learnBasicsBtn', icon: 'fas fa-book' },
+        { name: 'Vocabulary', value: vocab, weight: 30, buttonColor: 'success', buttonId: 'learnVocabBtn', icon: 'fas fa-book' },
+        { name: 'Grammar', value: grammar, weight: 20, buttonColor: 'info', buttonId: 'learnGrammarBtn', icon: 'fas fa-pencil-alt' }
     ];
 
-    // Function to determine if a category should be recommended based on 2% advantage
-    const shouldRecommend = (current, others) => {
-        return others.every(other => (current.value - other.value) >= 2);
-    };
-
-    // Iterate through categories based on precedence
-    for (let i = 0; i < categories.length; i++) {
-        const current = categories[i];
-        const others = categories.filter((_, index) => index !== i);
-        if (shouldRecommend(current, others)) {
-            recommendation = current;
-            reason = `${current.name} progress is ahead of other areas by at least 2%, ensuring a balanced advancement in your learning.`;
-            console.log(`Recommendation Reason: ${current.name} has a 2% or more advantage over all other categories.`);
-            return { recommendation, reason };
-        }
-    }
-
-    // If no category has a 2% advantage, proceed with weighted random selection
-    // Apply constraints:
-    // - Don't recommend Stories until Grammar and Vocabulary have at least 0.5%
-    // - Don't recommend Chat until Grammar, Vocabulary, and Stories have at least 1%
-    let eligibleCategories = [];
-
-    // Always eligible: Vocabulary and Grammar
-    eligibleCategories.push({ name: 'Vocabulary', weight: 60, buttonColor: 'success', buttonId: 'learnVocabBtn', icon: 'fas fa-book' });
-    eligibleCategories.push({ name: 'Grammar', weight: 30, buttonColor: 'info', buttonId: 'learnGrammarBtn', icon: 'fas fa-pencil-alt' });
-
-    // Stories eligibility
+    // Include Stories if Grammar and Vocabulary ≥ 0.5%
     if (grammar >= 0.5 && vocab >= 0.5) {
-        eligibleCategories.push({ name: 'Stories', weight: 10, buttonColor: 'secondary', buttonId: 'storiesBtn', icon: 'fas fa-book-open' });
+        eligibleCategories.push({ name: 'Stories', value: stories, weight: 10, buttonColor: 'secondary', buttonId: 'storiesBtn', icon: 'fas fa-book-open' });
     }
 
-    // Chat eligibility
-    if (grammar >= 1 && vocab >= 1 && stories >= 1) {
-        // Adjust weights if Chat is eligible
-        // Let's assume Chat gets an additional 5% weight, reducing Stories to 5%
-        // To maintain total weight at 100%
+    // Include Chat if Grammar, Vocabulary, Stories, and Basics ≥ 1%
+    // If stories wasn't included due to conditions, no chat
+    const storiesIncluded = eligibleCategories.some(cat => cat.name === 'Stories');
+    if (grammar >= 1 && vocab >= 1 && basics >= 1 && storiesIncluded && stories >= 1) {
+        // Adjust weights for Chat inclusion:
+        // Basics:45, Vocab:25, Grammar:20, Stories:5, Chat:15
         eligibleCategories = eligibleCategories.map(cat => {
-            if (cat.name === 'Vocabulary') return { ...cat, weight: 55 };
-            if (cat.name === 'Grammar') return { ...cat, weight: 25 };
+            if (cat.name === 'Basics') return { ...cat, weight: 45 };
+            if (cat.name === 'Vocabulary') return { ...cat, weight: 25 };
+            if (cat.name === 'Grammar') return { ...cat, weight: 20 };
             if (cat.name === 'Stories') return { ...cat, weight: 5 };
-            return cat;
+            return cat; // for default case
         });
-        eligibleCategories.push({ name: 'Chat', weight: 15, buttonColor: 'warning', buttonId: 'chatBtn', icon: 'fas fa-comments' });
+        eligibleCategories.push({ name: 'Chat', value: chat, weight: 15, buttonColor: 'warning', buttonId: 'chatBtn', icon: 'fas fa-comments' });
     }
 
-    // Calculate total weight
+    // Weighted random selection
     const totalWeight = eligibleCategories.reduce((sum, cat) => sum + cat.weight, 0);
-
-    // Generate a random number between 0 and totalWeight
     const rand = Math.random() * totalWeight;
-
     let cumulative = 0;
     for (let cat of eligibleCategories) {
         cumulative += cat.weight;
         if (rand <= cumulative) {
             recommendation = cat;
-            reason = `Based on your current progress, focusing on ${cat.name} will help you maintain a balanced learning path.`;
-            console.log(`Recommendation Reason: No category has a 2% advantage. Randomly selected ${cat.name} based on weighted probabilities.`);
+            reason = `No category had the required advantage. Randomly selected ${cat.name} based on weighted probabilities.`;
+            console.log(`Recommendation Reason: ${reason}`);
             return { recommendation, reason };
         }
     }
 
-    // Fallback to Vocabulary if something goes wrong
+    // Fallback to Basics if somehow we got here
     recommendation = {
-        name: 'Vocabulary',
+        name: 'Basics',
         buttonColor: 'success',
-        buttonId: 'learnVocabBtn',
+        buttonId: 'learnBasicsBtn',
         icon: 'fas fa-book'
     };
-    reason = 'Defaulting to Vocabulary to ensure you have a strong foundation.';
-    console.log(`Recommendation Reason: Fallback to Vocabulary due to unexpected conditions.`);
+    reason = 'Fallback to Basics due to unexpected conditions or no suitable category found.';
+    console.log(`Recommendation Reason: ${reason}`);
     return { recommendation, reason };
 }
 
-// **New Function: Update Recommendation Card**
 function updateRecommendationCard(recommendationObj) {
     const { recommendation, reason } = recommendationObj;
     const recommendationText = document.getElementById('recommendationText');
     const recommendationBtn = document.getElementById('recommendationBtn');
 
-    // Personalize the recommendation message based on the category
     let message = '';
     switch (recommendation.name) {
+        case 'Basics':
+            message = "Focusing on the Basics will help you build a strong foundation. Let's reinforce the fundamentals!";
+            break;
         case 'Vocabulary':
             message = "Building a robust vocabulary is essential for effective communication. Let's enhance your word knowledge!";
             break;
@@ -766,7 +794,7 @@ function updateRecommendationCard(recommendationObj) {
             message = "Engaging in conversations will boost your speaking and listening skills. Let's start chatting!";
             break;
         case 'Upgrade':
-            message = "I would normally recommend you to continue practicing, but as a user on the Free Plan, you are limited to 50 exercises per day. Consider upgrading for unlimited use, or come back tomorrow for more in-depth practice.";
+            message = "You've reached today's exercise limit on the Free Plan. Consider upgrading for unlimited access or come back tomorrow.";
             break;
         default:
             message = "Let's continue your learning journey!";
@@ -779,7 +807,6 @@ function updateRecommendationCard(recommendationObj) {
     recommendationBtn.innerHTML = `<i class="${recommendation.icon} me-2"></i> Go to ${recommendation.name}`;
     recommendationBtn.style.visibility = 'visible';
 
-    // Add click event to navigate to the relevant section
     recommendationBtn.onclick = () => {
         switch (recommendation.name) {
             case 'Vocabulary':
@@ -794,11 +821,15 @@ function updateRecommendationCard(recommendationObj) {
             case 'Chat':
                 window.location.href = 'chat.html';
                 break;
+            case 'Basics':
+                window.location.href = 'nouns.html';
+                break;
             case 'Upgrade':
                 showUpgradeModal();
                 break;
             default:
-                console.warn('Unknown recommendation category');
+                console.warn('Unknown recommendation category, defaulting to Basics');
+                window.location.href = 'nouns.html';
         }
     };
 
@@ -806,6 +837,7 @@ function updateRecommendationCard(recommendationObj) {
 
     console.log(`Recommendation Updated: ${recommendation.name} - ${reason}`);
 }
+
 
 // Function to load data for the cards
 async function loadCardData(user, currentCourse) {
@@ -939,9 +971,11 @@ async function loadCardData(user, currentCourse) {
         const grammar = parseFloat(grammarPercentage);
         const stories = parseFloat(storiesPercentage);
         const chat = parseFloat(chatPercentage);
+        const basics = parseFloat(basicsPercentage); // Added Basics
+
 
         // Calculate recommendation
-        const recommendationObj = calculateRecommendation(vocab, grammar, stories, chat);
+        const recommendationObj = calculateRecommendation(vocab, grammar, stories, chat, basics);
 
         // Update the recommendation card
         updateRecommendationCard(recommendationObj);
