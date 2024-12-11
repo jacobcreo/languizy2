@@ -719,7 +719,7 @@ function calculateRecommendation(vocab, grammar, stories, chat, basics) {
     // The user requested to try to "balance" the others, but the previous logic still stands. Just keep the same weighting logic.
 
     let eligibleCategories = [
-        { name: 'Basics', value: basics, weight: 50, buttonColor: 'success', buttonId: 'learnBasicsBtn', icon: 'fas fa-book' },
+        { name: 'Basics', value: basics, weight: 50, buttonColor: 'success', buttonId: 'learnBasicsBtn', icon: 'fas fa-stairs' },
         { name: 'Vocabulary', value: vocab, weight: 30, buttonColor: 'success', buttonId: 'learnVocabBtn', icon: 'fas fa-book' },
         { name: 'Grammar', value: grammar, weight: 20, buttonColor: 'info', buttonId: 'learnGrammarBtn', icon: 'fas fa-pencil-alt' }
     ];
