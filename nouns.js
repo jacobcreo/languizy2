@@ -14,6 +14,7 @@ let listOfSeenNouns = [];
 let maxOrder = 0;
 let imagesLoaded = 0;
 
+
 let matchingPairs = []; // Store {target: "", origin: ""}
 let selectedMatchingBtn = null; // Track the currently selected button
 let matchedCount = 0; // Count how many pairs have been matched in this drill
@@ -393,26 +394,30 @@ function loadNoun(user, currentCourse) {
     let attempts = 0;
     let lastValue = nounDisplayMode;
     debugger;
-    while (lastValue === nounDisplayMode && attempts < 5) {
-        console.log('Attempt: ' + attempts);
-        console.log('randVal: ' + randVal);
-        console.log('nounDisplayMode: ' + nounDisplayMode);
-        console.log('lastValue: ' + lastValue);
-        if (randVal < 0.15) {
-            nounDisplayMode = "matching-mode";
-        } else if (randVal < 0.3) {
-            nounDisplayMode = "matching-images-mode"; // our new mode
-            $('.matching-image').attr('src', '');
-        } else if (randVal < 0.55) {
-            nounDisplayMode = "four-images";
-            $('#noun-img1').attr('src', '');
-            $('#noun-img2').attr('src', '');
-            $('#noun-img3').attr('src', '');
-            $('#noun-img4').attr('src', '');
-        } else {
-            nounDisplayMode = "regular";
+    if (maxOrder < 7) {
+        nounDisplayMode = "regular";
+    } else {
+        while (lastValue === nounDisplayMode && attempts < 5) {
+            console.log('Attempt: ' + attempts);
+            console.log('randVal: ' + randVal);
+            console.log('nounDisplayMode: ' + nounDisplayMode);
+            console.log('lastValue: ' + lastValue);
+            if (randVal < 0.15) {
+                nounDisplayMode = "matching-mode";
+            } else if (randVal < 0.3) {
+                nounDisplayMode = "matching-images-mode"; // our new mode
+                $('.matching-image').attr('src', '');
+            } else if (randVal < 0.55) {
+                nounDisplayMode = "four-images";
+                $('#noun-img1').attr('src', '');
+                $('#noun-img2').attr('src', '');
+                $('#noun-img3').attr('src', '');
+                $('#noun-img4').attr('src', '');
+            } else {
+                nounDisplayMode = "regular";
+            }
+            attempts++;
         }
-        attempts++;
     }
 
 
@@ -637,6 +642,7 @@ function loadNextEarlyNoun(user, courseId) {
 // Show loading progress
 function showLoadingProgress() {
     // Hide the question area content but keep its space
+    stopNounAudio();
     $('#question-area').removeClass('visible').css('visibility', 'hidden');
     $('.option-btn').text('\u00A0');
 
@@ -709,7 +715,7 @@ function afterAnswerSubmission(isCorrect, type = "translation") {
 
     // Update visual stats and progress
     updateVisualStats(isCorrect);
-    updateUserProgress(window.currentNounId, isCorrect, currentCourse, timeTaken);
+    updateUserProgress(window.currentNounId, isCorrect, window.currentCourse, timeTaken);
 
     // Hide toggle-mode button after answer is submitted
     $('#toggle-mode').hide();
@@ -723,6 +729,7 @@ function afterAnswerSubmission(isCorrect, type = "translation") {
 
 function handleFourImagesSubmit(imgNumber) {
     var selectedImage = $(`#noun-img${imgNumber}`);
+    $('#replay-audio').prop('disabled', false);
     var isCorrect = selectedImage.attr('data-correct') === 'true';
     selectedImage.removeAttr('data-correct');
     if (isCorrect) {
@@ -743,7 +750,7 @@ function handleFourImagesSubmit(imgNumber) {
 
 function displayFourImagesNew(noun) {
 
-    
+
     while (fourImagesToLoad.length < 4) {
         const randomNumber = Math.floor(Math.random() * 66) + 1; // Generate a random number between 1 and 99
         const imgUrl = `https://languizy.com/myimages/nouns/noun-${randomNumber}.png/smaller`;
@@ -781,7 +788,7 @@ function displayFourImagesNew(noun) {
         // let imagesLoaded = 0; // Counter for loaded images
         const totalImages = imagesToLoad.length + 1; // +1 for the correct image
 
-        
+
 
         // Function to check if all images are loaded
         const checkAllImagesLoaded = () => {
@@ -835,6 +842,7 @@ function displayFourImagesNew(noun) {
 }
 
 function resetAllExerciseUI() {
+    
     $('#matching-images-container').hide();
     $('#matching-container').hide();
     $('#four-images-container').hide();
@@ -846,7 +854,10 @@ function resetAllExerciseUI() {
     $(document).off('keydown.multipleChoice');
     $(document).off('keydown.matching');
     $(document).off('keydown.matching-images');
+    $('#user-answer').prop('disabled', false); // Disable the input field for typing
+
     $(document).off('keydown.fourImages');
+    
 
 
 }
@@ -934,7 +945,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     } else { // regular mode (including multiple choice regular mode)
 
-        
+
 
 
         const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
@@ -947,12 +958,12 @@ function displayNoun(noun, nounId, currentCourse) {
             $('#question-area').show();
             $('#question-area').css('visibility', 'visible');
 
-        $('#toggle-mode').show();
-        $('#toggle-mode').prop('disabled', false);
+            $('#toggle-mode').show();
+            $('#toggle-mode').prop('disabled', false);
 
-        $("#submit-answer").css("visibility", "visible");
+            $("#submit-answer").css("visibility", "visible");
 
-        $("#text-input-area").show();
+            $("#text-input-area").show();
 
             $('#toggle-mode').show();
             $('#toggle-mode').prop('disabled', false);
@@ -997,7 +1008,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
         displayNounTranslations(noun.translations);
 
-        
+
 
 
 
@@ -1083,7 +1094,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     } else if (nounDisplayMode === "four-images") {
 
-       
+
     }
 
 
@@ -1101,6 +1112,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     // Handle answer submission for text input mode
     function handleSubmit() {
+        $('#user-answer').prop('disabled', true); // Disable the input field for typing
         var userAnswer = $('#user-answer').val().trim();
         var isCorrect = normalizeString(userAnswer) === normalizeString(noun.noun);
         $('#replay-audio').prop('disabled', false);
@@ -1117,7 +1129,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
 
     // Handle answer submission for four images mode
-    
+
 
     async function initializeMatchingImagesMode(currentNounData, currentCourse) {
         console.log('initializeMatchingImagesMode called: ' + new Date().getTime());
@@ -1200,7 +1212,7 @@ function displayNoun(noun, nounId, currentCourse) {
                 // Handle image load
                 img.on('load', function () {
                     console.log('image loaded: ' + imagesLoaded + ' timestamp is: ' + new Date().getTime());
-                    
+
                     imagesLoaded++;
                     if (imagesLoaded >= 4) {
                         // container.find('#matching-images-right-column').css('visibility', 'visible');                        
@@ -1306,7 +1318,7 @@ function displayNoun(noun, nounId, currentCourse) {
     }
 
 
-    
+
 
 
     async function initializeMatchingMode(currentNounData, currentCourse) {
@@ -1533,7 +1545,7 @@ function displayNoun(noun, nounId, currentCourse) {
         }
     }
 
-    
+
 
     /**
      * Sets up the Replay Audio button to play the noun audio when clicked.
@@ -1546,13 +1558,7 @@ function displayNoun(noun, nounId, currentCourse) {
         });
     }
 
-    /**
-     * Stops the noun audio playback and resets the audio element.
-     */
-    function stopNounAudio() {
-        nounAudioElement.pause();
-        nounAudioElement.currentTime = 0; // Reset the audio playback
-    }
+    
 
     if (isMultipleChoice) {
         // Event listener for multiple-choice option buttons
@@ -1601,7 +1607,7 @@ function displayNoun(noun, nounId, currentCourse) {
     }
 
     $('#next-question').off('click').on('click', function () {
-        stopNounAudio(); // Stop audio when moving to the next question
+        // stopNounAudio(); // Stop audio when moving to the next question
         $(".noun-img").removeClass("green-border red-border");
         handleDebounce(() => {
             $('#noun-image').attr('src', '');
@@ -1614,7 +1620,7 @@ function displayNoun(noun, nounId, currentCourse) {
     $(document).off('keypress').on('keypress', function (e) {
         if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
 
-            stopNounAudio();
+            // stopNounAudio();
             e.preventDefault(); // Prevent default behavior
             handleDebounce(() => $('#next-question').click());
         }
@@ -1653,7 +1659,7 @@ function shuffleArray(array) {
  * @param {string} nounWord - The noun word to be pronounced.
  */
 function playNounAudio(nounId, nounWord) {
-
+debugger;
     var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${nounId}.mp3`;
 
     const targetLanguage = window.currentCourse.split('-')[1];
@@ -1663,9 +1669,13 @@ function playNounAudio(nounId, nounWord) {
             console.log("Noun audio playback started successfully.");
         })
         .catch((error) => {
-            console.error("Error playing noun audio:", error);
-            console.log("Attempting to generate audio since playback failed.");
-            generateNounAudio(nounId, nounWord, targetLanguage);
+            if (!error.message.includes("pause()")) {
+                console.error("Error playing noun audio:", error);
+                console.log("Attempting to generate audio since playback failed.");
+                generateNounAudio(nounId, nounWord, targetLanguage);
+            } else {
+                console.log("Audio playback interrupted by pause, not generating new audio.");
+            }
         });
 
     nounAudioElement.onended = function () {
@@ -1677,6 +1687,14 @@ function playNounAudio(nounId, nounWord) {
         console.log("Attempting to generate audio due to loading error.");
         generateNounAudio(nounId, nounWord, targetLanguage);
     };
+}
+
+/**
+     * Stops the noun audio playback and resets the audio element.
+     */
+function stopNounAudio() {
+    nounAudioElement.pause();
+    nounAudioElement.currentTime = 0; // Reset the audio playback
 }
 
 /**
