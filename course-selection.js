@@ -964,6 +964,29 @@ async function loadCardData(user, currentCourse) {
         window.location.href = 'stories.html';
     });
 
+// Function to check if the courseModal is open and refresh the page
+function checkAndRefresh() {
+    const courseModal = document.getElementById('courseModal');
+    const isCourseModalOpen = courseModal && courseModal.classList.contains('show');
+
+    if (isCourseModalOpen) {
+        // Refresh the page if the courseModal was open
+        location.reload();
+    }
+}
+
+// Listen for visibility change
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        checkAndRefresh();
+    }
+});
+
+// Listen for window focus
+window.addEventListener('focus', function() {
+    checkAndRefresh();
+});
+
     // **New: Function to calculate and display recommendation**
     function calculateAndDisplayRecommendation() {
         // Convert percentages to numbers
