@@ -369,88 +369,81 @@
 
     </div>
 
-    <!-- Upgrade Modal inside course-selection.html -->
-    <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-gradient-primary text-white">
-                    <h5 class="modal-title" id="upgradeModalLabel">Unlock Your Full Potential</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Upgrade Modal -->
+<div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="upgradeModalLabel">Unlock Your Full Potential</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Upgrade to our Pro Plan and transform your language learning journey. Enjoy unlimited access to all features and take your skills to the next level!</p>
+                <table class="table table-striped mt-4">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Free Plan</th>
+                            <th>Pro Plan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Daily Exercises per Course</td>
+                            <td>50</td>
+                            <td>Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td>Stories</td>
+                            <td>Limited</td>
+                            <td>All Stories</td>
+                        </tr>
+                        <tr>
+                            <td>AI Chats</td>
+                            <td>Short Conversations</td>
+                            <td>Longer Conversations</td>
+                        </tr>
+                        <tr>
+                            <td>Stats</td>
+                            <td>Limited</td>
+                            <td>Full Stats</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-info mt-4">
+                    <strong>Special Offer:</strong> Get 25% off with our yearly plan - only $63!
                 </div>
-                <div class="modal-body">
-                    <p>Upgrade to our Pro Plan and transform your language learning journey. Enjoy unlimited access to
-                        all features and take your skills to the next level!</p>
-                    <table class="table table-striped mt-4">
-                        <thead>
-                            <tr>
-                                <th>Feature</th>
-                                <th>Free Plan</th>
-                                <th>Pro Plan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Daily Exercises per Course</td>
-                                <td>50</td>
-                                <td>Unlimited</td>
-                            </tr>
-                            <tr>
-                                <td>Stories</td>
-                                <td>Limited</td>
-                                <td>All Stories</td>
-                            </tr>
-                            <tr>
-                                <td>AI Chats</td>
-                                <td>Short Conversations</td>
-                                <td>Longer Conversations</td>
-                            </tr>
-                            <tr>
-                                <td>Stats</td>
-                                <td>Limited</td>
-                                <td>Full Stats</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="alert alert-info mt-4">
-                        <strong>Special Offer:</strong> Get 25% off with our yearly plan - only $63!
-                    </div>
-                    <div class="mt-4">
-                        <p>All purchases are subject to our <a href="/terms-of-service.html">Terms & Conditions</a> and
-                            to our <a href="/refund-policy.html">Refund Policy</a>.</p>
-                    </div>
-
-                    <!-- Hidden Success Message -->
-                    <div id="upgradeSuccessMessage" class="alert alert-success text-center mt-5" style="display: none;">
-                        <h4 class="alert-heading">Congratulations!</h4>
-                        <p>You are now subscribed to the <strong id="subscribedPlan"></strong> Pro Plan.</p>
-                        <hr>
-                        <button class="btn btn-primary" onclick="redirectToCourseSelection()">Start Practicing</button>
-                    </div>
-
-                    <!-- Hidden Error Message -->
-                    <div id="upgradeErrorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
-                        <h4 class="alert-heading">Subscription Failed</h4>
-                        <p>There was an issue processing your subscription. Please try again.</p>
-                        <hr>
-                        <button class="btn btn-warning" onclick="resetSubscription()">Try Again</button>
-                    </div>
+                <div class="mt-4">
+                    <p>All purchases are subject to our <a href="/terms-of-service.html">Terms & Conditions</a> and <a href="/refund-policy.html">Refund Policy</a>.</p>
                 </div>
-                <!-- Inside the modal-footer of upgradeModal -->
-                <div class="modal-footer flex-column flex-sm-row">
-                    <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue
-                        Free</button>
-                    <div class="d-flex flex-column flex-sm-row">
-                        <!-- Updated onclick handlers -->
-                        <button class="btn btn-primary me-sm-2 mb-2 mb-sm-0"
-                            onclick="initiateUpgradePlan('monthly')">Pro Plan - $6.99/month</button>
-                        <button class="btn btn-success mb-2 mb-sm-0" onclick="initiateUpgradePlan('yearly')">Pro Plan -
-                            $63/year</button>
-                    </div>
+  
+                <!-- Hidden Success Message -->
+                <div id="upgradeSuccessMessage" class="alert alert-success text-center mt-5" style="display: none;">
+                    <h4 class="alert-heading">Congratulations!</h4>
+                    <p>You are now subscribed to the <strong id="subscribedPlan"></strong> Pro Plan.</p>
+                    <hr>
+                    <button class="btn btn-primary" onclick="redirectToCourseSelection()">Start Practicing</button>
                 </div>
-
+  
+                <!-- Hidden Error Message -->
+                <div id="upgradeErrorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
+                    <h4 class="alert-heading">Subscription Failed</h4>
+                    <p>There was an issue processing your subscription. Please try again.</p>
+                    <hr>
+                    <button class="btn btn-warning" onclick="resetSubscription()">Try Again</button>
+                </div>
+            </div>
+            <div class="modal-footer flex-column flex-sm-row">
+                <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue Free</button>
+                <div class="d-flex flex-column flex-sm-row">
+                    <!-- Initially disabled until scripts are loaded and user recognized -->
+                    <button id="monthlyPlanBtn" class="btn btn-primary me-sm-2 mb-2 mb-sm-0" disabled>Pro Plan - $6.99/month</button>
+                    <button id="yearlyPlanBtn" class="btn btn-success mb-2 mb-sm-0" disabled>Pro Plan - $63/year</button>
+                </div>
             </div>
         </div>
     </div>
+  </div>
 
 
 
@@ -490,45 +483,53 @@
     <script src="course-selection.js?a=3"></script>
 
     <script>
-        // This flag ensures we don't load the scripts multiple times
         let fastspringLoaded = false;
         let upgradePopupLoaded = false;
+        let upgradeReady = false; // Once user recognized and scripts loaded
         
-        function initiateUpgradePlan(planType) {
-            // Dynamically load the FastSpring script if not loaded
+        // Event listener for when the upgradeModal is shown
+        document.getElementById('upgradeModal').addEventListener('shown.bs.modal', function () {
+            // If not loaded yet, load the scripts
             if (!fastspringLoaded) {
-                var fsScript = document.createElement('script');
-                fsScript.id = 'fsc-api';
-                fsScript.type = 'text/javascript';
-                fsScript.setAttribute('data-storefront', 'languizy.onfastspring.com/popup-languizy');
-                fsScript.setAttribute('data-popup-closed', 'onFSPopupClosed');
-                fsScript.setAttribute('data-debug', 'true');
-                fsScript.src = 'https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js';
-                fsScript.onload = function() {
-                    console.log("FastSpring script loaded.");
-                    fastspringLoaded = true;
-                    // Initialize the upgrade logic after FastSpring script is loaded
-                    loadUpgradePopup(planType);
-                };
-                fsScript.onerror = function() {
-                    console.error("Failed to load FastSpring script.");
-                    alert("Failed to load payment system. Please try again later.");
-                };
-                document.body.appendChild(fsScript);
+                loadFastSpringScript();
             } else {
-                // FastSpring script already loaded
-                loadUpgradePopup(planType);
+                // If already loaded once, just ensure user is recognized
+                ensureUpgradeReady();
             }
+        });
+        
+        function loadFastSpringScript() {
+            // Load FastSpring script
+            var fsScript = document.createElement('script');
+            fsScript.id = 'fsc-api';
+            fsScript.type = 'text/javascript';
+            fsScript.setAttribute('data-storefront', 'languizy.onfastspring.com/popup-languizy');
+            fsScript.setAttribute('data-popup-closed', 'onFSPopupClosed');
+            fsScript.setAttribute('data-debug', 'true');
+            fsScript.src = 'https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js';
+        
+            fsScript.onload = function() {
+                console.log("FastSpring script loaded.");
+                fastspringLoaded = true;
+                loadUpgradePopupScript();
+            };
+        
+            fsScript.onerror = function() {
+                console.error("Failed to load FastSpring script.");
+                alert("Failed to load payment system. Please try again later.");
+            };
+        
+            document.body.appendChild(fsScript);
         }
         
-        function loadUpgradePopup(planType) {
+        function loadUpgradePopupScript() {
             if (!upgradePopupLoaded) {
                 var upScript = document.createElement('script');
                 upScript.src = 'upgrade-popup.js';
                 upScript.onload = function() {
+                    console.log("upgrade-popup.js loaded.");
                     upgradePopupLoaded = true;
-                    // Initiate the upgrade process
-                    selectPlanFromPopup(planType);
+                    ensureUpgradeReady();
                 };
                 upScript.onerror = function() {
                     console.error("Failed to load upgrade-popup.js.");
@@ -536,11 +537,60 @@
                 };
                 document.body.appendChild(upScript);
             } else {
-                // upgrade-popup.js already loaded
-                selectPlanFromPopup(planType);
+                ensureUpgradeReady();
             }
         }
-        </script>
+        
+        // This function checks if user is recognized in upgrade-popup.js
+        // upgrade-popup.js recognizes user automatically on load.
+        // We can add a small timeout check to ensure userEmail is set there.
+        function ensureUpgradeReady() {
+            // Poll for a ready variable set in upgrade-popup.js if needed
+            let attempts = 0;
+            const interval = setInterval(() => {
+                attempts++;
+                // Check if upgrade-popup.js has recognized the user
+                // For instance, upgrade-popup.js sets userEmailPopup once recognized
+                if (window.userEmailPopup && window.userEmailPopup !== '') {
+                    clearInterval(interval);
+                    upgradeReady = true;
+                    enablePlanButtons();
+                } else if (attempts > 20) { // ~2 seconds
+                    clearInterval(interval);
+                    console.warn("Could not verify user recognition in time.");
+                    alert("We are having trouble verifying your account for the upgrade. Please try again.");
+                }
+            }, 100);
+        }
+        
+        // Enable the plan buttons after everything is ready
+        function enablePlanButtons() {
+            const monthlyPlanBtn = document.getElementById('monthlyPlanBtn');
+            const yearlyPlanBtn = document.getElementById('yearlyPlanBtn');
+        
+            monthlyPlanBtn.disabled = false;
+            yearlyPlanBtn.disabled = false;
+        
+            // Attach onclick handlers to actually initiate the checkout
+            monthlyPlanBtn.onclick = function() {
+                if (upgradeReady && typeof selectPlanFromPopup === 'function') {
+                    selectPlanFromPopup('monthly');
+                } else {
+                    alert("Payment system not ready. Please wait a moment and try again.");
+                }
+            };
+        
+            yearlyPlanBtn.onclick = function() {
+                if (upgradeReady && typeof selectPlanFromPopup === 'function') {
+                    selectPlanFromPopup('yearly');
+                } else {
+                    alert("Payment system not ready. Please wait a moment and try again.");
+                }
+            };
+        }
+        
+</script>
+
 </body>
 
 </html>
