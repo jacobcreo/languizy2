@@ -1,12 +1,14 @@
 // upgrade-popup.js
 
+let userEmailPopup = '';
+
 // Ensure the script runs after the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function () {
     // Initialize Firestore (using the same Firebase instance as course-selection.js)
     const dbx = firebase.firestore();
 
     // Variable to store user email
-    let userEmailPopup = '';
+    
 
     // Function to recognize the user email using currentUser
     async function recognizeUserEmail() {
