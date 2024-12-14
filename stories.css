@@ -14,6 +14,21 @@ body {
     margin-bottom: 1rem;
     color: #343a40;
   }
+
+  /* Avatar Circle */
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  background-color: #6f42c1;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
   
   .card {
     transition: transform 0.2s ease;

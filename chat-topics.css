@@ -30,6 +30,21 @@ h2 {
     pointer-events: none;
 }
 
+/* Avatar Circle */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #6f42c1;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
 .lock-icon {
     position: absolute;
     top: 10px;

@@ -21,6 +21,21 @@ body {
     line-height: 1.75;
 }
 
+/* Avatar Circle */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #6f42c1;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
 .contact-section form input,
 .contact-section form textarea {
     font-size: 1rem;

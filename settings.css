@@ -14,6 +14,21 @@ body {
     background: linear-gradient(90deg, #007bff, #0056b3);
 }
 
+/* Avatar Circle */
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #6f42c1;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
 /* Card Styling */
 .card {
     border-radius: 15px;
