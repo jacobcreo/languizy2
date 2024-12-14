@@ -369,7 +369,7 @@
 
     </div>
 
-    <!-- Upgrade Modal -->
+    <!-- Upgrade Modal inside course-selection.html -->
 <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -436,7 +436,7 @@
             <div class="modal-footer flex-column flex-sm-row">
                 <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue Free</button>
                 <div class="d-flex flex-column flex-sm-row">
-                    <!-- Initially disabled until scripts are loaded and user recognized -->
+                    <!-- Assign unique IDs to the buttons -->
                     <button id="monthlyPlanBtn" class="btn btn-primary me-sm-2 mb-2 mb-sm-0" disabled>Pro Plan - $6.99/month</button>
                     <button id="yearlyPlanBtn" class="btn btn-success mb-2 mb-sm-0" disabled>Pro Plan - $63/year</button>
                 </div>
@@ -444,6 +444,7 @@
         </div>
     </div>
   </div>
+  
 
 
 
@@ -483,21 +484,19 @@
     <script src="course-selection.js?a=3"></script>
 
     <script>
+        // Flags to prevent multiple script loads
         let fastspringLoaded = false;
         let upgradePopupLoaded = false;
-        let upgradeReady = false; // Once user recognized and scripts loaded
         
         // Event listener for when the upgradeModal is shown
         document.getElementById('upgradeModal').addEventListener('shown.bs.modal', function () {
             // If not loaded yet, load the scripts
             if (!fastspringLoaded) {
                 loadFastSpringScript();
-            } else {
-                // If already loaded once, just ensure user is recognized
-                ensureUpgradeReady();
             }
         });
         
+        // Function to load FastSpring script
         function loadFastSpringScript() {
             // Load FastSpring script
             var fsScript = document.createElement('script');
@@ -522,6 +521,7 @@
             document.body.appendChild(fsScript);
         }
         
+        // Function to load upgrade-popup.js
         function loadUpgradePopupScript() {
             if (!upgradePopupLoaded) {
                 var upScript = document.createElement('script');
@@ -529,41 +529,28 @@
                 upScript.onload = function() {
                     console.log("upgrade-popup.js loaded.");
                     upgradePopupLoaded = true;
-                    ensureUpgradeReady();
+        
+                    // Listen for the 'upgradeReady' event dispatched by upgrade-popup.js
+                    window.addEventListener('upgradeReady', function() {
+                        enablePlanButtons();
+                    });
+        
+                    // Optionally, directly call recognizeUserEmail() if not automatically called
+                    if (typeof recognizeUserEmail === 'function') {
+                        recognizeUserEmail().catch(() => {
+                            console.error("Failed to recognize user email.");
+                        });
+                    }
                 };
                 upScript.onerror = function() {
                     console.error("Failed to load upgrade-popup.js.");
                     alert("Failed to initialize payment system. Please try again later.");
                 };
                 document.body.appendChild(upScript);
-            } else {
-                ensureUpgradeReady();
             }
         }
         
-        // This function checks if user is recognized in upgrade-popup.js
-        // upgrade-popup.js recognizes user automatically on load.
-        // We can add a small timeout check to ensure userEmail is set there.
-        function ensureUpgradeReady() {
-            // Poll for a ready variable set in upgrade-popup.js if needed
-            let attempts = 0;
-            const interval = setInterval(() => {
-                attempts++;
-                // Check if upgrade-popup.js has recognized the user
-                // For instance, upgrade-popup.js sets userEmailPopup once recognized
-                if (window.userEmailPopup && window.userEmailPopup !== '') {
-                    clearInterval(interval);
-                    upgradeReady = true;
-                    enablePlanButtons();
-                } else if (attempts > 20) { // ~2 seconds
-                    clearInterval(interval);
-                    console.warn("Could not verify user recognition in time.");
-                    alert("We are having trouble verifying your account for the upgrade. Please try again.");
-                }
-            }, 100);
-        }
-        
-        // Enable the plan buttons after everything is ready
+        // Function to enable the plan buttons
         function enablePlanButtons() {
             const monthlyPlanBtn = document.getElementById('monthlyPlanBtn');
             const yearlyPlanBtn = document.getElementById('yearlyPlanBtn');
@@ -573,23 +560,30 @@
         
             // Attach onclick handlers to actually initiate the checkout
             monthlyPlanBtn.onclick = function() {
-                if (upgradeReady && typeof selectPlanFromPopup === 'function') {
-                    selectPlanFromPopup('monthly');
+                if (typeof initiateUpgradePlan === 'function') {
+                    initiateUpgradePlan('monthly');
                 } else {
                     alert("Payment system not ready. Please wait a moment and try again.");
                 }
             };
         
             yearlyPlanBtn.onclick = function() {
-                if (upgradeReady && typeof selectPlanFromPopup === 'function') {
-                    selectPlanFromPopup('yearly');
+                if (typeof initiateUpgradePlan === 'function') {
+                    initiateUpgradePlan('yearly');
                 } else {
                     alert("Payment system not ready. Please wait a moment and try again.");
                 }
             };
+        
+            console.log("Upgrade plan buttons are now enabled.");
         }
         
-</script>
+        // Listen for the 'upgradeReady' event to enable the buttons
+        window.addEventListener('upgradeReady', function() {
+            enablePlanButtons();
+        });
+        </script>
+        
 
 </body>
 

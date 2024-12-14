@@ -1,7 +1,7 @@
 // upgrade-popup.js
 
 // Initialize Firestore (using the same Firebase instance as course-selection.js)
-const dbx = firebase.firestore(); // Using dbx to avoid confusion
+const dbx = firebase.firestore();
 
 // Variable to store user email
 let userEmailPopup = '';
@@ -179,6 +179,7 @@ function selectPlanFromPopup(planType) {
     // Make sure fastspring.builder is available
     if (typeof fastspring === 'undefined' || typeof fastspring.builder === 'undefined') {
         console.error("FastSpring builder not loaded yet");
+        alert("Payment system is not ready. Please try again later.");
         return;
     }
 
@@ -199,23 +200,25 @@ function selectPlanFromPopup(planType) {
 
 // Function to initiate the upgrade plan (called from course-selection.html)
 function initiateUpgradePlan(planType) {
-    // Trigger FastSpring checkout
+    // Since the user is already recognized and 'upgradeReady' event has been fired,
+    // simply trigger the FastSpring checkout
     selectPlanFromPopup(planType);
 }
 
 // Function to recognize the user email using currentUser
-function recognizeUserEmail() {
+async function recognizeUserEmail() {
     const currentUser = firebase.auth().currentUser;
     if (currentUser) {
-        const userDocRef = dbx.collection('users').doc(currentUser.uid);
-        userDocRef.get().then((userDoc) => {
+        try {
+            const userDocRef = dbx.collection('users').doc(currentUser.uid);
+            const userDoc = await userDocRef.get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
                 userEmailPopup = userData.email;
                 if (!userEmailPopup) {
                     console.error('User email not found in Firestore.');
                     alert('User email not found. Please contact support.');
-                    return;
+                    throw new Error('User email not found.');
                 }
 
                 // Recognize the user with FastSpring
@@ -224,29 +227,31 @@ function recognizeUserEmail() {
                     // Not prepopulating firstName and lastName as per requirements
                 });
                 console.log(`FastSpring recognized user with email: ${userEmailPopup}`);
+
+                // Dispatch a custom event to signal that upgrade is ready
+                const event = new CustomEvent('upgradeReady');
+                window.dispatchEvent(event);
             } else {
                 console.error('User document does not exist.');
                 alert('User data not found. Please contact support.');
+                throw new Error('User data not found.');
             }
-        }).catch((error) => {
+        } catch (error) {
             console.error('Error fetching user data:', error);
-            alert('An error occurred. Please try again later.');
-        });
+            alert('An error occurred while fetching user data.');
+            throw error;
+        }
     } else {
         console.error('No authenticated user found.');
         alert('No authenticated user found. Please log in again.');
+        throw new Error('No authenticated user.');
     }
 }
 
-// Automatically recognize the user when the script loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Check if FastSpring builder is loaded
-    if (typeof fastspring !== 'undefined' && typeof fastspring.builder !== 'undefined') {
-        recognizeUserEmail();
-    } else {
-        // Wait for FastSpring builder to load
-        window.addEventListener('fsbuilderloaded', () => {
-            recognizeUserEmail();
-        });
-    }
-});
+// Expose functions to global scope
+window.initiateUpgradePlan = initiateUpgradePlan;
+window.onFSPopupClosed = onFSPopupClosed;
+
+// Remove automatic recognition on DOMContentLoaded
+// Because course-selection.html will handle calling recognizeUserEmail()
+
