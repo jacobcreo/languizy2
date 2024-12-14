@@ -437,8 +437,21 @@
                 <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue Free</button>
                 <div class="d-flex flex-column flex-sm-row">
                     <!-- Assign unique IDs to the buttons -->
-                    <button id="monthlyPlanBtn" class="btn btn-primary me-sm-2 mb-2 mb-sm-0" disabled>Pro Plan - $6.99/month</button>
-                    <button id="yearlyPlanBtn" class="btn btn-success mb-2 mb-sm-0" disabled>Pro Plan - $63/year</button>
+                    <button id="monthlyPlanBtn" 
+        data-fsc-item-path-value="monthly-pro" 
+        data-fsc-action="Add, Checkout"
+        class="btn btn-primary me-sm-2 mb-2 mb-sm-0" 
+        style="display:none;">
+    Pro Plan - $6.99/month
+</button>
+
+<button id="yearlyPlanBtn" 
+        data-fsc-item-path-value="yearly-pro" 
+        data-fsc-action="Add, Checkout"
+        class="btn btn-success mb-2 mb-sm-0" 
+        style="display:none;">
+    Pro Plan - $63/year
+</button>
                 </div>
             </div>
         </div>

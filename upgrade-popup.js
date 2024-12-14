@@ -174,42 +174,42 @@ async function verifySubscriptionPopup(subscriptionId) {
 }
 
 // Function to handle plan selection from popup
-function selectPlanFromPopup(planType) {
-    // Make sure fastspring.builder is available
-    if (typeof fastspring === 'undefined' || typeof fastspring.builder === 'undefined') {
-        console.error("FastSpring builder not loaded yet");
-        alert("Payment system is not ready. Please try again later.");
-        return;
-    }
+// function selectPlanFromPopup(planType) {
+//     // Make sure fastspring.builder is available
+//     if (typeof fastspring === 'undefined' || typeof fastspring.builder === 'undefined') {
+//         console.error("FastSpring builder not loaded yet");
+//         alert("Payment system is not ready. Please try again later.");
+//         return;
+//     }
 
-    // Optional: set the origin to match the page from which you're calling
-    // fastspring.builder.origin('https://languizy.com/course_selection.html');
+//     // Optional: set the origin to match the page from which you're calling
+//     // fastspring.builder.origin('https://languizy.com/course_selection.html');
 
-    // Clear any previously added items just to be safe
-    // fastspring.builder.clear();
+//     // Clear any previously added items just to be safe
+//     // fastspring.builder.clear();
 
-    // Add the selected product with quantity = 1 (avoid null if it's causing issues)
-    if (planType === 'monthly') {
-        fastspring.builder.add({ path: 'monthly-pro', quantity: 1 });
-    } else if (planType === 'yearly') {
-        fastspring.builder.add({ path: 'yearly-pro', quantity: 1 });
-    } else {
-        console.error('Unknown plan type:', planType);
-        alert('Invalid plan selected. Please try again.');
-        return;
-    }
+//     // Add the selected product with quantity = 1 (avoid null if it's causing issues)
+//     if (planType === 'monthly') {
+//         fastspring.builder.add({ path: 'monthly-pro', quantity: 1 });
+//     } else if (planType === 'yearly') {
+//         fastspring.builder.add({ path: 'yearly-pro', quantity: 1 });
+//     } else {
+//         console.error('Unknown plan type:', planType);
+//         alert('Invalid plan selected. Please try again.');
+//         return;
+//     }
 
-    // Now proceed to checkout
-    fastspring.builder.checkout();
-}
+//     // Now proceed to checkout
+//     fastspring.builder.checkout();
+// }
 
 
 // Function to initiate the upgrade plan (called from course-selection.html)
-function initiateUpgradePlan(planType) {
-    // Since the user is already recognized and 'upgradeReady' event has been fired,
-    // simply trigger the FastSpring checkout
-    selectPlanFromPopup(planType);
-}
+// function initiateUpgradePlan(planType) {
+//     // Since the user is already recognized and 'upgradeReady' event has been fired,
+//     // simply trigger the FastSpring checkout
+//     selectPlanFromPopup(planType);
+// }
 
 // Function to recognize the user email using currentUser
 async function recognizeUserEmail() {
@@ -237,6 +237,7 @@ async function recognizeUserEmail() {
                 // Dispatch a custom event to signal that upgrade is ready
                 const event = new CustomEvent('upgradeReady');
                 window.dispatchEvent(event);
+                enablePlanButtons();
             } else {
                 console.error('User document does not exist.');
                 alert('User data not found. Please contact support.');
@@ -253,6 +254,20 @@ async function recognizeUserEmail() {
         throw new Error('No authenticated user.');
     }
 }
+
+function enablePlanButtons() {
+    const monthlyPlanBtn = document.getElementById('monthlyPlanBtn');
+    const yearlyPlanBtn = document.getElementById('yearlyPlanBtn');
+  
+    // Remove disabled and show them
+    monthlyPlanBtn.disabled = false;
+    yearlyPlanBtn.disabled = false;
+    monthlyPlanBtn.style.display = 'inline-block';
+    yearlyPlanBtn.style.display = 'inline-block';
+  
+    console.log("Upgrade plan buttons are now enabled and visible.");
+  }
+  
 
 // Expose functions to global scope
 window.initiateUpgradePlan = initiateUpgradePlan;
