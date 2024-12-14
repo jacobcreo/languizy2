@@ -369,8 +369,8 @@
 
     </div>
 
-    <!-- Upgrade Modal inside course-selection.html -->
-<div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+   <!-- Upgrade Modal inside course-selection.html -->
+   <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-gradient-primary text-white">
@@ -416,7 +416,7 @@
                 <div class="mt-4">
                     <p>All purchases are subject to our <a href="/terms-of-service.html">Terms & Conditions</a> and <a href="/refund-policy.html">Refund Policy</a>.</p>
                 </div>
-  
+
                 <!-- Hidden Success Message -->
                 <div id="upgradeSuccessMessage" class="alert alert-success text-center mt-5" style="display: none;">
                     <h4 class="alert-heading">Congratulations!</h4>
@@ -424,7 +424,7 @@
                     <hr>
                     <button class="btn btn-primary" onclick="redirectToCourseSelection()">Start Practicing</button>
                 </div>
-  
+
                 <!-- Hidden Error Message -->
                 <div id="upgradeErrorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
                     <h4 class="alert-heading">Subscription Failed</h4>
@@ -436,27 +436,26 @@
             <div class="modal-footer flex-column flex-sm-row">
                 <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue Free</button>
                 <div class="d-flex flex-column flex-sm-row">
-                    <!-- Assign unique IDs to the buttons -->
+                    <!-- Assign unique IDs to the buttons with data-fsc attributes -->
                     <button id="monthlyPlanBtn" 
-        data-fsc-item-path-value="monthly-pro" 
-        data-fsc-action="Add, Checkout"
-        class="btn btn-primary me-sm-2 mb-2 mb-sm-0" 
-        style="display:none;">
-    Pro Plan - $6.99/month
-</button>
-
-<button id="yearlyPlanBtn" 
-        data-fsc-item-path-value="yearly-pro" 
-        data-fsc-action="Add, Checkout"
-        class="btn btn-success mb-2 mb-sm-0" 
-        style="display:none;">
-    Pro Plan - $63/year
-</button>
+                            data-fsc-item-path-value="monthly-pro" 
+                            data-fsc-action="Add, Checkout"
+                            class="btn btn-primary me-sm-2 mb-2 mb-sm-0" 
+                            style="display: none;">
+                        Pro Plan - $6.99/month
+                    </button>
+                    <button id="yearlyPlanBtn" 
+                            data-fsc-item-path-value="yearly-pro" 
+                            data-fsc-action="Add, Checkout"
+                            class="btn btn-success mb-2 mb-sm-0" 
+                            style="display: none;">
+                        Pro Plan - $63/year
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-  </div>
+</div>
   
 
 
@@ -496,105 +495,13 @@
     <!-- Custom JS -->
     <script src="course-selection.js?a=3"></script>
 
-    <script>
-        // Flags to prevent multiple script loads
-        let fastspringLoaded = false;
-        let upgradePopupLoaded = false;
-        
-        // Event listener for when the upgradeModal is shown
-        document.getElementById('upgradeModal').addEventListener('shown.bs.modal', function () {
-            // If not loaded yet, load the scripts
-            if (!fastspringLoaded) {
-                loadFastSpringScript();
-            }
-        });
-        
-        // Function to load FastSpring script
-        function loadFastSpringScript() {
-            // Load FastSpring script
-            var fsScript = document.createElement('script');
-            fsScript.id = 'fsc-api';
-            fsScript.type = 'text/javascript';
-            fsScript.setAttribute('data-storefront', 'languizy.onfastspring.com/popup-languizy');
-            fsScript.setAttribute('data-popup-closed', 'onFSPopupClosed');
-            fsScript.setAttribute('data-debug', 'true');
-            fsScript.src = 'https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js';
-        
-            fsScript.onload = function() {
-                console.log("FastSpring script loaded.");
-                fastspringLoaded = true;
-                loadUpgradePopupScript();
-            };
-        
-            fsScript.onerror = function() {
-                console.error("Failed to load FastSpring script.");
-                alert("Failed to load payment system. Please try again later.");
-            };
-        
-            document.body.appendChild(fsScript);
-        }
-        
-        // Function to load upgrade-popup.js
-        function loadUpgradePopupScript() {
-            if (!upgradePopupLoaded) {
-                var upScript = document.createElement('script');
-                upScript.src = 'upgrade-popup.js';
-                upScript.onload = function() {
-                    console.log("upgrade-popup.js loaded.");
-                    upgradePopupLoaded = true;
-        
-                    // Listen for the 'upgradeReady' event dispatched by upgrade-popup.js
-                    window.addEventListener('upgradeReady', function() {
-                        enablePlanButtons();
-                    });
-        
-                    // Optionally, directly call recognizeUserEmail() if not automatically called
-                    if (typeof recognizeUserEmail === 'function') {
-                        recognizeUserEmail().catch(() => {
-                            console.error("Failed to recognize user email.");
-                        });
-                    }
-                };
-                upScript.onerror = function() {
-                    console.error("Failed to load upgrade-popup.js.");
-                    alert("Failed to initialize payment system. Please try again later.");
-                };
-                document.body.appendChild(upScript);
-            }
-        }
-        
-        // Function to enable the plan buttons
-        function enablePlanButtons() {
-            const monthlyPlanBtn = document.getElementById('monthlyPlanBtn');
-            const yearlyPlanBtn = document.getElementById('yearlyPlanBtn');
-        
-            monthlyPlanBtn.disabled = false;
-            yearlyPlanBtn.disabled = false;
-        
-            // Attach onclick handlers to actually initiate the checkout
-            monthlyPlanBtn.onclick = function() {
-                if (typeof initiateUpgradePlan === 'function') {
-                    initiateUpgradePlan('monthly');
-                } else {
-                    alert("Payment system not ready. Please wait a moment and try again.");
-                }
-            };
-        
-            yearlyPlanBtn.onclick = function() {
-                if (typeof initiateUpgradePlan === 'function') {
-                    initiateUpgradePlan('yearly');
-                } else {
-                    alert("Payment system not ready. Please wait a moment and try again.");
-                }
-            };
-        
-            console.log("Upgrade plan buttons are now enabled.");
-        }
-        
-        // Listen for the 'upgradeReady' event to enable the buttons
-        window.addEventListener('upgradeReady', function() {
-            enablePlanButtons();
-        });
+    <script 
+            id="fsc-api"
+            src="https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js"
+            type="text/javascript"
+            data-storefront="languizy.onfastspring.com/popup-languizy"
+            data-popup-closed="onFSPopupClosed"
+            data-debug="true">
         </script>
         
 
