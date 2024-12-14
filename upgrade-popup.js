@@ -186,7 +186,7 @@ function selectPlanFromPopup(planType) {
     // fastspring.builder.origin('https://languizy.com/course_selection.html');
 
     // Clear any previously added items just to be safe
-    fastspring.builder.clear();
+    // fastspring.builder.clear();
 
     // Add the selected product with quantity = 1 (avoid null if it's causing issues)
     if (planType === 'monthly') {
