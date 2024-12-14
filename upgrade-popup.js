@@ -1,13 +1,12 @@
 // upgrade-popup.js
 
-// Initialize Firestore
-const dbx = firebase.firestore(); // Using dbx to avoid confusion, same as db
+// Initialize Firestore (using the same Firebase instance as course-selection.js)
+const dbx = firebase.firestore(); // Using dbx to avoid confusion
+
+// Variable to store user email
 let userEmailPopup = '';
 
-// We'll reuse the same logic as upgrade.js, but point to the #upgradeModal elements
-// The difference: we don't do window.location.href changes, except to course_selection on success
-
-// Functions to show success/error in the modal
+// Function to show success message inside the upgradeModal
 function showSuccessMessagePopup(planType) {
     const successMessageDiv = document.getElementById('upgradeSuccessMessage');
     const subscribedPlanSpan = document.getElementById('subscribedPlan');
@@ -37,6 +36,7 @@ function showSuccessMessagePopup(planType) {
     console.log(`Displayed success message for plan: ${planType}`);
 }
 
+// Function to show error message inside the upgradeModal
 function displayErrorMessagePopup() {
     const errorMessageDiv = document.getElementById('upgradeErrorMessage');
     const successMessageDiv = document.getElementById('upgradeSuccessMessage');
@@ -63,6 +63,7 @@ function displayErrorMessagePopup() {
     console.log(`Displayed error message: Subscription did not go through.`);
 }
 
+// Function to reset the subscription process (allow user to try again)
 function resetSubscription() {
     // Show subscription options and action buttons again
     const modalBody = document.querySelector('#upgradeModal .modal-body');
@@ -85,10 +86,12 @@ function resetSubscription() {
     console.log(`Reset subscription process for user to try again.`);
 }
 
+// Function to redirect to course_selection.html after successful subscription
 function redirectToCourseSelection() {
     window.location.href = '/course_selection.html';
 }
 
+// Function to continue with the free plan
 function continueFree() {
     // Just close the modal and do nothing special or reload
     const modalElement = document.getElementById('upgradeModal');
@@ -97,7 +100,7 @@ function continueFree() {
     console.log("Continuing with the free plan");
 }
 
-// Similar logic as in upgrade.js but we adapt variable names (use dbx if needed)
+// Handle FastSpring Popup Closed Event
 function onFSPopupClosed(orderReference) {
     if (orderReference && orderReference.id) {
         console.log("Order Reference ID:", orderReference.id);
@@ -107,9 +110,10 @@ function onFSPopupClosed(orderReference) {
         console.log("No order ID. Popup was closed without completing a purchase.");
     }
 
-    // We can optionally reset fastspring builder if needed
+    // Reset FastSpring Builder
     fastspring.builder.reset();
 
+    // Re-recognize the user to ensure email is updated after reset
     if (userEmailPopup) {
         fastspring.builder.recognize({
             email: userEmailPopup
@@ -118,8 +122,10 @@ function onFSPopupClosed(orderReference) {
     }
 }
 
+// Function to verify subscription status from Firestore
 async function verifySubscriptionPopup(subscriptionId) {
     try {
+        // Fetch the subscription document
         const subscriptionDocRef = dbx.collection('subscriptions').doc(subscriptionId);
         const subscriptionDoc = await subscriptionDocRef.get();
 
@@ -131,12 +137,14 @@ async function verifySubscriptionPopup(subscriptionId) {
 
         const subscriptionData = subscriptionDoc.data();
 
+        // Verify the subscription details
         if (
             subscriptionData &&
             subscriptionData.plan &&
             (subscriptionData.plan === 'Monthly Pro' || subscriptionData.plan === 'Yearly Pro') &&
             subscriptionData.status === 'active'
         ) {
+            // Fetch the user document to update UI
             const userDocRef = dbx.collection('users').doc(subscriptionData.userId);
             const userDoc = await userDocRef.get();
 
@@ -146,6 +154,8 @@ async function verifySubscriptionPopup(subscriptionId) {
                 return;
             }
 
+            // Optionally, you can further verify if the subscription belongs to the current user
+            // Assuming user.uid === subscriptionData.userId
             const currentUser = firebase.auth().currentUser;
             if (currentUser && currentUser.uid === subscriptionData.userId) {
                 showSuccessMessagePopup(subscriptionData.plan);
@@ -176,25 +186,29 @@ function selectPlanFromPopup(planType) {
     // We'll rely on fastspring.builder to show the popup:
     if (planType === 'monthly') {
         // Add monthly-pro item and checkout
-        fastspring.builder.recognize({ email: userEmailPopup });
         fastspring.builder.checkout({
             products: [{ path: 'monthly-pro' }]
         });
     } else if (planType === 'yearly') {
         // Add yearly-pro item and checkout
-        fastspring.builder.recognize({ email: userEmailPopup });
         fastspring.builder.checkout({
             products: [{ path: 'yearly-pro' }]
         });
     }
 }
 
-// We must recognize user from Firestore when the popup script loads
-firebase.auth().onAuthStateChanged(async (user) => {
-    if (user) {
-        try {
-            const userDocRef = dbx.collection('users').doc(user.uid);
-            const userDoc = await userDocRef.get();
+// Function to initiate the upgrade plan (called from course-selection.html)
+function initiateUpgradePlan(planType) {
+    // Trigger FastSpring checkout
+    selectPlanFromPopup(planType);
+}
+
+// Function to recognize the user email using currentUser
+function recognizeUserEmail() {
+    const currentUser = firebase.auth().currentUser;
+    if (currentUser) {
+        const userDocRef = dbx.collection('users').doc(currentUser.uid);
+        userDocRef.get().then((userDoc) => {
             if (userDoc.exists) {
                 const userData = userDoc.data();
                 userEmailPopup = userData.email;
@@ -204,14 +218,35 @@ firebase.auth().onAuthStateChanged(async (user) => {
                     return;
                 }
 
-                console.log(`FastSpring will recognize user with email: ${userEmailPopup} once checkout is triggered.`);
+                // Recognize the user with FastSpring
+                fastspring.builder.recognize({
+                    email: userEmailPopup
+                    // Not prepopulating firstName and lastName as per requirements
+                });
+                console.log(`FastSpring recognized user with email: ${userEmailPopup}`);
             } else {
                 console.error('User document does not exist.');
                 alert('User data not found. Please contact support.');
             }
-        } catch (error) {
+        }).catch((error) => {
             console.error('Error fetching user data:', error);
             alert('An error occurred. Please try again later.');
-        }
+        });
+    } else {
+        console.error('No authenticated user found.');
+        alert('No authenticated user found. Please log in again.');
+    }
+}
+
+// Automatically recognize the user when the script loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if FastSpring builder is loaded
+    if (typeof fastspring !== 'undefined' && typeof fastspring.builder !== 'undefined') {
+        recognizeUserEmail();
+    } else {
+        // Wait for FastSpring builder to load
+        window.addEventListener('fsbuilderloaded', () => {
+            recognizeUserEmail();
+        });
     }
 });

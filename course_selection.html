@@ -12,18 +12,18 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="course-selection.css">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-  gtag('config', 'G-K8GMWBXC5J');
-</script>
+        gtag('config', 'G-K8GMWBXC5J');
+    </script>
 </head>
 
 <body>
@@ -31,7 +31,9 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="/course_selection.html">
-                                <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
+                <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40"
+                    class="d-inline-block align-text-top" alt="Languizy Language Learning Logo"
+                    title="Languizy, Language Learning for Real">
             </a>
 
             <!-- Wrap the logout button and avatar inside a flex container -->
@@ -60,11 +62,11 @@
                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                     Current Course</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" id="currentCourseName">
-                                    </div>
+                                </div>
                             </div>
                             <div class="col-auto">
-                                <img src="" alt="Flag" width="36" class="me-2"
-                                    id="currentCourseFlag" style="visibility:hidden">
+                                <img src="" alt="Flag" width="36" class="me-2" id="currentCourseFlag"
+                                    style="visibility:hidden">
                             </div>
                         </div>
                     </div>
@@ -84,7 +86,7 @@
                             <i class="fas fa-lightbulb fa-fw"></i> Recommendation
                         </h5>
                         <p class="card-text" id="recommendationText">Loading recommendation...</p>
-                        
+
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-success" id="recommendationBtn">
@@ -114,9 +116,9 @@
                                     </div>
                                     <div class="col">
                                         <div class="progress progress-sm mr-2">
-                                            <div class="progress-bar bg-warning" role="progressbar"
-                                                id="basicsProgress" style="width: 0%" aria-valuenow="0"
-                                                aria-valuemin="0" aria-valuemax="100"></div>
+                                            <div class="progress-bar bg-warning" role="progressbar" id="basicsProgress"
+                                                style="width: 0%" aria-valuenow="0" aria-valuemin="0"
+                                                aria-valuemax="100"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -230,7 +232,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="card-footer">
                         <button class="btn btn-secondary w-100" id="chatBtn">Chat</button>
                     </div>
@@ -272,7 +274,7 @@
                 </div>
             </div>
 
-             
+
 
 
 
@@ -297,7 +299,8 @@
             </div>
             <!-- New Streaks Card -->
             <div class="col-xl-2 col-md-6 mb-3">
-                <div id="CurrentStreakCard" class="card border-left-warning shadow h-100 py-0 d-flex align-items-center justify-content-center">
+                <div id="CurrentStreakCard"
+                    class="card border-left-warning shadow h-100 py-0 d-flex align-items-center justify-content-center">
                     <div class="fill-effect position-absolute top-0 start-0 h-100"></div>
                     <div class="card-body text-center">
                         <h5 class="card-title text-danger text-uppercase mb-3">
@@ -355,7 +358,7 @@
         </div>
 
 
-        
+
 
 
 
@@ -367,81 +370,89 @@
     </div>
 
     <!-- Upgrade Modal inside course-selection.html -->
-<div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-primary text-white">
-                <h5 class="modal-title" id="upgradeModalLabel">Unlock Your Full Potential</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Upgrade to our Pro Plan and transform your language learning journey. Enjoy unlimited access to all features and take your skills to the next level!</p>
-                <table class="table table-striped mt-4">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>Free Plan</th>
-                            <th>Pro Plan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Daily Exercises per Course</td>
-                            <td>50</td>
-                            <td>Unlimited</td>
-                        </tr>
-                        <tr>
-                            <td>Stories</td>
-                            <td>Limited</td>
-                            <td>All Stories</td>
-                        </tr>
-                        <tr>
-                            <td>AI Chats</td>
-                            <td>Short Conversations</td>
-                            <td>Longer Conversations</td>
-                        </tr>
-                        <tr>
-                            <td>Stats</td>
-                            <td>Limited</td>
-                            <td>Full Stats</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="alert alert-info mt-4">
-                    <strong>Special Offer:</strong> Get 25% off with our yearly plan - only $63!
+    <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title" id="upgradeModalLabel">Unlock Your Full Potential</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mt-4">
-                    <p>All purchases are subject to our <a href="/terms-of-service.html">Terms & Conditions</a> and to our <a href="/refund-policy.html">Refund Policy</a>.</p>
+                <div class="modal-body">
+                    <p>Upgrade to our Pro Plan and transform your language learning journey. Enjoy unlimited access to
+                        all features and take your skills to the next level!</p>
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Free Plan</th>
+                                <th>Pro Plan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Daily Exercises per Course</td>
+                                <td>50</td>
+                                <td>Unlimited</td>
+                            </tr>
+                            <tr>
+                                <td>Stories</td>
+                                <td>Limited</td>
+                                <td>All Stories</td>
+                            </tr>
+                            <tr>
+                                <td>AI Chats</td>
+                                <td>Short Conversations</td>
+                                <td>Longer Conversations</td>
+                            </tr>
+                            <tr>
+                                <td>Stats</td>
+                                <td>Limited</td>
+                                <td>Full Stats</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="alert alert-info mt-4">
+                        <strong>Special Offer:</strong> Get 25% off with our yearly plan - only $63!
+                    </div>
+                    <div class="mt-4">
+                        <p>All purchases are subject to our <a href="/terms-of-service.html">Terms & Conditions</a> and
+                            to our <a href="/refund-policy.html">Refund Policy</a>.</p>
+                    </div>
+
+                    <!-- Hidden Success Message -->
+                    <div id="upgradeSuccessMessage" class="alert alert-success text-center mt-5" style="display: none;">
+                        <h4 class="alert-heading">Congratulations!</h4>
+                        <p>You are now subscribed to the <strong id="subscribedPlan"></strong> Pro Plan.</p>
+                        <hr>
+                        <button class="btn btn-primary" onclick="redirectToCourseSelection()">Start Practicing</button>
+                    </div>
+
+                    <!-- Hidden Error Message -->
+                    <div id="upgradeErrorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
+                        <h4 class="alert-heading">Subscription Failed</h4>
+                        <p>There was an issue processing your subscription. Please try again.</p>
+                        <hr>
+                        <button class="btn btn-warning" onclick="resetSubscription()">Try Again</button>
+                    </div>
                 </div>
-  
-                <!-- Add hidden success and error message sections here -->
-                <div id="upgradeSuccessMessage" class="alert alert-success text-center mt-5" style="display: none;">
-                    <h4 class="alert-heading">Congratulations!</h4>
-                    <p>You are now subscribed to the <strong id="subscribedPlan"></strong> Pro Plan.</p>
-                    <hr>
-                    <button class="btn btn-primary" onclick="redirectToCourseSelection()">Start Practicing</button>
+                <!-- Inside the modal-footer of upgradeModal -->
+                <div class="modal-footer flex-column flex-sm-row">
+                    <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue
+                        Free</button>
+                    <div class="d-flex flex-column flex-sm-row">
+                        <!-- Updated onclick handlers -->
+                        <button class="btn btn-primary me-sm-2 mb-2 mb-sm-0"
+                            onclick="initiateUpgradePlan('monthly')">Pro Plan - $6.99/month</button>
+                        <button class="btn btn-success mb-2 mb-sm-0" onclick="initiateUpgradePlan('yearly')">Pro Plan -
+                            $63/year</button>
+                    </div>
                 </div>
-  
-                <div id="upgradeErrorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
-                    <h4 class="alert-heading">Subscription Failed</h4>
-                    <p>There was an issue processing your subscription. Please try again.</p>
-                    <hr>
-                    <button class="btn btn-warning" onclick="resetSubscription()">Try Again</button>
-                </div>
-  
-            </div>
-            <div class="modal-footer flex-column flex-sm-row">
-                <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()">Continue Free</button>
-                <div class="d-flex flex-column flex-sm-row">
-                    <!-- Change the onclick calls to our new function -->
-                    <button class="btn btn-primary me-sm-2 mb-2 mb-sm-0" onclick="initiateUpgradePlan('monthly')">Pro Plan - $6.99/month</button>
-                    <button class="btn btn-success mb-2 mb-sm-0" onclick="initiateUpgradePlan('yearly')">Pro Plan - $63/year</button>
-                </div>
+
             </div>
         </div>
     </div>
-  </div>
-  
+
+
 
     <div class="modal modal-lg fade" id="courseModal" tabindex="-1" aria-labelledby="courseModalLabel"
         aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
@@ -484,32 +495,50 @@
         let upgradePopupLoaded = false;
         
         function initiateUpgradePlan(planType) {
-          // Dynamically load the FastSpring script if not loaded
-          if (!fastspringLoaded) {
-            var fsScript = document.createElement('script');
-            fsScript.id = 'fsc-api';
-            fsScript.type = 'text/javascript';
-            fsScript.setAttribute('data-storefront', 'languizy.onfastspring.com/popup-languizy');
-            fsScript.setAttribute('data-popup-closed', 'onFSPopupClosed');
-            fsScript.setAttribute('data-debug', 'true');
-            fsScript.src = 'https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js';
-            document.body.appendChild(fsScript);
-            fastspringLoaded = true;
-          }
+            // Dynamically load the FastSpring script if not loaded
+            if (!fastspringLoaded) {
+                var fsScript = document.createElement('script');
+                fsScript.id = 'fsc-api';
+                fsScript.type = 'text/javascript';
+                fsScript.setAttribute('data-storefront', 'languizy.onfastspring.com/popup-languizy');
+                fsScript.setAttribute('data-popup-closed', 'onFSPopupClosed');
+                fsScript.setAttribute('data-debug', 'true');
+                fsScript.src = 'https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js';
+                fsScript.onload = function() {
+                    console.log("FastSpring script loaded.");
+                    fastspringLoaded = true;
+                    // Initialize the upgrade logic after FastSpring script is loaded
+                    loadUpgradePopup(planType);
+                };
+                fsScript.onerror = function() {
+                    console.error("Failed to load FastSpring script.");
+                    alert("Failed to load payment system. Please try again later.");
+                };
+                document.body.appendChild(fsScript);
+            } else {
+                // FastSpring script already loaded
+                loadUpgradePopup(planType);
+            }
+        }
         
-          // Dynamically load the upgrade-popup.js if not loaded
-          if (!upgradePopupLoaded) {
-            var upScript = document.createElement('script');
-            upScript.src = 'upgrade-popup.js';
-            upScript.onload = function() {
-              upgradePopupLoaded = true;
-              selectPlanFromPopup(planType); // Call the function from upgrade-popup.js to start the process
-            };
-            document.body.appendChild(upScript);
-          } else {
-            // If already loaded, just call selectPlanFromPopup again
-            selectPlanFromPopup(planType);
-          }
+        function loadUpgradePopup(planType) {
+            if (!upgradePopupLoaded) {
+                var upScript = document.createElement('script');
+                upScript.src = 'upgrade-popup.js';
+                upScript.onload = function() {
+                    upgradePopupLoaded = true;
+                    // Initiate the upgrade process
+                    selectPlanFromPopup(planType);
+                };
+                upScript.onerror = function() {
+                    console.error("Failed to load upgrade-popup.js.");
+                    alert("Failed to initialize payment system. Please try again later.");
+                };
+                document.body.appendChild(upScript);
+            } else {
+                // upgrade-popup.js already loaded
+                selectPlanFromPopup(planType);
+            }
         }
         </script>
 </body>
