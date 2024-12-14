@@ -87,3 +87,17 @@
 #speechPartBreakdownChart {
   max-height: 400px; /* Prevent overflow */
 }
+
+.locked-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #6c757d;
+  font-weight: bold;
+  min-height: 200px;
+  text-align: center;
+}
+.locked-message i {
+  color: #6c757d;
+}

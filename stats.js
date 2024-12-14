@@ -1,3 +1,5 @@
+// stats.js
+
 // Initialize Firestore
 const db = firebase.firestore();
 
@@ -11,8 +13,7 @@ let performanceOverTimeChartInstance;
 let dailyScoreBreakdownChartInstance;
 let vocabGrammarAccuracyChartInstance;
 let timeSpentDistributionChartInstance;
-let timeSpentChartInstance; // Add this line
-
+let timeSpentChartInstance; 
 
 // Initialize selectedCourse to 'all' for showing all course stats by default
 let selectedCourse = 'all';
@@ -58,14 +59,6 @@ function loadUserAvatar(user) {
   });
 }
 
-/**
- * Load Statistics for the Authenticated User
- * @param {Object} user - The authenticated user object
- */
-/**
- * Load Statistics for the Authenticated User
- * @param {Object} user - The authenticated user object
- */
 async function loadStats(user) {
   try {
     const userDocRef = db.collection('users').doc(user.uid);
@@ -75,9 +68,16 @@ async function loadStats(user) {
     const chartIds = [
       'speechPartBreakdownChart', 'answersOverTimeChart', 'accuracyChart',
       'cumulativeScoreChart', 'difficultyLevelChart', 'performanceOverTimeChart',
-      'dailyScoreBreakdownChart', 'vocabGrammarAccuracyChart', 'timeSpentChart'
+      'dailyScoreBreakdownChart', 'vocabGrammarAccuracyChart', 'timeSpentChart', 'timeSpentDistributionChart'
     ];
     chartIds.forEach(id => setLoadingState(id, `${id}Loading`));
+
+    // For heatmap as well:
+    // We'll treat heatmap similarly (though it didn't have a loading by default, we will set a loading check):
+    // If you wish to treat heatmap as a chart for this purpose, just note no chart code needed:
+    // We'll just show locked message if needed. We'll create a pseudo loading div id if needed.
+    // The code currently does not show a separate loading for heatmap. Let's just skip loading for heatmap.
+    // We'll just hide it if totalDrills<10.
 
     // Fetch user document and courses in parallel
     const [userDoc, coursesSnapshot] = await Promise.all([
@@ -101,14 +101,13 @@ async function loadStats(user) {
     const statsData = processStatsData(statsSnapshots, selectedTimeInterval);
 
     // Fetch and display the "Day Joined" date
-    const dayJoined = userDoc.data().joinDate; // Assuming 'dayJoined' is stored in the user document
-    debugger;
+    const dayJoined = userDoc.data().joinDate; 
     displayDayJoined(dayJoined);
 
     // Update UI with processed data
     updateUIWithStats(statsData);
 
-    // Display charts
+    // Display charts (or locked messages if totalDrills < 10)
     await displayCharts(userDocRef, selectedCourse, statsData);
 
   } catch (error) {
@@ -122,11 +121,37 @@ function displayDayJoined(dayJoined) {
 }
 
 async function displayCharts(userDocRef, selectedCourse, statsData) {
-  const { dailyStats, datesSet, vocabCorrect, vocabWrong, grammarCorrect, grammarWrong } = statsData;
+  const { dailyStats, datesSet, vocabCorrect, vocabWrong, grammarCorrect, grammarWrong, totalDrills } = statsData;
 
-  // Generate a Complete Date Range and Fill Missing Dates
-  const latestDate = new Date(); // Assume latest date is today
-  const earliestDate = statsData.earliestDate || latestDate; // If there's no earliest date, set it to today
+  // If totalDrills < 10, display locked messages for all charts and return
+  if (totalDrills < 10) {
+    // Show locked messages for each chart
+    displayLockedMessage('timeSpentChart', 'timeSpentLoading', 'Time Spent on Activities');
+    displayLockedMessage('timeSpentDistributionChart', 'timeSpentDistributionLoading', 'Time Spent Distribution');
+    displayLockedMessage('speechPartBreakdownChart', 'speechPartBreakdownLoading', 'Speech Parts Breakdown');
+    displayLockedMessage('answersOverTimeChart', 'answersOverTimeLoading', 'Answers Over Time');
+    displayLockedMessage('accuracyChart', 'accuracyLoading', 'Accuracy');
+    displayLockedMessage('cumulativeScoreChart', 'cumulativeScoreLoading', 'Cumulative Score Over Time');
+    displayLockedMessage('difficultyLevelChart', 'difficultyLevelLoading', 'Questions by Difficulty Level');
+    displayLockedMessage('performanceOverTimeChart', 'performanceOverTimeLoading', 'Performance Over Time');
+    displayLockedMessage('dailyScoreBreakdownChart', 'dailyScoreBreakdownLoading', 'Daily Score Breakdown');
+    displayLockedMessage('vocabGrammarAccuracyChart', 'vocabGrammarAccuracyLoading', 'Vocabulary and Grammar Accuracy');
+    
+    // Also replace the heatmapContainer
+    // The heatmap isn't a chart, but for consistency let's also lock it:
+    // We'll just clear it and show a message.
+    const heatmapContainer = document.getElementById('heatmapContainer');
+    heatmapContainer.innerHTML = `
+      <div class="locked-message">
+        <i class="fas fa-lock fa-3x mb-3"></i>
+        <h5 class="mb-0">Practice More to Unlock Daily Practice Heatmap</h5>
+      </div>`;
+    return; 
+  }
+
+  // If totalDrills >= 10, proceed with displaying charts
+  const latestDate = new Date(); 
+  const earliestDate = statsData.earliestDate || latestDate; 
 
   const sortedDailyStats = dailyStats.sort((a, b) => new Date(a.date) - new Date(b.date));
   const dateRange = generateDateRange(earliestDate, latestDate);
@@ -137,7 +162,6 @@ async function displayCharts(userDocRef, selectedCourse, statsData) {
     return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0, vocabularyScore: 0, grammarScore: 0 };
   });
 
-  // Prepare Data for Charts
   const answersOverTimeData = filledDailyStats.map(stat => ({
     date: stat.date,
     correctAnswers: stat.correctAnswers,
@@ -146,7 +170,7 @@ async function displayCharts(userDocRef, selectedCourse, statsData) {
 
   // Display Charts and Heatmap
   await Promise.all([
-    displayTimeSpentChart(userDocRef, selectedCourse, dateRange), // Pass dateRange here
+    displayTimeSpentChart(userDocRef, selectedCourse, dateRange),
     displayTimeSpentDistributionChart(userDocRef, selectedCourse, dateRange),
     displaySpeechPartBreakdownChart(userDocRef, selectedCourse),
     displayAnswersOverTimeChart(answersOverTimeData),
@@ -185,7 +209,7 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
         sevenDaysAgo.setDate(today.getDate() - 6);
 
         if (date < sevenDaysAgo || date > today) {
-          return; // Skip dates outside the last 7 days
+          return; // Skip
         }
       }
 
@@ -195,7 +219,6 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
         totalScore += data.totalScore || 0;
         totalDrills += data.totalDrills || 0;
 
-        // Use the correct field names for "all-time" document
         vocabCorrect += data.vocabulary_totalCorrectAnswers || 0;
         vocabWrong += data.vocabulary_totalWrongAnswers || 0;
         grammarCorrect += data.grammar_totalCorrectAnswers || 0;
@@ -224,10 +247,8 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
           grammarTotalDrills: data.grammar_totalDrills || 0,
           grammarCorrect: data.grammar_correctAnswers || 0,
           grammarWrong: data.grammar_wrongAnswers || 0
-
         });
 
-        // Aggregate daily stats for vocabulary and grammar accuracy
         vocabCorrect += data.vocabulary_correctAnswers || 0;
         vocabWrong += data.vocabulary_wrongAnswers || 0;
         grammarCorrect += data.grammar_correctAnswers || 0;
@@ -260,21 +281,13 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
 function updateUIWithStats(statsData) {
   const { earliestDate, totalCorrectAnswers, totalWrongAnswers, totalScore, dailyStats, datesSet } = statsData;
 
-  // Determine Day Joined
-  // const dayJoined = earliestDate ? earliestDate.toLocaleDateString() : 'N/A';
-
-  // Calculate Streaks
   const streakInfo = calculateStreaks(Array.from(datesSet));
   const currentStreak = streakInfo.currentStreak;
   const longestStreak = streakInfo.longestStreak;
 
   const totalDaysPracticed = datesSet.size;
-
-  // Calculate Average Score
   const averageScore = totalDaysPracticed > 0 ? (totalScore / totalDaysPracticed).toFixed(2) : 0;
 
-  // Update HTML Elements with Calculated Statistics
-  // document.getElementById('dayJoined').innerText = `Day Joined: ${dayJoined}`;
   document.getElementById('currentStreak').innerText = `Current Streak: ${currentStreak}`;
   document.getElementById('longestStreak').innerText = `Longest Streak: ${longestStreak}`;
   document.getElementById('totalDaysPracticed').innerText = `Total Days Practiced: ${totalDaysPracticed}`;
@@ -312,15 +325,10 @@ function clearLoadingState(chartId, loadingId) {
   }
 }
 
-
-/**
- * Populate the course selector with options for the user's courses
- * @param {Object} user - The authenticated user object
- */
 async function populateCourseSelector(user) {
   const userDocRef = db.collection('users').doc(user.uid);
   const courseSelector = document.getElementById('courseSelector');
-  courseSelector.innerHTML = '<option value="all">All Courses</option>'; // Default option
+  courseSelector.innerHTML = '<option value="all">All Courses</option>';
 
   const coursesSnapshot = await userDocRef.collection('courses').get();
   coursesSnapshot.forEach(doc => {
@@ -332,9 +340,6 @@ async function populateCourseSelector(user) {
   });
 }
 
-/**
- * Display Speech Part Breakdown Chart
- */
 async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   const ctx = document.getElementById('speechPartBreakdownChart').getContext('2d');
 
@@ -342,20 +347,16 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
     speechPartBreakdownChartInstance.destroy();
   }
 
-  // Data structure to track correct and wrong answers for each speech part
   const speechPartStats = {};
 
-  // Process questions answered by the user
   async function processCourseQuestions(courseId) {
     const progressRef = userDocRef.collection('courses').doc(courseId).collection('progress');
     const progressSnapshot = await progressRef.get();
 
-    // Loop through progress to analyze each question's results
     for (const progressDoc of progressSnapshot.docs) {
       const progressData = progressDoc.data();
       const questionId = progressDoc.id;
 
-      // Fetch the corresponding question from the questions collection
       const questionDoc = await db.collection('questions').doc(questionId).get();
       if (!questionDoc.exists) continue;
 
@@ -366,13 +367,11 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
         speechPartStats[speechPart] = { correct: 0, wrong: 0 };
       }
 
-      // Increment correct and wrong counts
       speechPartStats[speechPart].correct += progressData.timesCorrect || 0;
       speechPartStats[speechPart].wrong += progressData.timesIncorrect || 0;
     }
   }
 
-  // Fetch data for all courses or a specific course
   if (currentCourse === 'all') {
     const coursesSnapshot = await userDocRef.collection('courses').get();
     await Promise.all(coursesSnapshot.docs.map(courseDoc => processCourseQuestions(courseDoc.id)));
@@ -380,7 +379,6 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
     await processCourseQuestions(currentCourse);
   }
 
-  // Prepare data for chart
   const labels = Object.keys(speechPartStats);
   const correctData = labels.map(speechPart => speechPartStats[speechPart].correct);
   const wrongData = labels.map(speechPart => speechPartStats[speechPart].wrong);
@@ -407,7 +405,7 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
       ],
     },
     options: {
-      indexAxis: 'y', // Horizontal bars
+      indexAxis: 'y',
       responsive: true,
       plugins: {
         legend: {
@@ -422,7 +420,6 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
               const wrong = wrongData[index];
               const total = correct + wrong;
               const successRate = total > 0 ? ((correct / total) * 100).toFixed(1) : '0';
-
               const datasetLabel = context.dataset.label || '';
               const value = context.raw || 0;
               
@@ -455,41 +452,33 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
   clearLoadingState('speechPartBreakdownChart', 'speechPartBreakdownLoading');
 }
 
-/**
- * Filter stats based on the selected course
- */
 function filterByCourse() {
   const selector = document.getElementById('courseSelector');
   selectedCourse = selector.value;
-  loadStats(firebase.auth().currentUser); // Reload stats when course is selected
+  loadStats(firebase.auth().currentUser); 
 }
 
-/**
- * Display Heatmap for Daily Practice
- * @param {Array} dates - Array of date strings in "YYYY-MM-DD" format when the user practiced
- */
 function displayHeatmap(dates) {
   const heatmapContainer = document.getElementById('heatmapContainer');
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Ensure we start from today without time interference
+  today.setHours(0, 0, 0, 0);
 
-  const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
+  const oneDay = 24 * 60 * 60 * 1000;
   const datesSet = new Set(dates);
-  const minimumBoxes = 30; // Ensure at least 30 boxes are shown
+  const minimumBoxes = 30; 
 
-  // Function to recalculate and redraw the heatmap based on screen size
   function drawHeatmap() {
-    heatmapContainer.innerHTML = ''; // Clear previous content
+    heatmapContainer.innerHTML = '';
     const containerWidth = heatmapContainer.offsetWidth;
-    const boxSize = 28.78; // Width of each box in pixels, including margin
+    const boxSize = 28.78;
     const boxesPerRow = Math.floor(containerWidth / boxSize);
-    const totalBoxes = Math.max(minimumBoxes, boxesPerRow * Math.ceil(minimumBoxes / boxesPerRow)); // Always fill rows completely
+    const totalBoxes = Math.max(minimumBoxes, boxesPerRow * Math.ceil(minimumBoxes / boxesPerRow));
 
     for (let i = 0; i < totalBoxes; i++) {
-      const day = new Date(today.getTime() - i * oneDay); // Get date for each box starting from today
+      const day = new Date(today.getTime() - i * oneDay);
       const dateStr = day.toISOString().split('T')[0];
       const played = datesSet.has(dateStr);
-      const color = played ? '#4CAF50' : '#D3D3D3'; // Color for practiced and non-practiced days
+      const color = played ? '#4CAF50' : '#D3D3D3';
 
       const dayDiv = document.createElement('div');
       dayDiv.className = 'heatmap-day';
@@ -499,17 +488,10 @@ function displayHeatmap(dates) {
     }
   }
 
-  // Initial draw
   drawHeatmap();
-
-  // Redraw heatmap when window is resized to ensure it fits dynamically
   window.addEventListener('resize', drawHeatmap);
-  clearLoadingState('heatmapContainer', 'heatmapLoading');
 }
 
-/**
- * Calculate Streaks
- */
 function calculateStreaks(dates) {
   if (dates.length === 0) return { currentStreak: 0, longestStreak: 0 };
 
@@ -539,15 +521,14 @@ function calculateStreaks(dates) {
   today.setHours(0, 0, 0, 0);
   let tempStreak = 0;
   let checkDate = new Date(today);
-  checkDate.setDate(checkDate.getDate() - 1); // Start checking from yesterday
+  checkDate.setDate(checkDate.getDate() - 1);
 
-  // Check if there is a continuous streak until yesterday
   while (true) {
     const dateStr = checkDate.toLocaleDateString('en-CA');
 
     if (uniqueDates.find(d => d.toLocaleDateString('en-CA') === dateStr)) {
         tempStreak++;
-        checkDate.setDate(checkDate.getDate() - 1); // Move to the previous day
+        checkDate.setDate(checkDate.getDate() - 1);
     } else {
         break;
     }
@@ -556,7 +537,7 @@ function calculateStreaks(dates) {
   const streakExtendedToday = uniqueDates.some(d => d.toLocaleDateString('en-CA') === today.toLocaleDateString('en-CA'));
 
   if (streakExtendedToday) {
-    tempStreak++; // Include today in the streak count if practiced today
+    tempStreak++;
   }
 
   currentStreak = tempStreak;
@@ -564,10 +545,6 @@ function calculateStreaks(dates) {
   return { currentStreak, longestStreak };
 }
 
-/**
- * Display Answers Over Time Chart
- * @param {Array} data - Array of objects containing date, correctAnswers, and wrongAnswers
- */
 function displayAnswersOverTimeChart(data) {
   const ctx = document.getElementById('answersOverTimeChart').getContext('2d');
 
@@ -636,11 +613,6 @@ function displayAnswersOverTimeChart(data) {
   clearLoadingState('answersOverTimeChart', 'answersOverTimeLoading');
 }
 
-/**
- * Display Accuracy Pie Chart
- * @param {number} totalCorrect - Total number of correct answers
- * @param {number} totalWrong - Total number of wrong answers
- */
 function displayAccuracyChart(totalCorrect, totalWrong) {
   const ctx = document.getElementById('accuracyChart').getContext('2d');
 
@@ -675,15 +647,11 @@ function displayAccuracyChart(totalCorrect, totalWrong) {
           }
         }
       }
-    }}
-  );
+    }
+  });
   clearLoadingState('accuracyChart', 'accuracyLoading');
 }
 
-/**
- * Display Cumulative Score Chart
- * @param {Array} dailyStats - Array of daily stats containing score
- */
 function displayCumulativeScoreChart(dailyStats) {
   const ctx = document.getElementById('cumulativeScoreChart').getContext('2d');
 
@@ -737,11 +705,6 @@ function displayCumulativeScoreChart(dailyStats) {
   clearLoadingState('cumulativeScoreChart', 'cumulativeScoreLoading');
 }
 
-/**
- * Display Questions by Difficulty Level Chart
- * @param {Object} userDocRef - Firestore document reference to the user
- * @param {string} currentCourse - The course to display stats for (or 'all' for all courses)
- */
 async function displayDifficultyLevelChart(userDocRef, currentCourse) {
   const ctx = document.getElementById('difficultyLevelChart').getContext('2d');
 
@@ -749,9 +712,8 @@ async function displayDifficultyLevelChart(userDocRef, currentCourse) {
     difficultyLevelChartInstance.destroy();
   }
 
-  // Object to store difficulty levels and answer statistics
   const difficultyLevels = {};
-  let maxDifficultyLevelSeen = 0; // Track the highest difficulty level seen
+  let maxDifficultyLevelSeen = 0;
 
   async function processCourseProgress(courseId) {
     const progressRef = userDocRef.collection('courses').doc(courseId).collection('progress');
@@ -854,16 +816,13 @@ async function displayDifficultyLevelChart(userDocRef, currentCourse) {
   clearLoadingState('difficultyLevelChart', 'difficultyLevelLoading');
 }
 
-/**
- * Generate an array of date strings between two dates
- */
 function generateDateRange(startDate, endDate) {
   const dates = [];
   let currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
-    dates.push(new Date(currentDate).toISOString().split('T')[0]); // Format as YYYY-MM-DD
-    currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+    dates.push(new Date(currentDate).toISOString().split('T')[0]);
+    currentDate.setDate(currentDate.getDate() + 1);
   }
 
   return dates;
@@ -937,10 +896,6 @@ function displayPerformanceOverTimeChart(data) {
   clearLoadingState('performanceOverTimeChart', 'performanceOverTimeLoading');
 }
 
-/**
- * Display Daily Score Breakdown Chart
- * @param {Array} data - Array of daily stats containing vocabulary and grammar scores
- */
 function displayDailyScoreBreakdownChart(data) {
   const ctx = document.getElementById('dailyScoreBreakdownChart').getContext('2d');
 
@@ -997,15 +952,7 @@ function displayDailyScoreBreakdownChart(data) {
   clearLoadingState('dailyScoreBreakdownChart', 'dailyScoreBreakdownLoading');
 }
 
-/**
- * Display Vocabulary vs. Grammar Accuracy Chart
- * @param {number} vocabCorrect - Total number of correct vocabulary answers
- * @param {number} vocabWrong - Total number of wrong vocabulary answers
- * @param {number} grammarCorrect - Total number of correct grammar answers
- * @param {number} grammarWrong - Total number of wrong grammar answers
- */
 function displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorrect, grammarWrong) {
-
   const ctx = document.getElementById('vocabGrammarAccuracyChart').getContext('2d');
 
   if (vocabGrammarAccuracyChartInstance) {
@@ -1051,32 +998,26 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
     timeSpentChartInstance.destroy();
   }
 
-  // Initialize time spent data
   const timeSpentData = {};
-
-  // Get the selected time interval
   const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 6);
 
-  // Fetch stats for all courses or a specific course
   const coursesSnapshot = currentCourse === 'all' 
     ? await userDocRef.collection('courses').get()
     : [{ id: currentCourse }];
 
-  for (const courseDoc of coursesSnapshot.docs || coursesSnapshot) {
+  for (const courseDoc of (coursesSnapshot.docs || coursesSnapshot)) {
     const statsSnapshot = await userDocRef.collection('courses').doc(courseDoc.id).collection('stats').get();
 
     statsSnapshot.forEach(doc => {
       const data = doc.data();
       const dateId = doc.id;
-
-      // Filter by time interval
       if (selectedTimeInterval === 'last-7-days') {
         const date = new Date(dateId);
         if (date < sevenDaysAgo || date > today) {
-          return; // Skip dates outside the last 7 days
+          return;
         }
       }
 
@@ -1084,7 +1025,6 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
         if (!timeSpentData[dateId]) {
           timeSpentData[dateId] = { vocabulary: 0, grammar: 0, stories: 0, chat: 0, basics: 0 };
         }
-
         timeSpentData[dateId].vocabulary += data.vocabulary_DailyTime || 0;
         timeSpentData[dateId].grammar += data.grammar_DailyTime || 0;
         timeSpentData[dateId].stories += data.timeSpentStories || 0;
@@ -1094,14 +1034,12 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
     });
   }
 
-  // Ensure all dates in dateRange are present in timeSpentData
   for (const date of dateRange) {
     if (!timeSpentData[date]) {
-      timeSpentData[date] = { vocabulary: 0, grammar: 0, stories: 0, chat: 0 };
+      timeSpentData[date] = { vocabulary: 0, grammar: 0, stories: 0, chat: 0, basics: 0 };
     }
   }
 
-  // Prepare data for the chart
   const dates = dateRange.sort();
   const vocabularyData = dates.map(date => timeSpentData[date].vocabulary);
   const grammarData = dates.map(date => timeSpentData[date].grammar);
@@ -1109,7 +1047,6 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
   const chatData = dates.map(date => timeSpentData[date].chat);
   const basicsData = dates.map(date => timeSpentData[date].basics);
 
-  // Create the stacked bar chart
   timeSpentChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -1179,32 +1116,27 @@ async function displayTimeSpentDistributionChart(userDocRef, currentCourse, date
     timeSpentDistributionChartInstance.destroy();
   }
 
-  // Initialize total time spent data
   let totalTimeSpent = { vocabulary: 0, grammar: 0, stories: 0, chat: 0, basics: 0 };
-
-  // Get the selected time interval
   const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
   const today = new Date();
   const sevenDaysAgo = new Date(today);
   sevenDaysAgo.setDate(today.getDate() - 6);
 
-  // Fetch stats for all courses or a specific course
   const coursesSnapshot = currentCourse === 'all' 
     ? await userDocRef.collection('courses').get()
     : [{ id: currentCourse }];
 
-  for (const courseDoc of coursesSnapshot.docs || coursesSnapshot) {
+  for (const courseDoc of (coursesSnapshot.docs || coursesSnapshot)) {
     const statsSnapshot = await userDocRef.collection('courses').doc(courseDoc.id).collection('stats').get();
 
     statsSnapshot.forEach(doc => {
       const data = doc.data();
       const dateId = doc.id;
 
-      // Filter by time interval
       if (selectedTimeInterval === 'last-7-days') {
         const date = new Date(dateId);
         if (date < sevenDaysAgo || date > today) {
-          return; // Skip dates outside the last 7 days
+          return; 
         }
       }
 
@@ -1218,7 +1150,6 @@ async function displayTimeSpentDistributionChart(userDocRef, currentCourse, date
     });
   }
 
-  // Prepare data for the pie chart
   const labels = ['Vocabulary', 'Grammar', 'Stories', 'Chat', 'Basics'];
   const data = [
     totalTimeSpent.vocabulary,
@@ -1261,7 +1192,31 @@ async function displayTimeSpentDistributionChart(userDocRef, currentCourse, date
   clearLoadingState('timeSpentDistributionChart', 'timeSpentDistributionLoading');
 }
 
-
 function filterByTimeInterval() {
-  loadStats(firebase.auth().currentUser); // Reload stats when time interval is selected
+  loadStats(firebase.auth().currentUser);
+}
+
+/**
+ * NEW HELPER FUNCTION:
+ * Display a locked message instead of a chart if totalDrills < 10
+ */
+function displayLockedMessage(chartId, loadingId, chartName) {
+  const loadingElement = document.getElementById(loadingId);
+  if (loadingElement) loadingElement.style.display = 'none';
+
+  const chartElement = document.getElementById(chartId);
+  if (chartElement) {
+    chartElement.style.display = 'none';
+    const parent = chartElement.parentNode;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'locked-message';
+    messageDiv.innerHTML = `
+      <i class="fas fa-lock fa-3x mb-3"></i>
+      <h5 class="mb-0">Practice More to Unlock ${chartName}</h5>
+    `;
+
+    // Append the message after the loading element (or at end if no loading)
+    parent.appendChild(messageDiv);
+  }
 }
