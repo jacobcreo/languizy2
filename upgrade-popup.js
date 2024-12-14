@@ -78,9 +78,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Re-recognize the user to ensure email is updated after reset
         if (userEmailPopup) {
-            fastspring.builder.recognize({
-                email: userEmailPopup
-            });
+            // fastspring.builder.recognize({
+            //     email: userEmailPopup
+            // });
+            var mySession = {
+                "paymentContact": {
+                  "email":userEmailPopup
+              }};
+              fastspring.builder.push(mySession);
             console.log(`FastSpring re-recognized user with email: ${userEmailPopup}`);
         }
     }
