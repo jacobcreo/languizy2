@@ -211,7 +211,7 @@ function updateMaxOrder(user, currentCourse) {
     allTimeStatsRef.get().then(doc => {
         if (doc.exists) {
             maxOrder = doc.data().maxOrder || 0;
-            let maxOrderPercentage = (maxOrder / 10000 * 100).toFixed(2) + '%';
+            let maxOrderPercentage = (maxOrder / 2500 * 100).toFixed(2) + '%';
             $('#proficiencyLevel').text(maxOrderPercentage);
             $('#profTooltip').text(maxOrderPercentage + ' Proficiency Level');
         } else {
@@ -1863,7 +1863,7 @@ function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
                                 allTimeData.maxOrder = nounOrder;
                                 maxOrder = nounOrder; // updating the global maxOrder variable
 
-                                var maxOrderPercentage = (nounOrder / 10000 * 100).toFixed(2) + '%';
+                                var maxOrderPercentage = (nounOrder / 2500 * 100).toFixed(2) + '%';
                             }
                             $('#proficiencyLevel').text(maxOrderPercentage);
                             $('#profTooltip').text(maxOrderPercentage + ' Proficiency Level');

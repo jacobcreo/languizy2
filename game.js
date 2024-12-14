@@ -676,6 +676,7 @@ function showLoadingMessages() {
   const shuffledMessages = [...window.coachData.loadingMessages].sort(() => Math.random() - 0.5);
   let currentMessageIndex = 0;
 
+
   const loadingHtml = `
     <div id="loading-indicator" class="loading-container">
       <div class="spinner"></div>
@@ -705,6 +706,8 @@ function showLoadingProgress() {
   // Hide the question area content but keep its space
   $('#question-area').removeClass('visible').css('visibility', 'hidden');
   $('.option-btn').text('\u00A0');
+
+  stopAudio();
 
   $('#loading-progress').show();
   $('#progress-bar').css('width', '0%');
@@ -1021,7 +1024,6 @@ function displayQuestion(question, questionId, currentCourse) {
 
 
   $('#next-question').off('click').on('click', function () {
-    stopAudio(); // Stop audio when moving to the next question
     handleDebounce(() => {
       loadQuestion(user, currentCourse);
       $('#explain-sentence-btn').hide(); // Hide the button for the next question
@@ -1032,7 +1034,6 @@ function displayQuestion(question, questionId, currentCourse) {
   // Event listener for Enter key to move to the next question
   $(document).off('keypress').on('keypress', function (e) {
     if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
-      stopAudio();
       e.preventDefault(); // Prevent default behavior
       handleDebounce(() => $('#next-question').click());
     }

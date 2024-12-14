@@ -741,6 +741,8 @@ function showLoadingProgress() {
     $('#question-area').removeClass('visible').css('visibility', 'hidden');
     $('.option-btn').text('\u00A0');
 
+    stopAudio();
+
     $('#loading-progress').show();
     $('#progress-bar').css('width', '0%');
 
@@ -1056,7 +1058,7 @@ if (translationsText) {
         // Event listener for Enter key to submit answer
         $('#user-answer').off('keypress').on('keypress', function (e) {
             if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
-                stopAudio();
+                
                 handleDebounce(handleSubmit);
             }
         });
@@ -1068,7 +1070,6 @@ if (translationsText) {
     }
 
     $('#next-question').off('click').on('click', function () {
-        stopAudio(); // Stop audio when moving to the next question
         handleDebounce(() => {
             loadQuestion(user, currentLesson);
             $('#explain-sentence-btn').hide(); // Hide the button for the next question
