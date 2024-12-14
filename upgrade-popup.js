@@ -174,7 +174,6 @@ async function verifySubscriptionPopup(subscriptionId) {
 }
 
 // Function to handle plan selection from popup
-// This mirrors the logic from upgrade.js but triggers the FastSpring checkout popup.
 function selectPlanFromPopup(planType) {
     // Make sure fastspring.builder is available
     if (typeof fastspring === 'undefined' || typeof fastspring.builder === 'undefined') {
@@ -183,19 +182,15 @@ function selectPlanFromPopup(planType) {
         return;
     }
 
-    // This function triggers the FastSpring checkout
-    // We'll rely on fastspring.builder to show the popup:
+    // Add the selected product with quantity
     if (planType === 'monthly') {
-        // Add monthly-pro item and checkout
-        fastspring.builder.checkout({
-            products: [{ path: 'monthly-pro' }]
-        });
+        fastspring.builder.add({ path: 'monthly-pro', quantity: null });
     } else if (planType === 'yearly') {
-        // Add yearly-pro item and checkout
-        fastspring.builder.checkout({
-            products: [{ path: 'yearly-pro' }]
-        });
+        fastspring.builder.add({ path: 'yearly-pro', quantity: null });
     }
+
+    // Proceed to checkout
+    fastspring.builder.checkout();
 }
 
 // Function to initiate the upgrade plan (called from course-selection.html)
@@ -254,4 +249,3 @@ window.onFSPopupClosed = onFSPopupClosed;
 
 // Remove automatic recognition on DOMContentLoaded
 // Because course-selection.html will handle calling recognizeUserEmail()
-
