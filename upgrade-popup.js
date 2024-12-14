@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Reset FastSpring Builder
-        fastspring.builder.reset();
+        // fastspring.builder.reset();
 
         // Re-recognize the user to ensure email is updated after reset
         if (userEmailPopup) {
