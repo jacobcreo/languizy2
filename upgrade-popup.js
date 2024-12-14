@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
                   console.log(`FastSpring re-recognized user with email: ${userEmailPopup}`);
               }, 2000);
     }
+}
 
     // Function to verify subscription status from Firestore
     async function verifySubscriptionPopup(subscriptionId) {
