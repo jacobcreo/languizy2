@@ -81,15 +81,16 @@ document.addEventListener('DOMContentLoaded', function () {
             // fastspring.builder.recognize({
             //     email: userEmailPopup
             // });
-              fastspring.builder.push({
-                "reset": true,
-                "paymentContact": {
-                    "email":userEmailPopup
-                },
-                "language":"en"
-    });
-            console.log(`FastSpring re-recognized user with email: ${userEmailPopup}`);
-        }
+              setTimeout(() => {
+                  fastspring.builder.push({
+                    "reset": true,
+                    "paymentContact": {
+                        "email": userEmailPopup
+                    },
+                    "language": "en"
+                  });
+                  console.log(`FastSpring re-recognized user with email: ${userEmailPopup}`);
+              }, 2000);
     }
 
     // Function to verify subscription status from Firestore
