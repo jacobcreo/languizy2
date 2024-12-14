@@ -81,11 +81,13 @@ document.addEventListener('DOMContentLoaded', function () {
             // fastspring.builder.recognize({
             //     email: userEmailPopup
             // });
-            var mySession = {
+              fastspring.builder.push({
+                "reset": true,
                 "paymentContact": {
-                  "email":userEmailPopup
-              }};
-              fastspring.builder.push(mySession);
+                    "email":userEmailPopup
+                },
+                "language":"en"
+    });
             console.log(`FastSpring re-recognized user with email: ${userEmailPopup}`);
         }
     }
