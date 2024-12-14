@@ -182,16 +182,27 @@ function selectPlanFromPopup(planType) {
         return;
     }
 
-    // Add the selected product with quantity
+    // Optional: set the origin to match the page from which you're calling
+    // fastspring.builder.origin('https://languizy.com/course_selection.html');
+
+    // Clear any previously added items just to be safe
+    fastspring.builder.clear();
+
+    // Add the selected product with quantity = 1 (avoid null if it's causing issues)
     if (planType === 'monthly') {
-        fastspring.builder.add({ path: 'monthly-pro', quantity: null });
+        fastspring.builder.add({ path: 'monthly-pro', quantity: 1 });
     } else if (planType === 'yearly') {
-        fastspring.builder.add({ path: 'yearly-pro', quantity: null });
+        fastspring.builder.add({ path: 'yearly-pro', quantity: 1 });
+    } else {
+        console.error('Unknown plan type:', planType);
+        alert('Invalid plan selected. Please try again.');
+        return;
     }
 
-    // Proceed to checkout
+    // Now proceed to checkout
     fastspring.builder.checkout();
 }
+
 
 // Function to initiate the upgrade plan (called from course-selection.html)
 function initiateUpgradePlan(planType) {
