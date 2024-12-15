@@ -59,11 +59,11 @@
           </select>
         </div>
       </div>
-    
-  
+</div>
+<div class="row">
 
-    <!-- Data Boxes Row -->
-    
+      <!-- Data Boxes Row -->
+
       <div class="col-md-4 mb-3">
         <div class="card text-white bg-success h-100">
           <div class="card-body d-flex align-items-center">
@@ -100,7 +100,7 @@
     </div>
 
     <!-- Additional Data Boxes Row -->
-    <div class="row mb-4">
+    <div class="row">
       <div class="col-md-4 mb-3">
         <div class="card text-white bg-primary h-100">
           <div class="card-body d-flex align-items-center">
@@ -124,12 +124,50 @@
         </div>
       </div>
       <div class="col-md-4 mb-3">
+        <div class="card text-white bg-dark h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-clipboard-check fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Total Exercises Done</h5>
+              <p id="totalExercisesDone" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-success h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-check-circle fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Correct Answers</h5>
+              <p id="correctAnswers" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
         <div class="card text-white bg-danger h-100">
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-exclamation-triangle fa-3x me-3"></i>
             <div>
               <h5 class="card-title">Total Wrong Answers</h5>
               <p id="totalWrongAnswers" class="card-text">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card text-white bg-info h-100">
+          <div class="card-body d-flex align-items-center">
+            <i class="fas fa-clock fa-3x me-3"></i>
+            <div>
+              <h5 class="card-title">Time Spent Learning</h5>
+              <p id="timeSpentLearning" class="card-text">Loading...</p>
             </div>
           </div>
         </div>
@@ -149,7 +187,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="row mb-4">
 
       <div class="col-lg-6">
@@ -246,21 +284,21 @@
         </div>
       </div>
     </div>
-    </div>
+  </div>
   </div>
 
 
-    <!-- Firebase and External Libraries -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Firebase and External Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Custom JavaScript -->
-    <script src="firebase-config.js"></script>
-    <script src="auth.js"></script>
-    <script src="stats.js"></script>
+  <!-- Custom JavaScript -->
+  <script src="firebase-config.js"></script>
+  <script src="auth.js"></script>
+  <script src="stats.js"></script>
 </body>
 
 </html>

@@ -45,7 +45,7 @@ function loadUserAvatar(user) {
       if (photoURL) {
         userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
       } else {
-        const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
+        const fallbackLetter = (displayName.charAt(0) || email.charAt(0)).toUpperCase();
         userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
       }
     } else {
@@ -71,13 +71,6 @@ async function loadStats(user) {
       'dailyScoreBreakdownChart', 'vocabGrammarAccuracyChart', 'timeSpentChart', 'timeSpentDistributionChart'
     ];
     chartIds.forEach(id => setLoadingState(id, `${id}Loading`));
-
-    // For heatmap as well:
-    // We'll treat heatmap similarly (though it didn't have a loading by default, we will set a loading check):
-    // If you wish to treat heatmap as a chart for this purpose, just note no chart code needed:
-    // We'll just show locked message if needed. We'll create a pseudo loading div id if needed.
-    // The code currently does not show a separate loading for heatmap. Let's just skip loading for heatmap.
-    // We'll just hide it if totalDrills<10.
 
     // Fetch user document and courses in parallel
     const [userDoc, coursesSnapshot] = await Promise.all([
@@ -121,7 +114,7 @@ function displayDayJoined(dayJoined) {
 }
 
 async function displayCharts(userDocRef, selectedCourse, statsData) {
-  const { dailyStats, datesSet, vocabCorrect, vocabWrong, grammarCorrect, grammarWrong, totalDrills } = statsData;
+  const { dailyStats, datesSet, vocabCorrect, vocabWrong, grammarCorrect, grammarWrong, totalDrills, totalTimeSpent } = statsData;
 
   // If totalDrills < 10, display locked messages for all charts and return
   if (totalDrills < 10) {
@@ -138,8 +131,6 @@ async function displayCharts(userDocRef, selectedCourse, statsData) {
     displayLockedMessage('vocabGrammarAccuracyChart', 'vocabGrammarAccuracyLoading', 'Vocabulary and Grammar Accuracy');
     
     // Also replace the heatmapContainer
-    // The heatmap isn't a chart, but for consistency let's also lock it:
-    // We'll just clear it and show a message.
     const heatmapContainer = document.getElementById('heatmapContainer');
     heatmapContainer.innerHTML = `
       <div class="locked-message">
@@ -159,7 +150,20 @@ async function displayCharts(userDocRef, selectedCourse, statsData) {
   // Fill in missing dates in dailyStats with zero values
   const filledDailyStats = dateRange.map(date => {
     const existingStat = sortedDailyStats.find(stat => stat.date === date);
-    return existingStat || { date, correctAnswers: 0, wrongAnswers: 0, score: 0, totalDrills: 0, vocabularyScore: 0, grammarScore: 0 };
+    return existingStat || { 
+      date, 
+      correctAnswers: 0, 
+      wrongAnswers: 0, 
+      score: 0, 
+      totalDrills: 0, 
+      vocabularyScore: 0, 
+      grammarScore: 0,
+      vocabulary_DailyTime: 0,
+      grammar_DailyTime: 0,
+      stories_DailyTime: 0,
+      chat_DailyTime: 0,
+      basics_DailyTime: 0 
+    };
   });
 
   const answersOverTimeData = filledDailyStats.map(stat => ({
@@ -190,6 +194,7 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
   let totalWrongAnswers = 0;
   let totalScore = 0;
   let totalDrills = 0;
+  let totalTimeSpent = 0;
   let dailyStats = [];
   let datesSet = new Set();
   let vocabCorrect = 0, vocabWrong = 0, grammarCorrect = 0, grammarWrong = 0, nounsCorrect = 0, nounsWrong = 0;
@@ -229,7 +234,7 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
         const date = new Date(dateId);
         if (!earliestDate || date < earliestDate) earliestDate = date;
 
-        dailyStats.push({
+        const stat = {
           date: dateId,
           correctAnswers: data.correctAnswers || 0,
           wrongAnswers: data.wrongAnswers || 0,
@@ -246,8 +251,15 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
           vocabularyWrong: data.vocabulary_wrongAnswers || 0,
           grammarTotalDrills: data.grammar_totalDrills || 0,
           grammarCorrect: data.grammar_correctAnswers || 0,
-          grammarWrong: data.grammar_wrongAnswers || 0
-        });
+          grammarWrong: data.grammar_wrongAnswers || 0,
+          vocabulary_DailyTime: data.vocabulary_DailyTime || 0,
+          grammar_DailyTime: data.grammar_DailyTime || 0,
+          stories_DailyTime: data.timeSpentStories || 0,
+          chat_DailyTime: data.chatTimeSpent || 0,
+          basics_DailyTime: data.nouns_DailyTime || 0
+        };
+
+        dailyStats.push(stat);
 
         vocabCorrect += data.vocabulary_correctAnswers || 0;
         vocabWrong += data.vocabulary_wrongAnswers || 0;
@@ -257,6 +269,13 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
         nounsWrong += data.nouns_wrongAnswers || 0;
 
         datesSet.add(dateId);
+
+        // Accumulate total time spent
+        totalTimeSpent += stat.vocabulary_DailyTime;
+        totalTimeSpent += stat.grammar_DailyTime;
+        totalTimeSpent += stat.stories_DailyTime;
+        totalTimeSpent += stat.chat_DailyTime;
+        totalTimeSpent += stat.basics_DailyTime;
       }
     });
   });
@@ -274,12 +293,13 @@ function processStatsData(statsSnapshots, selectedTimeInterval) {
     grammarCorrect,
     grammarWrong,
     nounsCorrect,
-    nounsWrong
+    nounsWrong,
+    totalTimeSpent
   };
 }
 
 function updateUIWithStats(statsData) {
-  const { earliestDate, totalCorrectAnswers, totalWrongAnswers, totalScore, dailyStats, datesSet } = statsData;
+  const { earliestDate, totalCorrectAnswers, totalWrongAnswers, totalScore, dailyStats, datesSet, totalTimeSpent } = statsData;
 
   const streakInfo = calculateStreaks(Array.from(datesSet));
   const currentStreak = streakInfo.currentStreak;
@@ -293,6 +313,25 @@ function updateUIWithStats(statsData) {
   document.getElementById('totalDaysPracticed').innerText = `Total Days Practiced: ${totalDaysPracticed}`;
   document.getElementById('averageScore').innerText = `Average Score: ${averageScore}`;
   document.getElementById('totalWrongAnswers').innerText = `Total Wrong Answers: ${totalWrongAnswers}`;
+
+  // NEW: Update the new data boxes
+  document.getElementById('totalExercisesDone').innerText = `Total Exercises Done: ${statsData.totalDrills}`;
+  document.getElementById('correctAnswers').innerText = `Correct Answers: ${totalCorrectAnswers}`;
+  document.getElementById('timeSpentLearning').innerText = `Time Spent Learning: ${formatTime(totalTimeSpent)}`;
+}
+
+/**
+ * Helper Function to Format Time from Seconds to "X hr Y min Z sec"
+ */
+function formatTime(seconds) {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+  let formatted = '';
+  if (hrs > 0) formatted += `${hrs} hr `;
+  if (mins > 0) formatted += `${mins} min `;
+  formatted += `${secs} sec`;
+  return formatted;
 }
 
 /**
