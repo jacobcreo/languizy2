@@ -33,7 +33,6 @@ body {
     display: inline-block;
 }
 
-
 .selected-coach-card {
     background-color: #ffffff;
     border-radius: 15px;
@@ -87,14 +86,14 @@ body {
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    transition: transform 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     height: 100%;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .coach-card img {
@@ -116,10 +115,35 @@ body {
 
 .coach-card:hover {
     transform: translateY(-10px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
-.selected-coach-highlight {
+.coach-card.locked {
+    opacity: 0.6;
+    position: relative;
+    cursor: not-allowed;
+    pointer-events: none; /* Prevents any interaction */
+}
+
+.coach-card.locked .card-img-container {
+    position: relative;
+}
+
+.coach-card.locked .lock-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.coach-card.selected {
     border: 3px solid #007bff;
+}
+
+.coach-card.selected .card-body {
+    font-weight: bold;
 }
 
 .badge {
@@ -127,4 +151,37 @@ body {
     padding: 0.5em 0.75em;
     cursor: pointer;
     margin-right: 15px;
-  }
+}
+
+.selected-coach-card .btn {
+    margin-top: 10px;
+}
+
+.selected-coach-card .btn + .btn {
+    margin-left: 10px;
+}
+
+/* Additional Styles for Upgrade Modal Consistency */
+.modal-header.bg-warning {
+    background-color: #ffc107 !important;
+}
+
+.modal-footer .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}

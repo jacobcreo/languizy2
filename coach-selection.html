@@ -12,14 +12,14 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="coach-selection.css">
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  gtag('config', 'G-K8GMWBXC5J');
-</script>
+        gtag('config', 'G-K8GMWBXC5J');
+    </script>
 </head>
 
 <body>
@@ -27,7 +27,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <a class="navbar-brand" href="/course_selection.html">
-                                <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
+                <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40"
+                    class="d-inline-block align-text-top" title="Languizy, Language Learning for Real">
             </a>
             <!-- Wrap the logout button and avatar inside a flex container -->
             <div class="d-flex align-items-center">
@@ -55,7 +56,10 @@
                 <div class="ms-4">
                     <h4 id="selectedCoachName">Loading...</h4>
                     <p id="selectedCoachDescription" class="text-muted">Loading description...</p>
-                    <button class="btn btn-primary" disabled>Your Current Coach</button>
+                    <div>
+                        <button class="btn btn-primary" disabled>Your Current Coach</button>
+                        <button class="btn btn-secondary ms-2" onclick="window.location.href='/course_selection.html'">Return to Dashboard</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,6 +67,31 @@
         <!-- Coach Selection Grid -->
         <div class="coach-grid-container" id="coachGrid">
             <!-- Coaches will be populated here dynamically -->
+        </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="upgradeModalLabel">Unlock More Coaches and Features!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="lead">Upgrade to our Pro Plan to gain access to more coaches, unlimited daily exercises, detailed stats, longer AI conversations, and more!</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Access to All Coaches</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Unlimited Daily Exercises</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Detailed Practice Stats</li>
+                        <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> Longer AI Conversations</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continue Free</button>
+                    <button type="button" class="btn btn-primary" onclick="redirectToUpgrade()">Upgrade Now</button>
+                </div>
+            </div>
         </div>
     </div>
 
