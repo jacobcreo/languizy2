@@ -174,6 +174,8 @@ function updateFlagIcons(currentCourse) {
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
+        fetchOrAssignCoach(user).then(() => {
+
         fetchCurrentCourse(user).then((currentCourse) => {
             loadUserAvatar(user);
             if (!currentCourse) {
@@ -197,6 +199,7 @@ firebase.auth().onAuthStateChanged(function (user) {
             console.error('Error fetching current course:', error);
             window.location.href = 'course_selection.html';
         });
+    });
     } else {
         window.location.href = '/';
     }
@@ -209,7 +212,7 @@ async function populateSubLevelBadge(userDoc) {
     if (subLevel === 'Free') {
       subLevelBadge.textContent = 'FREE';
       subLevelBadge.className = 'badge bg-secondary';
-      debugger;
+      
       subLevelBadge.onclick = function() {
         window.location.href = '/course_selection.html?upgrade=true';
       };
@@ -412,7 +415,7 @@ function loadNoun(user, currentCourse) {
     const randVal = Math.random();
     let attempts = 0;
     let lastValue = nounDisplayMode;
-    debugger;
+    
     if (maxOrder < 7) {
         nounDisplayMode = "regular";
     } else {
@@ -426,7 +429,7 @@ function loadNoun(user, currentCourse) {
             } else if (randVal < 0.3) {
                 nounDisplayMode = "matching-images-mode"; // our new mode
                 $('.matching-image').attr('src', '');
-            } else if (randVal < 0.55) {
+            } else if (randVal < 0.5) {
                 nounDisplayMode = "four-images";
                 $('#noun-img1').attr('src', '');
                 $('#noun-img2').attr('src', '');
@@ -693,7 +696,7 @@ function hideLoadingProgress() {
 
 // Common function to handle after answer submission
 function afterAnswerSubmission(isCorrect, type = "translation") {
-    debugger;
+    
     $('#submit-answer').hide();
     $('#next-question').show();
 
@@ -817,8 +820,11 @@ function displayFourImagesNew(noun) {
                 imageElements.forEach(selector => {
                     $(selector).off('load');
                 });
+                
                 hideLoadingProgress(); // Hide progress bar when the noun loads
+                showEncouragementMessage();
                 console.log('images.off(load) called: ' + new Date().getTime());
+                
                 $('.the4images').css("visibility", "visible"); // Show the container after all images are loaded
                 console.log('the4images container shown: ' + new Date().getTime());
                 imagesLoaded = 0;
@@ -860,16 +866,45 @@ function displayFourImagesNew(noun) {
     }
 }
 
-function resetAllExerciseUI() {
-    
+function hideall() {
     $('#matching-images-container').hide();
     $('#matching-container').hide();
     $('#four-images-container').hide();
     $("#question-area").hide();
     $("#multiple-choice-options").hide();
-    $("#special-characters").hide();
-    $('#replay-audio').prop('disabled', true);
     $('#text-input-area').hide();
+    $('#text-input-area').css('visibility', 'visible');
+    $('#matching-images-container').css('visibility', 'visible');
+    $('#matching-container').css('visibility', 'visible');
+    $('#four-images-container').css('visibility', 'visible');
+    $("#question-area").css('visibility', 'visible');
+    $("#multiple-choice-options").css('visibility', 'visible');
+    
+
+}
+
+function resetAllExerciseUI() {
+    // $('#matching-images-container').hide();
+    $('#matching-images-container').css('visibility', 'hidden');
+    // $('#matching-container').hide();
+    $('#matching-container').css('visibility', 'hidden');
+    // $('#four-images-container').hide();
+    $('#four-images-container').css('visibility', 'hidden');
+    $('#four-images-container').find('*').each(function() {
+        if (this.style.visibility === 'visible') {
+            $(this).css('visibility', 'hidden');
+        }
+    });
+    // $("#question-area").hide();
+    $("#question-area").css('visibility', 'hidden');
+    // $("#multiple-choice-options").hide();
+    $("#multiple-choice-options").css('visibility', 'hidden');
+    // $("#special-characters").hide();
+    $("#special-characters").css('visibility', 'hidden');
+    $('#replay-audio').prop('disabled', true);
+    // $('#text-input-area').hide();
+    $('#text-input-area').css('visibility', 'hidden');
+    $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden');
     $(document).off('keydown.multipleChoice');
     $(document).off('keydown.matching');
     $(document).off('keydown.matching-images');
@@ -926,12 +961,15 @@ function displayNoun(noun, nounId, currentCourse) {
         const pimg = new Image();
         pimg.src = imageUrl;
         pimg.onload = () => {
+            hideall();
+            $('#question-area').show();
             $('#four-images-container').show();
+            // $('#question-area').show();
         };
 
         $('#noun-image').hide();
         $('#noun-four-images-text').text(noun.noun);
-
+        // hideall();
         $('#question-area').show();
         $('#toggle-mode').hide();
 
@@ -939,7 +977,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     } else if (nounDisplayMode === "matching-mode") {
 
-
+        hideall();
         $('#matching-container').show();
 
         $('#toggle-mode').hide();
@@ -974,6 +1012,8 @@ function displayNoun(noun, nounId, currentCourse) {
         function handleNounImageLoad() {
             console.log('Noun image loaded');
             hideLoadingProgress();
+            showEncouragementMessage();
+            hideall();
             $('#question-area').show();
             $('#question-area').css('visibility', 'visible');
 
@@ -1007,6 +1047,7 @@ function displayNoun(noun, nounId, currentCourse) {
                 $('#special-characters').hide();
                 $('#text-input-area').hide();
                 $('#submit-answer').hide();
+                
                 $('#multiple-choice-options').show();
                 displayMultipleChoiceOptions(noun);
                 // Add keydown event for keys 1-4
@@ -1035,7 +1076,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     }
 
-    $('h3').css('visibility', 'visible');
+    // $('h3').css('visibility', 'visible');
 
 
 
@@ -1241,6 +1282,7 @@ function displayNoun(noun, nounId, currentCourse) {
                         $('.matching-image').css('visibility', 'visible').removeClass('matched');
                         $('.matching-btn').removeClass('matched selected');
                         $('.matching-btn').css('visibility', 'visible');
+                        hideall();
                         $('#matching-images-container').show();
                         console.log('Matching images container shown: ' + new Date().getTime());
                         imagesLoaded = 0;
@@ -1404,6 +1446,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     function displayMatchingColumns(targetWords, originWords) {
         hideLoadingProgress(); // Hide progress bar when the noun loads
+        showEncouragementMessage();
         const leftCol = $('#matching-left-column');
         const rightCol = $('#matching-right-column');
         leftCol.empty();
@@ -1678,7 +1721,7 @@ function shuffleArray(array) {
  * @param {string} nounWord - The noun word to be pronounced.
  */
 function playNounAudio(nounId, nounWord) {
-debugger;
+
     var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${nounId}.mp3`;
 
     const targetLanguage = window.currentCourse.split('-')[1];
@@ -1862,6 +1905,8 @@ function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
                         updateStats(userStatsRef, today, points, false, timeTaken); // Pass timeTaken
                     }
 
+                    updateCoachFeedback(streakCorrect, streakWrong);
+
                     // Update `lastAnswered` to the current time
                     data.lastAnswered = firebase.firestore.Timestamp.fromDate(now);
                     data.initialAppearance = false;
@@ -1913,40 +1958,47 @@ function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
 
 // Function to update the coach message with a random encouragement statement
 function showEncouragementMessage() {
-    const randomIndex = Math.floor(Math.random() * encouragementStatements.length);
-    const message = encouragementStatements[randomIndex];
-
-    // You can implement coach feedback display here if needed
+    const randomIndex = Math.floor(Math.random() * window.coachData.encouragementMessages.length);
+    const message = window.coachData.encouragementMessages[randomIndex];
+  
+    $('#coach-message').text(message);
+    $('#coach-container').show();
 }
 
-// Function to update coach feedback
+
 function updateCoachFeedback(correctStreak, incorrectStreak) {
     let coachMessage = '';
-
+  
     if (correctStreak >= 9) {
-        coachMessage = "Amazing! You're on fire!";
+      coachMessage = getRandomMessage(window.coachData.tonsOfCorrectsInARowMessages);
     } else if (correctStreak == 7) {
-        coachMessage = "Fantastic! Keep up the great work!";
+      coachMessage = getRandomMessage(window.coachData.sevenCorrectMessages);
     } else if (correctStreak == 5) {
-        coachMessage = "Great job! You're halfway there!";
+      coachMessage = getRandomMessage(window.coachData.fiveCorrectMessages);
     } else if (correctStreak == 3) {
-        coachMessage = "Good going! Keep it up!";
+      coachMessage = getRandomMessage(window.coachData.threeCorrectMessages);
     } else if (correctStreak > 0) {
-        coachMessage = "Correct!";
+      coachMessage = getRandomMessage(window.coachData.correctMessages);
     } else if (incorrectStreak >= 9) {
-        coachMessage = "Don't give up! Take a deep breath.";
+      coachMessage = getRandomMessage(window.coachData.tonsOfMistakesInARowMessages);
     } else if (incorrectStreak == 7) {
-        coachMessage = "Keep trying! You'll get it!";
+      coachMessage = getRandomMessage(window.coachData.sevenMistakesMessages);
     } else if (incorrectStreak == 5) {
-        coachMessage = "Stay focused! You can do it!";
+      coachMessage = getRandomMessage(window.coachData.fiveMistakesMessages);
     } else if (incorrectStreak == 3) {
-        coachMessage = "It's okay! Let's try another.";
+      coachMessage = getRandomMessage(window.coachData.threeMistakesMessages);
     } else {
-        coachMessage = "Incorrect. Let's keep practicing!";
+      coachMessage = getRandomMessage(window.coachData.mistakeMessages);
     }
-
-    // Display coach feedback if needed
-}
+  
+    $('#coach-message').text(coachMessage);
+    $('#coach-container').show();
+  }
+  
+  function getRandomMessage(messagesArray) {
+    return messagesArray[Math.floor(Math.random() * messagesArray.length)];
+  }
+  
 
 // Function to update the visual stats (correct/wrong counts and last 5 answers)
 function updateVisualStats(isCorrect) {
@@ -2382,3 +2434,59 @@ function playFeedbackSound(isCorrect) {
         });
 
 }
+
+async function fetchOrAssignCoach(user) {
+    const userRef = db.collection('users').doc(user.uid);
+    try {
+      const userDoc = await userRef.get();
+      let coachId = userDoc.exists && userDoc.data().coach;
+      if (!coachId) {
+        coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
+        await userRef.update({ coach: coachId });
+      }
+      const coachData = await fetchCoachData(coachId);
+      window.coachData = coachData;
+      setCoachImage(coachData.image);
+    } catch (error) {
+      console.error('Error fetching or assigning coach:', error);
+    }
+  }
+  
+  async function fetchCoachData(coachId) {
+    try {
+      const coachDoc = await db.collection('coaches').doc(coachId).get();
+      if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
+  
+      const coachData = coachDoc.data();
+  
+      function getRandomMessages(array, count = 10) {
+        return array.sort(() => 0.5 - Math.random()).slice(0, count);
+      }
+  
+      return {
+        coachName: coachData.coachName,
+        image: coachData.image,
+        correctMessages: getRandomMessages(coachData.correctMessages),
+        encouragementMessages: getRandomMessages(coachData.encouragementMessages),
+        fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
+        fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
+        loadingMessages: getRandomMessages(coachData.loadingMessages),
+        mistakeMessages: getRandomMessages(coachData.mistakeMessages),
+        sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
+        sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
+        threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
+        threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
+        tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
+        tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
+      };
+    } catch (error) {
+      console.error('Error fetching coach data:', error);
+    }
+  }
+  
+  function setCoachImage(imageFilename) {
+    const imagePath = `assets/images/${imageFilename}`;
+    $('#coachImage').attr('src', imagePath);
+    $('#coachImage').removeClass('invisible');
+  }
+  

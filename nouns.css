@@ -551,3 +551,21 @@
     cursor: pointer;
     margin-right: 15px;
 }
+
+.coach-image {
+    flex-shrink: 0;
+    margin-right: 15px;
+    max-width: 100px;
+}
+.speech-bubble {
+    position: relative;
+    background-color: #f1f1f1;
+    border-radius: 12px;
+    padding: 10px 15px;
+    max-width: 60%;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+.bubble-content {
+    font-size: 1rem;
+    color: #333;
+}

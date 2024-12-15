@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  
+
   <meta charset="UTF-8">
   <title>Vocabulary - Language Learning App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,14 +17,14 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="main.css">
   <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-  gtag('config', 'G-K8GMWBXC5J');
-</script>
+    gtag('config', 'G-K8GMWBXC5J');
+  </script>
 </head>
 
 <body>
@@ -32,8 +32,10 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary d-none d-lg-flex">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <a class="navbar-brand" href="/course_selection.html">
-                <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40" class="d-inline-block align-text-top" alt="Languizy Language Learning Logo" title="Languizy, Language Learning for Real">
-    </a>
+        <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40"
+          class="d-inline-block align-text-top" alt="Languizy Language Learning Logo"
+          title="Languizy, Language Learning for Real">
+      </a>
       <!-- Wrap the logout button and avatar inside a flex container -->
       <div class="d-flex align-items-center d-none d-lg-flex">
         <div id="subLevelBadge" class="badge bg-secondary me-3"></div>
@@ -45,7 +47,7 @@
 
   <!-- Stats Bar -->
 
-  <div  class="container-fluid m-0 p-0">
+  <div class="container-fluid m-0 p-0">
     <div id="stats-row" class="row align-items-center justify-content-between stats-bar p-2">
       <!-- Course Flags -->
       <div class="m80 col-6 col-lg-3 text-start d-flex align-items-center justify-content-start">
@@ -54,19 +56,20 @@
           <img src="assets/icons/de-flag.png" alt="German Flag" width="32"> -->
         </div>
       </div>
-  
+
       <!-- Score and Correct/Wrong Count -->
       <div class="tp col-6 d-lg-block col-lg-5 text-center" style="flex-grow: 1;">
         <div class="close d-none d-lg-inline" style="float:left" onClick="backToCourseSelection();">
-          <i class="fa-regular fa-circle-xmark fa-2x pt-1"></i>        </div>
+          <i class="fa-regular fa-circle-xmark fa-2x pt-1"></i>
+        </div>
         <div class="d-flex justify-content-center align-items-center pt-1">
           <span id="profBox" class="lessonType-box d-inline me-3">
             <i class="fa fa-list text-primary"></i>
             <span id="proficiencyLevel">0</span>
             <span id="profTooltip" class="tooltiptext"></span>
-            </span>
+          </span>
           <span class="score-box d-inline me-3">
-            <i class="fas fa-star text-warning"></i> 
+            <i class="fas fa-star text-warning"></i>
             <span id="score">0</span>
           </span>
           <span class="correct-box me-2">
@@ -80,11 +83,13 @@
 
       <div class="tp col-3 d-lg-none text-center" style="width: 80px;">
         <div class="close d-lg-none" style="float:right" onClick="backToCourseSelection();">
-          <i class="fa-regular fa-circle-xmark fa-2x pt-2"></i>        </div>
+          <i class="fa-regular fa-circle-xmark fa-2x pt-2"></i>
+        </div>
       </div>
-  
+
       <!-- Last 5 Answers -->
-      <div id="lfa-container" class="col-12 col-lg-4 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
+      <div id="lfa-container"
+        class="col-12 col-lg-4 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
         <div id="last-five-answers" class="d-flex align-items-center p-0">
           <div class="answer-box gray"></div>
           <div class="answer-box gray"></div>
@@ -100,7 +105,7 @@
   <div class="container text-center mt-2 mt-lg-5">
 
 
-    
+
 
 
     <!-- Progress Bar -->
@@ -117,7 +122,7 @@
       <!-- Feedback Area -->
       <p id="feedback" class="mt-3" style="visibility: hidden">correct </p>
 
-      
+
 
 
       <!-- Redesigned Question Stats Section -->
@@ -149,35 +154,35 @@
     </div>
 
 
-<!-- Multiple Choice Options (hidden initially) -->
-<div id="multiple-choice-options" class="mt-3" style="display: none;">
-    <div class="row">
+    <!-- Multiple Choice Options (hidden initially) -->
+    <div id="multiple-choice-options" class="mt-3" style="display: none;">
+      <div class="row">
         <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="1"></button>
+          <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="1"></button>
         </div>
         <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="2"></button>
+          <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="2"></button>
         </div>
         <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="3"></button>
+          <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="3"></button>
         </div>
         <div class="col-6">
-            <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="4"></button>
+          <button class="option-btn btn btn-outline-primary w-100 mb-2" data-index="4"></button>
         </div>
+      </div>
     </div>
-</div>
 
 
     <div id="coach-container" class="d-flex align-items-start mt-lg-3 mb-3">
       <div class="coach-image">
-          <img id="coachImage" class="img-fluid rounded-start invisible" alt="Coach">
+        <img id="coachImage" class="img-fluid rounded-start invisible" alt="Coach">
       </div>
       <div class="speech-bubble">
-          <div class="bubble-content">
-              <p id="coach-message" class="card-text"></p>
-          </div>
+        <div class="bubble-content">
+          <p id="coach-message" class="card-text"></p>
+        </div>
       </div>
-  </div>
+    </div>
 
     <!-- Special Characters for Input -->
     <div id="special-characters" class="special-characters mb-3" style="display: none;">
@@ -206,136 +211,151 @@
           <button id="report-button" class="btn btn-danger w-100">Report <i class="fas fa-flag"></i></button>
         </div>
 
-        
+
       </div>
     </div>
 
   </div>
-  
-  
 
- <!-- Explanation Modal -->
-<div class="modal fade" id="explanationModal" tabindex="-1" aria-labelledby="explanationModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title" id="explanationModalLabel"></h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="explanation-content">
-        <!-- Explanation will be populated here -->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-</div>
- 
-<!-- Report Modal -->
-<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="reportModalLabel">Report Issue</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="reportForm">
-          <input type="hidden" id="report-question-id">
-          <div class="mb-3">
-            <label for="report-comment" class="form-label">Describe your issue with the question:</label>
-            <textarea class="form-control" id="report-comment" rows="3"></textarea>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="submit-report">Submit</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<!-- Help Modal -->
-<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-info text-white">
-        <h5 class="modal-title" id="helpModalLabel">Help & Instructions</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <h6>Welcome to the Vocabulary Practice Screen!</h6>
-        <p>Here, you can enhance your language skills by practicing vocabulary in a fun and interactive way. Below are some tips and instructions to help you make the most of this experience.</p>
-
-        <h6>Navigation</h6>
-        <ul>
-          <li><strong>Logout:</strong> Click the "Logout" button in the top-right corner to safely exit your session.</li>
-          <li><strong>Course Selection:</strong> Use the back arrow in the stats bar to return to the course selection screen.</li>
-        </ul>
-
-        <h6>Understanding the Interface</h6>
-        <ul>
-          <li><strong>Question Area:</strong> This is where your current question is displayed. Fill in the blank with the correct word.</li>
-          <li><strong>Multiple Choice Mode:</strong> If enabled, select the correct answer from the given options.</li>
-          <li><strong>Text Input Mode:</strong> Type your answer in the input field provided.</li>
-        </ul>
-
-        <h6>Buttons and Features</h6>
-        <ul>
-          <li><strong>Submit Answer:</strong> Click this button to submit your answer for evaluation.</li>
-          <li><strong>Next Question:</strong> Move to the next question after submitting your answer.</li>
-          <li><strong>Toggle Mode:</strong> Switch between multiple-choice and text input modes to adjust the difficulty level.</li>
-          <li><strong>Replay Audio:</strong> Listen to the pronunciation of the sentence again.</li>
-          <li><strong>Explain Sentence:</strong> Get a detailed explanation of the sentence and the missing word.</li>
-          <li><strong>Special Characters:</strong> Use these buttons to insert special characters into your answer.</li>
-          <li><strong>Report:</strong> If you encounter an issue with a question, use this button to report it.</li>
-        </ul>
-
-        <h6>Stats and Feedback</h6>
-        <ul>
-          <li><strong>Score:</strong> Your current score is displayed in the stats bar. Aim to improve it with each correct answer!</li>
-          <li><strong>Correct/Wrong Count:</strong> Keep track of your correct and incorrect answers.</li>
-          <li><strong>Last 5 Answers:</strong> Visual feedback on your recent performance is shown with colored boxes.</li>
-        </ul>
-
-        <h6>Tips for Success</h6>
-        <ul>
-          <li>Take your time to understand each question and use the "Explain Sentence" feature for additional insights.</li>
-          <li>Switch between modes to challenge yourself and enhance your learning experience.</li>
-          <li>Use the "Replay Audio" feature to improve your pronunciation and listening skills.</li>
-        </ul>
-
-        <p>We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel free to reach out to our support team. Happy learning!</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Add this modal to your HTML -->
-<div class="modal fade" id="drillsLimitModal" tabindex="-1" aria-labelledby="drillsLimitModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <!-- Explanation Modal -->
+  <div class="modal fade" id="explanationModal" tabindex="-1" aria-labelledby="explanationModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
-          <div class="modal-header bg-danger text-white">
-              <h5 class="modal-title" id="drillsLimitModalLabel">Drills Limit Reached</h5>
-          </div>
-          <div class="modal-body">
-              <p>You have reached your daily limit of 50 drills for the Free subscription. Please upgrade to continue practicing.</p>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'">Return to Course Selection</button>
-          </div>
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="explanationModalLabel"></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="explanation-content">
+          <!-- Explanation will be populated here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
+    </div>
   </div>
-</div>
 
-<!-- Scripts -->
+  </div>
+
+  <!-- Report Modal -->
+  <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reportModalLabel">Report Issue</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="reportForm">
+            <input type="hidden" id="report-question-id">
+            <div class="mb-3">
+              <label for="report-comment" class="form-label">Describe your issue with the question:</label>
+              <textarea class="form-control" id="report-comment" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="submit-report">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title" id="helpModalLabel">Help & Instructions</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Welcome to the Vocabulary Practice Screen!</h6>
+          <p>Here, you can enhance your language skills by practicing vocabulary in a fun and interactive way. Below are
+            some tips and instructions to help you make the most of this experience.</p>
+
+          <h6>Navigation</h6>
+          <ul>
+            <li><strong>Logout:</strong> Click the "Logout" button in the top-right corner to safely exit your session.
+            </li>
+            <li><strong>Course Selection:</strong> Use the back arrow in the stats bar to return to the course selection
+              screen.</li>
+          </ul>
+
+          <h6>Understanding the Interface</h6>
+          <ul>
+            <li><strong>Question Area:</strong> This is where your current question is displayed. Fill in the blank with
+              the correct word.</li>
+            <li><strong>Multiple Choice Mode:</strong> If enabled, select the correct answer from the given options.
+            </li>
+            <li><strong>Text Input Mode:</strong> Type your answer in the input field provided.</li>
+          </ul>
+
+          <h6>Buttons and Features</h6>
+          <ul>
+            <li><strong>Submit Answer:</strong> Click this button to submit your answer for evaluation.</li>
+            <li><strong>Next Question:</strong> Move to the next question after submitting your answer.</li>
+            <li><strong>Toggle Mode:</strong> Switch between multiple-choice and text input modes to adjust the
+              difficulty level.</li>
+            <li><strong>Replay Audio:</strong> Listen to the pronunciation of the sentence again.</li>
+            <li><strong>Explain Sentence:</strong> Get a detailed explanation of the sentence and the missing word.</li>
+            <li><strong>Special Characters:</strong> Use these buttons to insert special characters into your answer.
+            </li>
+            <li><strong>Report:</strong> If you encounter an issue with a question, use this button to report it.</li>
+          </ul>
+
+          <h6>Stats and Feedback</h6>
+          <ul>
+            <li><strong>Score:</strong> Your current score is displayed in the stats bar. Aim to improve it with each
+              correct answer!</li>
+            <li><strong>Correct/Wrong Count:</strong> Keep track of your correct and incorrect answers.</li>
+            <li><strong>Last 5 Answers:</strong> Visual feedback on your recent performance is shown with colored boxes.
+            </li>
+          </ul>
+
+          <h6>Tips for Success</h6>
+          <ul>
+            <li>Take your time to understand each question and use the "Explain Sentence" feature for additional
+              insights.</li>
+            <li>Switch between modes to challenge yourself and enhance your learning experience.</li>
+            <li>Use the "Replay Audio" feature to improve your pronunciation and listening skills.</li>
+          </ul>
+
+          <p>We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel
+            free to reach out to our support team. Happy learning!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add this modal to your HTML -->
+  <div class="modal fade" id="drillsLimitModal" tabindex="-1" aria-labelledby="drillsLimitModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="drillsLimitModalLabel">Drills Limit Reached</h5>
+        </div>
+        <div class="modal-body">
+          <p>You have reached your daily limit of 50 drills for the Free subscription. Please upgrade to continue
+            practicing.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'">Return
+            to Course Selection</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
 
 
   <!-- Scripts -->
