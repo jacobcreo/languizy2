@@ -206,4 +206,9 @@ body {
     }
 }
 
-  
+  .badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+    cursor: pointer;
+    margin-right: 15px;
+  }

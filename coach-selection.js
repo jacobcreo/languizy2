@@ -12,10 +12,27 @@ firebase.auth().onAuthStateChanged((user) => {
     }
 });
 
+async function populateSubLevelBadge(userDoc) {
+    const subLevel = userDoc.data().subLevel;
+    const subLevelBadge = document.getElementById('subLevelBadge');
+    subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+    if (subLevel === 'Free') {
+      subLevelBadge.textContent = 'FREE';
+      subLevelBadge.className = 'badge bg-secondary';
+      subLevelBadge.onclick = function() {
+        window.location.href = '/course_selection.html?upgrade=true';
+      };
+    } else {
+      subLevelBadge.textContent = 'PRO';
+      subLevelBadge.className = 'badge bg-danger';
+      subLevelBadge.onclick = null; // No action on click for PRO
+  }
+  }
 // Fetch or assign the coach for the user
 async function fetchOrAssignCoach(user) {
     const userRef = db.collection('users').doc(user.uid);
     const userDoc = await userRef.get();
+    populateSubLevelBadge(userDoc);
 
     // Check if the user has a coach assigned
     currentCoachId = userDoc.exists && userDoc.data().coach;

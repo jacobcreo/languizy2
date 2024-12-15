@@ -92,9 +92,10 @@ async function loadStory() {
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
   const userRef = db.collection('users').doc(user.uid);
-
+  
   userRef.get().then((doc) => {
       if (doc.exists) {
+          populateSubLevelBadge(doc);
           const userData = doc.data();
           const photoURL = userData.photoURL;
           const displayName = userData.displayName || '';
@@ -380,6 +381,23 @@ document.getElementById('retryTestBtn').onclick = function() {
   startTime = Date.now();  // Restart the timer
   startTest();  // Start the test again
 };
+
+async function populateSubLevelBadge(userDoc) {
+  const subLevel = userDoc.data().subLevel;
+  const subLevelBadge = document.getElementById('subLevelBadge');
+  subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+  if (subLevel === 'Free') {
+    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.className = 'badge bg-secondary';
+    subLevelBadge.onclick = function() {
+      window.location.href = '/course_selection.html?upgrade=true';
+    };
+  } else {
+    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.className = 'badge bg-danger';
+    subLevelBadge.onclick = null; // No action on click for PRO
+}
+}
 
 // Authentication listener to get the user
 firebase.auth().onAuthStateChanged(user => {

@@ -109,3 +109,9 @@ h2 {
 .card-status.text-secondary:hover {
     color: #6c757d;
 }
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+    cursor: pointer;
+    margin-right: 15px;
+  }

@@ -35,6 +35,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
         if (userDoc.exists) {
             const userData = userDoc.data();
             const currentCourse = userData.currentCourse;
+            checkUpgradeParameter(userData);
             populateModalCourses(user); // Populate modal with course options
 
             if (currentCourse) {
@@ -1048,4 +1049,16 @@ function continueFree() {
     const modalElement = document.getElementById('upgradeModal');
     const modalInstance = bootstrap.Modal.getInstance(modalElement);
     modalInstance.hide();
+}
+
+ // Function to check URL parameters and open the upgrade modal if needed
+ function checkUpgradeParameter(userData) {
+    debugger;
+    const urlParams = new URLSearchParams(window.location.search);
+    const upgradeParam = urlParams.get('upgrade');
+    if (userData.subLevel === 'Free') {
+    if (upgradeParam === 'true') {
+        showUpgradeModal();
+    }
+}
 }

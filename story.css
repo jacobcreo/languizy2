@@ -120,3 +120,9 @@ button {
     justify-content: center;
     overflow: visible; /* In case the image is larger */
 }
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+    cursor: pointer;
+    margin-right: 15px;
+}

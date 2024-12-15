@@ -31,18 +31,41 @@ const TOTAL_WORDS = 10000; // Simulated total vocabulary size for Language Famil
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
+    loadUserAvatar(user);
     loadCourses(user);
   } else {
     window.location.href = '/';
   }
 });
 
+async function populateSubLevelBadge(userDoc) {
+  const subLevel = userDoc.data().subLevel;
+  const subLevelBadge = document.getElementById('subLevelBadge');
+  subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+  if (subLevel === 'Free') {
+    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.className = 'badge bg-secondary';
+    subLevelBadge.onclick = function() {
+      window.location.href = '/course_selection.html?upgrade=true';
+    };
+  } else {
+    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.className = 'badge bg-danger';
+    subLevelBadge.onclick = null; // No action on click for PRO
+}
+}
+
+
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
   const userRef = db.collection('users').doc(user.uid);
+  
+  
 
   userRef.get().then((doc) => {
       if (doc.exists) {
+        
+          populateSubLevelBadge(doc);
           const userData = doc.data();
           const photoURL = userData.photoURL;
           const displayName = userData.displayName || '';

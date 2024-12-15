@@ -171,7 +171,7 @@ async function fetchOrAssignCoach(user) {
         // Get user document to find coach ID
         const userDoc = await userRef.get();
         let coachId = userDoc.exists && userDoc.data().coach;
-
+        populateSubLevelBadge(userDoc)
         // If no coach is assigned, set the default coach ID and update the user document
         if (!coachId) {
             coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
@@ -1954,6 +1954,24 @@ function backToSelection(what) {
       alert('Please enter a comment before submitting.');
     }
   });
+
+  async function populateSubLevelBadge(userDoc) {
+    const subLevel = userDoc.data().subLevel;
+    const subLevelBadge = document.getElementById('subLevelBadge');
+    subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+    if (subLevel === 'Free') {
+      subLevelBadge.textContent = 'FREE';
+      subLevelBadge.className = 'badge bg-secondary';
+      debugger;
+      subLevelBadge.onclick = function() {
+        window.location.href = '/course_selection.html?upgrade=true';
+      };
+  } else {
+      subLevelBadge.textContent = 'PRO';
+      subLevelBadge.className = 'badge bg-danger';
+      subLevelBadge.onclick = null; // No action on click for PRO
+  }
+  }
 
   // Function to check drills and show modal if limit is reached
 async function checkDrillsLimit(user, currentCourse) {

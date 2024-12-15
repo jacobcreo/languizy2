@@ -5,6 +5,59 @@ const db = firebase.firestore();
 
 // Variable to store user email after first retrieval
 let userEmail = '';
+async function populateSubLevelBadge(userDoc) {
+    const subLevel = userDoc.data().subLevel;
+    const subLevelBadge = document.getElementById('subLevelBadge');
+    subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+    if (subLevel === 'Free') {
+      subLevelBadge.textContent = 'FREE';
+      subLevelBadge.className = 'badge bg-secondary';
+      subLevelBadge.onclick = function() {
+        window.location.href = '/course_selection.html?upgrade=true';
+      };
+    } else {
+      subLevelBadge.textContent = 'PRO';
+      subLevelBadge.className = 'badge bg-danger';
+      subLevelBadge.onclick = null; // No action on click for PRO
+  }
+  }
+
+// Load User Avatar or Initials into Navbar
+function loadUserAvatar(user) {
+    const userRef = db.collection('users').doc(user.uid);
+    
+    
+  
+    userRef.get().then((doc) => {
+        if (doc.exists) {
+          debugger;
+            populateSubLevelBadge(doc);
+            const userData = doc.data();
+            const photoURL = userData.photoURL;
+            const displayName = userData.displayName || '';
+            const email = userData.email || '';
+            
+            // Get the avatar element in the navbar
+            const userAvatar = document.getElementById('userAvatar');
+  
+            if (photoURL) {
+                // If photoURL exists, display the user's profile image
+                userAvatar.innerHTML = `<img src="${photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="40" height="40">`;
+            } else {
+                // If no photoURL, create a circle with initials
+                const fallbackLetter = displayName.charAt(0).toUpperCase() || email.charAt(0).toUpperCase();
+                userAvatar.innerHTML = `<div class="avatar-circle">${fallbackLetter}</div>`;
+            }
+            userAvatar.onclick = () => {
+              window.location.href = '/settings.html';
+          };
+        } else {
+            console.error('User data does not exist in Firestore');
+        }
+    }).catch((error) => {
+        console.error('Error loading user avatar:', error);
+    });
+  }
 
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
@@ -13,6 +66,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
             // Fetch the user document once
             const userDocRef = db.collection('users').doc(user.uid);
             const userDoc = await userDocRef.get();
+            populateSubLevelBadge(userDoc);
+            loadUserAvatar(user);
 
             if (userDoc.exists) {
                 const userData = userDoc.data();

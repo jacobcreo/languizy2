@@ -306,6 +306,23 @@ async function showTopicModal(course, topic) {
     $('#topicDetailsModal').modal('show');
   }
   
+async function populateSubLevelBadge(userDoc) {
+  const subLevel = userDoc.data().subLevel;
+  const subLevelBadge = document.getElementById('subLevelBadge');
+  subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+  if (subLevel === 'Free') {
+    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.className = 'badge bg-secondary';
+    debugger;
+    subLevelBadge.onclick = function() {
+      window.location.href = '/course_selection.html?upgrade=true';
+    };
+} else {
+    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.className = 'badge bg-danger';
+    subLevelBadge.onclick = null; // No action on click for PRO
+}
+}
 
 // Populate course selector
 async function populateCourseSelector(user) {
@@ -314,7 +331,9 @@ async function populateCourseSelector(user) {
   const currentCourse = userDoc.data().currentCourse.toLowerCase();
   const grammarSnapshot = await userDocRef.collection('grammar').get();
   const courseSelector = document.getElementById('courseSelector');
-  courseSelector.innerHTML = ''; // Clear options
+  populateSubLevelBadge(userDoc);
+  
+
 
   let courseExists = false;
 

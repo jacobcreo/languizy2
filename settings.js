@@ -13,6 +13,24 @@ firebase.auth().onAuthStateChanged((user) => {
     }
 });
 
+async function populateSubLevelBadge(userData) {
+    const subLevel = userData.subLevel;
+    const subLevelBadge = document.getElementById('subLevelBadge');
+    subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+    if (subLevel === 'Free') {
+      subLevelBadge.textContent = 'FREE';
+      subLevelBadge.className = 'badge bg-secondary';
+      debugger;
+      subLevelBadge.onclick = function() {
+        window.location.href = '/course_selection.html?upgrade=true';
+      };
+  } else {
+      subLevelBadge.textContent = 'PRO';
+      subLevelBadge.className = 'badge bg-danger';
+      subLevelBadge.onclick = null; // No action on click for PRO
+  }
+  }
+
 // Load User Profile Data
 function loadUserProfile(user) {
     const userRef = db.collection('users').doc(user.uid);
@@ -23,6 +41,8 @@ function loadUserProfile(user) {
             // Update subscription level
             const subLevel = userData.subLevel || 'Free';
             const currentPlan = userData.currentSubscription?.plan || '';
+
+            populateSubLevelBadge(userData);
 
             document.getElementById('subscriptionLevel').textContent = `Subscription Level: ${subLevel}`;
             if (subLevel === 'Pro') {
@@ -35,11 +55,23 @@ function loadUserProfile(user) {
                 document.getElementById('cancelButton').style.display = 'none';
             }
 
-            // Update profile image
+
+            // Get the avatar element in the navbar
+            const profileImage = document.getElementById('profileImage');
+
             if (userData.photoURL) {
-                document.getElementById('profileImage').src = userData.photoURL;
+                // If photoURL exists, display the user's profile image
+                profileImage.innerHTML = `<img src="${userData.photoURL}" alt="User Avatar" class="img-fluid rounded-circle" width="100" height="100">`;
+            } else {
+                // If no photoURL, create a circle with initials
+                const fallbackLetter = userData.displayName.charAt(0).toUpperCase() || userData.email.charAt(0).toUpperCase();
+                profileImage.innerHTML = `<div class="profileImage-circle">${fallbackLetter}</div>`;
             }
+
+            
             userSubLevel = userData.subLevel || 'Free';
+
+            
 
             // Update user name
             const displayName = userData.displayName;
@@ -62,6 +94,8 @@ function loadUserProfile(user) {
         console.error('Error loading user profile:', error);
     });
 }
+
+
 
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {

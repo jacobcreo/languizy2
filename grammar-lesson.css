@@ -376,6 +376,20 @@ h1, h3 {
     margin-right: 15px; /* Margin for logout button */
 }
 
+ /* Avatar Circle */
+ .avatar-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #6f42c1;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
 /* 7. Option Button Styles */
 .option-btn {
     font-size: 1.2rem;
@@ -680,3 +694,10 @@ h1, h3 {
     visibility: visible;
     opacity: 1;
   }
+
+  .badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+    cursor: pointer;
+    margin-right: 15px;
+  } 

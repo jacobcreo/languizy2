@@ -293,6 +293,24 @@ firebase.auth().onAuthStateChanged(function (user) {
   }
 });
 
+async function populateSubLevelBadge(userDoc) {
+  const subLevel = userDoc.data().subLevel;
+  const subLevelBadge = document.getElementById('subLevelBadge');
+  subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+  if (subLevel === 'Free') {
+    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.className = 'badge bg-secondary';
+    debugger;
+    subLevelBadge.onclick = function() {
+      window.location.href = '/course_selection.html?upgrade=true';
+    };
+} else {
+    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.className = 'badge bg-danger';
+    subLevelBadge.onclick = null; // No action on click for PRO
+}
+}
+
 // New function to update maxFrequency
 function updateMaxFrequency(user, currentCourse) {
   const allTimeStatsRef = db.collection('users').doc(user.uid)
@@ -1789,6 +1807,7 @@ async function checkDrillsLimit(user, currentCourse) {
 
     // Check subscription level
     const userData = await userDocRef.get();
+    populateSubLevelBadge(userData)
     const subLevel = userData.data().subLevel;
 
     if (subLevel === 'Free' && totalDrills >= 50) {

@@ -5,11 +5,30 @@ let maxFrequencySeen = 0;
 
 // Load Stories for the user based on the current course
 
+async function populateSubLevelBadge(userDoc) {
+  const subLevel = userDoc.data().subLevel;
+  const subLevelBadge = document.getElementById('subLevelBadge');
+  subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+  if (subLevel === 'Free') {
+    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.className = 'badge bg-secondary';
+    subLevelBadge.onclick = function() {
+      window.location.href = '/course_selection.html?upgrade=true';
+    };
+  } else {
+    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.className = 'badge bg-danger';
+    subLevelBadge.onclick = null; // No action on click for PRO
+}
+}
+
 async function loadStories(user) {
   try {
     
     const userDocRef = db.collection('users').doc(user.uid);
     const userDoc = await userDocRef.get();
+
+    populateSubLevelBadge(userDoc);
 
     // Fetch current course from the user's document
     var currentCourse = userDoc.data().currentCourse;

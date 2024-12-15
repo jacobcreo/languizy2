@@ -29,6 +29,23 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
+async function populateSubLevelBadge(userDoc) {
+  const subLevel = userDoc.data().subLevel;
+  const subLevelBadge = document.getElementById('subLevelBadge');
+  subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+  if (subLevel === 'Free') {
+    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.className = 'badge bg-secondary';
+    subLevelBadge.onclick = function() {
+      window.location.href = '/course_selection.html?upgrade=true';
+    };
+  } else {
+    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.className = 'badge bg-danger';
+    subLevelBadge.onclick = null; // No action on click for PRO
+}
+}
+
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
   const userRef = db.collection('users').doc(user.uid);
@@ -63,6 +80,7 @@ async function loadStats(user) {
   try {
     const userDocRef = db.collection('users').doc(user.uid);
     const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
+    
 
     // Display loading messages for each chart
     const chartIds = [
@@ -77,6 +95,8 @@ async function loadStats(user) {
       userDocRef.get(),
       userDocRef.collection('courses').get()
     ]);
+
+    populateSubLevelBadge(userDoc);
 
     if (!userDoc.exists) return console.error('No such user!');
     if (coursesSnapshot.empty) return console.warn('No courses found for this user.');
