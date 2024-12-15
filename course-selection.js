@@ -417,6 +417,17 @@ async function loadTodaysDrills(user, currentCourse) {
 function updateDrillsUI(totalDrills, userLevel) {
     const drillsAlert = document.getElementById('drillsAlert');
     const drillsCard = document.getElementById('drillsCard');
+    const subLevelBadge = document.getElementById('subLevelBadge');
+
+    if (userLevel === 'Free') {
+        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.className = 'badge bg-secondary';
+        subLevelBadge.onclick = showUpgradeModal; // Open upgrade modal on click
+    } else {
+        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.className = 'badge bg-danger';
+        subLevelBadge.onclick = null; // No action on click for PRO
+    }
 
     if (userLevel === 'Free') {
         if (totalDrills >= 50) {
