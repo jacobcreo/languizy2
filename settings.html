@@ -39,20 +39,44 @@
 
     <!-- Main Container -->
     <div class="container my-5">
-        <!-- Subscription Status Card -->
         <div class="row mb-4">
             <div class="col-md-12">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <h5 class="card-title" id="subscriptionLevel">Subscription Level: Free</h5>
-                        <p id="subscriptionBenefits">Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!</p>
-                        <button id="upgradeButton" class="btn btn-success" onclick="window.location.href='upgrade.html'">Upgrade to Pro</button>
-                        <button id="cancelButton" class="btn btn-danger" style="display: none;" onclick="cancelSubscription()">Cancel Subscription</button>
+                <div class="card shadow-sm">
+                    <div class="card-body d-flex flex-column flex-md-row align-items-center justify-content-between">
+                        <!-- Subscription Details -->
+                        <div class="mb-3 mb-md-0 text-center text-md-start">
+                            <h5 class="card-title">
+                                <i class="fa-solid fa-circle-notch me-2" id="subscriptionIcon"></i>
+                                <span id="subscriptionLevel">Free</span> Subscription
+                            </h5>
+                            <p id="subscriptionBenefits" class="mb-2">
+                                Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!
+                            </p>
+                            <div id="subscriptionInfo" class="d-none">
+                                <small class="text-muted">
+                                    <strong>Subscribed since:</strong> <span id="startDate">N/A</span><br>
+                                    <strong>Next Billing Date:</strong> <span id="nextBillingDate">N/A</span>
+                                </small>
+                            </div>
+                        </div>
+        
+                        <!-- Action Buttons -->
+                        <div>
+                            <button id="upgradeButton" class="btn btn-success me-2">
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Upgrade to Pro
+                            </button>
+                            <button id="cancelButton" class="btn btn-outline-danger me-2 d-none">
+                                <i class="fa-solid fa-ban me-1"></i> Cancel Subscription
+                            </button>
+                            <button id="manageButton" class="btn btn-primary d-none">
+                                <i class="fa-solid fa-gear me-1"></i> Manage Subscription
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
+        
         <!-- User Profile Section -->
         <div class="row mb-4">
             <div class="col-md-12">

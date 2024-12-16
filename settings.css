@@ -1,21 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 body {
-    background-color: #f0f2f5;
+    background-color: #f8f9fa;
     font-family: 'Roboto', sans-serif;
-    color: #333;
+    color: #343a40;
     margin: 0;
     padding: 0;
 }
 
 /* Navigation Bar */
 .navbar {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     background: linear-gradient(90deg, #007bff, #0056b3);
 }
 
 /* Avatar Circle */
-.avatar-circle {
+.avatar-circle, .profileImage-circle {
     width: 40px;
     height: 40px;
     background-color: #6f42c1;
@@ -28,49 +28,38 @@ body {
     display: inline-block;
 }
 
-
-/* Card Styling */
-.card {
-    border-radius: 15px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: #fff;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
 /* Profile Image */
-#profileImage {
-    max-width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 0px solid #007bff;
-}
-
-/* Avatar and Logout Button */
-#userAvatar img {
+#profileImage img, #userAvatar img {
     border-radius: 50%; 
     object-fit: cover;
     border: 2px solid #fff;
 }
 
-/* Buttons */
-button {
-    font-size: 1rem;
-    font-weight: bold;
-    padding: 10px 20px;
-    border-radius: 25px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+/* Subscription Status Card */
+.card-title {
+    font-weight: 600;
+    color: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#subscriptionIcon {
+    font-size: 1.5rem;
+    color: #28a745; /* Default color for Free */
+}
+
+#subscriptionLevel {
+    font-size: 1.25rem;
+    margin-right: 5px;
+
 }
 
 .btn-success {
     background: linear-gradient(45deg, #28a745, #218838);
     border: none;
     color: #fff;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .btn-success:hover {
@@ -78,33 +67,36 @@ button {
     transform: translateY(-2px);
 }
 
-.btn-danger {
-    background: linear-gradient(45deg, #dc3545, #c82333);
-    border: none;
-    color: #fff;
+.btn-outline-danger {
+    border-color: #dc3545;
+    color: #dc3545;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
 }
 
-.btn-danger:hover {
-    background: linear-gradient(45deg, #c82333, #dc3545);
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    color: #fff;
     transform: translateY(-2px);
 }
 
-.btn-outline-light {
-    border-color: #fff;
-    color: #fff;
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 
-.btn-outline-light:hover {
-    background-color: #fff;
-    color: #007bff;
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+    transform: translateY(-2px);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .row.mb-4 {
-        flex-direction: column;
-        align-items: center;
-    }
+/* Badge Styling */
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+    cursor: pointer;
+    margin-right: 15px;
 }
 
 /* Modal Styling */
@@ -127,6 +119,7 @@ button {
 h5.card-title {
     font-weight: 500;
     color: #007bff;
+    justify-content: left;
 }
 
 p.card-text, p {
@@ -141,24 +134,15 @@ p.card-text, p {
 
 .form-control {
     border-radius: 8px;
-    border: 1px solid #ddd;
-    transition: border-color 0.3s ease;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-control:focus {
-    border-color: #007bff;
+    border-color: #80bdff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-
-.badge {
-    font-size: 0.9rem;
-    padding: 0.5em 0.75em;
-    cursor: pointer;
-    margin-right: 15px;
-  }
-
-  /* Avatar Circle */
 .profileImage-circle {
     width: 100px;
     height: 100px;
@@ -170,4 +154,47 @@ p.card-text, p {
     line-height: 100px;
     border-radius: 50%;
     display: inline-block;
+}
+
+/* Subscription Information Card Styling */
+#subscriptionInfoCard {
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+}
+
+#subscriptionInfoCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+#subscriptionTitle {
+    font-weight: 600;
+    color: #007bff;
+}
+
+#subscriptionDetails {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .row.mb-4 {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card-body.d-flex {
+        flex-direction: column;
+    }
+
+    .card-body.d-flex div:first-child {
+        text-align: center;
+    }
+
+    .card-body.d-flex div:last-child {
+        margin-top: 20px;
+    }
 }

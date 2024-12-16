@@ -2,7 +2,6 @@
 const db = firebase.firestore();
 let userSubLevel = ''; // Declare a variable to hold subLevel
 
-
 // Load User Profile Information
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -18,18 +17,17 @@ async function populateSubLevelBadge(userData) {
     const subLevelBadge = document.getElementById('subLevelBadge');
     subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
     if (subLevel === 'Free') {
-      subLevelBadge.textContent = 'FREE';
-      subLevelBadge.className = 'badge bg-secondary';
-      debugger;
-      subLevelBadge.onclick = function() {
-        window.location.href = '/course_selection.html?upgrade=true';
-      };
-  } else {
-      subLevelBadge.textContent = 'PRO';
-      subLevelBadge.className = 'badge bg-danger';
-      subLevelBadge.onclick = null; // No action on click for PRO
-  }
-  }
+        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.className = 'badge bg-secondary';
+        subLevelBadge.onclick = function() {
+            window.location.href = '/course_selection.html?upgrade=true';
+        };
+    } else {
+        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.className = 'badge bg-danger';
+        subLevelBadge.onclick = null; // No action on click for PRO
+    }
+}
 
 // Load User Profile Data
 function loadUserProfile(user) {
@@ -41,20 +39,15 @@ function loadUserProfile(user) {
             // Update subscription level
             const subLevel = userData.subLevel || 'Free';
             const currentPlan = userData.currentSubscription?.plan || '';
+            const subscriptionStatus = userData.currentSubscription?.status || '';
+            const startDate = userData.currentSubscription?.startDate?.toDate().toLocaleDateString() || '';
+            const nextBillingDate = userData.currentSubscription?.nextBillingDate?.toDate().toLocaleDateString() || '';
+            const canceledDate = userData.currentSubscription?.canceledDate?.toDate().toLocaleDateString() || '';
 
             populateSubLevelBadge(userData);
 
-            document.getElementById('subscriptionLevel').textContent = `Subscription Level: ${subLevel}`;
-            if (subLevel === 'Pro') {
-                document.getElementById('subscriptionBenefits').textContent = `You are subscribed to the ${currentPlan}. Enjoy unlimited access to all features!`;
-                document.getElementById('upgradeButton').style.display = 'none';
-                document.getElementById('cancelButton').style.display = 'inline-block';
-            } else {
-                document.getElementById('subscriptionBenefits').textContent = 'Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!';
-                document.getElementById('upgradeButton').style.display = 'inline-block';
-                document.getElementById('cancelButton').style.display = 'none';
-            }
-
+            // Update Subscription Card
+            updateSubscriptionCard(userData);
 
             // Get the avatar element in the navbar
             const profileImage = document.getElementById('profileImage');
@@ -68,10 +61,7 @@ function loadUserProfile(user) {
                 profileImage.innerHTML = `<div class="profileImage-circle">${fallbackLetter}</div>`;
             }
 
-            
             userSubLevel = userData.subLevel || 'Free';
-
-            
 
             // Update user name
             const displayName = userData.displayName;
@@ -95,7 +85,88 @@ function loadUserProfile(user) {
     });
 }
 
+function updateSubscriptionCard(userData) {
+    const subLevel = userData.subLevel || 'Free';
+    const currentPlan = userData.currentSubscription?.plan || '';
+    const subscriptionStatus = userData.currentSubscription?.status || '';
+    const startDate = userData.currentSubscription?.startDate?.toDate().toLocaleDateString() || '';
+    const nextBillingDate = userData.currentSubscription?.nextBillingDate?.toDate().toLocaleDateString() || '';
+    const canceledDate = userData.currentSubscription?.canceledDate?.toDate().toLocaleDateString() || '';
 
+    const subscriptionLevel = document.getElementById('subscriptionLevel');
+    const subscriptionBenefits = document.getElementById('subscriptionBenefits');
+    const upgradeButton = document.getElementById('upgradeButton');
+    const cancelButton = document.getElementById('cancelButton');
+    const manageButton = document.getElementById('manageButton');
+    const subscriptionInfo = document.getElementById('subscriptionInfo');
+    const subscriptionIcon = document.getElementById('subscriptionIcon');
+
+    if (subLevel === 'Pro') {
+        // Update Subscription Level
+        subscriptionLevel.textContent = 'Pro';
+
+        // Update Benefits
+        subscriptionBenefits.textContent = `You are subscribed to the ${currentPlan}. Enjoy unlimited access to all features!`;
+
+        
+        // Show Cancel and Manage Buttons
+        if (subscriptionStatus !== 'canceled') {
+        cancelButton.classList.remove('d-none');
+        }
+        manageButton.classList.remove('d-none');
+        upgradeButton.classList.add('d-none');
+
+        // Update Subscription Icon
+        subscriptionIcon.className = 'fa-solid fa-circle-check me-2';
+        subscriptionIcon.style.color = '#28a745'; // Green color for Pro
+
+        if (subscriptionStatus === 'canceled') {
+        // Populate Subscription Info
+        subscriptionInfo.innerHTML = `
+        <strong>Subscribed since:</strong> ${startDate}<br>
+        <strong>Subscription expires on:</strong> ${nextBillingDate}
+        `;
+            
+        } else {
+
+
+        // Populate Subscription Info
+        subscriptionInfo.innerHTML = `
+            <strong>Subscribed since:</strong> ${startDate}<br>
+            <strong>Next Billing Date:</strong> ${nextBillingDate}
+        `;
+        }
+        subscriptionInfo.classList.remove('d-none');
+    } else {
+        // Update Subscription Level
+        subscriptionLevel.textContent = 'Free';
+
+        // Update Benefits
+        subscriptionBenefits.textContent = 'Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!';
+
+        // Show Upgrade Button
+        upgradeButton.classList.remove('d-none');
+        cancelButton.classList.add('d-none');
+        manageButton.classList.add('d-none');
+
+        // Update Subscription Icon
+        subscriptionIcon.className = 'fa-solid fa-circle-notch me-2';
+        subscriptionIcon.style.color = '#6c757d'; // Gray color for Free
+
+        // Hide Subscription Info
+        subscriptionInfo.classList.add('d-none');
+    }
+    if (!cancelButton.classList.contains('d-none')) {
+        cancelButton.onclick = cancelSubscription;
+    }
+
+    if (!manageButton.classList.contains('d-none')) {
+        manageButton.onclick = manageSubscription;
+    }
+    if (!upgradeButton.classList.contains('d-none')) {
+        upgradeButton.onclick = upgradeSubscription;
+    }
+}
 
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
@@ -142,51 +213,31 @@ async function resetProgress() {
 
     const userRef = db.collection('users').doc(user.uid);
 
-     // Disable reset button and cancel button, show progress bar
-     document.getElementById('confirmResetButton').disabled = true;
-     document.getElementById('cancelResetButton').disabled = true;
-     document.getElementById('progressContainer').style.display = 'block';
+    // Disable reset button and cancel button, show progress bar
+    document.getElementById('confirmResetButton').disabled = true;
+    document.getElementById('cancelResetButton').disabled = true;
+    document.getElementById('progressContainer').style.display = 'block';
 
     try {
-        // Step 1: Disable offline persistence
-        // await db.disableNetwork();
-        // console.log("Offline persistence disabled for reset.");
-
-        // Step 2: Delete fields from user document
+        // Step 1: Update user document to reset progress
         await userRef.update({
             currentCourse: firebase.firestore.FieldValue.delete(),
             totalPoints: firebase.firestore.FieldValue.delete()
         });
         console.log("User fields reset successfully.");
 
-        // Step 3: Delete all sub-collections under the user document
+        // Step 2: Delete all sub-collections under the user document
         await deleteAllSubCollections(userRef);
 
-        // Step 4: Clear local cache
-        // await db.clearPersistence();
-        // console.log("Local cache cleared.");
-
-        // Step 5: Re-enable offline persistence
-        // await db.enableNetwork();
-        // console.log("Offline persistence re-enabled.");
-
-        // Step 6: Hide the reset modal after successful deletion
+        // Step 3: Hide the reset modal after successful deletion
         $('#resetModal').modal('hide');
         console.log("All user progress reset successfully.");
 
-           // Step 7: Show the success modal
-           $('#successModal').modal('show');
+        // Step 4: Show the success modal
+        $('#successModal').modal('show');
 
     } catch (error) {
         console.error("Error resetting user progress:", error);
-
-        // Ensure network is re-enabled in case of error
-        // try {
-        //     await db.enableNetwork();
-        //     console.log("Network re-enabled after error.");
-        // } catch (networkError) {
-        //     console.error("Error re-enabling network:", networkError);
-        // }
     } finally {
         // Re-enable buttons and hide progress bar after completion
         document.getElementById('confirmResetButton').disabled = false;
@@ -225,13 +276,6 @@ async function deleteAllSubCollections(docRef) {
     }
 }
 
-
-
-// Function to show the reset confirmation modal
-function showResetModal() {
-    $('#resetModal').modal('show');
-}
-
 // Logout function
 function logout() {
     firebase.auth().signOut().then(() => {
@@ -242,7 +286,6 @@ function logout() {
 }
 
 document.getElementById('profileForm').addEventListener('submit', function(e) {
-    debugger;
     e.preventDefault();
     saveProfileChanges();
 });
@@ -263,17 +306,16 @@ function saveProfileChanges() {
     userRef.update(updatedData).then(() => {
         // After updating the profile, call the sendToLoops function
         return sendToLoops(updatedData, user);
-      })
-      
-        .then(() => {
-            alert('Profile updated successfully.');
-            // Optionally, reload the profile to reflect changes
-            loadUserProfile(user);
-        })
-        .catch((error) => {
-            console.error('Error updating profile:', error);
-            alert('Error updating profile: ' + error.message);
-        });
+    })
+    .then(() => {
+        alert('Profile updated successfully.');
+        // Optionally, reload the profile to reflect changes
+        loadUserProfile(user);
+    })
+    .catch((error) => {
+        console.error('Error updating profile:', error);
+        alert('Error updating profile: ' + error.message);
+    });
 }
 
 function sendToLoops(updatedData, user) {
@@ -307,15 +349,30 @@ function sendToLoops(updatedData, user) {
       .catch((error) => {
         console.error('Error calling sendToLoops:', error);
       });
-  }
+}
 
 // Function to cancel subscription
 function cancelSubscription() {
-gtag('event', 'cancel_subscription', {
-    'event_category': 'Subscription',
-    'event_label': 'User started cancellation process'
-});
+    gtag('event', 'cancel_subscription', {
+        'event_category': 'Subscription',
+        'event_label': 'User started cancellation process'
+    });
 
-// Redirect the user to the FastSpring account page
-window.location.href = 'https://languizy.test.onfastspring.com/account/';
+    // Redirect the user to the FastSpring account page
+    window.location.href = 'https://languizy.test.onfastspring.com/account/';
+}
+
+// Function to cancel subscription
+function manageSubscription() {
+    gtag('event', 'manage_subscription', {
+        'event_category': 'Subscription',
+        'event_label': 'User clicked manage subscription button'
+    });
+
+    // Redirect the user to the FastSpring account page
+    window.location.href = 'https://languizy.test.onfastspring.com/account/';
+}
+
+function upgradeSubscription() {
+    window.location.href = '/course_selection.html?upgrade=true';
 }
