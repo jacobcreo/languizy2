@@ -486,6 +486,9 @@
         .img-number {
             display: none; /* Hide on smaller screens */
         }
+        .matching-btn-left {
+            margin-bottom:0px !important;
+        }
     }
     #four-images-container {
         max-width:512px;

@@ -19,7 +19,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
   <!-- Custom CSS for Languizy Landing Page -->
-  <link rel="stylesheet" href="languizy-landing.css">
+  <link rel="stylesheet" href="lp.css">
   
   <link rel="preload" fetchpriority="high" as="image" href="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/mobile" type="image/webp">
   <link rel="preload" fetchpriority="high" as="image" href="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/public" type="image/webp">
@@ -66,29 +66,27 @@
     </div>
   </nav>
   
-  <!-- Hero Section -->
-  <section class="hero d-flex align-items-center">
-    <style>
-      .hero {
-        background-image: url('https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/mobile');
-      }
-      @media (min-width: 768px) {
-        .hero {
-          background-image: url('https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/public');
-        }
-      }
-    </style>
-    <div class="container text-center text-white">
-      <h1 class="display-4 fw-bold">Language Learning for Real.</h1>
-      <p class="lead my-4">Dive deep into our trio of immersive courses with expert guidance.</p>
-      <!-- <a class="google-login btn btn-lg btn-primary me-3">Join Now</a>
-      <a class="google-login btn btn-lg btn-outline-light">Sign In</a>
-      <a class="email-login btn btn-lg btn-outline-light">Sign In with Email</a> -->
-      <a class="btn btn-xl btn-outline-light extra-large-btn" data-bs-toggle="modal" data-bs-target="#loginModal">
-        Get Started / Login</a>
-
+  <section class="hero-mockup">
+    <div class="container-fluid p-0 position-relative h-100">
+      <!-- Headline -->
+      <div class="hero-content text-center">
+        <h1 class="hero-title">
+          NO GAMES. NO OWLS. <br>
+          JUST 100% LANGUAGE LEARNING THAT WORKS.
+        </h1>
+      </div>
+  
+      <!-- Call-to-Action Button -->
+      <div class="hero-button-container">
+        <a data-bs-toggle="modal" data-bs-target="#loginModal" class="btn btn-outline-primary hero-btn">LEARN NOW</a>
+      </div>
+      <div class="free-version-text">
+        🤫 Yes, There is a Free Version
+      </div>
     </div>
   </section>
+  
+  
   
   <!-- Features Section -->
   <section class="features py-5">
@@ -453,7 +451,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="loginModalLabel">Welcome Back!</h1>
+        <h1 class="modal-title fs-5" id="loginModalLabel">Ready to Start?</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

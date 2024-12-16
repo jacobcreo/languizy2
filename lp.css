@@ -168,9 +168,6 @@ body {
   }
 
   /* Center the modal header text */
-.modal-header .modal-title {
-    margin: 0 auto;
-  }
   
   /* Style the Google Sign-In button */
   #googleSignInBtn {
@@ -221,6 +218,25 @@ body {
   
 
 
-
+/* Free Version Text Styling */
+.free-version-text {
+    position: absolute;
+    top: 75%; /* Positions it at the middle of the blue part */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: white; /* White text for blue background */
+    text-align: center;
+    z-index: 2;
+  }
+  
+  @media (max-width: 768px) {
+    .free-version-text {
+      font-size: 1rem; /* Smaller font size on mobile screens */
+      top: 72%; /* Adjust positioning slightly for smaller screens */
+    }
+  }
 
 
