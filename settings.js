@@ -102,7 +102,7 @@ function updateSubscriptionCard(userData) {
     const subscriptionIcon = document.getElementById('subscriptionIcon');
 
     if (subLevel === 'Pro') {
-        // Update Subscription Level
+        // Update Subscription Level:
         subscriptionLevel.textContent = 'Pro';
 
         // Update Benefits
