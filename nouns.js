@@ -176,30 +176,30 @@ firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         fetchOrAssignCoach(user).then(() => {
 
-        fetchCurrentCourse(user).then((currentCourse) => {
-            loadUserAvatar(user);
-            if (!currentCourse) {
-                console.error('No valid current course found.');
+            fetchCurrentCourse(user).then((currentCourse) => {
+                loadUserAvatar(user);
+                if (!currentCourse) {
+                    console.error('No valid current course found.');
+                    window.location.href = 'course_selection.html';
+                    return;
+                }
+                checkDrillsLimit(user, currentCourse);
+
+                loadRandomImages(0);
+                loadDailyScore(user, currentCourse);
+                initializeDefaultMode();
+                loadNoun(user, currentCourse);
+                updateFlagIcons(currentCourse);
+                updateMaxOrder(user, currentCourse);
+
+                const targetLanguage = currentCourse.split('-')[1];
+                updateSpecialCharacters(targetLanguage);
+
+            }).catch((error) => {
+                console.error('Error fetching current course:', error);
                 window.location.href = 'course_selection.html';
-                return;
-            }
-            checkDrillsLimit(user, currentCourse);
-
-            loadRandomImages(0);
-            loadDailyScore(user, currentCourse);
-            initializeDefaultMode();
-            loadNoun(user, currentCourse);
-            updateFlagIcons(currentCourse);
-            updateMaxOrder(user, currentCourse);
-
-            const targetLanguage = currentCourse.split('-')[1];
-            updateSpecialCharacters(targetLanguage);
-
-        }).catch((error) => {
-            console.error('Error fetching current course:', error);
-            window.location.href = 'course_selection.html';
+            });
         });
-    });
     } else {
         window.location.href = '/';
     }
@@ -210,18 +210,18 @@ async function populateSubLevelBadge(userDoc) {
     const subLevelBadge = document.getElementById('subLevelBadge');
     subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
     if (subLevel === 'Free') {
-      subLevelBadge.textContent = 'FREE';
-      subLevelBadge.className = 'badge bg-secondary';
-      
-      subLevelBadge.onclick = function() {
-        window.location.href = '/course_selection.html?upgrade=true';
-      };
-  } else {
-      subLevelBadge.textContent = 'PRO';
-      subLevelBadge.className = 'badge bg-danger';
-      subLevelBadge.onclick = null; // No action on click for PRO
-  }
-  }
+        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.className = 'badge bg-secondary';
+
+        subLevelBadge.onclick = function () {
+            window.location.href = '/course_selection.html?upgrade=true';
+        };
+    } else {
+        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.className = 'badge bg-danger';
+        subLevelBadge.onclick = null; // No action on click for PRO
+    }
+}
 
 // New function to update maxOrder
 function updateMaxOrder(user, currentCourse) {
@@ -415,7 +415,7 @@ function loadNoun(user, currentCourse) {
     const randVal = Math.random();
     let attempts = 0;
     let lastValue = nounDisplayMode;
-    
+
     if (maxOrder < 7) {
         nounDisplayMode = "regular";
     } else {
@@ -696,7 +696,7 @@ function hideLoadingProgress() {
 
 // Common function to handle after answer submission
 function afterAnswerSubmission(isCorrect, type = "translation") {
-    
+
     $('#submit-answer').hide();
     $('#next-question').show();
 
@@ -820,11 +820,11 @@ function displayFourImagesNew(noun) {
                 imageElements.forEach(selector => {
                     $(selector).off('load');
                 });
-                
+
                 hideLoadingProgress(); // Hide progress bar when the noun loads
                 showEncouragementMessage();
                 console.log('images.off(load) called: ' + new Date().getTime());
-                
+
                 $('.the4images').css("visibility", "visible"); // Show the container after all images are loaded
                 console.log('the4images container shown: ' + new Date().getTime());
                 imagesLoaded = 0;
@@ -879,7 +879,7 @@ function hideall() {
     $('#four-images-container').css('visibility', 'visible');
     $("#question-area").css('visibility', 'visible');
     $("#multiple-choice-options").css('visibility', 'visible');
-    
+
 
 }
 
@@ -890,7 +890,7 @@ function resetAllExerciseUI() {
     $('#matching-container').css('visibility', 'hidden');
     // $('#four-images-container').hide();
     $('#four-images-container').css('visibility', 'hidden');
-    $('#four-images-container').find('*').each(function() {
+    $('#four-images-container').find('*').each(function () {
         if (this.style.visibility === 'visible') {
             $(this).css('visibility', 'hidden');
         }
@@ -911,7 +911,7 @@ function resetAllExerciseUI() {
     $('#user-answer').prop('disabled', false); // Disable the input field for typing
 
     $(document).off('keydown.fourImages');
-    
+
 
 
 }
@@ -1047,7 +1047,7 @@ function displayNoun(noun, nounId, currentCourse) {
                 $('#special-characters').hide();
                 $('#text-input-area').hide();
                 $('#submit-answer').hide();
-                
+
                 $('#multiple-choice-options').show();
                 displayMultipleChoiceOptions(noun);
                 // Add keydown event for keys 1-4
@@ -1453,6 +1453,7 @@ function displayNoun(noun, nounId, currentCourse) {
         rightCol.empty();
 
         // Create buttons for left column (1-4)
+        const leftButtons = [];
         for (let i = 0; i < 4; i++) {
             const btn = $('<button>')
                 .addClass('matching-btn')
@@ -1461,9 +1462,11 @@ function displayNoun(noun, nounId, currentCourse) {
                 .attr('data-word', targetWords[i])
                 .attr('data-index', i + 1);
             leftCol.append(btn);
+            leftButtons.push(btn);
         }
 
         // Create buttons for right column (5-8)
+        const rightButtons = [];
         for (let i = 0; i < 4; i++) {
             const btn = $('<button>')
                 .addClass('matching-btn')
@@ -1472,6 +1475,18 @@ function displayNoun(noun, nounId, currentCourse) {
                 .attr('data-word', originWords[i])
                 .attr('data-index', i + 5);
             rightCol.append(btn);
+            rightButtons.push(btn);
+        }
+
+        // Adjust heights of matching pairs
+        for (let i = 0; i < 4; i++) {
+            const leftHeight = leftButtons[i].outerHeight();
+            const rightHeight = rightButtons[i].outerHeight();
+            if (leftHeight > rightHeight) {
+                rightButtons[i].css('height', leftHeight);
+            } else {
+                leftButtons[i].css('height', rightHeight);
+            }
         }
 
         // Click handler for matching
@@ -1620,7 +1635,7 @@ function displayNoun(noun, nounId, currentCourse) {
         });
     }
 
-    
+
 
     if (isMultipleChoice) {
         // Event listener for multiple-choice option buttons
@@ -1960,7 +1975,7 @@ function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
 function showEncouragementMessage() {
     const randomIndex = Math.floor(Math.random() * window.coachData.encouragementMessages.length);
     const message = window.coachData.encouragementMessages[randomIndex];
-  
+
     $('#coach-message').text(message);
     $('#coach-container').show();
 }
@@ -1968,37 +1983,37 @@ function showEncouragementMessage() {
 
 function updateCoachFeedback(correctStreak, incorrectStreak) {
     let coachMessage = '';
-  
+
     if (correctStreak >= 9) {
-      coachMessage = getRandomMessage(window.coachData.tonsOfCorrectsInARowMessages);
+        coachMessage = getRandomMessage(window.coachData.tonsOfCorrectsInARowMessages);
     } else if (correctStreak == 7) {
-      coachMessage = getRandomMessage(window.coachData.sevenCorrectMessages);
+        coachMessage = getRandomMessage(window.coachData.sevenCorrectMessages);
     } else if (correctStreak == 5) {
-      coachMessage = getRandomMessage(window.coachData.fiveCorrectMessages);
+        coachMessage = getRandomMessage(window.coachData.fiveCorrectMessages);
     } else if (correctStreak == 3) {
-      coachMessage = getRandomMessage(window.coachData.threeCorrectMessages);
+        coachMessage = getRandomMessage(window.coachData.threeCorrectMessages);
     } else if (correctStreak > 0) {
-      coachMessage = getRandomMessage(window.coachData.correctMessages);
+        coachMessage = getRandomMessage(window.coachData.correctMessages);
     } else if (incorrectStreak >= 9) {
-      coachMessage = getRandomMessage(window.coachData.tonsOfMistakesInARowMessages);
+        coachMessage = getRandomMessage(window.coachData.tonsOfMistakesInARowMessages);
     } else if (incorrectStreak == 7) {
-      coachMessage = getRandomMessage(window.coachData.sevenMistakesMessages);
+        coachMessage = getRandomMessage(window.coachData.sevenMistakesMessages);
     } else if (incorrectStreak == 5) {
-      coachMessage = getRandomMessage(window.coachData.fiveMistakesMessages);
+        coachMessage = getRandomMessage(window.coachData.fiveMistakesMessages);
     } else if (incorrectStreak == 3) {
-      coachMessage = getRandomMessage(window.coachData.threeMistakesMessages);
+        coachMessage = getRandomMessage(window.coachData.threeMistakesMessages);
     } else {
-      coachMessage = getRandomMessage(window.coachData.mistakeMessages);
+        coachMessage = getRandomMessage(window.coachData.mistakeMessages);
     }
-  
+
     $('#coach-message').text(coachMessage);
     $('#coach-container').show();
-  }
-  
-  function getRandomMessage(messagesArray) {
+}
+
+function getRandomMessage(messagesArray) {
     return messagesArray[Math.floor(Math.random() * messagesArray.length)];
-  }
-  
+}
+
 
 // Function to update the visual stats (correct/wrong counts and last 5 answers)
 function updateVisualStats(isCorrect) {
@@ -2438,55 +2453,54 @@ function playFeedbackSound(isCorrect) {
 async function fetchOrAssignCoach(user) {
     const userRef = db.collection('users').doc(user.uid);
     try {
-      const userDoc = await userRef.get();
-      let coachId = userDoc.exists && userDoc.data().coach;
-      if (!coachId) {
-        coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
-        await userRef.update({ coach: coachId });
-      }
-      const coachData = await fetchCoachData(coachId);
-      window.coachData = coachData;
-      setCoachImage(coachData.image);
+        const userDoc = await userRef.get();
+        let coachId = userDoc.exists && userDoc.data().coach;
+        if (!coachId) {
+            coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
+            await userRef.update({ coach: coachId });
+        }
+        const coachData = await fetchCoachData(coachId);
+        window.coachData = coachData;
+        setCoachImage(coachData.image);
     } catch (error) {
-      console.error('Error fetching or assigning coach:', error);
+        console.error('Error fetching or assigning coach:', error);
     }
-  }
-  
-  async function fetchCoachData(coachId) {
+}
+
+async function fetchCoachData(coachId) {
     try {
-      const coachDoc = await db.collection('coaches').doc(coachId).get();
-      if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
-  
-      const coachData = coachDoc.data();
-  
-      function getRandomMessages(array, count = 10) {
-        return array.sort(() => 0.5 - Math.random()).slice(0, count);
-      }
-  
-      return {
-        coachName: coachData.coachName,
-        image: coachData.image,
-        correctMessages: getRandomMessages(coachData.correctMessages),
-        encouragementMessages: getRandomMessages(coachData.encouragementMessages),
-        fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
-        fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
-        loadingMessages: getRandomMessages(coachData.loadingMessages),
-        mistakeMessages: getRandomMessages(coachData.mistakeMessages),
-        sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
-        sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
-        threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
-        threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
-        tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
-        tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
-      };
+        const coachDoc = await db.collection('coaches').doc(coachId).get();
+        if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
+
+        const coachData = coachDoc.data();
+
+        function getRandomMessages(array, count = 10) {
+            return array.sort(() => 0.5 - Math.random()).slice(0, count);
+        }
+
+        return {
+            coachName: coachData.coachName,
+            image: coachData.image,
+            correctMessages: getRandomMessages(coachData.correctMessages),
+            encouragementMessages: getRandomMessages(coachData.encouragementMessages),
+            fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
+            fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
+            loadingMessages: getRandomMessages(coachData.loadingMessages),
+            mistakeMessages: getRandomMessages(coachData.mistakeMessages),
+            sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
+            sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
+            threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
+            threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
+            tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
+            tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
+        };
     } catch (error) {
-      console.error('Error fetching coach data:', error);
+        console.error('Error fetching coach data:', error);
     }
-  }
-  
-  function setCoachImage(imageFilename) {
+}
+
+function setCoachImage(imageFilename) {
     const imagePath = `assets/images/${imageFilename}`;
     $('#coachImage').attr('src', imagePath);
     $('#coachImage').removeClass('invisible');
-  }
-  
+}
