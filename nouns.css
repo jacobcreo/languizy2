@@ -447,6 +447,10 @@
         text-align: left;
     }
     
+    #noun-image {
+        max-width: 75%;
+    }
+
     .example-sentence-text {
         font-style: italic;
     }
