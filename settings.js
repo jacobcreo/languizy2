@@ -363,7 +363,7 @@ function cancelSubscription() {
     });
 
     // Redirect the user to the FastSpring account page
-    window.location.href = 'https://languizy.test.onfastspring.com/account/';
+    window.location.href = 'https://languizy.onfastspring.com/account/';
 }
 
 // Function to cancel subscription
@@ -374,7 +374,7 @@ function manageSubscription() {
     });
 
     // Redirect the user to the FastSpring account page
-    window.location.href = 'https://languizy.test.onfastspring.com/account/';
+    window.location.href = 'https://languizy.onfastspring.com/account/';
 }
 
 function upgradeSubscription() {

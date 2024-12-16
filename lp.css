@@ -1,0 +1,226 @@
+/* languizy-landing.css */
+
+/* Apply Google Fonts */
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Hero Section */
+.hero-mockup {
+    height: 100vh; /* Full viewport height */
+    background: linear-gradient(to bottom, white 50%, #4c5fd7 50%);
+    position: relative;
+  }
+  
+  /* Headline Styling */
+  .hero-title {
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: 900; /* BLACK 900 */
+    font-size: 3.5rem;
+    color: #0d2f90;
+    text-align: center;
+    position: absolute;
+    top: 25%; /* Middle between navbar and button */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    z-index: 2;
+    line-height: 1.2;
+  }
+  
+  /* CTA Button */
+  .hero-button-container {
+    position: absolute;
+    top: 50%; /* Exactly where background changes */
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .hero-btn {
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: 900;
+    font-size: 2.5rem;
+    padding: 1rem 2.5rem;
+    color: #0d2f90;
+    border: 5px solid #0d2f90;
+    border-radius: 10px;
+    background-color: transparent;
+    text-transform: uppercase;
+    z-index: 3;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  
+  .hero-btn:hover {
+    background-color: #1d4ed8;
+    color: white;
+    text-decoration: none;
+  }
+  
+  /* Mobile Adjustments */
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 1.5rem;
+      top: 30%; /* Adjusted for smaller screens */
+    }
+  
+    .hero-btn {
+      font-size: 1.25rem;
+      padding: 0.75rem 2rem;
+    }
+  }
+  
+  
+
+/* Features Section */
+.features .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.features .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.features .fa-3x {
+    color: #007bff;
+}
+
+/* Coaches Section */
+.coaches .card-img-top {
+    height: 200px;
+    object-fit: contain;
+}
+
+.coaches .card-title {
+    font-size: 1.25rem;
+    margin-top: 1rem;
+}
+
+.coaches .card-text {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Testimonials Section */
+.testimonials .card {
+    border-left: 5px solid #007bff;
+}
+
+.testimonials .card-text {
+    font-style: italic;
+    color: #333;
+}
+
+.testimonials .card-img-top {
+    border-radius: 50%;
+    object-fit: cover;
+    width: 50px;
+    height: 50px;
+}
+
+/* Call to Action Section */
+.cta {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.cta .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 25px;
+}
+
+.cta .btn:hover {
+    background-color: #0056b3;
+}
+
+/* Footer Styling */
+.footer h5 {
+    margin-bottom: 1rem;
+}
+
+.footer a:hover {
+    color: #007bff;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero {
+        height: 70vh;
+    }
+    
+    .features .card-text,
+    .coaches .card-text,
+    .testimonials .card-text {
+        font-size: 0.9rem;
+    }
+    
+    .cta h2 {
+        font-size: 1.75rem;
+    }
+}
+
+
+.btn-xl {
+    font-size: 1.5rem !important; 
+    padding: 1rem 2rem !important; 
+    border-radius: 50px !important;
+  }
+
+  /* Center the modal header text */
+.modal-header .modal-title {
+    margin: 0 auto;
+  }
+  
+  /* Style the Google Sign-In button */
+  #googleSignInBtn {
+    background-color: #4285F4;
+    color: white;
+  }
+  
+  #googleSignInBtn:hover {
+    background-color: #357ae8;
+    color: white;
+  }
+  
+  /* Style the divider */
+  .modal-body .text-center span {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .modal-body .text-center span::before,
+  .modal-body .text-center span::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: #ccc;
+  }
+  
+  .modal-body .text-center span::before {
+    left: -50%;
+  }
+  
+  .modal-body .text-center span::after {
+    right: -50%;
+  }
+  
+  /* Style the email input */
+  #emailInput {
+    height: 45px;
+    font-size: 1rem;
+  }
+  
+  /* Style the 'Get Sign-In Link' button */
+  #emailSignInForm button {
+    height: 45px;
+    font-size: 1rem;
+  }
+  
+
+
+
+
+
