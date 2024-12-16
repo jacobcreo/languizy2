@@ -9,6 +9,8 @@ let streakWrong = 0;
 let lastFiveAnswers = [];
 let previousQuestionId = null; // Ensure this is correctly initialized
 let questionStartTime; // Variable to store the start time of the question
+let showCoachFeedback = true;
+
 
 
 let uid = null;
@@ -135,6 +137,13 @@ function loadUserAvatar(user) {
 
       // Get the avatar element in the navbar
       const userAvatar = document.getElementById('userAvatar');
+
+      showCoachFeedback = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
+            if (showCoachFeedback) {
+                $('#coach-container').addClass('d-flex').removeClass('d-none');
+            } else {
+                $('#coach-container').addClass('d-none').removeClass('d-flex');
+            }
 
       if (photoURL) {
         // If photoURL exists, display the user's profile image

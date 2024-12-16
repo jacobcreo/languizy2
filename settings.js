@@ -77,6 +77,8 @@ function loadUserProfile(user) {
             document.getElementById('fullName').value = fullName || '';
             document.getElementById('progressMail').checked = userData.progressMail || false;
             document.getElementById('marketingMail').checked = userData.marketingMail || false;
+            document.getElementById('coachFeedback').checked = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
+
         } else {
             console.error('User data does not exist in Firestore');
         }
@@ -300,7 +302,9 @@ function saveProfileChanges() {
         displayName: document.getElementById('displayName').value.trim(),
         fullName: document.getElementById('fullName').value.trim(),
         progressMail: document.getElementById('progressMail').checked,
-        marketingMail: document.getElementById('marketingMail').checked
+        marketingMail: document.getElementById('marketingMail').checked,
+        CoachFeedback: document.getElementById('coachFeedback').checked // Add Coach Feedback
+
     };
 
     userRef.update(updatedData).then(() => {

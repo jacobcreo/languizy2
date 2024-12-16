@@ -13,6 +13,7 @@ let nounDisplayMode = "four-images";
 let listOfSeenNouns = [];
 let maxOrder = 0;
 let imagesLoaded = 0;
+let showCoachFeedback = true;
 
 
 let matchingPairs = []; // Store {target: "", origin: ""}
@@ -108,6 +109,13 @@ function loadUserAvatar(user) {
             const photoURL = userData.photoURL;
             const displayName = userData.displayName || '';
             const email = userData.email || '';
+            
+            showCoachFeedback = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
+            if (showCoachFeedback) {
+                $('#coach-container').addClass('d-flex').removeClass('d-none');
+            } else {
+                $('#coach-container').addClass('d-none').removeClass('d-flex');
+            }
 
             // Get the avatar element in the navbar
             const userAvatar = document.getElementById('userAvatar');
@@ -1973,6 +1981,9 @@ function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
 
 // Function to update the coach message with a random encouragement statement
 function showEncouragementMessage() {
+    if (!showCoachFeedback) {
+        return;
+    }
     const randomIndex = Math.floor(Math.random() * window.coachData.encouragementMessages.length);
     const message = window.coachData.encouragementMessages[randomIndex];
 
@@ -1982,6 +1993,9 @@ function showEncouragementMessage() {
 
 
 function updateCoachFeedback(correctStreak, incorrectStreak) {
+    if (!showCoachFeedback) {
+        return;
+    }
     let coachMessage = '';
 
     if (correctStreak >= 9) {

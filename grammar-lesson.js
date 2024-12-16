@@ -9,6 +9,7 @@ let wrongAnswers = 0;
 let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
+let showCoachFeedback = true;
 
 let questionStartTime; // Variable to store the start time of the question
 
@@ -170,7 +171,15 @@ async function fetchOrAssignCoach(user) {
     try {
         // Get user document to find coach ID
         const userDoc = await userRef.get();
-        let coachId = userDoc.exists && userDoc.data().coach;
+        let userData = userDoc.data();
+        showCoachFeedback = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
+            if (showCoachFeedback) {
+                $('#coach-container').addClass('d-flex').removeClass('d-none');
+            } else {
+            $('#coach-container').addClass('d-none').removeClass('d-flex');
+        }
+
+        let coachId = userDoc.exists && userData.coach;
         populateSubLevelBadge(userDoc)
         // If no coach is assigned, set the default coach ID and update the user document
         if (!coachId) {
@@ -277,6 +286,14 @@ firebase.auth().onAuthStateChanged(function (user) {
                     window.location.href = 'course_selection.html';
                     return;
                 }
+                debugger;
+                fetchLessonName(currentLesson).then(name => {
+                    lessonName = name;
+                    console.log(`Current Lesson Name: ${lessonName}`);
+                    displayLessonName(lessonName);
+                }).catch(error => {
+                    console.error('Error fetching lesson name:', error);
+                });
 
                 // Initialize default mode and load question
                 initializeDefaultMode();
@@ -289,13 +306,7 @@ firebase.auth().onAuthStateChanged(function (user) {
  
 
                 // Fetch and store the lesson name, then display it
-                fetchLessonName(currentLesson).then(name => {
-                    lessonName = name;
-                    console.log(`Current Lesson Name: ${lessonName}`);
-                    displayLessonName(lessonName);
-                }).catch(error => {
-                    console.error('Error fetching lesson name:', error);
-                });
+                
 
                 
 
@@ -346,6 +357,7 @@ function toggleMode() {
 // Function to fetch the current lesson based on URL or Firestore
 function fetchCurrentLesson(user) {
     return new Promise((resolve, reject) => {
+        debugger;
         const urlParams = new URLSearchParams(window.location.search);
         const topicFromUrl = urlParams.get('topic');
         const targetLanguage = urlParams.get('language');
@@ -1795,20 +1807,20 @@ async function handleAnswerSubmission(user, isCorrect, questionId, topicNumber, 
     }
 }
 
-async function fetchLessonName(lessonId) {
-    try {
-        const lessonDoc = await db.collection('grammar_topics').doc(lessonId.toString()).get();
-        if (lessonDoc.exists) {
-            return lessonDoc.data().name || 'this lesson';
-        } else {
-            console.warn(`No lesson name found for lesson ID: ${lessonId}`);
-            return 'this lesson';
-        }
-    } catch (error) {
-        console.error('Error fetching lesson name:', error);
-        return 'this lesson';
-    }
-}
+// async function fetchLessonName(lessonId) {
+//     try {
+//         const lessonDoc = await db.collection('grammar_topics').doc(lessonId.toString()).get();
+//         if (lessonDoc.exists) {
+//             return lessonDoc.data().name || 'this lesson';
+//         } else {
+//             console.warn(`No lesson name found for lesson ID: ${lessonId}`);
+//             return 'this lesson';
+//         }
+//     } catch (error) {
+//         console.error('Error fetching lesson name:', error);
+//         return 'this lesson';
+//     }
+// }
 
 async function showCompletionModal(lessonId) {
     // Fetch the lesson name using the topic number
@@ -1848,8 +1860,12 @@ async function showCompletionModal(lessonId) {
 
 async function fetchLessonName(topicNumber) {
     try {
+        let language = window.currentLanguagePair.split('-')[1];
+        let knownLanguage = window.currentLanguagePair.split('-')[0];
         const grammarSnapshot = await db.collection('grammar')
             .where('topic', '==', parseInt(topicNumber))
+            .where('language', '==', language)
+            .where('knownLanguage', '==', knownLanguage)
             .limit(1) // Assuming each topic number is unique
             .get();
         
