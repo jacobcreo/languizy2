@@ -1043,7 +1043,7 @@ function selectPlan(planType) {
 
 function continueFree() {
     // Logic to continue with the free plan
-    alert('You have selected the Free plan. Upgrade options coming soon. Enjoy your extended Free plan for now.');
+    // alert('You have selected the Free plan. Upgrade options coming soon. Enjoy your extended Free plan for now.');
     console.log("Continuing with the free plan");
     // Close the modal
     const modalElement = document.getElementById('upgradeModal');
