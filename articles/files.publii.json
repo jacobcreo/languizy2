@@ -205,6 +205,11 @@
         "md5": "aaac589c99ce8eee7e1bfb49b5c05adf"
     },
     {
+        "path": "languizys-german-music-playlist-for-language-learners.html",
+        "type": "file",
+        "md5": "72a6bb94e3a3c3c26ca5ff6a6689aecc"
+    },
+    {
         "path": "media",
         "type": "directory",
         "md5": false
@@ -438,6 +443,51 @@
         "path": "/media/posts/14/responsive/different_cultures-xs.png",
         "type": "file",
         "md5": "608e9fea78a60df8dd0e16d887302a5d"
+    },
+    {
+        "path": "media/posts/16",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/16/image_fx_-1.jpg",
+        "type": "file",
+        "md5": "7f15966e4f8e21a680809d53751f4fbb"
+    },
+    {
+        "path": "media/posts/16/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/16/responsive/image_fx_-1-2xl.jpg",
+        "type": "file",
+        "md5": "3af21ea0e289e81ff534926d1931416e"
+    },
+    {
+        "path": "/media/posts/16/responsive/image_fx_-1-lg.jpg",
+        "type": "file",
+        "md5": "b6ceb6b8a7bdedd8030482115bf324bc"
+    },
+    {
+        "path": "/media/posts/16/responsive/image_fx_-1-md.jpg",
+        "type": "file",
+        "md5": "7bd3e10ac56e5f7e44a8e6737ae8417c"
+    },
+    {
+        "path": "/media/posts/16/responsive/image_fx_-1-sm.jpg",
+        "type": "file",
+        "md5": "7349b70b49bbac3def40c41e1d3cb7f9"
+    },
+    {
+        "path": "/media/posts/16/responsive/image_fx_-1-xl.jpg",
+        "type": "file",
+        "md5": "3af21ea0e289e81ff534926d1931416e"
+    },
+    {
+        "path": "/media/posts/16/responsive/image_fx_-1-xs.jpg",
+        "type": "file",
+        "md5": "28dabb1325b61c8b510bf5645da60852"
     },
     {
         "path": "media/posts/2",
@@ -807,7 +857,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "cb6a8ac5cfdc36481c97007ee9fade00"
+        "md5": "db99ecf188fe088ef54d9c380521ac2a"
     },
     {
         "path": "sitemap.xsl",
