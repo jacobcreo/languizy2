@@ -2,7 +2,7 @@
     {
         "path": "404.html",
         "type": "file",
-        "md5": "1fd9905c35aa8cbe7c937b0ffc5a473f"
+        "md5": "357588dd52a623061a1a289771f8a494"
     },
     {
         "path": "assets",
@@ -122,7 +122,7 @@
     {
         "path": "/authors/jacob/index.html",
         "type": "file",
-        "md5": "e23e736fac2bec3a847be5f5885cefea"
+        "md5": "352d6fee37a9796362488786149f30f9"
     },
     {
         "path": "authors/jacob/page",
@@ -137,7 +137,7 @@
     {
         "path": "/authors/jacob/page/2/index.html",
         "type": "file",
-        "md5": "e59dc48953ee3667ab993a87a7d7a043"
+        "md5": "16ffa4371c10205f92a52bc9fd1d2bfd"
     },
     {
         "path": "authors/jacob/page/3",
@@ -147,7 +147,7 @@
     {
         "path": "/authors/jacob/page/3/index.html",
         "type": "file",
-        "md5": "ee056be9384ebdf006a6d36fd22ad7a8"
+        "md5": "eec4eb0daf7dc6a321a5beb5320aebde"
     },
     {
         "path": "feed.json",
@@ -162,52 +162,52 @@
     {
         "path": "how-grammar-patterns-differ-across-languages.html",
         "type": "file",
-        "md5": "22eef1ba6348f7334e8673791187fe81"
+        "md5": "8494d9d5c3d9f00f052fa1e079e527f6"
     },
     {
         "path": "how-to-build-confidence-in-speaking-a-new-language.html",
         "type": "file",
-        "md5": "1d5ef24097c3084f3d184f0f41ef36c2"
+        "md5": "8f11581f0335e7562fefa9c9cd2c85f9"
     },
     {
         "path": "how-to-learn-a-language-without-feeling-overwhelmed.html",
         "type": "file",
-        "md5": "abb707328d6f73e058295cd1faff4922"
+        "md5": "df933db41b4dbf18ab2e6f1df2fc1b9c"
     },
     {
         "path": "how-to-stay-consistent-with-language-practice.html",
         "type": "file",
-        "md5": "fd751f9d27d65293b524713db306dfc7"
+        "md5": "0633dff8004be5846686b660dabcc868"
     },
     {
         "path": "index.html",
         "type": "file",
-        "md5": "0a0370b6c727057d0076135b78f376b0"
+        "md5": "79fa911014f27e879d811671ad3cb60a"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
         "type": "file",
-        "md5": "de528ecf42ac341aa59828a1b524bdac"
+        "md5": "d4faa36d2cec16de3a2604b54bd28b31"
     },
     {
         "path": "language-learning-myths-debunked.html",
         "type": "file",
-        "md5": "bb8ba7eb10bf40cea8b2daacbd386829"
+        "md5": "974b8b100c976c392d7852e849305716"
     },
     {
         "path": "language-learning-through-music.html",
         "type": "file",
-        "md5": "e69f9a2916124780f3d8c7bb24fec63d"
+        "md5": "153bba834f1dcc366204112bcf5868c3"
     },
     {
         "path": "languizy-faqs.html",
         "type": "file",
-        "md5": "aaac589c99ce8eee7e1bfb49b5c05adf"
+        "md5": "b4b26c3f701c8191941302183346532f"
     },
     {
         "path": "languizys-german-music-playlist-for-language-learners.html",
         "type": "file",
-        "md5": "ccd35278833ad85b726e3c704542c2a9"
+        "md5": "fa23a185bf76ecde240756c2c097481a"
     },
     {
         "path": "media",
@@ -872,31 +872,31 @@
     {
         "path": "/tags/index.html",
         "type": "file",
-        "md5": "54793b03c8c66766193a0a3ee2ed2615"
+        "md5": "76c8fe2350874eb82465e87335b0747f"
     },
     {
         "path": "the-importance-of-pronunciation-in-language-learning.html",
         "type": "file",
-        "md5": "6830a6617bc57af99dc7d3ade0421575"
+        "md5": "bc73705cf206737a616d5e50a38ea786"
     },
     {
         "path": "the-power-of-storytelling-in-language-learning.html",
         "type": "file",
-        "md5": "dee8fd47b0fc9da3b318b4772d79728e"
+        "md5": "cd6c05427973a33b85836defbaf237fa"
     },
     {
         "path": "the-role-of-games-and-gamification-in-language-learning.html",
         "type": "file",
-        "md5": "5c9adc6185704880d20dd2305e6c6f43"
+        "md5": "8335a84c50ba82428804fb0a83df1423"
     },
     {
         "path": "the-science-of-language-learning.html",
         "type": "file",
-        "md5": "bbaf5e7082af33e55e5f058815f942f6"
+        "md5": "c0245f604bb9f65da104bf704de79bdf"
     },
     {
         "path": "why-learning-a-language-without-culture-is-like-eating-pasta-without-sauce.html",
         "type": "file",
-        "md5": "aa5baa9be60c0c61447984a1c1d51bde"
+        "md5": "d87293b09487e7a4e46b5604542d504c"
     }
 ]
