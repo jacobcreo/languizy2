@@ -1027,7 +1027,19 @@ function checkReg(user) {
             'user_id': user.uid,
             'tier': 'Free'
         });
-        fbq('track', 'CompleteRegistration');
+        // Generate a unique event ID
+var eventID = 'event_' + Math.random().toString(36).substring(2) + '_' + Date.now();
+
+if (typeof fbq === 'function') {
+    fbq('track', 'CompleteRegistration', {
+        eventID: eventID
+    });
+} else {
+    var regimg = new Image();
+    regimg.src = "https://www.facebook.com/tr?id=621064440260076&ev=CompleteRegistration&eventID=" + eventID;
+    document.body.appendChild(regimg);
+}
+
     }
 }
 
