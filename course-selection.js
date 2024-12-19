@@ -1027,6 +1027,7 @@ function checkReg(user) {
             'user_id': user.uid,
             'tier': 'Free'
         });
+        fbq('track', 'CompleteRegistration');
     }
 }
 
