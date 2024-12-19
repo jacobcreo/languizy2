@@ -1,6 +1,46 @@
 <html></html>
 <script>
-    sendToFacebookAPI({'email': 'koby@languizy.com'});
+    // sendToFacebookAPI({'email': 'koby@languizy.com'});
+
+// Function to send data to the Google Cloud Function
+function sendEventToCloudFunction(fbclid = null, email = null) {
+  debugger;
+    const ip = ''; // Optionally retrieve the client IP (if available)
+    const userAgent = navigator.userAgent; // Get user agent string
+    const eventId = `event_${Math.random().toString(36).substring(2)}_${Date.now()}`; // Generate unique event ID client-side
+
+    // Build the payload
+    const payload = {
+        fbclid, // Facebook Click ID
+        email, // Plain email (will be hashed server-side)
+        ip, // Optional: pass client IP if available
+        userAgent, // Browser user agent
+        eventName: 'CompleteRegistration', // Custom event name
+        eventId, // Pass the generated event ID
+    };
+
+    // Send the payload to the Cloud Function
+    fetch('https://YOUR_CLOUD_FUNCTION_URL', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Event sent to Facebook:', data);
+    })
+    .catch(error => {
+        console.error('Error sending event:', error);
+    });
+}
+
+// Example usage
+const fbclid = new URLSearchParams(window.location.search).get('fbclid'); // Extract fbclid from URL
+const email = 'user@example.com'; // Example email, replace with user input
+sendEventToCloudFunction(fbclid, email);
+
+
+
 
 function sendToFacebookAPI(userId) {
 //   const sourceData = getSourceData();
