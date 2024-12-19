@@ -3,7 +3,7 @@
     sendToFacebookAPI('koby@languizy.com');
 
 function sendToFacebookAPI(userId) {
-  const sourceData = getSourceData();
+//   const sourceData = getSourceData();
   var eventID = 'event_' + Math.random().toString(36).substring(2) + '_' + Date.now();
 
 
@@ -16,12 +16,7 @@ function sendToFacebookAPI(userId) {
     event_id: eventID,
     user_data: {
       em: sha256(userId.email), // Hashed email
-      fbclid: sourceData?.fbclid || null
-    },
-    custom_data: {
-      source: sourceData?.utm_source,
-      medium: sourceData?.utm_medium,
-      campaign: sourceData?.utm_campaign
+      fbclid: 31289712893
     }
   };
 
