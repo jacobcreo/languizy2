@@ -1,0 +1,45 @@
+<html></html>
+<script>
+    sendToFacebookAPI('koby@languizy.com');
+
+function sendToFacebookAPI(userId) {
+  const sourceData = getSourceData();
+  var eventID = 'event_' + Math.random().toString(36).substring(2) + '_' + Date.now();
+
+
+
+
+  const payload = {
+    event_name: "CompleteRegistration",
+    event_time: Math.floor(Date.now() / 1000),
+    test_event_code: "TEST22426",
+    event_id: eventID,
+    user_data: {
+      em: sha256(userId.email), // Hashed email
+      fbclid: sourceData?.fbclid || null
+    },
+    custom_data: {
+      source: sourceData?.utm_source,
+      medium: sourceData?.utm_medium,
+      campaign: sourceData?.utm_campaign
+    }
+  };
+
+  fetch('https://graph.facebook.com/v13.0/2324991951113810/events', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Facebook Conversions API response:', data);
+  })
+  .catch(error => {
+    console.error('Error sending to Facebook Conversions API:', error);
+  });
+}
+
+</script>
+</html>
