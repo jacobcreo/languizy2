@@ -5,6 +5,28 @@ var db = firebase.firestore();
 // Add Firestore settings if needed (optional)
 db.settings({ timestampsInSnapshots: true });
 
+(function() {
+  const queryParams = new URLSearchParams(window.location.search);
+  const sourceData = {
+    utm_source: queryParams.get('utm_source') || null,
+    utm_medium: queryParams.get('utm_medium') || null,
+    utm_campaign: queryParams.get('utm_campaign') || null,
+    fbclid: queryParams.get('fbclid') || null,
+    referrer: document.referrer || null
+  };
+
+  // Check if data already exists in localStorage
+  if (!localStorage.getItem('sourceData')) {
+    localStorage.setItem('sourceData', JSON.stringify(sourceData));
+  }
+})();
+
+function getSourceData() {
+  const data = localStorage.getItem('sourceData');
+  return data ? JSON.parse(data) : null;
+}
+
+
 function sendSignInLink(email) {
   var actionCodeSettings = {
     url: window.location.origin + '/',
@@ -101,23 +123,35 @@ function handleUserLogin(user) {
       });
     } else {
       // New user: Set user data and call onboarding function
-      userRef.set({
-        email: user.email,
-        displayName: user.displayName || user.email.split('@')[0],
-        photoURL: user.photoURL || '',
-        lastLogin: firebase.firestore.Timestamp.now(),
-        joinDate: firebase.firestore.Timestamp.now(),
-        subLevel: 'Free'
-      }).then(() => {
-        console.log('New user data saved.');
-        pingOnboardFunction(user.uid, user);
-        redirectToCourseSelection('reg');
-      }).catch(error => {
-        console.error('Error saving new user data:', error);
-      });
+      handleUserRegistration(user);
     }
   }).catch(error => {
     console.error('Error fetching user data from Firestore:', error);
+  });
+}
+
+function handleUserRegistration(user) {
+  const userRef = db.collection('users').doc(user.uid);
+  const sourceData = getSourceData();
+
+  userRef.set({
+    email: user.email,
+    displayName: user.displayName || user.email.split('@')[0],
+    photoURL: user.photoURL || '',
+    lastLogin: firebase.firestore.Timestamp.now(),
+    joinDate: firebase.firestore.Timestamp.now(),
+    subLevel: 'Free',
+    source: sourceData?.utm_source || 'unknown',
+    medium: sourceData?.utm_medium || 'unknown',
+    campaign: sourceData?.utm_campaign || 'unknown',
+    fbclid: sourceData?.fbclid || null,
+    referrer: sourceData?.referrer || null
+  }).then(() => {
+    console.log('User registration data saved with source info.');
+    pingOnboardFunction(user.uid, user);
+    redirectToCourseSelection('reg');
+  }).catch(error => {
+    console.error('Error saving user data:', error);
   });
 }
 
