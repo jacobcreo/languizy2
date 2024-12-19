@@ -15,7 +15,7 @@ function sendToFacebookAPI(userId) {
     test_event_code: "TEST22426",
     event_id: eventID,
     user_data: {
-      em: sha256(userId.email), // Hashed email
+      em: userId.email, // Hashed email
       fbclid: 31289712893
     }
   };
