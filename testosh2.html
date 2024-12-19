@@ -20,7 +20,7 @@ function sendEventToCloudFunction(fbclid = null, email = null) {
     };
 
     // Send the payload to the Cloud Function
-    fetch('https://YOUR_CLOUD_FUNCTION_URL', {
+    fetch('https://us-central1-languizy2.cloudfunctions.net/sendToFacebook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
