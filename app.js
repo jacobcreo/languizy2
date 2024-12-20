@@ -8,6 +8,7 @@ db.settings({ timestampsInSnapshots: true });
 // Capture URL parameters and other relevant data
 (async function() {
   const queryParams = new URLSearchParams(window.location.search);
+  const { fbp, fbc } = getFBPAndFBC();
   const sourceData = {
     utm_source: queryParams.get('utm_source') || null,
     utm_medium: queryParams.get('utm_medium') || null,
@@ -15,6 +16,8 @@ db.settings({ timestampsInSnapshots: true });
     fbclid: queryParams.get('fbclid') || null,
     referrer: document.referrer || null,
     refurl: window.location.href,
+    fbp : fbp || null,
+    fbc : fbc || null
   };
 
   // Fetch country and other data using Cloudflare's CF-IPCountry header
@@ -83,6 +86,38 @@ function generateUniqueId() {
 function getSourceData() {
   const data = localStorage.getItem('sourceData');
   return data ? JSON.parse(data) : null;
+}
+
+// Function to get a cookie by name
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
+// Function to extract URL parameters by name
+function getURLParameter(name) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(name);
+}
+
+// Function to get _fbp and _fbc values
+function getFBPAndFBC() {
+  // Step 1: Try to get _fbp and _fbc from cookies
+  const fbp = getCookie('_fbp') || '';  // Default to '' if not found
+  let fbc = getCookie('_fbc') || '';    // Default to '' if not found
+
+  // Step 2: If _fbc is not present, attempt to construct it from gclid
+  if (!fbc) {
+    const gclid = getURLParameter('gclid');
+    if (gclid) {
+      fbc = 'fb.' + gclid;  // Construct _fbc from gclid
+    }
+  }
+
+  // Return the result
+  return { fbp, fbc };
 }
 
 function getBrowserName(userAgent) {
