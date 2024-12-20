@@ -20,6 +20,16 @@ db.settings({ timestampsInSnapshots: true });
     fbc : fbc || null
   };
 
+  if (typeof userCountry === 'undefined') {
+    var userCountry = 'Unknown';
+  }
+
+  if (typeof idf === 'undefined') {
+    var idf = '';
+  }
+  
+
+  
   // Fetch country and other data using Cloudflare's CF-IPCountry header
   const country = userCountry || 'Unknown'; // Cloudflare sets CF-IPCountry header
   const nidf = idf || ''; // You can get the IP address by using a service like ipify (or from server logs)
