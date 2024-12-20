@@ -19,7 +19,7 @@ db.settings({ timestampsInSnapshots: true });
 
   // Fetch country and other data using Cloudflare's CF-IPCountry header
   const country = userCountry || 'Unknown'; // Cloudflare sets CF-IPCountry header
-  const ip = ''; // You can get the IP address by using a service like ipify (or from server logs)
+  const nidf = idf || ''; // You can get the IP address by using a service like ipify (or from server logs)
   const userAgent = navigator.userAgent;
   let browser = getBrowserName(userAgent);
 
@@ -31,7 +31,7 @@ db.settings({ timestampsInSnapshots: true });
     const userData = {
       ...sourceData,
       country,
-      ip,
+      nidf,
       browser,
       userAgent,
       timestamp: currentTime,
