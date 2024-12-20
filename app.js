@@ -21,7 +21,7 @@ db.settings({ timestampsInSnapshots: true });
   const country = window.CFIPCountry || 'Unknown'; // Cloudflare sets CF-IPCountry header
   const ip = ''; // You can get the IP address by using a service like ipify (or from server logs)
   const userAgent = navigator.userAgent;
-  const browser = navigator.appName;
+  let browser = getBrowserName(userAgent);
 
   const currentTime = new Date().toISOString();
 
@@ -85,6 +85,29 @@ function getSourceData() {
   return data ? JSON.parse(data) : null;
 }
 
+function getBrowserName(userAgent) {
+  
+  // Define browser patterns
+  const browsers = {
+    Chrome: /Chrome/,
+    Firefox: /Firefox/,
+    Safari: /Safari/,
+    Edge: /Edg/,
+    IE: /Trident/,
+    Opera: /OPR|Opera/,
+    Android: /Android/,
+    iPhone: /iPhone/
+  };
+
+  // Loop through the patterns and return the matching browser name
+  for (const [browser, pattern] of Object.entries(browsers)) {
+    if (pattern.test(userAgent)) {
+      return browser;
+    }
+  }
+
+  return "Unknown"; // Default if no match
+}
 
 function sendSignInLink(email) {
   var actionCodeSettings = {
