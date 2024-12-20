@@ -5,6 +5,7 @@ var db = firebase.firestore();
 // Add Firestore settings if needed (optional)
 db.settings({ timestampsInSnapshots: true });
 
+// Capture URL parameters and other relevant data
 (function() {
   const queryParams = new URLSearchParams(window.location.search);
   const sourceData = {
@@ -12,14 +13,75 @@ db.settings({ timestampsInSnapshots: true });
     utm_medium: queryParams.get('utm_medium') || null,
     utm_campaign: queryParams.get('utm_campaign') || null,
     fbclid: queryParams.get('fbclid') || null,
-    referrer: document.referrer || null
+    referrer: document.referrer || null,
+    refurl: window.location.href,
   };
 
-  // Check if data already exists in localStorage
-  if (!localStorage.getItem('sourceData')) {
-    localStorage.setItem('sourceData', JSON.stringify(sourceData));
+  // Fetch country and other data using Cloudflare's CF-IPCountry header
+  const country = window.CFIPCountry || 'Unknown'; // Cloudflare sets CF-IPCountry header
+  const ip = ''; // You can get the IP address by using a service like ipify (or from server logs)
+  const userAgent = navigator.userAgent;
+  const browser = navigator.appName;
+
+  const currentTime = new Date().toISOString();
+
+  // Store this information in localStorage if not already stored
+  const userKey = 'userDataLogged';
+  if (!localStorage.getItem(userKey)) {
+    const userData = {
+      ...sourceData,
+      country,
+      ip,
+      browser,
+      userAgent,
+      timestamp: currentTime,
+    };
+
+    // Save the user data to localStorage
+    localStorage.setItem(userKey, JSON.stringify(userData));
+
+    // Save the user data in Firestore only if not already logged
+    logUserData(userData);
   }
 })();
+
+// Function to log user data to Firestore
+function logUserData(userData) {
+  const userId = auth.currentUser ? auth.currentUser.uid : null; // Get Firebase user ID if available
+
+  if (!userId) {
+    console.warn('No authenticated user found, logging data anonymously');
+    // Optionally, use an anonymous identifier, such as IP or session ID
+    // Here we'll just generate a random ID if no user is logged in
+    const userRef = db.collection('Logs').doc(generateUniqueId());
+    userRef.set(userData)
+      .then(() => {
+        console.log('User data logged anonymously in Firestore.');
+      })
+      .catch((error) => {
+        console.error('Error logging user data:', error);
+      });
+  } else {
+    const userRef = db.collection('Logs').doc(userId);
+    userRef.get().then(doc => {
+      if (!doc.exists) {
+        // If the user document does not exist, create a new one
+        userRef.set(userData)
+          .then(() => {
+            console.log('User data logged successfully in Firestore.');
+          })
+          .catch((error) => {
+            console.error('Error logging user data:', error);
+          });
+      }
+    });
+  }
+}
+
+// Helper function to generate a unique identifier (in case there's no logged-in user)
+function generateUniqueId() {
+  return 'user-' + Math.random().toString(36).substr(2, 9);
+}
 
 function getSourceData() {
   const data = localStorage.getItem('sourceData');
