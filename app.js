@@ -208,6 +208,7 @@ if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
 
 // Monitor auth state changes
 auth.onAuthStateChanged(user => {
+  debugger;
   if (user) {
     console.log('User logged in:', user.email);
     handleUserLogin(user);

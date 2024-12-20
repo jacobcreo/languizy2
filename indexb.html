@@ -19,10 +19,10 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 <link rel="manifest" href="/site.webmanifest">
   <!-- Custom CSS for Languizy Landing Page -->
-  <link rel="stylesheet" href="languizy-landing.css">
+  <link rel="stylesheet" href="lp.css">
   
-  <link rel="preload" fetchpriority="high" as="image" href="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/mobile" type="image/webp">
-  <link rel="preload" fetchpriority="high" as="image" href="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/public" type="image/webp">
+  <!-- <link rel="preload" fetchpriority="high" as="image" href="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/mobile" type="image/webp">
+  <link rel="preload" fetchpriority="high" as="image" href="https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/public" type="image/webp"> -->
 
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-K8GMWBXC5J"></script>
@@ -33,6 +33,24 @@
 
   gtag('config', 'G-K8GMWBXC5J');
 </script>
+<!-- Meta Pixel Code -->
+<script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '621064440260076');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=621064440260076&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
 </head>
 <body>
   
@@ -66,29 +84,27 @@
     </div>
   </nav>
   
-  <!-- Hero Section -->
-  <section class="hero d-flex align-items-center">
-    <style>
-      .hero {
-        background-image: url('https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/mobile');
-      }
-      @media (min-width: 768px) {
-        .hero {
-          background-image: url('https://imagedelivery.net/j9E4LWp3y7gI6dhWlQbOtw/2df1d2ba-a2cd-4030-b52b-99ec6d058e00/public');
-        }
-      }
-    </style>
-    <div class="container text-center text-white">
-      <h1 class="display-4 fw-bold">Language Learning for Real.</h1>
-      <p class="lead my-4">Dive deep into our trio of immersive courses with expert guidance.</p>
-      <!-- <a class="google-login btn btn-lg btn-primary me-3">Join Now</a>
-      <a class="google-login btn btn-lg btn-outline-light">Sign In</a>
-      <a class="email-login btn btn-lg btn-outline-light">Sign In with Email</a> -->
-      <a class="btn btn-xl btn-outline-light extra-large-btn" data-bs-toggle="modal" data-bs-target="#loginModal">
-        Get Started / Login</a>
-
+  <section class="hero-mockup">
+    <div class="container-fluid p-0 position-relative h-100">
+      <!-- Headline -->
+      <div class="hero-content text-center">
+        <h1 class="hero-title">
+          NO GAMES. NO OWLS. <br>
+          JUST 100% LANGUAGE LEARNING THAT WORKS.
+        </h1>
+      </div>
+  
+      <!-- Call-to-Action Button -->
+      <div class="hero-button-container">
+        <a data-bs-toggle="modal" data-bs-target="#loginModal" class="btn btn-outline-primary hero-btn">LEARN NOW</a>
+      </div>
+      <div class="free-version-text">
+        🤫 Yes, There is a Free Version
+      </div>
     </div>
   </section>
+  
+  
   
   <!-- Features Section -->
   <section class="features py-5">
@@ -185,18 +201,19 @@
         <!-- Coach 1: Alien Diplomat -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachAlien1.png" class="card-img-top" alt="Alien Diplomat">
+            <img src="https://languizy.com/myimages/coachAlien1.png/smaller" class="card-img-top" alt="Alien Diplomat">
             <div class="card-body">
               <h5 class="card-title">Alien Diplomat</h5>
               <p class="card-text">Navigate language complexities with galactic wisdom. Stay sharp to earn the Alien Diplomat's guidance!</p>
             </div>
           </div>
+          
         </div>
         
         <!-- Coach 2: Eccentric Chef -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachChef1.png" class="card-img-top" alt="Eccentric Chef">
+            <img src="https://languizy.com/myimages/coachChef1.png/smaller" class="card-img-top" alt="Eccentric Chef">
             <div class="card-body">
               <h5 class="card-title">Eccentric Chef</h5>
               <p class="card-text">Whip up your language skills with creative flair. Impress the Eccentric Chef and master the art of words!</p>
@@ -207,7 +224,7 @@
         <!-- Coach 3: Russian Dictator -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachDictator1.png" class="card-img-top" alt="Russian Dictator">
+            <img src="https://languizy.com/myimages/coachDictator1.png/smaller" class="card-img-top" alt="Russian Dictator">
             <div class="card-body">
               <h5 class="card-title">Russian Dictator</h5>
               <p class="card-text">Achieve perfection under strict guidance. Impress the Russian Dictator to earn unwavering respect!</p>
@@ -218,7 +235,7 @@
         <!-- Coach 4: Grumpy Old Librarian -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachLibrarian1.png" class="card-img-top" alt="Grumpy Old Librarian">
+            <img src="https://languizy.com/myimages/coachLibrarian1.png/smaller" class="card-img-top" alt="Grumpy Old Librarian">
             <div class="card-body">
               <h5 class="card-title">Grumpy Old Librarian</h5>
               <p class="card-text">Maintain order and precision. Impress the Grumpy Librarian by mastering your language studies diligently!</p>
@@ -229,7 +246,7 @@
         <!-- Coach 5: Ninja Sensei -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachNinja1.png" class="card-img-top" alt="Ninja Sensei">
+            <img src="https://languizy.com/myimages/coachNinja1.png/smaller" class="card-img-top" alt="Ninja Sensei">
             <div class="card-body">
               <h5 class="card-title">Ninja Sensei</h5>
               <p class="card-text">Achieve mastery through discipline and precision. Earn the silent approval of the Ninja Sensei!</p>
@@ -240,7 +257,7 @@
         <!-- Coach 6: Pirate Captain -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachPirate1.png" class="card-img-top" alt="Pirate Captain">
+            <img src="https://languizy.com/myimages/coachPirate1.png/smaller" class="card-img-top" alt="Pirate Captain">
             <div class="card-body">
               <h5 class="card-title">Pirate Captain</h5>
               <p class="card-text">Embark on adventurous learning quests. Navigate rough seas to reach linguistic treasure with the Pirate Captain!</p>
@@ -251,7 +268,7 @@
         <!-- Coach 7: Royal Queen -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachQueen1.png" class="card-img-top" alt="Royal Queen">
+            <img src="https://languizy.com/myimages/coachQueen1.png/smaller" class="card-img-top" alt="Royal Queen">
             <div class="card-body">
               <h5 class="card-title">Royal Queen</h5>
               <p class="card-text">Strive for elegance and perfection. Receive regal guidance as you conquer language mastery with the Royal Queen!</p>
@@ -262,7 +279,7 @@
         <!-- Coach 8: Robot Overlord -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachRobot1.png" class="card-img-top" alt="Robot Overlord">
+            <img src="https://languizy.com/myimages/coachRobot1.png/smaller" class="card-img-top" alt="Robot Overlord">
             <div class="card-body">
               <h5 class="card-title">Robot Overlord</h5>
               <p class="card-text">Optimize your learning with flawless precision. Impress the Robot Overlord through efficient and accurate progress!</p>
@@ -273,7 +290,7 @@
         <!-- Coach 9: Drill Sergeant -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachSargent1.png" class="card-img-top" alt="Drill Sergeant">
+            <img src="https://languizy.com/myimages/coachSargent1.png/smaller" class="card-img-top" alt="Drill Sergeant">
             <div class="card-body">
               <h5 class="card-title">Drill Sergeant</h5>
               <p class="card-text">Push your limits with rigorous training. Earn the strength and resilience of language mastery under the Drill Sergeant!</p>
@@ -284,7 +301,7 @@
         <!-- Coach 10: Mad Scientist -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachScientist1.png" class="card-img-top" alt="Mad Scientist">
+            <img src="https://languizy.com/myimages/coachScientist1.png/smaller" class="card-img-top" alt="Mad Scientist">
             <div class="card-body">
               <h5 class="card-title">Mad Scientist</h5>
               <p class="card-text">Innovate and experiment with your language skills. Spark breakthroughs and embrace learning adventures with the Mad Scientist!</p>
@@ -295,7 +312,7 @@
         <!-- Coach 11: Surfer Dude -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachSurfer1.png" class="card-img-top" alt="Surfer Dude">
+            <img src="https://languizy.com/myimages/coachSurfer1.png/smaller" class="card-img-top" alt="Surfer Dude">
             <div class="card-body">
               <h5 class="card-title">Surfer Dude</h5>
               <p class="card-text">Ride the waves of language learning effortlessly. Keep the good vibes flowing with the laid-back Surfer Dude!</p>
@@ -306,7 +323,7 @@
         <!-- Coach 12: Teacher (Old-School British Boarding School Teacher) -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachTeacher1.png" class="card-img-top" alt="Old-School British Boarding School Teacher">
+            <img src="https://languizy.com/myimages/coachTeacher1.png/smaller" class="card-img-top" alt="Old-School British Boarding School Teacher">
             <div class="card-body">
               <h5 class="card-title">Old-School British Teacher</h5>
               <p class="card-text">Embrace discipline and tradition in your studies. Achieve steady progress with the guidance of the Old-School British Teacher!</p>
@@ -317,7 +334,7 @@
         <!-- Coach 13: Vampire Count -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachVampire1.png" class="card-img-top" alt="Vampire Count">
+            <img src="https://languizy.com/myimages/coachVampire1.png/smaller" class="card-img-top" alt="Vampire Count">
             <div class="card-body">
               <h5 class="card-title">Vampire Count</h5>
               <p class="card-text">Refine your language skills with timeless sophistication. Gain immortal wisdom from the Vampire Count!</p>
@@ -328,7 +345,7 @@
         <!-- Coach 14: Wizard Mentor -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachWizard1.png" class="card-img-top" alt="Wizard Mentor">
+            <img src="https://languizy.com/myimages/coachWizard1.png/smaller" class="card-img-top" alt="Wizard Mentor">
             <div class="card-body">
               <h5 class="card-title">Wizard Mentor</h5>
               <p class="card-text">Master the mystical arts of language. Grow your wisdom and become a linguistic wizard with the Wizard Mentor!</p>
@@ -339,7 +356,7 @@
         <!-- Coach 15: Zombie Coach -->
         <div class="col-md-4">
           <div class="card h-100 border-0 shadow-sm">
-            <img src="assets/images/coachZombie1.png" class="card-img-top" alt="Zombie Coach">
+            <img src="https://languizy.com/myimages/coachZombie1.png/smaller" class="card-img-top" alt="Zombie Coach">
             <div class="card-body">
               <h5 class="card-title">Zombie Coach</h5>
               <p class="card-text">Relentlessly pursue language mastery. Stay on track and thrive under the unwavering guidance of the Zombie Coach!</p>
@@ -420,6 +437,7 @@
             <li><a href="/pricing.html" class="text-decoration-none text-muted">Pricing</a></li>
             <li><a href="/refund-policy.html" class="text-decoration-none text-muted">Refund Policy</a></li>
             <li><a href="/articles/" class="text-decoration-none text-muted">Articles</a></li>
+            <li><a href="/faq.html" class="text-decoration-none text-muted">FAQ</a></li>
           </ul>
         </div>
         <!-- Social Media -->
@@ -453,7 +471,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="loginModalLabel">Welcome Back!</h1>
+        <h1 class="modal-title fs-5" id="loginModalLabel">Ready to Start?</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -488,7 +506,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-config.js"></script>
   <!-- Custom JS -->
-  <script src="app.js"></script>
+  <!-- <script src="app.js"></script> -->
   <!-- <script>
     $('.google-login').click(googleLogin);
     $('.email-login').click(emailLogin);
