@@ -6,7 +6,7 @@ var db = firebase.firestore();
 db.settings({ timestampsInSnapshots: true });
 
 // Capture URL parameters and other relevant data
-(function() {
+(async function() {
   const queryParams = new URLSearchParams(window.location.search);
   const sourceData = {
     utm_source: queryParams.get('utm_source') || null,
@@ -18,7 +18,7 @@ db.settings({ timestampsInSnapshots: true });
   };
 
   // Fetch country and other data using Cloudflare's CF-IPCountry header
-  const country = window.CFIPCountry || 'Unknown'; // Cloudflare sets CF-IPCountry header
+  const country = userCountry || 'Unknown'; // Cloudflare sets CF-IPCountry header
   const ip = ''; // You can get the IP address by using a service like ipify (or from server logs)
   const userAgent = navigator.userAgent;
   let browser = getBrowserName(userAgent);
@@ -26,7 +26,7 @@ db.settings({ timestampsInSnapshots: true });
   const currentTime = new Date().toISOString();
 
   // Store this information in localStorage if not already stored
-  const userKey = 'userDataLogged';
+  const userKey = 'log';
   if (!localStorage.getItem(userKey)) {
     const userData = {
       ...sourceData,
@@ -41,7 +41,7 @@ db.settings({ timestampsInSnapshots: true });
     localStorage.setItem(userKey, JSON.stringify(userData));
 
     // Save the user data in Firestore only if not already logged
-    logUserData(userData);
+    await logUserData(userData);
   }
 })();
 
