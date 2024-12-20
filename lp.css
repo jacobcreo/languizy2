@@ -41,18 +41,22 @@ body {
     font-weight: 900;
     font-size: 2.5rem;
     padding: 1rem 2.5rem;
-    color: #0d2f90;
+    /* color: #0d2f90; */
     border: 5px solid #0d2f90;
     border-radius: 10px;
-    background-color: transparent;
+    /* background-color: transparent; */
     text-transform: uppercase;
     z-index: 3;
     transition: background 0.3s ease, color 0.3s ease;
+    background-color: #1d4ed8;
+    color: white;
   }
   
   .hero-btn:hover {
-    background-color: #1d4ed8;
-    color: white;
+    /* background-color: #1d4ed8; */
+    /* color: white; */
+    color: #0d2f90;
+    background-color: transparent;
     text-decoration: none;
   }
   
