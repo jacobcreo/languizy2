@@ -53,30 +53,27 @@ function logUserData(userData) {
     console.warn('No authenticated user found, logging data anonymously');
     // Optionally, use an anonymous identifier, such as IP or session ID
     // Here we'll just generate a random ID if no user is logged in
-    const userRef = db.collection('Logs').doc(generateUniqueId());
-    userRef.set(userData)
-      .then(() => {
-        console.log('User data logged anonymously in Firestore.');
-      })
-      .catch((error) => {
-        console.error('Error logging user data:', error);
-      });
-  } else {
-    const userRef = db.collection('Logs').doc(userId);
-    userRef.get().then(doc => {
-      if (!doc.exists) {
-        // If the user document does not exist, create a new one
-        userRef.set(userData)
-          .then(() => {
-            console.log('User data logged successfully in Firestore.');
-          })
-          .catch((error) => {
-            console.error('Error logging user data:', error);
-          });
-      }
+
+    fetch('https://us-central1-languizy2.cloudfunctions.net/saveUserData', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Successfully pinged log function:', data);
+    })
+    .catch(error => {
+      console.error('Error pinging log function:', error);
     });
   }
-}
+
+
+    
+  }
+
 
 // Helper function to generate a unique identifier (in case there's no logged-in user)
 function generateUniqueId() {
