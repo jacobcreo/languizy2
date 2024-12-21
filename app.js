@@ -20,12 +20,16 @@ db.settings({ timestampsInSnapshots: true });
     fbc : fbc || null
   };
 
-  if (typeof userCountry === 'undefined') {
+  if (typeof window.userCountry === 'undefined') {
     var userCountry = 'Unknown';
+  } else {
+    var userCountry = window.userCountry;
   }
 
-  if (typeof idf === 'undefined') {
+  if (typeof window.idf === 'undefined') {
     var idf = '';
+  } else {
+    var idf = window.idf;
   }
   
 
@@ -689,3 +693,9 @@ function saveUserData(user) {
 //     }
 //   }
 // });
+
+// Toggle mobile menu
+document.getElementById('mobile-menu').addEventListener('click', function() {
+  const nav = document.querySelector('.nav');
+  nav.classList.toggle('active');
+});
