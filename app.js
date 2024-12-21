@@ -98,8 +98,17 @@ function generateUniqueId() {
 }
 
 function getSourceData() {
-  const data = localStorage.getItem('sourceData');
-  return data ? JSON.parse(data) : null;
+  const logData = localStorage.getItem('log');
+  if (logData) {
+    try {
+      const parsedData = JSON.parse(logData);
+      return parsedData;
+    } catch (error) {
+      console.error('Error parsing log data from localStorage:', error);
+      return null;
+    }
+  }
+  return null;
 }
 
 // Function to get a cookie by name
@@ -230,7 +239,9 @@ auth.onAuthStateChanged(user => {
     console.log('User logged out');
     // Redirect to login if not authenticated
     if (window.location.pathname !== '/' && !window.location.pathname.endsWith('index.html')) {
-      window.location.href = '/';
+      if (!(lp || window.location.pathname.endsWith('lp.html'))) {
+        window.location.href = '/';
+      }
     }
   }
 });
@@ -273,11 +284,15 @@ function handleUserRegistration(user) {
     lastLogin: firebase.firestore.Timestamp.now(),
     joinDate: firebase.firestore.Timestamp.now(),
     subLevel: 'Free',
-    source: sourceData?.utm_source || 'unknown',
-    medium: sourceData?.utm_medium || 'unknown',
-    campaign: sourceData?.utm_campaign || 'unknown',
-    fbclid: sourceData?.fbclid || null,
-    referrer: sourceData?.referrer || null
+    source: sourceData.utm_source || 'unknown',
+    medium: sourceData.utm_medium || 'unknown',
+    campaign: sourceData.utm_campaign || 'unknown',
+    fbclid: sourceData.fbclid || null,
+    referrer: sourceData.referrer || null,
+    country: sourceData.country || 'Unknown',
+    nidf: sourceData.nidf || '',
+    browser: sourceData.browser || 'Unknown',
+    userAgent: sourceData.userAgent || ''
   }).then(() => {
     console.log('User registration data saved with source info.');
     pingOnboardFunction(user.uid, user);
