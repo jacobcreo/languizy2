@@ -2,27 +2,238 @@
 const db = firebase.firestore();
 let languageLearned = '';
 let drillsLimitReached = false;
+let interfaceLanguage = 'en';
+
+const UIString = {
+    'en': {
+        'currentCourseCardTitle': 'CURRENT COURSE',
+        'changeCourseButton': 'Change Course',
+        'noCoursesAvailable': 'No courses available',
+        'RecommendationCardTitle': 'RECOMMENDATION',
+        'RecommendationCardButtonGoTo': 'Go To',
+        'RecommendationLoading': 'Loading recommendation...',
+        'TodaysDrillsCardTitle': 'TODAY\'S DRILLS',
+        'TodaysDrillsCardButton': 'Upgrade',
+        'TodaysDrillsCardButtonToContinue': 'to continue',
+        'TodaysDrillsOutOf': 'out of',
+        'TodaysDrillsCompletedToday': 'drills completed today',
+        'BasicsCardTitle': 'BASICS PRACTICE',
+        'BasicsCardButton': 'Practice the Basics',
+        'VocabCardTitle': 'VOCABULARY COVERED',
+        'VocabCardButton': 'Learn Vocabulary',
+        'GrammarCardTitle': 'GRAMMAR COVERED',
+        'GrammarCardButton': 'Learn Grammar',
+        'ChatCardTitle': 'CHAT TOPICS COVERED',
+        'ChatCardButton': 'Chat in',
+        'StoriesCardTitle': 'STORIES READ',
+        'StoriesCardButton': 'Read Stories',
+        'ChangeCoachButton': 'Change Coach',
+        'CurrentCoachLoading': 'Loading Coach...',
+        'StreakCardTitle': 'STREAK',
+        'StreakCardDays': 'Days',
+        'StreakCardHoursLeft': 'hours left to extend your streak!',
+        'StreakCardMessage': 'Extend your streak!',
+        'StreakCardExtendedToday': 'Streak extended today!',
+        'VocabListButton': 'Vocabulary List',
+        'PracticeStatsButton': 'Practice Stats',
+        'SelectCourseModalTitle': 'Select a Course',
+        'SelectCourseModalButton': 'Select',
+        'HeadlineLoading': 'Loading your daily motivation...',
+        'RecommendationUpgradeReason': 'You have reached the daily limit of 50 exercises on the Free Plan. Consider upgrading for unlimited access or return tomorrow for more practice.',
+        'RecommendationBasicsReason': 'All your progress areas are at zero. Starting with Basics will help you build a strong foundation.',
+        'RecommendationVocab': 'Building a robust vocabulary is essential for effective communication. Let\'s enhance your word knowledge!',
+        'RecommendationGrammar': 'Understanding grammar rules will help you construct sentences accurately. Let\'s delve into grammar!',
+        'RecommendationStories': 'Reading stories can improve your comprehension and contextual understanding. Let\'s explore some engaging stories!',
+        'RecommendationChat': 'Engaging in conversations will boost your speaking and listening skills. Let\'s start chatting!',
+        'RecommendationBasics': 'Focusing on the Basics will help you build a strong foundation. Let\'s reinforce the fundamentals!',
+        'RecommendationUpgrade': 'You\'ve reached today\'s exercise limit on the Free Plan. Consider upgrading for unlimited access or come back tomorrow.',
+        'RecommendationDefault': 'Let\'s continue your learning journey!',
+        'RecommendationNames': {
+            'Basics': 'Basics',
+            'Vocabulary': 'Vocabulary',
+            'Grammar': 'Grammar',
+            'Stories': 'Stories',
+            'Chat': 'Chat',
+            'Upgrade': 'Upgrade'
+        },
+        'LogoutText': 'Logout',
+        'FreeUser': 'FREE',
+        'ProUser': 'PRO',
+        'upgradeModalTitle': 'Unlock Your Full Potential',
+        'upgradeModalSubtitle': 'Upgrade to our Pro Plan and transform your language learning journey. Enjoy unlimited access to all features and take your skills to the next level!',
+        'upgradeFeatureHeader': 'Feature',
+        'upgradeFeatureFree': 'Free Plan',
+        'upgradeFeaturePro': 'Pro Plan',
+        'upgradeSpecialOffer': 'Special Offer:',
+        'upgradeSpecialOfferText': 'Get 25% off with our yearly plan - only $63!',
+        'upgradeTerms': 'All purchases are subject to our',
+        'upgradeTermsOfService': 'Terms & Conditions',
+        'upgradeRefundPolicy': 'Refund Policy',
+        'upgradeSuccessTitle': 'Congratulations!',
+        'upgradeSuccessMessage': 'You are now subscribed to the <strong id="subscribedPlan"></strong> Pro Plan.',
+        'upgradeErrorTitle': 'Subscription Failed',
+        'upgradeErrorMessage': 'There was an issue processing your subscription. Please try again.',
+        'upgradeContinueFree': 'Continue Free',
+        'upgradeMonthlyPlan': 'Pro Plan - $6.99/month',
+        'upgradeYearlyPlan': 'Pro Plan - $63/year',
+        'featureDailyExercises': 'Daily Exercises per Course',
+        'featureStories': 'Stories',
+        'featureAIChats': 'AI Chats',
+        'featureStats': 'Stats',
+        'featureDailyExercisesFree': '50',
+        'featureDailyExercisesPro': 'Unlimited',
+        'featureStoriesFree': 'Limited',
+        'featureStoriesPro': 'All Stories',
+        'featureAIChatsFree': 'Short Conversations',
+        'featureAIChatsPro': 'Longer Conversations',
+        'featureStatsFree': 'Limited',
+        'featureStatsPro': 'Full Stats',
+        'upgradeSuccessButton': 'Start Practicing',
+        'upgradeErrorButton': 'Try Again',
+        'upgradeTerms1': 'All purchases are subject to our ',
+        'upgradeTerms2': 'Terms & Conditions ',
+        'upgradeTerms3': 'and ',
+        'upgradeTerms4': 'Refund Policy'
+    },
+    'es': {
+        'currentCourseCardTitle': 'CURSO ACTUAL',
+        'changeCourseButton': 'Cambiar Curso',
+        'noCoursesAvailable': 'No hay cursos disponibles',
+        'RecommendationCardTitle': 'RECOMENDACIÓN',
+        'RecommendationCardButtonGoTo': 'Ir a',
+        'RecommendationLoading': 'Cargando recomendación...',
+        'TodaysDrillsCardTitle': 'EJERCICIOS DE HOY',
+        'TodaysDrillsCardButton': 'Actualizar',
+        'TodaysDrillsCardButtonToContinue': 'para continuar',
+        'TodaysDrillsOutOf': 'de',
+        'TodaysDrillsCompletedToday': 'ejercicios completados hoy',
+        'BasicsCardTitle': 'PRÁCTICA BÁSICA',
+        'BasicsCardButton': 'Practicar los Básicos',
+        'VocabCardTitle': 'VOCABULARY COVERED', 
+        'VocabCardButton': 'Aprender Vocabulario',
+        'GrammarCardTitle': 'GRAMÁTICA CUBIERTA',
+        'GrammarCardButton': 'Aprender Gramática',
+        'ChatCardTitle': 'TEMAS DE CHAT CUBIERTOS',
+        'ChatCardButton': 'Chatear en',
+        'StoriesCardTitle': 'HISTORIAS LEÍDAS',
+        'StoriesCardButton': 'Leer Historias',
+        'ChangeCoachButton': 'Cambiar Entrenador',
+        'CurrentCoachLoading': 'Cargando Entrenador...',
+        'StreakCardTitle': 'Racha',
+        'StreakCardDays': 'Días',
+        'StreakCardHoursLeft': 'horas restantes para extender tu racha!',
+        'StreakCardMessage': '¡Extiende tu racha!',
+        'StreakCardExtendedToday': '¡Racha extendida hoy!',
+        'VocabListButton': 'Lista de Vocabulario',
+        'PracticeStatsButton': 'Estadísticas de Práctica',
+        'SelectCourseModalTitle': 'Seleccionar un Curso',
+        'SelectCourseModalButton': 'Seleccionar',
+        'HeadlineLoading': 'Cargando tu motivación diaria...',
+        'RecommendationUpgradeReason': 'Has alcanzado el límite diario de 50 ejercicios en el Plan Gratuito. Considera actualizar para acceso ilimitado o regresa mañana para más práctica.',
+        'RecommendationBasicsReason': 'Todas tus áreas de progreso están en cero. Comenzar con los Básicos te ayudará a construir una base sólida.',
+        'RecommendationVocab': 'Construir un vocabulario sólido es esencial para una comunicación efectiva. ¡Vamos a mejorar tu conocimiento de palabras!',
+        'RecommendationGrammar': 'Comprender las reglas gramaticales te ayudará a construir oraciones con precisión. ¡Profundicemos en la gramática!',
+        'RecommendationStories': 'Leer historias puede mejorar tu comprensión y entendimiento contextual. ¡Exploremos algunas historias atractivas!',
+        'RecommendationChat': 'Participar en conversaciones mejorará tus habilidades de habla y escucha. ¡Comencemos a chatear!',
+        'RecommendationBasics': 'Enfocarse en los Básicos te ayudará a construir una base sólida. ¡Reforcemos los fundamentos!',
+        'RecommendationUpgrade': 'Has alcanzado el límite de ejercicios de hoy en el Plan Gratuito. Considera actualizar para acceso ilimitado o regresa mañana.',
+        'RecommendationDefault': '¡Continuemos tu viaje de aprendizaje!',
+        'RecommendationNames': {
+            'Basics': 'Básicos',
+            'Vocabulary': 'Vocabulario',
+            'Grammar': 'Gramática',
+            'Stories': 'Historias',
+            'Chat': 'Chat',
+            'Upgrade': 'Actualizar'
+        },
+        'LogoutText': 'Cerrar Sesión',
+        'FreeUser': 'GRATIS',
+        'ProUser': 'PRO',
+        'upgradeModalTitle': 'Desbloquea Tu Máximo Potencial',
+        'upgradeModalSubtitle': 'Actualiza a nuestro Plan Pro y transforma tu viaje de aprendizaje de idiomas. ¡Disfruta de acceso ilimitado a todas las funciones y lleva tus habilidades al siguiente nivel!',
+        'upgradeFeatureHeader': 'Característica',
+        'upgradeFeatureFree': 'Plan Gratuito',
+        'upgradeFeaturePro': 'Plan Pro',
+        'upgradeSpecialOffer': 'Oferta Especial:',
+        'upgradeSpecialOfferText': '¡Obtén un 25% de descuento con nuestro plan anual - solo $63!',
+        'upgradeTerms': 'Todas las compras están sujetas a nuestros',
+        'upgradeTermsOfService': 'Términos y Condiciones',
+        'upgradeRefundPolicy': 'Política de Reembolso',
+        'upgradeSuccessTitle': '¡Felicidades!',
+        'upgradeSuccessMessage': 'Ahora estás suscrito al <strong id="subscribedPlan"></strong> Plan Pro.',
+        'upgradeErrorTitle': 'Suscripción Fallida',
+        'upgradeErrorMessage': 'Hubo un problema al procesar tu suscripción. Por favor, intenta nuevamente.',
+        'upgradeContinueFree': 'Continuar Gratis',
+        'upgradeMonthlyPlan': 'Plan Pro - $6.99/mes',
+        'upgradeYearlyPlan': 'Plan Pro - $63/año',
+        'featureDailyExercises': 'Ejercicios Diarios por Curso',
+        'featureStories': 'Historias',
+        'featureAIChats': 'Chats de IA',
+        'featureStats': 'Estadísticas',
+        'featureDailyExercisesFree': '50',
+        'featureDailyExercisesPro': 'Ilimitado',
+        'featureStoriesFree': 'Limitado',
+        'featureStoriesPro': 'Todas las Historias',
+        'featureAIChatsFree': 'Conversaciones Cortas',
+        'featureAIChatsPro': 'Conversaciones Más Largas',
+        'featureStatsFree': 'Limitado',
+        'featureStatsPro': 'Estadísticas Completas',
+        'upgradeSuccessButton': 'Comenzar a Practicar',
+        'upgradeErrorButton': 'Intentar de Nuevo'
+    }
+}
 
 
 
+
+// const languageShorts = {
+//     'en': 'English',
+//     'de': 'German',
+//     'fr': 'French',
+//     'it': 'Italian',
+//     'es': 'Spanish',
+//     'us': 'English',
+//     'uk': 'English',
+//     'ru': 'Russian',
+//     'cn': 'Chinese',
+//     'pt': 'Portuguese',
+//     'nl': 'Dutch'
+// };
 
 const languageShorts = {
-    'en': 'English',
-    'de': 'German',
-    'fr': 'French',
-    'it': 'Italian',
-    'es': 'Spanish',
-    'us': 'English',
-    'uk': 'English',
-    'ru': 'Russian',
-    'cn': 'Chinese',
-    'pt': 'Portuguese',
-    'nl': 'Dutch'
-};
+    'en': {
+        'en': 'English',
+        'de': 'German',
+        'fr': 'French',
+        'it': 'Italian',
+        'es': 'Spanish',
+        'us': 'English',
+        'uk': 'English',
+        'ru': 'Russian',
+        'cn': 'Chinese',
+        'pt': 'Portuguese',
+        'nl': 'Dutch'
+    }, 'es' :
+    {
+        'en': 'Inglés',
+        'de': 'Alemán',
+        'fr': 'Francés',
+        'it': 'Italiano',
+        'es': 'Español',
+        'us': 'Inglés',
+        'uk': 'Inglés',
+        'ru': 'Ruso',
+        'cn': 'Chino',
+        'pt': 'Portugués',
+        'nl': 'Holandés'
+    }
+}
+
 
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
+        modifyInterfaceLanguage();
         checkReg(user);
 
         // Fetch the user document once
@@ -54,7 +265,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
                 loadUserAvatar(userData),
             ]);
 
-           
+
         }
     } else {
         window.location.href = '/';
@@ -159,7 +370,7 @@ async function loadStreak(user, userDocRef) {
 
         if (coursesSnapshot.empty) {
             console.warn('No courses found for this user.');
-            document.getElementById('streakCount').textContent = "0 Days";
+            document.getElementById('streakCount').textContent = "0" + UIString[interfaceLanguage].StreakCardDays;
             document.getElementById('streakCount').style.visibility = 'visible';
             return;
         }
@@ -202,7 +413,7 @@ async function loadStreak(user, userDocRef) {
         const hoursLeft = Math.floor((midnight - now) / (60 * 60 * 1000));
 
         // Update streak display
-        document.getElementById('streakCount').textContent = `${currentStreak || 0} Days`;
+        document.getElementById('streakCount').textContent = `${currentStreak || 0} ` + UIString[interfaceLanguage].StreakCardDays;
 
         // Update flame color based on whether the streak was extended today
         const flameIcon = document.querySelector('.fa-fire');
@@ -211,17 +422,17 @@ async function loadStreak(user, userDocRef) {
 
         // Display additional message
         if (streakExtendedToday) {
-            messageElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> Streak extended today!`;
+            messageElement.innerHTML = `<i class="fas fa-check-circle text-success"></i> ` + UIString[interfaceLanguage].StreakCardExtendedToday;
             console.log(`Streak extended today for user ${user.uid}. Current streak: ${currentStreak} Days.`);
         } else {
-            messageElement.innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> ${hoursLeft} hours left to extend your streak!`;
+            messageElement.innerHTML = `<i class="fas fa-exclamation-triangle text-danger"></i> ${hoursLeft} ` + UIString[interfaceLanguage].StreakCardHoursLeft;
             console.log(`Streak not extended today for user ${user.uid}. ${hoursLeft} hours left to extend.`);
         }
         document.querySelector('#CurrentStreakCard .fill-effect').style.animation = 'none';
         document.getElementById('streakCount').style.visibility = 'visible';
     } catch (error) {
         console.error("Error fetching streak: ", error);
-        document.getElementById('streakCount').textContent = "0 Days";
+        document.getElementById('streakCount').textContent = "0" + UIString[interfaceLanguage].StreakCardDays;
         document.getElementById('streakCount').style.visibility = 'visible';
     }
     console.timeEnd('Load Streak');
@@ -284,9 +495,9 @@ function calculateStreaks(dates) {
 function getFlagIcons(currentCourse) {
     const [knownLanguage, language] = currentCourse.split('-');
     const flagIcons = `
-        <img src="assets/icons/${knownLanguage}-flag.png" alt="${languageShorts[knownLanguage]} Flag" width="24" class="me-2">
+        <img src="assets/icons/${knownLanguage}-flag.png" alt="${languageShorts[interfaceLanguage][knownLanguage]} Flag" width="24" class="me-2">
         <i class="fas fa-arrow-right me-2"></i>
-        <img src="assets/icons/${language}-flag.png" alt="${languageShorts[language]} Flag" width="24" class="me-2">
+        <img src="assets/icons/${language}-flag.png" alt="${languageShorts[interfaceLanguage][language]} Flag" width="24" class="me-2">
     `;
     return flagIcons;
 }
@@ -332,10 +543,10 @@ function loadTrainingOptions(currentCourse, userId) {
         .get();
 
     const basicsQuery = db.collection('nouns').
-    where('knownLanguage', '==', knownLanguage).
-    where('language', '==', language).
-    limit(1).
-    get();
+        where('knownLanguage', '==', knownLanguage).
+        where('language', '==', language).
+        limit(1).
+        get();
 
     Promise.all([storiesQuery, grammarQuery, basicsQuery])
         .then(([storySnap, grammarSnap, basicsSnap]) => {
@@ -421,11 +632,11 @@ function updateDrillsUI(totalDrills, userLevel) {
     const subLevelBadge = document.getElementById('subLevelBadge');
 
     if (userLevel === 'Free') {
-        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.textContent = UIString[interfaceLanguage].FreeUser;
         subLevelBadge.className = 'badge bg-secondary';
         subLevelBadge.onclick = showUpgradeModal; // Open upgrade modal on click
     } else {
-        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.textContent = UIString[interfaceLanguage].ProUser;
         subLevelBadge.className = 'badge bg-danger';
         subLevelBadge.onclick = null; // No action on click for PRO
     }
@@ -438,8 +649,8 @@ function updateDrillsUI(totalDrills, userLevel) {
             drillsCard.innerHTML = `
                 <div class="card border-left-warning shadow h-100 py-0">
                     <div class="card-body">
-                        <h5 class="card-title text-danger text-uppercase">   <i class="fas fa-check-circle fa-fw"></i> Today's Drills</h5>
-                        <p>${totalDrills} out of 50 drills completed today.</p>
+                        <h5 class="card-title text-danger text-uppercase">   <i class="fas fa-check-circle fa-fw"></i> ${UIString[interfaceLanguage].TodaysDrillsCardTitle}</h5>
+                        <p>${totalDrills} ${UIString[interfaceLanguage].TodaysDrillsOutOf} 50 ${UIString[interfaceLanguage].TodaysDrillsCompletedToday}.</p>
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-warning" onclick="showUpgradeModal()" id="upgBtn">
@@ -452,8 +663,8 @@ function updateDrillsUI(totalDrills, userLevel) {
         } else { // For smaller devices
             drillsAlert.innerHTML = `
                 <div class="alert alert-warning" role="alert">
-                    ${totalDrills} out of 50 drills completed today. 
-                    <a href="#" onclick="showUpgradeModal()">Upgrade</a> to continue.
+                    ${totalDrills} ${UIString[interfaceLanguage].TodaysDrillsOutOf} 50 ${UIString[interfaceLanguage].TodaysDrillsCompletedToday}. 
+                    <a onclick="showUpgradeModal()">${UIString[interfaceLanguage].Upgrade}</a> ${UIString[interfaceLanguage].TodaysDrillsCardButtonToContinue}.
                 </div>
             `;
             drillsAlert.style.display = 'block';
@@ -511,7 +722,7 @@ function populateModalCourses(user) {
             renderCourseList(coursesData);
 
             if (coursesData.length === 0) {
-                courseList.innerHTML = '<p>No courses available</p>';
+                courseList.innerHTML = '<p>' + UIString[interfaceLanguage].NoCoursesAvailable + '</p>';
             }
         })
         .catch((error) => {
@@ -529,7 +740,7 @@ function populateModalCourses(user) {
             item.classList.add('list-group-item', 'course-item', 'cursor-pointer');
             item.dataset.course = course;
 
-            const courseText = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`;
+            const courseText = `${languageShorts[interfaceLanguage][knownLanguage]} to ${languageShorts[interfaceLanguage][language]}`;
 
             item.innerHTML = `
                 <div class="d-flex align-items-center">
@@ -553,7 +764,7 @@ function populateModalCourses(user) {
         const searchTerm = searchInput.value.toLowerCase();
         const filteredCourses = coursesData.filter(course => {
             const [knownLanguage, language] = course.split('-');
-            const courseText = `${languageShorts[knownLanguage]} to ${languageShorts[language]}`.toLowerCase();
+            const courseText = `${languageShorts[interfaceLanguage][knownLanguage]} to ${languageShorts[interfaceLanguage][language]}`.toLowerCase();
             return courseText.includes(searchTerm);
         });
 
@@ -665,7 +876,7 @@ function calculateRecommendation(vocab, grammar, stories, chat, basics) {
             buttonId: 'upgradeBtn',
             icon: 'fas fa-exclamation-triangle'
         };
-        reason = 'You have reached the daily limit of 50 exercises on the Free Plan. Consider upgrading for unlimited access or return tomorrow for more practice.';
+        reason = UIString[interfaceLanguage].RecommendationUpgrade;
         console.log(`Recommendation Reason: Drills limit reached. Recommending Upgrade.`);
         return { recommendation, reason };
     }
@@ -678,7 +889,7 @@ function calculateRecommendation(vocab, grammar, stories, chat, basics) {
             buttonId: 'learnBasicsBtn',
             icon: 'fas fa-book'
         };
-        reason = 'All your progress areas are at zero. Starting with Basics will help you build a strong foundation.';
+        reason = UIString[interfaceLanguage].RecommendationBasics;
         console.log(`Recommendation Reason: All categories are 0%. Recommending Basics.`);
         return { recommendation, reason };
     }
@@ -791,32 +1002,32 @@ function updateRecommendationCard(recommendationObj) {
     let message = '';
     switch (recommendation.name) {
         case 'Basics':
-            message = "Focusing on the Basics will help you build a strong foundation. Let's reinforce the fundamentals!";
+            message = UIString[interfaceLanguage].RecommendationBasics;
             break;
         case 'Vocabulary':
-            message = "Building a robust vocabulary is essential for effective communication. Let's enhance your word knowledge!";
+            message = UIString[interfaceLanguage].RecommendationVocab;
             break;
         case 'Grammar':
-            message = "Understanding grammar rules will help you construct sentences accurately. Let's delve into grammar!";
+            message = UIString[interfaceLanguage].RecommendationGrammar;
             break;
         case 'Stories':
-            message = "Reading stories can improve your comprehension and contextual understanding. Let's explore some engaging stories!";
+            message = UIString[interfaceLanguage].RecommendationStories;
             break;
         case 'Chat':
-            message = "Engaging in conversations will boost your speaking and listening skills. Let's start chatting!";
+            message = UIString[interfaceLanguage].RecommendationChat;
             break;
         case 'Upgrade':
-            message = "You've reached today's exercise limit on the Free Plan. Consider upgrading for unlimited access or come back tomorrow.";
+            message = UIString[interfaceLanguage].RecommendationUpgrade;
             break;
         default:
-            message = "Let's continue your learning journey!";
+            message = UIString[interfaceLanguage].RecommendationDefault;
     }
 
     recommendationText.textContent = message;
 
     // Update button color and icon
     recommendationBtn.className = `btn btn-${recommendation.buttonColor}`;
-    recommendationBtn.innerHTML = `<i class="${recommendation.icon} me-2"></i> Go to ${recommendation.name}`;
+    recommendationBtn.innerHTML = `<i class="${recommendation.icon} me-2"></i> ${UIString[interfaceLanguage].RecommendationCardButtonGoTo} ${UIString[interfaceLanguage].RecommendationNames[recommendation.name]}`;
     recommendationBtn.style.visibility = 'visible';
 
     recommendationBtn.onclick = () => {
@@ -857,8 +1068,8 @@ async function loadCardData(user, currentCourse) {
 
     const courseParts = currentCourse.split('-');
     const targetLanguageCode = courseParts[1];
-    const targetLanguage = languageShorts[targetLanguageCode] || targetLanguageCode;
-    document.getElementById('currentCourseName').textContent = `${languageShorts[courseParts[0]]} to ${languageShorts[courseParts[1]]}`;
+    const targetLanguage = languageShorts[interfaceLanguage][targetLanguageCode] || targetLanguageCode;
+    document.getElementById('currentCourseName').textContent = `${languageShorts[interfaceLanguage][courseParts[0]]} to ${languageShorts[interfaceLanguage][courseParts[1]]}`;
     document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
     document.getElementById('currentCourseFlag').style.visibility = 'visible';
 
@@ -916,7 +1127,7 @@ async function loadCardData(user, currentCourse) {
                 document.getElementById('chatPercentage').textContent = `${chatPercentage}%`;
                 document.getElementById('chatProgress').style.width = `${chatPercentage}%`;
                 document.getElementById('chatProgress').setAttribute('aria-valuenow', chatPercentage);
-                document.getElementById('chatBtn').textContent = 'Chat in ' + languageShorts[courseParts[1]];
+                document.getElementById('chatBtn').textContent = UIString[interfaceLanguage].ChatCardButton + ' ' + languageShorts[interfaceLanguage][courseParts[1]];
 
                 console.log(`Loaded Chat Percentage: ${chatPercentage}%`);
                 document.querySelector('#CurrentChatCard .fill-effect').style.animation = 'none';
@@ -939,7 +1150,7 @@ async function loadCardData(user, currentCourse) {
                 console.error("Error fetching stories stats:", error);
             });
 
-            const basicsPromise = db.collection('users').doc(user.uid).collection('courses').doc(currentCourse).collection('stats').doc('all-time').get()
+        const basicsPromise = db.collection('users').doc(user.uid).collection('courses').doc(currentCourse).collection('stats').doc('all-time').get()
             .then((doc) => {
                 if (doc.exists) {
                     const maxNouns = doc.data().maxOrder || 0;
@@ -956,14 +1167,14 @@ async function loadCardData(user, currentCourse) {
             .catch((error) => {
                 console.error("Error fetching basics stats:", error);
             });
-            
-            console.timeEnd('Load Card Data');
+
+        console.timeEnd('Load Card Data');
 
 
         // Wait for all category data to be fetched
         await Promise.all([vocabPromise, grammarPromise, chatPromise, storiesPromise, basicsPromise]);
 
-        
+
 
         // Calculate and display recommendation
         calculateAndDisplayRecommendation();
@@ -976,28 +1187,28 @@ async function loadCardData(user, currentCourse) {
         window.location.href = 'stories.html';
     });
 
-// Function to check if the courseModal is open and refresh the page
-function checkAndRefresh() {
-    const courseModal = document.getElementById('courseModal');
-    const isCourseModalOpen = courseModal && courseModal.classList.contains('show');
+    // Function to check if the courseModal is open and refresh the page
+    function checkAndRefresh() {
+        const courseModal = document.getElementById('courseModal');
+        const isCourseModalOpen = courseModal && courseModal.classList.contains('show');
 
-    if (isCourseModalOpen) {
-        // Refresh the page if the courseModal was open
-        location.reload();
+        if (isCourseModalOpen) {
+            // Refresh the page if the courseModal was open
+            location.reload();
+        }
     }
-}
 
-// Listen for visibility change
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
+    // Listen for visibility change
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') {
+            checkAndRefresh();
+        }
+    });
+
+    // Listen for window focus
+    window.addEventListener('focus', function () {
         checkAndRefresh();
-    }
-});
-
-// Listen for window focus
-window.addEventListener('focus', function() {
-    checkAndRefresh();
-});
+    });
 
     // **New: Function to calculate and display recommendation**
     function calculateAndDisplayRecommendation() {
@@ -1028,30 +1239,19 @@ function checkReg(user) {
             'tier': 'Free'
         });
         // Generate a unique event ID
-var eventID = 'event_' + Math.random().toString(36).substring(2) + '_' + Date.now();
+        var eventID = 'event_' + Math.random().toString(36).substring(2) + '_' + Date.now();
 
-if (typeof fbq === 'function') {
-    fbq('track', 'CompleteRegistration', {
-        eventID: eventID
-    });
-} else {
-    var regimg = new Image();
-    regimg.src = "https://www.facebook.com/tr?id=621064440260076&ev=CompleteRegistration&eventID=" + eventID;
-    document.body.appendChild(regimg);
-}
+        if (typeof fbq === 'function') {
+            fbq('track', 'CompleteRegistration', {
+                eventID: eventID
+            });
+        } else {
+            var regimg = new Image();
+            regimg.src = "https://www.facebook.com/tr?id=621064440260076&ev=CompleteRegistration&eventID=" + eventID;
+            document.body.appendChild(regimg);
+        }
 
     }
-}
-
-function selectPlan(planType) {
-    if (planType === 'monthly') {
-        alert('You have selected the ' + planType + ' plan. Upgrade options coming soon. Enjoy your extended Free plan for now.');
-        console.log("Monthly plan selected");
-    } else if (planType === 'yearly') {
-        alert('You have selected the ' + planType + ' plan. Upgrade options coming soon. Enjoy your extended Free plan for now.');
-        console.log("Yearly plan selected");
-    }
-    // Redirect to payment or confirmation page
 }
 
 function continueFree() {
@@ -1064,14 +1264,87 @@ function continueFree() {
     modalInstance.hide();
 }
 
- // Function to check URL parameters and open the upgrade modal if needed
- function checkUpgradeParameter(userData) {
+// Function to check URL parameters and open the upgrade modal if needed
+function checkUpgradeParameter(userData) {
     debugger;
     const urlParams = new URLSearchParams(window.location.search);
     const upgradeParam = urlParams.get('upgrade');
     if (userData.subLevel === 'Free') {
-    if (upgradeParam === 'true') {
-        showUpgradeModal();
+        if (upgradeParam === 'true') {
+            showUpgradeModal();
+        }
     }
 }
+
+function modifyInterfaceLanguage() {
+    if (UIString[interfaceLanguage]) {
+        const lang = UIString[interfaceLanguage];
+
+        // Update all elements with data-i18n attribute (text content)
+        $('[data-i18n]').each(function() {
+            const key = $(this).data('i18n');
+            if (key.includes('.')) {
+                // Handle nested keys e.g. 'RecommendationNames.Basics'
+                const keys = key.split('.');
+                let text = lang;
+                keys.forEach(k => {
+                    text = text[k] || '';
+                });
+                $(this).text(text);
+            } else {
+                // Direct key in the UIString
+                if (lang[key] !== undefined) {
+                    $(this).text(lang[key]);
+                }
+            }
+        });
+
+        // Update elements with data-i18n-alt (for alt attributes)
+        $('[data-i18n-alt]').each(function() {
+            const key = $(this).data('i18n-alt');
+            if (lang[key] !== undefined) {
+                $(this).attr('alt', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-title (for title attributes)
+        $('[data-i18n-title]').each(function() {
+            const key = $(this).data('i18n-title');
+            if (lang[key] !== undefined) {
+                $(this).attr('title', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-placeholder (for placeholders)
+        $('[data-i18n-placeholder]').each(function() {
+            const key = $(this).data('i18n-placeholder');
+            if (lang[key] !== undefined) {
+                $(this).attr('placeholder', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-html (where innerHTML is needed)
+        $('[data-i18n-html]').each(function() {
+            const key = $(this).data('i18n-html');
+            if (key.includes('.')) {
+                const keys = key.split('.');
+                let html = lang;
+                keys.forEach(k => {
+                    html = html[k] || '';
+                });
+                $(this).html(html);
+            } else {
+                if (lang[key] !== undefined) {
+                    $(this).html(lang[key]);
+                }
+            }
+        });
+
+        // Special case for #subscribedPlan if you have dynamic plan naming
+        const subscribedPlanElement = $('#subscribedPlan');
+        const currentPlan = subscribedPlanElement.text();
+        if (currentPlan && lang.RecommendationNames && lang.RecommendationNames[currentPlan]) {
+            subscribedPlanElement.html(lang.RecommendationNames[currentPlan]);
+        }
+    }
 }
