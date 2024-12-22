@@ -14,5 +14,8 @@
     "education"
   ],
   "author": "Koby OFOfekEK",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "terser": "^5.37.0"
+  }
 }
