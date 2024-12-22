@@ -14,12 +14,236 @@ let listOfSeenNouns = [];
 let maxOrder = 0;
 let imagesLoaded = 0;
 let showCoachFeedback = true;
+let interfaceLanguage = 'en';
+
 
 
 let matchingPairs = []; // Store {target: "", origin: ""}
 let selectedMatchingBtn = null; // Track the currently selected button
 let matchedCount = 0; // Count how many pairs have been matched in this drill
 
+const UIString = {
+    'en': {
+        // General
+        'title': 'Nouns - Language Learning App',
+        'navbarBrandTitle': 'Languizy, Language Learning for Real',
+        'navbarBrandAlt': 'Languizy Logo',
+
+        // Buttons
+        'logout': 'Logout',
+        'replayAudio': 'Replay',
+        'help': 'Help',
+        'stats': 'Stats',
+        'report': 'Report',
+        'submit': 'Submit',
+        'close': 'Close',
+        'returnToCourseSelection': 'Return to Course Selection',
+        'submitAnswer': 'Submit Answer',
+        'nextQuestion': 'Next Question',
+        'toggleMode': 'Make it easier',
+
+        // Feedback and Stats
+        'proficiencyLevel': 'Proficiency Level',
+        'score': 'Score',
+        'correctCount': 'Correct',
+        'wrongCount': 'Wrong',
+
+        // Image and Icon Alt Texts
+        'navbarBrandAlt': 'Languizy Logo',
+        'proficiencyIconAlt': 'Proficiency Icon',
+        'scoreIconAlt': 'Score Icon',
+        'correctIconAlt': 'Correct Icon',
+        'wrongIconAlt': 'Wrong Icon',
+        'closeButtonAlt': 'Close Button',
+        'closeButtonAltMobile': 'Close Button Mobile',
+        'nounImageAlt': 'Image representing the noun',
+
+        // Close Button Titles
+        'closeButtonTitle': 'Close',
+        'closeButtonTitleMobile': 'Close',
+
+        // Questions and Inputs
+        'textInputQuestion': "What's this?",
+        'matchWords': 'Match the words',
+        'selectWordPair': 'Select a word from either column, then select its pair.',
+        'matchWordsToImages': 'Match the words to images',
+        'clickImagePhrase': 'Click on the image for the phrase:',
+        'userAnswerPlaceholder': 'Type your answer here...',
+
+        // Coach
+        'coachImageAlt': 'Coach Image',
+        'coachMessage': 'Keep up the great work! You are making fantastic progress in your language learning journey.',
+
+        // Help Modal
+        'helpInstructions': 'Help & Instructions',
+        'welcome': 'Welcome to the Nouns Practice Screen!',
+        'enhanceSkills': 'Here, you can enhance your language skills by practicing nouns identification in a fun and interactive way. Below are some tips and instructions to help you make the most of this experience.',
+        'navigationHeader': 'Navigation',
+        'logoutLabel': 'Logout:',
+        'logoutDescription': ' Click the "Logout" button in the top-right corner to safely exit your session.',
+        'courseSelectionLabel': 'Course Selection:',
+        'courseSelectionDescription': ' Use the back arrow in the stats bar to return to the course selection screen.',
+        'interfaceUnderstandingHeader': 'Understanding the Interface',
+        'questionAreaLabel': 'Question Area:',
+        'questionAreaDescription': ' This is where an image representing a noun is displayed. Identify the noun in the target language.',
+        'multipleChoiceModeLabel': 'Multiple Choice Mode:',
+        'multipleChoiceModeDescription': ' If enabled, select the correct noun from the given options.',
+        'textInputModeLabel': 'Text Input Mode:',
+        'textInputModeDescription': ' Type the noun in the input field provided.',
+        'buttonsFeaturesHeader': 'Buttons and Features',
+        'submitAnswerLabel': 'Submit Answer:',
+        'submitAnswerDescription': ' Click this button to submit your answer for evaluation.',
+        'nextQuestionLabel': 'Next Question:',
+        'nextQuestionDescription': ' Move to the next question after submitting your answer.',
+        'toggleModeLabel': 'Toggle Mode:',
+        'toggleModeDescription': ' Switch between multiple-choice and text input modes to adjust the difficulty level.',
+        'replayAudioLabel': 'Replay Audio:',
+        'replayAudioDescription': ' Listen to the pronunciation of the noun again.',
+        'reportLabel': 'Report:',
+        'reportDescription': ' If you encounter an issue with a question, use this button to report it.',
+        'statsFeedbackHeader': 'Stats and Feedback',
+        'scoreLabel': 'Score:',
+        'scoreDescription': ' Your current score is displayed in the stats bar. Aim to improve it with each correct answer!',
+        'correctWrongCountLabel': 'Correct/Wrong Count:',
+        'correctWrongCountDescription': ' Keep track of your correct and incorrect answers.',
+        'lastFiveAnswersLabel': 'Last 5 Answers:',
+        'lastFiveAnswersDescription': ' Visual feedback on your recent performance is shown with colored boxes.',
+        'tipsSuccessHeader': 'Tips for Success',
+        'tip1': 'Take your time to understand each image and use the "Toggle Mode" feature to challenge yourself.',
+        'tip2': 'Use the "Replay Audio" feature to improve your pronunciation and listening skills.',
+        'tip3': 'Use the "Report" feature to notify us of any issues with questions.',
+        'exampleSentence': 'For example, <strong>"The cat is on the mat."</strong>',
+        'closingParagraph': 'We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel free to reach out to our support team. Happy learning!',
+
+        // Report Modal
+        'reportIssue': 'Report Issue',
+        'describeIssue': 'Describe your issue with the question:',
+        'reportCommentPlaceholder': 'Explain what went wrong...',
+
+        // Dynamic Content
+        'freeUser' : 'FREE',
+        'ProUser' : 'Pro',
+        'Proficiency Level' : 'Proficiency Level',
+        'MakeItHarder' : 'Make it harder',
+        'MakeItEasier' : 'Make it easier',
+        'correctExclemation' : 'Correct!',
+        'incorrectPart1' : 'Incorrect. The correct answer was',
+        'correctPart2' : 'is',
+        'incorrect' : 'Incorrect',
+        'newNoun' : '(new noun)',
+        
+    },
+    'es': {
+        // General
+        'title': 'Sustantivos - Aplicación de Aprendizaje de Idiomas',
+        'navbarBrandTitle': 'Languizy, Aprendizaje de Idiomas para la Vida Real',
+        'navbarBrandAlt': 'Logo de Languizy',
+
+        // Buttons
+        'logout': 'Cerrar sesión',
+        'replayAudio': 'Repetir',
+        'help': 'Ayuda',
+        'stats': 'Estadísticas',
+        'report': 'Informar',
+        'submit': 'Enviar',
+        'close': 'Cerrar',
+        'returnToCourseSelection': 'Volver a la Selección de Curso',
+        'submitAnswer': 'Enviar Respuesta',
+        'nextQuestion': 'Siguiente Pregunta',
+        'toggleMode': 'Hacerlo más fácil',
+
+        // Feedback and Stats
+        'proficiencyLevel': 'Nivel de Competencia',
+        'score': 'Puntuación',
+        'correctCount': 'Correctos',
+        'wrongCount': 'Incorrectos',
+
+        // Image and Icon Alt Texts
+        'navbarBrandAlt': 'Logo de Languizy',
+        'proficiencyIconAlt': 'Icono de Nivel de Competencia',
+        'scoreIconAlt': 'Icono de Puntuación',
+        'correctIconAlt': 'Icono de Correcto',
+        'wrongIconAlt': 'Icono de Incorrecto',
+        'closeButtonAlt': 'Botón de Cerrar',
+        'closeButtonAltMobile': 'Botón de Cerrar Móvil',
+        'nounImageAlt': 'Imagen que representa el sustantivo',
+
+        // Close Button Titles
+        'closeButtonTitle': 'Cerrar',
+        'closeButtonTitleMobile': 'Cerrar',
+
+        // Questions and Inputs
+        'textInputQuestion': '¿Qué es esto?',
+        'matchWords': 'Empareja las palabras',
+        'selectWordPair': 'Selecciona una palabra de cualquiera de las columnas, luego selecciona su par.',
+        'matchWordsToImages': 'Empareja las palabras con imágenes',
+        'clickImagePhrase': 'Haz clic en la imagen para la frase:',
+        'userAnswerPlaceholder': 'Escribe tu respuesta aquí...',
+
+        // Coach
+        'coachImageAlt': 'Imagen del Entrenador',
+        'coachMessage': '¡Sigue con el excelente trabajo! Estás haciendo un progreso fantástico en tu viaje de aprendizaje de idiomas.',
+
+        // Help Modal
+        'helpInstructions': 'Ayuda e Instrucciones',
+        'welcome': '¡Bienvenido a la Pantalla de Práctica de Sustantivos!',
+        'enhanceSkills': 'Aquí, puedes mejorar tus habilidades lingüísticas practicando la identificación de sustantivos de una manera divertida e interactiva. A continuación, se presentan algunos consejos e instrucciones para ayudarte a aprovechar al máximo esta experiencia.',
+        'navigationHeader': 'Navegación',
+        'logoutLabel': 'Cerrar Sesión:',
+        'logoutDescription': ' Haz clic en el botón "Cerrar sesión" en la esquina superior derecha para salir de tu sesión de manera segura.',
+        'courseSelectionLabel': 'Selección de Curso:',
+        'courseSelectionDescription': ' Utiliza la flecha de regreso en la barra de estadísticas para regresar a la pantalla de selección de curso.',
+        'interfaceUnderstandingHeader': 'Comprensión de la Interfaz',
+        'questionAreaLabel': 'Área de Pregunta:',
+        'questionAreaDescription': ' Aquí es donde se muestra una imagen que representa un sustantivo. Identifica el sustantivo en el idioma objetivo.',
+        'multipleChoiceModeLabel': 'Modo de Opción Múltiple:',
+        'multipleChoiceModeDescription': ' Si está habilitado, selecciona el sustantivo correcto de las opciones proporcionadas.',
+        'textInputModeLabel': 'Modo de Entrada de Texto:',
+        'textInputModeDescription': ' Escribe el sustantivo en el campo de entrada proporcionado.',
+        'buttonsFeaturesHeader': 'Botones y Funciones',
+        'submitAnswerLabel': 'Enviar Respuesta:',
+        'submitAnswerDescription': ' Haz clic en este botón para enviar tu respuesta para evaluación.',
+        'nextQuestionLabel': 'Siguiente Pregunta:',
+        'nextQuestionDescription': ' Pasa a la siguiente pregunta después de enviar tu respuesta.',
+        'toggleModeLabel': 'Cambiar Modo:',
+        'toggleModeDescription': ' Cambia entre modos de opción múltiple y entrada de texto para ajustar el nivel de dificultad.',
+        'replayAudioLabel': 'Repetir Audio:',
+        'replayAudioDescription': ' Escucha nuevamente la pronunciación del sustantivo.',
+        'reportLabel': 'Informar:',
+        'reportDescription': ' Si encuentras un problema con una pregunta, usa este botón para informarlo.',
+        'statsFeedbackHeader': 'Estadísticas y Retroalimentación',
+        'scoreLabel': 'Puntuación:',
+        'scoreDescription': ' Tu puntuación actual se muestra en la barra de estadísticas. ¡Intenta mejorarla con cada respuesta correcta!',
+        'correctWrongCountLabel': 'Cuenta de Correctos/Incorrectos:',
+        'correctWrongCountDescription': ' Lleva un registro de tus respuestas correctas e incorrectas.',
+        'lastFiveAnswersLabel': 'Últimas 5 Respuestas:',
+        'lastFiveAnswersDescription': ' La retroalimentación visual de tu desempeño reciente se muestra con cuadros de colores.',
+        'tipsSuccessHeader': 'Consejos para el Éxito',
+        'tip1': 'Tómate tu tiempo para entender cada imagen y usa la función "Cambiar Modo" para desafiarte.',
+        'tip2': 'Usa la función "Repetir Audio" para mejorar tu pronunciación y habilidades de escucha.',
+        'tip3': 'Usa la función "Informar" para notificarnos sobre cualquier problema con las preguntas.',
+        'exampleSentence': 'Por ejemplo, <strong>"El gato está en la alfombra."</strong>',
+        'closingParagraph': 'Esperamos que disfrutes tu viaje de aprendizaje con nosotros. Si tienes alguna pregunta o necesitas más ayuda, no dudes en contactar a nuestro equipo de soporte. ¡Feliz aprendizaje!',
+
+        // Report Modal
+        'reportIssue': 'Informar problema',
+        'describeIssue': 'Describe tu problema con la pregunta:',
+        'reportCommentPlaceholder': 'Explica qué salió mal...',
+
+        // Dynamic Content
+        'freeUser' : 'GRATIS',
+        'ProUser' : 'PRO',
+        'Proficiency Level' : 'Nivel de Competencia',
+        'MakeItHarder' : 'Hacerlo más difícil',
+        'MakeItEasier' : 'Hacerlo más fácil',
+        'correctExclemation' : '¡Correcto!',
+        'incorrectPart1' : 'Incorrecto. La respuesta correcta era',
+        'correctPart2' : 'es',
+        'incorrect' : 'Incorrecto',
+        'newNoun' : '(nuevo sustantivo)',
+    },
+    // Add more languages as needed
+};
 
 let fourImagesToLoad = [];
 
@@ -34,34 +258,9 @@ let currentNounData;
 let currentCourse;
 
 
-// Array of random encouragement statements
-const encouragementStatements = [
-    "You got this! Let's make this fun!",
-    "Believe in yourself – you're doing great!",
-    "Let's conquer this question together!",
-    "You're unstoppable! Keep up the good work!",
-    "Every step counts – let's make it count!"
-];
 
-const loadingMessages = [
-    "Hang tight! We're fetching some cool words...",
-    "Just a moment! Your image is loading...",
-    "Patience is key! Almost there...",
-    "Great things take time, and so does your image...",
-    "Did you know? We're selecting the perfect image just for you...",
-    "A little longer... Good things come to those who wait!",
-    "Loading... the suspense is building!",
-    "Fetching your next noun...",
-    "We're halfway there... keep your linguistic curiosity strong!",
-    "Just a sec... almost ready!",
-    "Loading... this is a great time to stretch, don't you think?",
-    "Fetching some A+ images for your learning pleasure...",
-    "Loading... our language squirrel is gathering all the nuts of knowledge!",
-    "Meanwhile, in the Land of Nouns... your image is being prepared.",
-    "Ever wonder how images are chosen? Well, you're about to find out...",
-    "Your noun is coming... it's fashionably late, but worth it.",
-    "Patience, grasshopper. Your learning will be worth the wait!",
-];
+
+
 
 let interimMessageInterval;
 const countryToLanguage = {
@@ -182,6 +381,7 @@ function updateFlagIcons(currentCourse) {
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
+        modifyInterfaceLanguage();
         fetchOrAssignCoach(user).then(() => {
 
             fetchCurrentCourse(user).then((currentCourse) => {
@@ -218,14 +418,14 @@ async function populateSubLevelBadge(userDoc) {
     const subLevelBadge = document.getElementById('subLevelBadge');
     subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
     if (subLevel === 'Free') {
-        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.textContent = UIString[interfaceLanguage].freeUser;
         subLevelBadge.className = 'badge bg-secondary';
 
         subLevelBadge.onclick = function () {
             window.location.href = '/course_selection.html?upgrade=true';
         };
     } else {
-        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.textContent = UIString[interfaceLanguage].ProUser;
         subLevelBadge.className = 'badge bg-danger';
         subLevelBadge.onclick = null; // No action on click for PRO
     }
@@ -243,10 +443,10 @@ function updateMaxOrder(user, currentCourse) {
             maxOrder = doc.data().maxOrder || 0;
             let maxOrderPercentage = (maxOrder / 2500 * 100).toFixed(2) + '%';
             $('#proficiencyLevel').text(maxOrderPercentage);
-            $('#profTooltip').text(maxOrderPercentage + ' Proficiency Level');
+            $('#profTooltip').text(maxOrderPercentage + ' ' + UIString[interfaceLanguage].ProficiencyLevel);
         } else {
             $('#proficiencyLevel').text('0.00%');
-            $('#profTooltip').text('0.00% Proficiency Level');
+            $('#profTooltip').text('0.00% ' + UIString[interfaceLanguage].ProficiencyLevel);
         }
     }).catch(error => {
         console.error('Error fetching maxOrder:', error);
@@ -258,10 +458,10 @@ function updateMaxOrder(user, currentCourse) {
 function initializeDefaultMode() {
     if (window.innerWidth < 768) { // Mobile devices
         isMultipleChoice = true; // Set to multiple-choice
-        $('#toggle-mode').text('Make it harder');
+        $('#toggle-mode').text(UIString[interfaceLanguage].MakeItHarder);
     } else {
         isMultipleChoice = false; // Set to text input
-        $('#toggle-mode').text('Make it easier');
+        $('#toggle-mode').text(UIString[interfaceLanguage].MakeItEasier);
     }
 
     // Add an event listener for the toggle button
@@ -271,7 +471,7 @@ function initializeDefaultMode() {
 // Function to toggle between modes
 function toggleMode() {
     isMultipleChoice = !isMultipleChoice; // Toggle the mode
-    $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
+    $('#toggle-mode').text(isMultipleChoice ? UIString[interfaceLanguage].MakeItHarder : UIString[interfaceLanguage].MakeItEasier);
     gtag('event', 'Toggle Mode', {
         'question_type': 'Nouns',
         'user_id': uid,
@@ -726,19 +926,19 @@ function afterAnswerSubmission(isCorrect, type = "translation") {
     if (type !== "four-images") {
         // Feedback to user
         if (isCorrect) {
-            $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
+            $('#feedback').text(UIString[interfaceLanguage].correctExclemation).removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
             if (!isMultipleChoice) {
                 $('#user-answer').val(`${window.currentNounData.noun}`).css('font-weight', 'bold');
             }
         } else {
-            $('#feedback').text(`Incorrect. The correct answer was "${window.currentNounData.noun}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+            $('#feedback').text(UIString[interfaceLanguage].incorrectPart1 + ` "${window.currentNounData.noun}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
         }
     } else {
         if (isCorrect) {
-            let correction = 'Correct! <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> is <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
+            let correction = UIString[interfaceLanguage].correctExclemation + ' <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> ' + UIString[interfaceLanguage].correctPart2 + ' <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
             $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible');
         } else {
-            let correction = 'Incorrect. <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> is <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
+            let correction = UIString[interfaceLanguage].incorrect + '. <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> ' + UIString[interfaceLanguage].correctPart2 + ' <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
             $('#feedback').html(correction).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
         }
     }
@@ -919,7 +1119,6 @@ function resetAllExerciseUI() {
     $('#user-answer').prop('disabled', false); // Disable the input field for typing
 
     $(document).off('keydown.fourImages');
-
 
 
 }
@@ -1109,7 +1308,7 @@ function displayNoun(noun, nounId, currentCourse) {
         .collection('nouns').doc(nounId);
 
     userProgressRef.get().then(progressDoc => {
-        var phraseStatus = "(new noun)"; // Default if never answered before
+        var phraseStatus = UIString[interfaceLanguage].newNoun; // Default if never answered before
 
         if (progressDoc.exists) {
             var progressData = progressDoc.data();
@@ -2517,4 +2716,59 @@ function setCoachImage(imageFilename) {
     const imagePath = `assets/images/${imageFilename}`;
     $('#coachImage').attr('src', imagePath);
     $('#coachImage').removeClass('invisible');
+}
+
+
+function modifyInterfaceLanguage() {
+    debugger;
+    if (UIString[interfaceLanguage]) {
+        const lang = UIString[interfaceLanguage];
+
+        // Update all elements with data-i18n attribute (text content)
+        $('[data-i18n]').each(function() {
+            const key = $(this).data('i18n');
+            if (key.includes('.')) {
+                // Handle nested keys e.g. 'RecommendationNames.Basics'
+                const keys = key.split('.');
+                let text = lang;
+                keys.forEach(k => {
+                    text = text[k] || '';
+                });
+                $(this).text(text);
+            } else {
+                // Direct key in the UIString
+                if (lang[key] !== undefined) {
+                    $(this).text(lang[key]);
+                }
+            }
+        });
+
+        // Update elements with data-i18n-alt (for alt attributes)
+        $('[data-i18n-alt]').each(function() {
+            const key = $(this).data('i18n-alt');
+            if (lang[key] !== undefined) {
+                $(this).attr('alt', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-title (for title attributes)
+        $('[data-i18n-title]').each(function() {
+            const key = $(this).data('i18n-title');
+            if (lang[key] !== undefined) {
+                $(this).attr('title', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-placeholder (for placeholders)
+        $('[data-i18n-placeholder]').each(function() {
+            const key = $(this).data('i18n-placeholder');
+            if (lang[key] !== undefined) {
+                $(this).attr('placeholder', lang[key]);
+            }
+        });
+
+        
+
+        
+    }
 }

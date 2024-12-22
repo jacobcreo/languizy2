@@ -4,7 +4,7 @@
 <head>
 
   <meta charset="UTF-8">
-  <title>Nouns - Language Learning App</title>
+  <title data-i18n="title">Nouns - Language Learning App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Bootstrap 5 CSS -->
@@ -49,14 +49,14 @@
   <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary d-none d-lg-flex">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-      <a class="navbar-brand" href="/course_selection.html">
-        <img src="assets/images/languizy-thin.png" alt="Languizy Logo" width="100" height="40"
-          class="d-inline-block align-text-top" title="Languizy, Language Learning for Real">
+      <a class="navbar-brand" href="/course_selection.html" data-i18n-title="navbarBrandTitle">
+        <img src="assets/images/languizy-thin.png" alt="" class="d-inline-block align-text-top" width="100" height="40"
+          data-i18n-alt="navbarBrandAlt" title="" />
       </a>
       <!-- Wrap the logout button and avatar inside a flex container -->
       <div class="d-flex align-items-center">
         <div id="subLevelBadge" class="badge bg-secondary me-3"></div>
-        <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+        <button class="btn btn-outline-light me-3" onclick="logout()" data-i18n="logout">Logout</button>
         <div id="userAvatar" class="avatar"></div>
       </div>
     </div>
@@ -74,32 +74,34 @@
 
       <!-- Score and Correct/Wrong Count -->
       <div class="tp col-6 d-lg-block col-lg-5 text-center" style="flex-grow: 1;">
-        <div class="close d-none d-lg-inline" style="float:left" onClick="backToCourseSelection();">
-          <i class="fa-regular fa-circle-xmark fa-2x pt-1"></i>
+        <div class="close d-none d-lg-inline" style="float:left" onClick="backToCourseSelection();" data-i18n-title="closeButtonTitle">
+          <i class="fa-regular fa-circle-xmark fa-2x pt-1" data-i18n-alt="closeButtonAlt"></i>
         </div>
         <div class="d-flex justify-content-center align-items-center pt-1">
           <span id="profBox" class="lessonType-box d-inline me-3">
-            <i class="fa fa-list text-primary"></i>
-            <span id="proficiencyLevel">0</span>
+            <i class="fa fa-list text-primary" data-i18n-alt="proficiencyIconAlt"></i>
+            <span id="proficiencyLevel" data-i18n-key="proficiencyLevel">0</span>
             <span id="profTooltip" class="tooltiptext"></span>
           </span>
           <span class="score-box d-inline me-3">
-            <i class="fas fa-star text-warning"></i>
-            <span id="score">0</span>
+            <i class="fas fa-star text-warning" data-i18n-alt="scoreIconAlt"></i>
+            <span id="score" data-i18n-key="score">0</span>
           </span>
           <span class="correct-box me-2">
-            <i class="fas fa-check text-success"></i> <span id="correct-count">0</span>
+            <i class="fas fa-check text-success" data-i18n-alt="correctIconAlt"></i>
+            <span id="correct-count" data-i18n-key="correctCount">0</span>
           </span>
           <span class="wrong-box">
-            <i class="fas fa-times text-danger"></i> <span id="wrong-count">0</span>
+            <i class="fas fa-times text-danger" data-i18n-alt="wrongIconAlt"></i>
+            <span id="wrong-count" data-i18n-key="wrongCount">0</span>
           </span>
         </div>
       </div>
 
 
       <div class="tp col-3 d-lg-none text-center" style="width: 80px;">
-        <div class="close d-lg-none" style="float:right" onClick="backToCourseSelection();">
-          <i class="fa-regular fa-circle-xmark fa-2x pt-2"></i>
+        <div class="close d-lg-none" style="float:right" onClick="backToCourseSelection();" data-i18n-title="closeButtonTitleMobile">
+          <i class="fa-regular fa-circle-xmark fa-2x pt-2" data-i18n-alt="closeButtonAltMobile"></i>
         </div>
       </div>
 
@@ -129,11 +131,11 @@
     <!-- Question Area -->
     <div class="question-area mb-4" id="question-area" style="display:none;">
       <div id="image-container">
-        <img id="noun-image" src="" alt="Noun Image" class="img-fluid" />
+        <img id="noun-image" src="" alt="" class="img-fluid" data-i18n-alt="nounImageAlt" />
       </div>
       <div id="four-images-container" class="row" style="display:none;">
         <div class="col-12 d-flex justify-content-center" style="flex-direction: column;">
-          <div>Click on the image for the phrase: </div>
+          <div data-i18n="clickImagePhrase">Click on the image for the phrase:</div>
           <h3><strong><span id="noun-four-images-text" class="my-2" style="text-decoration: underline;"></span></strong>
           </h3>
         </div>
@@ -158,7 +160,7 @@
       <!-- Text Input Area -->
       <div id="text-input-area" class="mt-3" style="display: none;">
         <div id="text-input-question" class="mt-3">
-          <p id="text-input-question-text">What's this?<span id="noun-translation" class="mx-2"
+          <p id="text-input-question-text" data-i18n="textInputQuestion">What's this?<span id="noun-translation" class="mx-2"
               style="text-decoration: underline;"></span></p>
         </div>
         <!-- Example Sentence Area -->
@@ -201,8 +203,8 @@
 
     <!-- Matching Mode Container (Initially hidden) -->
     <div id="matching-container" class="container mt-4" style="display:none;">
-      <h3>Match the words</h3>
-      <p class="text-muted">Select a word from either column, then select its pair.</p>
+      <h3 data-i18n="matchWords">Match the words</h3>
+      <p class="text-muted" data-i18n="selectWordPair">Select a word from either column, then select its pair.</p>
       <div class="row">
         <div class="col-6 text-end" id="matching-left-column">
           <!-- Left column buttons (1-4) will be inserted here -->
@@ -215,7 +217,7 @@
 
     <!-- Matching Images Mode Container (Initially hidden) -->
     <div id="matching-images-container" class="container mt-4" style="display:none;">
-      <h3>Match the words to images</h3>
+      <h3 data-i18n="matchWordsToImages">Match the words to images</h3>
 
       <!-- Text Buttons Section -->
       <div class="row mb-4">
@@ -303,17 +305,16 @@
     <div class="container">
       <div class="row justify-content-center mt-4 button-container">
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button id="replay-audio" disabled class="btn btn-info w-100">Replay <i class="fas fa-volume-up"></i></button>
+          <button id="replay-audio" disabled class="btn btn-info w-100" data-i18n="replayAudio">Replay <i class="fas fa-volume-up"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button id="help-button" class="btn btn-secondary w-100">Help <i class="fas fa-question-circle"></i></button>
+          <button id="help-button" class="btn btn-secondary w-100" data-i18n="help">Help <i class="fas fa-question-circle"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button class="btn btn-warning w-100" onclick="buttonClick('stats')">Stats <i
-              class="fas fa-chart-line"></i></button>
+          <button class="btn btn-warning w-100" onclick="buttonClick('stats')" data-i18n="stats">Stats <i class="fas fa-chart-line"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button id="report-button" class="btn btn-danger w-100">Report <i class="fas fa-flag"></i></button>
+          <button id="report-button" class="btn btn-danger w-100" data-i18n="report">Report <i class="fas fa-flag"></i></button>
         </div>
       </div>
     </div>
@@ -325,21 +326,21 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="reportModalLabel">Report Issue</h5>
+          <h5 class="modal-title" id="reportModalLabel" data-i18n="reportIssue">Report Issue</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <form id="reportForm">
             <input type="hidden" id="report-question-id">
             <div class="mb-3">
-              <label for="report-comment" class="form-label">Describe your issue with the question:</label>
-              <textarea class="form-control" id="report-comment" rows="3"></textarea>
+              <label for="report-comment" class="form-label" data-i18n="describeIssue">Describe your issue with the question:</label>
+              <textarea class="form-control" id="report-comment" rows="3" data-i18n-placeholder="reportCommentPlaceholder"></textarea>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="submit-report">Submit</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="close">Close</button>
+          <button type="button" class="btn btn-primary" id="submit-report" data-i18n="submit">Submit</button>
         </div>
       </div>
     </div>
@@ -350,61 +351,92 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header bg-info text-white">
-          <h5 class="modal-title" id="helpModalLabel">Help & Instructions</h5>
+          <h5 class="modal-title" id="helpModalLabel" data-i18n="helpInstructions">Help & Instructions</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <h6>Welcome to the Nouns Practice Screen!</h6>
-          <p>Here, you can enhance your language skills by practicing nouns identification in a fun and interactive way.
-            Below are some tips and instructions to help you make the most of this experience.</p>
+          <h6 data-i18n="welcome">Welcome to the Nouns Practice Screen!</h6>
+          <p data-i18n="enhanceSkills">Here, you can enhance your language skills by practicing nouns identification in a fun and interactive way. Below are some tips and instructions to help you make the most of this experience.</p>
 
-          <h6>Navigation</h6>
+          <h6 data-i18n="navigationHeader">Navegación</h6>
           <ul>
-            <li><strong>Logout:</strong> Click the "Logout" button in the top-right corner to safely exit your session.
+            <li>
+              <strong><span data-i18n="logoutLabel">Logout:</span></strong>
+              <span data-i18n="logoutDescription"> Click the "Logout" button in the top-right corner to safely exit your session.</span>
             </li>
-            <li><strong>Course Selection:</strong> Use the back arrow in the stats bar to return to the course selection
-              screen.</li>
-          </ul>
-
-          <h6>Understanding the Interface</h6>
-          <ul>
-            <li><strong>Question Area:</strong> This is where an image representing a noun is displayed. Identify the
-              noun in the target language.</li>
-            <li><strong>Multiple Choice Mode:</strong> If enabled, select the correct noun from the given options.</li>
-            <li><strong>Text Input Mode:</strong> Type the noun in the input field provided.</li>
-          </ul>
-
-          <h6>Buttons and Features</h6>
-          <ul>
-            <li><strong>Submit Answer:</strong> Click this button to submit your answer for evaluation.</li>
-            <li><strong>Next Question:</strong> Move to the next question after submitting your answer.</li>
-            <li><strong>Toggle Mode:</strong> Switch between multiple-choice and text input modes to adjust the
-              difficulty level.</li>
-            <li><strong>Replay Audio:</strong> Listen to the pronunciation of the noun again.</li>
-            <li><strong>Report:</strong> If you encounter an issue with a question, use this button to report it.</li>
-          </ul>
-
-          <h6>Stats and Feedback</h6>
-          <ul>
-            <li><strong>Score:</strong> Your current score is displayed in the stats bar. Aim to improve it with each
-              correct answer!</li>
-            <li><strong>Correct/Wrong Count:</strong> Keep track of your correct and incorrect answers.</li>
-            <li><strong>Last 5 Answers:</strong> Visual feedback on your recent performance is shown with colored boxes.
+            <li>
+              <strong><span data-i18n="courseSelectionLabel">Course Selection:</span></strong>
+              <span data-i18n="courseSelectionDescription"> Use the back arrow in the stats bar to return to the course selection screen.</span>
             </li>
           </ul>
 
-          <h6>Tips for Success</h6>
+          <h6 data-i18n="interfaceUnderstandingHeader">Comprensión de la Interfaz</h6>
           <ul>
-            <li>Take your time to understand each image and use the "Toggle Mode" feature to challenge yourself.</li>
-            <li>Use the "Replay Audio" feature to improve your pronunciation and listening skills.</li>
-            <li>Use the "Report" feature to notify us of any issues with questions.</li>
+            <li>
+              <strong><span data-i18n="questionAreaLabel">Area de Pregunta:</span></strong>
+              <span data-i18n="questionAreaDescription"> This is where an image representing a noun is displayed. Identify the noun in the target language.</span>
+            </li>
+            <li>
+              <strong><span data-i18n="multipleChoiceModeLabel">Modo de Opción Múltiple:</span></strong>
+              <span data-i18n="multipleChoiceModeDescription"> If enabled, select the correct noun from the given options.</span>
+            </li>
+            <li>
+              <strong><span data-i18n="textInputModeLabel">Modo de Entrada de Texto:</span></strong>
+              <span data-i18n="textInputModeDescription"> Type the noun in the input field provided.</span>
+            </li>
           </ul>
 
-          <p>We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel
-            free to reach out to our support team. Happy learning!</p>
+          <h6 data-i18n="buttonsFeaturesHeader">Botones y Funciones</h6>
+          <ul>
+            <li>
+              <strong><span data-i18n="submitAnswerLabel">Enviar Respuesta:</span></strong>
+              <span data-i18n="submitAnswerDescription"> Click this button to submit your answer for evaluation.</span>
+            </li>
+            <li>
+              <strong><span data-i18n="nextQuestionLabel">Siguiente Pregunta:</span></strong>
+              <span data-i18n="nextQuestionDescription"> Move to the next question after submitting your answer.</span>
+            </li>
+            <li>
+              <strong><span data-i18n="toggleModeLabel">Cambiar Modo:</span></strong>
+              <span data-i18n="toggleModeDescription"> Switch between multiple-choice and text input modes to adjust the difficulty level.</span>
+            </li>
+            <li>
+              <strong><span data-i18n="replayAudioLabel">Repetir Audio:</span></strong>
+              <span data-i18n="replayAudioDescription"> Listen to the pronunciation of the noun again.</span>
+            </li>
+            <li>
+              <strong><span data-i18n="reportLabel">Informar:</span></strong>
+              <span data-i18n="reportDescription"> If you encounter an issue with a question, use this button to report it.</span>
+            </li>
+          </ul>
+
+          <h6 data-i18n="statsFeedbackHeader">Estadísticas y Retroalimentación</h6>
+          <ul>
+            <li>
+              <strong><span data-i18n="scoreLabel">Puntuación:</span></strong>
+              <span data-i18n="scoreDescription"> Your current score is displayed in the stats bar. Aim to improve it with each correct answer!</span>
+            </li>
+            <li>
+              <strong><span data-i18n="correctWrongCountLabel">Cuenta de Correctos/Incorrectos:</span></strong>
+              <span data-i18n="correctWrongCountDescription"> Keep track of your correct and incorrect answers.</span>
+            </li>
+            <li>
+              <strong><span data-i18n="lastFiveAnswersLabel">Últimas 5 Respuestas:</span></strong>
+              <span data-i18n="lastFiveAnswersDescription"> Visual feedback on your recent performance is shown with colored boxes.</span>
+            </li>
+          </ul>
+
+          <h6 data-i18n="tipsSuccessHeader">Consejos para el Éxito</h6>
+          <ul>
+            <li data-i18n="tip1">Tómate tu tiempo para entender cada imagen y usa la función "Cambiar Modo" para desafiarte.</li>
+            <li data-i18n="tip2">Usa la función "Repetir Audio" para mejorar tu pronunciación y habilidades de escucha.</li>
+            <li data-i18n="tip3">Usa la función "Informar" para notificarnos sobre cualquier problema con las preguntas.</li>
+          </ul>
+
+          <p data-i18n-html="closingParagraph">We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel free to reach out to our support team. Happy learning!</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal" data-i18n="close">Close</button>
         </div>
       </div>
     </div>
@@ -416,14 +448,14 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header bg-danger text-white">
-          <h5 class="modal-title" id="drillsLimitModalLabel">Drills Limit Reached</h5>
+          <h5 class="modal-title" id="drillsLimitModalLabel" data-i18n="drillsLimitReached">Drills Limit Reached</h5>
         </div>
         <div class="modal-body">
-          <p>You have reached your daily limit of 50 drills for the Free subscription. Please upgrade to continue
+          <p data-i18n="dailyLimitReached">You have reached your daily limit of 50 drills for the Free subscription. Please upgrade to continue
             practicing.</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'">Return
+          <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'" data-i18n="returnToCourseSelection">Return
             to Course Selection</button>
         </div>
       </div>
