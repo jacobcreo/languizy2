@@ -25,21 +25,23 @@
         gtag('config', 'G-K8GMWBXC5J');
     </script>
     <!-- Meta Pixel Code -->
-<script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '621064440260076');
-    fbq('track', 'PageView');
+    <script>
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '621064440260076');
+        fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=621064440260076&ev=PageView&noscript=1"
-    /></noscript>
+            src="https://www.facebook.com/tr?id=621064440260076&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel Code -->
 
 </head>
@@ -57,7 +59,8 @@
             <!-- Wrap the logout button and avatar inside a flex container -->
             <div class="d-flex align-items-center">
                 <span id="subLevelBadge" class="badge me-3"></span>
-                <button id="logoutBtn" class="btn btn-outline-light me-3" onclick="logout()" data-i18n="LogoutText">Logout</button>
+                <button id="logoutBtn" class="btn btn-outline-light me-3" onclick="logout()"
+                    data-i18n="LogoutText">Logout</button>
                 <div id="userAvatar" class="avatar"></div>
             </div>
         </div>
@@ -78,7 +81,9 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div id="currentCourseTitle" class="text-xs font-weight-bold text-primary text-uppercase mb-1" data-i18n="currentCourseCardTitle">
+                                <div id="currentCourseTitle"
+                                    class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                                    data-i18n="currentCourseCardTitle">
                                     Current Course</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" id="currentCourseName">
                                 </div>
@@ -102,9 +107,11 @@
                     <div class="fill-effect position-absolute top-0 start-0 h-100"></div>
                     <div class="card-body">
                         <h5 class="card-title text-success text-uppercase mb-3">
-                            <i class="fas fa-lightbulb fa-fw"></i><span id="recommendationTitle" data-i18n="RecommendationCardTitle"> Recommendation</span>
+                            <i class="fas fa-lightbulb fa-fw"></i><span id="recommendationTitle"
+                                data-i18n="RecommendationCardTitle"> Recommendation</span>
                         </h5>
-                        <p class="card-text" id="recommendationText" data-i18n="RecommendationLoading">Loading recommendation...</p>
+                        <p class="card-text" id="recommendationText" data-i18n="RecommendationLoading">Loading
+                            recommendation...</p>
 
                     </div>
                     <div class="card-footer">
@@ -125,7 +132,8 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div id="basicsTitle" class="text-xs font-weight-bold text-warning text-uppercase mb-1" data-i18n="BasicsCardTitle">Basics
+                                <div id="basicsTitle" class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                                    data-i18n="BasicsCardTitle">Basics
                                     Practice
                                 </div>
                                 <div class="row no-gutters align-items-center">
@@ -148,7 +156,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-warning w-100" id="basicsBtn" data-i18n="BasicsCardButton">Practice the Basics</button>
+                        <button class="btn btn-warning w-100" id="basicsBtn" data-i18n="BasicsCardButton">Practice the
+                            Basics</button>
                     </div>
                 </div>
             </div>
@@ -160,7 +169,8 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div id="vocabTitle" data-i18n="VocabCardTitle" class="text-xs font-weight-bold text-success text-uppercase mb-1">Vocabulary
+                                <div id="vocabTitle" data-i18n="VocabCardTitle"
+                                    class="text-xs font-weight-bold text-success text-uppercase mb-1">Vocabulary
                                     Covered
                                 </div>
                                 <div class="row no-gutters align-items-center">
@@ -183,7 +193,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-success w-100" id="learnVocabBtn" data-i18n="VocabCardButton">Learn Vocabulary</button>
+                        <button class="btn btn-success w-100" id="learnVocabBtn" data-i18n="VocabCardButton">Learn
+                            Vocabulary</button>
                     </div>
                 </div>
             </div>
@@ -195,7 +206,8 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div id="grammarTitle" data-i18n="GrammarCardTitle" class="text-xs font-weight-bold text-info text-uppercase mb-1">Grammar Covered
+                                <div id="grammarTitle" data-i18n="GrammarCardTitle"
+                                    class="text-xs font-weight-bold text-info text-uppercase mb-1">Grammar Covered
                                 </div>
                                 <div class="row no-gutters align-items-center">
                                     <div class="col-auto">
@@ -217,7 +229,8 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-info w-100" id="learnGrammarBtn" data-i18n="GrammarCardButton">Learn Grammar</button>
+                        <button class="btn btn-info w-100" id="learnGrammarBtn" data-i18n="GrammarCardButton">Learn
+                            Grammar</button>
                     </div>
                 </div>
             </div>
@@ -229,7 +242,8 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div id="chatTitle" data-i18n="ChatCardTitle" class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Chat Topics
+                                <div id="chatTitle" data-i18n="ChatCardTitle"
+                                    class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Chat Topics
                                     Covered
                                 </div>
                                 <div class="row no-gutters align-items-center">
@@ -265,7 +279,8 @@
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div id="storiesTitle" data-i18n="StoriesCardTitle" class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Stories
+                                <div id="storiesTitle" data-i18n="StoriesCardTitle"
+                                    class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Stories
                                     Read
                                 </div>
                                 <div class="row no-gutters align-items-center">
@@ -288,12 +303,11 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button class="btn btn-secondary w-100" id="storiesBtn" data-i18n="StoriesCardButton">Read Stories</button>
+                        <button class="btn btn-secondary w-100" id="storiesBtn" data-i18n="StoriesCardButton">Read
+                            Stories</button>
                     </div>
                 </div>
             </div>
-
-
 
 
 
@@ -310,7 +324,8 @@
                             style="max-width: 120px; visibility:hidden" src="" alt="Current Coach">
                         <div class="m-auto">
                             <h5 id="currentCoachName" class="card-title">Loading Coach...</h5>
-                            <button id="changeCoachBtn" data-i18n="ChangeCoachButton" class="btn btn-primary mt-3" onclick="openCoachSelection()">Change
+                            <button id="changeCoachBtn" data-i18n="ChangeCoachButton" class="btn btn-primary mt-3"
+                                onclick="openCoachSelection()">Change
                                 Coach</button>
                         </div>
                     </div>
@@ -323,7 +338,8 @@
                     <div class="fill-effect position-absolute top-0 start-0 h-100"></div>
                     <div class="card-body text-center">
                         <h5 class="card-title text-danger text-uppercase mb-3">
-                            <i id="flameIcon" class="fas fa-fire fa-fw"></i> <span id="streakTitle" data-i18n="StreakCardTitle">Streak</span>
+                            <i id="flameIcon" class="fas fa-fire fa-fw"></i> <span id="streakTitle"
+                                data-i18n="StreakCardTitle">Streak</span>
                         </h5>
                         <div class="h5 mb-0 font-weight-bold text-gray-800" id="streakCount" style="visibility:hidden">
                             0 days
@@ -342,7 +358,8 @@
                 <div class="card bg-warning text-dark text-center h-100">
                     <div class="fill-effect position-absolute top-0 start-0 h-100"></div>
                     <div class="card-body d-flex align-items-center justify-content-center">
-                        <h5 id="headline" data-i18n="HeadlineLoading" class="card-title">Loading your daily motivation...</h5>
+                        <h5 id="headline" data-i18n="HeadlineLoading" class="card-title">Loading your daily
+                            motivation...</h5>
                     </div>
                 </div>
             </div>
@@ -351,11 +368,15 @@
 
             <div class="col-6 col-md-3 mb-3">
 
-                <div class="card  d-lg-flex p-3 " style="text-align: center;">
-                    <i class="fas fa-chart-bar mb-4 fa-2x"></i>
-
+                <div class="card  d-lg-flex p-3 h-100" style="text-align: center;">
+                    <div class="card-body">
+                    <i class="fas fa-chart-bar mb-4 fa-3x pb-md-0"></i>
+                    </div>
+                    <div class="card-footer">
                     <!-- <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a> -->
-                    <button id="vocabBtn" data-i18n="VocabListButton" class="btn btn-success btn-sm w-100" disabled>Vocabulary List</button>
+                    <button id="vocabBtn" data-i18n="VocabListButton" class="btn btn-success btn-sm w-100"
+                        disabled>Vocabulary List</button>
+                    </div>
 
 
                 </div>
@@ -363,15 +384,61 @@
             </div>
             <div class="col-6 col-md-3 mb-3">
 
-                <div class="card  d-lg-flex p-3" style="text-align: center;">
-                    <i class="fas fa-book mb-4 fa-2x"></i>
+                <div class="card  d-lg-flex p-3 h-100" style="text-align: center;">
+                    <div class="card-body">
+                    <i class="fas fa-book mb-4 fa-3x pb-md-0"></i>
+                    </div>
+                    <div class="card-footer">
 
                     <!-- <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a> -->
-                    <button id="statsBtn" class="btn btn-success btn-sm w-100" data-i18n="PracticeStatsButton" disabled>Practice Stats</button>
-
+                    <button id="statsBtn" class="btn btn-success btn-sm w-100" data-i18n="PracticeStatsButton"
+                        disabled>Practice Stats</button>
+                    </div>
 
                 </div>
 
+            </div>
+
+            <!-- Your Language Level Card -->
+            <div class="col-col-12 col-md-3 mb-3">
+                <div id="CurrentLevelCard" class="card h-100 py-0">
+                    <div class="card-body pb-0">
+                        <!-- Headline -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="levelTitle" class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                                    data-i18n="LevelCardTitle">
+                                    Your <span
+                                        id="targetLanguageName" class="mx-1">Language</span> Level
+                                </div>
+                            </div>
+                            <div class="col-12 mt-0">
+
+                                <!-- Level and Description -->
+                                <div class="row align-items-center pt-3">
+                                    <div class="col-4">
+                                        <div id="currentLevel" class="h5 mb-0 font-weight-bold text-gray-800">1</div>
+                                    </div>
+                                    <div class="col-8 text-right">
+                                        <div id="levelName" class=" font-weight-bold text-gray-600">Word Wanderer
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="card-footer">
+                        <!-- Drills to Level Up Box -->
+                         <div class="row">
+                            <div class="col-12">
+                        <div class=" rounded p-2 w-100 text-center">
+                            <div id="drillsToNextLevel" class="text-muted font-weight-bold">0 drills to level up</div>
+                        </div>
+                        </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -388,110 +455,111 @@
 
     </div>
 
-   <!-- Upgrade Modal inside course-selection.html -->
-   <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
+    <!-- Upgrade Modal inside course-selection.html -->
+    <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
 
-            <!-- Modal Header -->
-            <div class="modal-header bg-gradient-primary text-white">
-                <h5 class="modal-title" id="upgradeModalLabel" data-i18n="upgradeModalTitle">Unlock Your Full Potential</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- Modal Header -->
+                <div class="modal-header bg-gradient-primary text-white">
+                    <h5 class="modal-title" id="upgradeModalLabel" data-i18n="upgradeModalTitle">Unlock Your Full
+                        Potential</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <p data-i18n="upgradeModalSubtitle">Upgrade to our Pro Plan and transform your language learning
+                        journey. Enjoy unlimited access to all features and take your skills to the next level!</p>
+
+                    <table class="table table-striped mt-4">
+                        <thead>
+                            <tr>
+                                <th data-i18n="upgradeFeatureHeader">Feature</th>
+                                <th data-i18n="upgradeFeatureFree">Free Plan</th>
+                                <th data-i18n="upgradeFeaturePro">Pro Plan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-i18n="featureDailyExercises">Daily Exercises per Course</td>
+                                <td data-i18n="featureDailyExercisesFree">50</td>
+                                <td data-i18n="featureDailyExercisesPro">Unlimited</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="featureStories">Stories</td>
+                                <td data-i18n="featureStoriesFree">Limited</td>
+                                <td data-i18n="featureStoriesPro">All Stories</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="featureAIChats">AI Chats</td>
+                                <td data-i18n="featureAIChatsFree">Short Conversations</td>
+                                <td data-i18n="featureAIChatsPro">Longer Conversations</td>
+                            </tr>
+                            <tr>
+                                <td data-i18n="featureStats">Stats</td>
+                                <td data-i18n="featureStatsFree">Limited</td>
+                                <td data-i18n="featureStatsPro">Full Stats</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="alert alert-info mt-4">
+                        <strong data-i18n="upgradeSpecialOffer">Special Offer:</strong> <span
+                            data-i18n="upgradeSpecialOfferText">Get 25% off with our yearly plan - only $63!</span>
+                    </div>
+
+                    <div class="mt-4">
+                        <p>
+                            <span data-i18n="upgradeTerms1"></span>All purchases are subject to our </span>
+                            <a href="/terms-of-service.html" data-i18n="upgradeTerms2">Terms & Conditions </a>
+                            <span data-i18n="upgradeTerms3">and </span>
+                            <a href="/refund-policy.html" data-i18n="upgradeTerms4">Refund Policy</a>.
+                        </p>
+                    </div>
+
+                    <!-- Hidden Success Message -->
+                    <div id="upgradeSuccessMessage" class="alert alert-success text-center mt-5" style="display: none;">
+                        <h4 class="alert-heading" data-i18n="upgradeSuccessTitle">Congratulations!</h4>
+                        <p data-i18n="upgradeSuccessMessage">You are now subscribed to the <strong
+                                id="subscribedPlan"></strong> Pro Plan.</p>
+                        <hr>
+                        <button class="btn btn-primary" onclick="redirectToCourseSelection()"
+                            data-i18n="upgradeSuccessButton">Start Practicing</button>
+                    </div>
+
+                    <!-- Hidden Error Message -->
+                    <div id="upgradeErrorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
+                        <h4 class="alert-heading" data-i18n="upgradeErrorTitle">Subscription Failed</h4>
+                        <p data-i18n="upgradeErrorMessage">There was an issue processing your subscription. Please try
+                            again.</p>
+                        <hr>
+                        <button class="btn btn-warning" onclick="resetSubscription()" data-i18n="upgradeErrorButton">Try
+                            Again</button>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer flex-column flex-sm-row">
+                    <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()"
+                        data-i18n="upgradeContinueFree">Continue Free</button>
+                    <div class="d-flex flex-column flex-sm-row">
+                        <button id="monthlyPlanBtn" data-fsc-item-path-value="monthly-pro"
+                            data-fsc-action="Add, Checkout" class="btn btn-primary me-sm-2 mb-2 mb-sm-0"
+                            style="display: none;" data-i18n="upgradeMonthlyPlan">
+                            Pro Plan - $6.99/month
+                        </button>
+                        <button id="yearlyPlanBtn" data-fsc-item-path-value="yearly-pro" data-fsc-action="Add, Checkout"
+                            class="btn btn-success mb-2 mb-sm-0" style="display: none;" data-i18n="upgradeYearlyPlan">
+                            Pro Plan - $63/year
+                        </button>
+                    </div>
+                </div>
+
             </div>
-
-            <!-- Modal Body -->
-            <div class="modal-body">
-                <p data-i18n="upgradeModalSubtitle">Upgrade to our Pro Plan and transform your language learning journey. Enjoy unlimited access to all features and take your skills to the next level!</p>
-
-                <table class="table table-striped mt-4">
-                    <thead>
-                        <tr>
-                            <th data-i18n="upgradeFeatureHeader">Feature</th>
-                            <th data-i18n="upgradeFeatureFree">Free Plan</th>
-                            <th data-i18n="upgradeFeaturePro">Pro Plan</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-i18n="featureDailyExercises">Daily Exercises per Course</td>
-                            <td data-i18n="featureDailyExercisesFree">50</td>
-                            <td data-i18n="featureDailyExercisesPro">Unlimited</td>
-                        </tr>
-                        <tr>
-                            <td data-i18n="featureStories">Stories</td>
-                            <td data-i18n="featureStoriesFree">Limited</td>
-                            <td data-i18n="featureStoriesPro">All Stories</td>
-                        </tr>
-                        <tr>
-                            <td data-i18n="featureAIChats">AI Chats</td>
-                            <td data-i18n="featureAIChatsFree">Short Conversations</td>
-                            <td data-i18n="featureAIChatsPro">Longer Conversations</td>
-                        </tr>
-                        <tr>
-                            <td data-i18n="featureStats">Stats</td>
-                            <td data-i18n="featureStatsFree">Limited</td>
-                            <td data-i18n="featureStatsPro">Full Stats</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="alert alert-info mt-4">
-                    <strong data-i18n="upgradeSpecialOffer">Special Offer:</strong> <span data-i18n="upgradeSpecialOfferText">Get 25% off with our yearly plan - only $63!</span>
-                </div>
-
-                <div class="mt-4">
-                    <p>
-                        <span data-i18n="upgradeTerms1"></span>All purchases are subject to our </span>
-                        <a href="/terms-of-service.html" data-i18n="upgradeTerms2">Terms & Conditions </a>
-                        <span data-i18n="upgradeTerms3">and </span>
-                        <a href="/refund-policy.html" data-i18n="upgradeTerms4">Refund Policy</a>.
-                    </p>
-                </div>
-
-                <!-- Hidden Success Message -->
-                <div id="upgradeSuccessMessage" class="alert alert-success text-center mt-5" style="display: none;">
-                    <h4 class="alert-heading" data-i18n="upgradeSuccessTitle">Congratulations!</h4>
-                    <p data-i18n="upgradeSuccessMessage">You are now subscribed to the <strong id="subscribedPlan"></strong> Pro Plan.</p>
-                    <hr>
-                    <button class="btn btn-primary" onclick="redirectToCourseSelection()" data-i18n="upgradeSuccessButton">Start Practicing</button>
-                </div>
-
-                <!-- Hidden Error Message -->
-                <div id="upgradeErrorMessage" class="alert alert-danger text-center mt-5" style="display: none;">
-                    <h4 class="alert-heading" data-i18n="upgradeErrorTitle">Subscription Failed</h4>
-                    <p data-i18n="upgradeErrorMessage">There was an issue processing your subscription. Please try again.</p>
-                    <hr>
-                    <button class="btn btn-warning" onclick="resetSubscription()" data-i18n="upgradeErrorButton">Try Again</button>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="modal-footer flex-column flex-sm-row">
-                <button class="btn btn-outline-secondary mb-2 mb-sm-0" onclick="continueFree()" data-i18n="upgradeContinueFree">Continue Free</button>
-                <div class="d-flex flex-column flex-sm-row">
-                    <button id="monthlyPlanBtn" 
-                            data-fsc-item-path-value="monthly-pro" 
-                            data-fsc-action="Add, Checkout"
-                            class="btn btn-primary me-sm-2 mb-2 mb-sm-0" 
-                            style="display: none;"
-                            data-i18n="upgradeMonthlyPlan">
-                        Pro Plan - $6.99/month
-                    </button>
-                    <button id="yearlyPlanBtn" 
-                            data-fsc-item-path-value="yearly-pro" 
-                            data-fsc-action="Add, Checkout"
-                            class="btn btn-success mb-2 mb-sm-0" 
-                            style="display: none;"
-                            data-i18n="upgradeYearlyPlan">
-                        Pro Plan - $63/year
-                    </button>
-                </div>
-            </div>
-
         </div>
     </div>
-</div>
-  
+
 
 
 
@@ -500,7 +568,8 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="courseModalTitle" data-i18n="SelectCourseModalTitle">Select a Course</h5>
+                    <h5 class="modal-title" id="courseModalTitle" data-i18n="SelectCourseModalTitle">Select a Course
+                    </h5>
                 </div>
                 <div class="modal-body">
                     <input type="text" id="searchCourseInput" class="form-control mb-3"
@@ -510,7 +579,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="modalSelectCourseBtn" disabled data-i18n="SelectCourseModalButton">Select</button>
+                    <button type="button" class="btn btn-primary" id="modalSelectCourseBtn" disabled
+                        data-i18n="SelectCourseModalButton">Select</button>
                 </div>
             </div>
         </div>
@@ -532,15 +602,11 @@
     <script src="upgrade-popup.js"></script>
 
 
-    <script 
-            id="fsc-api"
-            src="https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js"
-            type="text/javascript"
-            data-storefront="languizy.onfastspring.com/popup-languizy"
-            data-popup-closed="onFSPopupClosed"
-            data-debug="false">
+    <script id="fsc-api" src="https://sbl.onfastspring.com/sbl/1.0.1/fastspring-builder.min.js" type="text/javascript"
+        data-storefront="languizy.onfastspring.com/popup-languizy" data-popup-closed="onFSPopupClosed"
+        data-debug="false">
         </script>
-        
+
 
 </body>
 

@@ -4,6 +4,513 @@ let languageLearned = '';
 let drillsLimitReached = false;
 let interfaceLanguage = 'en';
 
+const levels = [
+        {
+            "level": 1,
+            "name": "Word Wanderer",
+            "correctDrillsRequired": 0
+        },
+        {
+            "level": 2,
+            "name": "Letter Explorer",
+            "correctDrillsRequired": 20
+        },
+        {
+            "level": 3,
+            "name": "Phrase Pioneer",
+            "correctDrillsRequired": 50
+        },
+        {
+            "level": 4,
+            "name": "Sound Adventurer",
+            "correctDrillsRequired": 90
+        },
+        {
+            "level": 5,
+            "name": "Grammar Glider",
+            "correctDrillsRequired": 140
+        },
+        {
+            "level": 6,
+            "name": "Sentence Sprout",
+            "correctDrillsRequired": 200
+        },
+        {
+            "level": 7,
+            "name": "Accent Apprentice",
+            "correctDrillsRequired": 270
+        },
+        {
+            "level": 8,
+            "name": "Vocab Voyager",
+            "correctDrillsRequired": 350
+        },
+        {
+            "level": 9,
+            "name": "Syntax Seeker",
+            "correctDrillsRequired": 440
+        },
+        {
+            "level": 10,
+            "name": "Culture Enthusiast",
+            "correctDrillsRequired": 540
+        },
+        {
+            "level": 11,
+            "name": "Language Pathfinder",
+            "correctDrillsRequired": 650
+        },
+        {
+            "level": 12,
+            "name": "Article Architect",
+            "correctDrillsRequired": 770
+        },
+        {
+            "level": 13,
+            "name": "Dialogue Discoverer",
+            "correctDrillsRequired": 900
+        },
+        {
+            "level": 14,
+            "name": "Noun Navigator",
+            "correctDrillsRequired": 1040
+        },
+        {
+            "level": 15,
+            "name": "Verb Conqueror",
+            "correctDrillsRequired": 1190
+        },
+        {
+            "level": 16,
+            "name": "Preposition Pilot",
+            "correctDrillsRequired": 1350
+        },
+        {
+            "level": 17,
+            "name": "Basic Builder",
+            "correctDrillsRequired": 1520
+        },
+        {
+            "level": 18,
+            "name": "Wordsmith-in-Training",
+            "correctDrillsRequired": 1700
+        },
+        {
+            "level": 19,
+            "name": "Grammar Grower",
+            "correctDrillsRequired": 1890
+        },
+        {
+            "level": 20,
+            "name": "Pronunciation Prodigy",
+            "correctDrillsRequired": 2090
+        },
+        {
+            "level": 21,
+            "name": "Sentence Shaper",
+            "correctDrillsRequired": 2300
+        },
+        {
+            "level": 22,
+            "name": "Conjugation Crafter",
+            "correctDrillsRequired": 2520
+        },
+        {
+            "level": 23,
+            "name": "Idiom Investigator",
+            "correctDrillsRequired": 2750
+        },
+        {
+            "level": 24,
+            "name": "Conversation Champion",
+            "correctDrillsRequired": 2990
+        },
+        {
+            "level": 25,
+            "name": "Phrase Chaser",
+            "correctDrillsRequired": 3240
+        },
+        {
+            "level": 26,
+            "name": "Accent Aficionado",
+            "correctDrillsRequired": 3500
+        },
+        {
+            "level": 27,
+            "name": "Vocabulary Virtuoso",
+            "correctDrillsRequired": 3770
+        },
+        {
+            "level": 28,
+            "name": "Grammar Guardian",
+            "correctDrillsRequired": 4050
+        },
+        {
+            "level": 29,
+            "name": "Dialogue Dancer",
+            "correctDrillsRequired": 4340
+        },
+        {
+            "level": 30,
+            "name": "Cultural Connector",
+            "correctDrillsRequired": 4640
+        },
+        {
+            "level": 31,
+            "name": "Syntax Strategist",
+            "correctDrillsRequired": 4950
+        },
+        {
+            "level": 32,
+            "name": "Expression Enthusiast",
+            "correctDrillsRequired": 5270
+        },
+        {
+            "level": 33,
+            "name": "Linguistic Learner",
+            "correctDrillsRequired": 5600
+        },
+        {
+            "level": 34,
+            "name": "Word Weaver",
+            "correctDrillsRequired": 5940
+        },
+        {
+            "level": 35,
+            "name": "Translation Tactician",
+            "correctDrillsRequired": 6290
+        },
+        {
+            "level": 36,
+            "name": "Comprehension Conqueror",
+            "correctDrillsRequired": 6650
+        },
+        {
+            "level": 37,
+            "name": "Sentence Sculptor",
+            "correctDrillsRequired": 7020
+        },
+        {
+            "level": 38,
+            "name": "Accent Artist",
+            "correctDrillsRequired": 7400
+        },
+        {
+            "level": 39,
+            "name": "Phrase Specialist",
+            "correctDrillsRequired": 7790
+        },
+        {
+            "level": 40,
+            "name": "Grammar Sage",
+            "correctDrillsRequired": 8190
+        },
+        {
+            "level": 41,
+            "name": "Linguistic Voyager",
+            "correctDrillsRequired": 8600
+        },
+        {
+            "level": 42,
+            "name": "Polyglot Pathfinder",
+            "correctDrillsRequired": 9020
+        },
+        {
+            "level": 43,
+            "name": "Syntax Sorcerer",
+            "correctDrillsRequired": 9450
+        },
+        {
+            "level": 44,
+            "name": "Idiom Alchemist",
+            "correctDrillsRequired": 9890
+        },
+        {
+            "level": 45,
+            "name": "Phraseologist",
+            "correctDrillsRequired": 10340
+        },
+        {
+            "level": 46,
+            "name": "Expression Artisan",
+            "correctDrillsRequired": 10800
+        },
+        {
+            "level": 47,
+            "name": "Accent Maestro",
+            "correctDrillsRequired": 11270
+        },
+        {
+            "level": 48,
+            "name": "Fluent Trailblazer",
+            "correctDrillsRequired": 11750
+        },
+        {
+            "level": 49,
+            "name": "Cultural Whisperer",
+            "correctDrillsRequired": 12240
+        },
+        {
+            "level": 50,
+            "name": "Grammar Virtuoso",
+            "correctDrillsRequired": 12740
+        },
+        {
+            "level": 51,
+            "name": "Language Magician",
+            "correctDrillsRequired": 13250
+        },
+        {
+            "level": 52,
+            "name": "Multilingual Muse",
+            "correctDrillsRequired": 13770
+        },
+        {
+            "level": 53,
+            "name": "Conjugation Commander",
+            "correctDrillsRequired": 14300
+        },
+        {
+            "level": 54,
+            "name": "Sentence Sculptor Extraordinaire",
+            "correctDrillsRequired": 14840
+        },
+        {
+            "level": 55,
+            "name": "Expression Explorer",
+            "correctDrillsRequired": 15390
+        },
+        {
+            "level": 56,
+            "name": "Cultural Cartographer",
+            "correctDrillsRequired": 15950
+        },
+        {
+            "level": 57,
+            "name": "Polyglot Dreamer",
+            "correctDrillsRequired": 16520
+        },
+        {
+            "level": 58,
+            "name": "Dialogue Dynamo",
+            "correctDrillsRequired": 17100
+        },
+        {
+            "level": 59,
+            "name": "Vocabulary Visionary",
+            "correctDrillsRequired": 17690
+        },
+        {
+            "level": 60,
+            "name": "Linguistic Luminary",
+            "correctDrillsRequired": 18290
+        },
+        {
+            "level": 61,
+            "name": "Language Nomad",
+            "correctDrillsRequired": 18900
+        },
+        {
+            "level": 62,
+            "name": "Multilingual Mastermind",
+            "correctDrillsRequired": 19520
+        },
+        {
+            "level": 63,
+            "name": "Syntax Whisperer",
+            "correctDrillsRequired": 20150
+        },
+        {
+            "level": 64,
+            "name": "Prose Pioneer",
+            "correctDrillsRequired": 20790
+        },
+        {
+            "level": 65,
+            "name": "Vocabulary Vanguard",
+            "correctDrillsRequired": 21440
+        },
+        {
+            "level": 66,
+            "name": "Translation Titan",
+            "correctDrillsRequired": 22100
+        },
+        {
+            "level": 67,
+            "name": "Accent Virtuoso",
+            "correctDrillsRequired": 22770
+        },
+        {
+            "level": 68,
+            "name": "Idiom Enthusiast",
+            "correctDrillsRequired": 23450
+        },
+        {
+            "level": 69,
+            "name": "Cultural Ambassador",
+            "correctDrillsRequired": 24140
+        },
+        {
+            "level": 70,
+            "name": "Grammar Guru",
+            "correctDrillsRequired": 24840
+        },
+        {
+            "level": 71,
+            "name": "Fluent Pathfinder",
+            "correctDrillsRequired": 25550
+        },
+        {
+            "level": 72,
+            "name": "Global Conversationalist",
+            "correctDrillsRequired": 26270
+        },
+        {
+            "level": 73,
+            "name": "Prose Alchemist",
+            "correctDrillsRequired": 27000
+        },
+        {
+            "level": 74,
+            "name": "Wordplay Wizard",
+            "correctDrillsRequired": 27740
+        },
+        {
+            "level": 75,
+            "name": "Accent Perfectionist",
+            "correctDrillsRequired": 28490
+        },
+        {
+            "level": 76,
+            "name": "Language Liberator",
+            "correctDrillsRequired": 29250
+        },
+        {
+            "level": 77,
+            "name": "Idiom Illuminator",
+            "correctDrillsRequired": 30020
+        },
+        {
+            "level": 78,
+            "name": "Expression Strategist",
+            "correctDrillsRequired": 30800
+        },
+        {
+            "level": 79,
+            "name": "Communication Captain",
+            "correctDrillsRequired": 31590
+        },
+        {
+            "level": 80,
+            "name": "Cultural Crusader",
+            "correctDrillsRequired": 32390
+        },
+        {
+            "level": 81,
+            "name": "Multilingual Maestro",
+            "correctDrillsRequired": 33200
+        },
+        {
+            "level": 82,
+            "name": "Expression Innovator",
+            "correctDrillsRequired": 34020
+        },
+        {
+            "level": 83,
+            "name": "Linguistic Artisan",
+            "correctDrillsRequired": 34850
+        },
+        {
+            "level": 84,
+            "name": "Cultural Sage",
+            "correctDrillsRequired": 35690
+        },
+        {
+            "level": 85,
+            "name": "Language Connoisseur",
+            "correctDrillsRequired": 36540
+        },
+        {
+            "level": 86,
+            "name": "Grammar Grandmaster",
+            "correctDrillsRequired": 37400
+        },
+        {
+            "level": 87,
+            "name": "Syntax Champion",
+            "correctDrillsRequired": 38270
+        },
+        {
+            "level": 88,
+            "name": "Conversational Visionary",
+            "correctDrillsRequired": 39150
+        },
+        {
+            "level": 89,
+            "name": "Polyglot Pilgrim",
+            "correctDrillsRequired": 40040
+        },
+        {
+            "level": 90,
+            "name": "Linguistic Virtuoso",
+            "correctDrillsRequired": 40940
+        },
+        {
+            "level": 91,
+            "name": "Expressionist Extraordinaire",
+            "correctDrillsRequired": 41850
+        },
+        {
+            "level": 92,
+            "name": "Language Legend",
+            "correctDrillsRequired": 42770
+        },
+        {
+            "level": 93,
+            "name": "Fluent Star",
+            "correctDrillsRequired": 43700
+        },
+        {
+            "level": 94,
+            "name": "Sentence Symphony",
+            "correctDrillsRequired": 44640
+        },
+        {
+            "level": 95,
+            "name": "Accent Commander",
+            "correctDrillsRequired": 45590
+        },
+        {
+            "level": 96,
+            "name": "Translation Luminary",
+            "correctDrillsRequired": 46550
+        },
+        {
+            "level": 97,
+            "name": "Polyglot Pioneer",
+            "correctDrillsRequired": 47520
+        },
+        {
+            "level": 98,
+            "name": "Linguistic Sage",
+            "correctDrillsRequired": 48500
+        },
+        {
+            "level": 99,
+            "name": "Global Wordsmith",
+            "correctDrillsRequired": 49490
+        },
+        {
+            "level": 100,
+            "name": "Master of Tongues",
+            "correctDrillsRequired": 50490
+        }
+    ]
+
+    
+
+
+
 const UIString = {
     'en': {
         'currentCourseCardTitle': 'CURRENT COURSE',
@@ -661,14 +1168,16 @@ function updateDrillsUI(totalDrills, userLevel) {
             `;
             drillsCard.style.display = 'block';
         } else { // For smaller devices
-            drillsAlert.innerHTML = `
-                <div class="alert alert-warning" role="alert">
-                    ${totalDrills} ${UIString[interfaceLanguage].TodaysDrillsOutOf} 50 ${UIString[interfaceLanguage].TodaysDrillsCompletedToday}. 
-                    <a onclick="showUpgradeModal()">${UIString[interfaceLanguage].Upgrade}</a> ${UIString[interfaceLanguage].TodaysDrillsCardButtonToContinue}.
+            if (drillsLimitReached) {
+                drillsAlert.innerHTML = `
+                    <div class="alert alert-warning" role="alert">
+                        ${totalDrills} ${UIString[interfaceLanguage].TodaysDrillsOutOf} 50 ${UIString[interfaceLanguage].TodaysDrillsCompletedToday}. 
+                    <a onclick="showUpgradeModal()">${UIString[interfaceLanguage].RecommendationNames.Upgrade}</a> ${UIString[interfaceLanguage].TodaysDrillsCardButtonToContinue}.
                 </div>
             `;
             drillsAlert.style.display = 'block';
         }
+    }
     } else {
         if (window.innerWidth >= 1200) { // For xl devices
             const recCol = document.getElementById('recCol');
@@ -799,7 +1308,7 @@ function populateModalCourses(user) {
                 const statsDocRef = courseDocRef.collection('stats').doc('all-time');
                 const statsDoc = await statsDocRef.get();
                 if (!statsDoc.exists) {
-                    await statsDocRef.set({ maxFrequency: 0 });
+                    await statsDocRef.set({ maxFrequency: 0, level: 1 });
                 }
 
                 // Update the current course
@@ -1068,10 +1577,14 @@ async function loadCardData(user, currentCourse) {
 
     const courseParts = currentCourse.split('-');
     const targetLanguageCode = courseParts[1];
+    const targetLanguageName = languageShorts[interfaceLanguage][targetLanguageCode] || 'Spanish';
+
     const targetLanguage = languageShorts[interfaceLanguage][targetLanguageCode] || targetLanguageCode;
     document.getElementById('currentCourseName').textContent = `${languageShorts[interfaceLanguage][courseParts[0]]} to ${languageShorts[interfaceLanguage][courseParts[1]]}`;
     document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
     document.getElementById('currentCourseFlag').style.visibility = 'visible';
+    document.getElementById('targetLanguageName').textContent = targetLanguageName;
+
 
     document.querySelector('#CurrentCourseCard .fill-effect').style.animation = 'none';
 
@@ -1181,6 +1694,9 @@ async function loadCardData(user, currentCourse) {
     } catch (error) {
         console.error("Error loading card data:", error);
     }
+
+    await loadCurrentLevelCard(user, currentCourse);
+
 
     // Stories Button Functionality
     document.getElementById('storiesBtn').addEventListener('click', () => {
@@ -1346,5 +1862,63 @@ function modifyInterfaceLanguage() {
         if (currentPlan && lang.RecommendationNames && lang.RecommendationNames[currentPlan]) {
             subscribedPlanElement.html(lang.RecommendationNames[currentPlan]);
         }
+    }
+}
+
+// Function to determine the current level based on totalCorrectAnswers
+function getCurrentLevel(totalCorrectAnswers) {
+    let currentLevel = 1;
+    for (let i = 0; i < levels.length; i++) {
+        if (totalCorrectAnswers >= levels[i].correctDrillsRequired) {
+            currentLevel = levels[i].level;
+        } else {
+            break;
+        }
+    }
+    return currentLevel;
+}
+// Function to load and update the Current Level Card
+async function loadCurrentLevelCard(user, currentCourse) {
+    try {
+        const statsDocRef = db.collection('users')
+            .doc(user.uid)
+            .collection('courses')
+            .doc(currentCourse)
+            .collection('stats')
+            .doc('all-time');
+        
+        const statsDoc = await statsDocRef.get();
+
+        let drillsCompleted = 0;
+        let currentLevel = 1;
+        let levelName = 'Word Wanderer';
+        let drillsForNextLevel = levels[1].correctDrillsRequired; // Drills required for Level 2
+
+        if (statsDoc.exists) {
+            drillsCompleted = statsDoc.data().totalCorrectAnswers || 0;
+            currentLevel = getCurrentLevel(drillsCompleted);
+
+            const levelInfo = levels.find(lv => lv.level === currentLevel) || levels[0];
+            levelName = levelInfo.name;
+
+            if (currentLevel < levels.length) {
+                drillsForNextLevel = levels[currentLevel].correctDrillsRequired - drillsCompleted;
+                if (drillsForNextLevel < 0) drillsForNextLevel = 0;
+            } else {
+                drillsForNextLevel = 0; // Max level reached
+            }
+        }
+
+        // Update UI elements
+        document.getElementById('currentLevel').textContent = currentLevel;
+        document.getElementById('levelName').textContent = levelName;
+        document.getElementById('drillsToNextLevel').textContent = `${drillsForNextLevel} drills to level up`;
+
+    } catch (error) {
+        console.error("Error loading current level:", error);
+        // Default to level 1
+        document.getElementById('currentLevel').textContent = 1;
+        document.getElementById('levelName').textContent = levels[0].name;
+        document.getElementById('drillsToNextLevel').textContent = `${levels[1].correctDrillsRequired} drills to level up`;
     }
 }

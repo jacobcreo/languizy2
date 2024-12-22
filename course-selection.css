@@ -341,3 +341,63 @@ button i {
     padding: 0.5em 0.75em;
     cursor: pointer;
 }
+
+/* CurrentLevelCard Specific Styles */
+#CurrentLevelCard {
+    /* Optional: Add a distinctive background or border if desired */
+    background-color: #f8f9fa; /* Light background to match other cards */
+    
+}
+
+#levelTitle {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #4e73df; /* Primary color */
+}
+
+#levelTitle i {
+    margin-right: 5px;
+}
+
+#currentLevel {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #5a5c69;
+}
+
+#levelName {
+    font-size: 1.25rem;
+    color: #858796;
+}
+
+#drillsToNextLevel {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #d1d3e2;
+    border-radius: 5px;
+    background-color: #ffffff;
+    color: #858796;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    /* Adjust font sizes for smaller screens */
+    #levelTitle {
+        font-size: 1.25rem;
+    }
+    
+    #currentLevel {
+        font-size: 1.25rem;
+    }
+    
+    #levelName {
+        font-size: 1rem;
+    }
+    
+    #drillsToNextLevel {
+        font-size: 0.75rem;
+    }
+}
