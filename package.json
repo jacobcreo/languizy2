@@ -1,4 +1,18 @@
-"scripts": {
-  "build": "node build.js",
-  "deploy": "npm run build && cp dist/*.js . && rm -rf dist" 
+{
+  "name": "languizy",
+  "version": "1.0.0",
+  "description": "A language learning application focusing on nouns practice.",
+  "scripts": {
+    "build": "node build.js",
+    "deploy": "npm run build && cp dist/*.js . && rm -rf dist"
+  },
+  "keywords": [
+    "language",
+    "learning",
+    "nouns",
+    "i18n",
+    "education"
+  ],
+  "author": "Koby OFOfekEK",
+  "license": "MIT"
 }
