@@ -3,6 +3,7 @@ const db = firebase.firestore();
 let languageLearned = '';
 let drillsLimitReached = false;
 let interfaceLanguage = 'en';
+let userEmail = '';
 
 const levels = [
         {
@@ -752,6 +753,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
         if (userDoc.exists) {
             const userData = userDoc.data();
+            
             const currentCourse = userData.currentCourse;
             checkUpgradeParameter(userData);
             populateModalCourses(user); // Populate modal with course options
@@ -1744,6 +1746,40 @@ async function loadCardData(user, currentCourse) {
     }
 }
 
+
+// Function to send data to the Google Cloud Function
+function sendEventToCloudFunction(fbclid = null, email = null, ip = null, eventId = null) {
+  
+    
+    const userAgent = navigator.userAgent; // Get user agent string
+    
+
+    // Build the payload
+    const payload = {
+        fbclid, // Facebook Click ID
+        email, // Plain email (will be hashed server-side)
+        ip, // Optional: pass client IP if available
+        userAgent, // Browser user agent
+        eventName: 'CompleteRegistration', // Custom event name
+        eventId, // Pass the generated event ID
+    };
+
+    // Send the payload to the Cloud Function
+    fetch('https://us-central1-languizy2.cloudfunctions.net/sendToFacebook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Event sent to Facebook:', data);
+    })
+    .catch(error => {
+        console.error('Error sending event:', error);
+    });
+}
+
+
 function checkReg(user) {
     const urlParams = new URLSearchParams(window.location.search);
     const regParam = urlParams.get('reg');
@@ -1766,9 +1802,29 @@ function checkReg(user) {
             regimg.src = "https://www.facebook.com/tr?id=621064440260076&ev=CompleteRegistration&eventID=" + eventID;
             document.body.appendChild(regimg);
         }
+        let storedData = getSourceData();
+        let nidf = storedData.nidf;
+        let email = storedData.em;
+        let fbclid = storedData.fbclid;
+
+        sendEventToCloudFunction(fbclid, email, nidf, eventID);
 
     }
 }
+
+function getSourceData() {
+    const sourceData = localStorage.getItem('log');
+    if (sourceData) {
+      try {
+        return JSON.parse(sourceData);
+      } catch (error) {
+        console.error('Error parsing source data from localStorage:', error);
+        return null;
+      }
+    }
+    return null;
+  }
+
 
 function continueFree() {
     // Logic to continue with the free plan

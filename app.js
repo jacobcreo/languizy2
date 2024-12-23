@@ -168,8 +168,20 @@ function getBrowserName(userAgent) {
 }
 
 function sendSignInLink(email) {
+  // ?fbclid=blabla&utm_campaign=test_bla
+  // Capture original URL parameters from localStorage
+  const logData = getSourceData(); // Retrieves data from localStorage 'log' key
+  const { fbp, fbc, utm_source, utm_medium, utm_campaign, country } = logData || {};
+  // Store the email in localStorage under the key 'log'
+  const log = JSON.parse(window.localStorage.getItem('log')) || {};
+  log.em = email;
+  window.localStorage.setItem('log', JSON.stringify(log));
+
+  // Construct the redirect URL with tracking parameters
+  const redirectUrl = `${window.location.origin}/?fbclid=${encodeURIComponent(getURLParameter('fbclid')) || ''}&fbp=${encodeURIComponent(fbp)}&fbc=${encodeURIComponent(fbc)}&utm_source=${encodeURIComponent(utm_source)}&utm_medium=${encodeURIComponent(utm_medium)}&utm_campaign=${encodeURIComponent(utm_campaign)}&country=${encodeURIComponent(country)}`;
+debugger;
   var actionCodeSettings = {
-    url: window.location.origin + '/',
+    url: redirectUrl,
     handleCodeInApp: true,
   };
 

@@ -1,13 +1,13 @@
 <html></html>
 <script>
     // sendToFacebookAPI({'email': 'koby@languizy.com'});
-
-// Function to send data to the Google Cloud Function
-function sendEventToCloudFunction(fbclid = null, email = null) {
-  debugger;
-    const ip = ''; // Optionally retrieve the client IP (if available)
-    const userAgent = navigator.userAgent; // Get user agent string
     const eventId = `event_${Math.random().toString(36).substring(2)}_${Date.now()}`; // Generate unique event ID client-side
+// Function to send data to the Google Cloud Function
+function sendEventToCloudFunction(fbclid = null, email = null, ip = null, eventId = null) {
+  
+    
+    const userAgent = navigator.userAgent; // Get user agent string
+    
 
     // Build the payload
     const payload = {
