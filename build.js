@@ -7,7 +7,7 @@ const inputDir = path.resolve(__dirname, '.'); // Current directory (root)
 
 console.log(`Starting build process in directory: ${inputDir}`);
 
-// Function to minify a single file
+// Function to remove console.log and comments without minifying
 const minifyFile = async (file) => {
     const filePath = path.join(inputDir, file);
     console.log(`Processing file: ${filePath}`);
@@ -17,22 +17,27 @@ const minifyFile = async (file) => {
             const code = fs.readFileSync(filePath, 'utf8');
             console.log(`Read code from ${filePath}`);
 
-            // Minify the JavaScript and remove console.log
+            // Configure Terser to remove console.log and comments without minifying
             const result = await minify(code, {
                 compress: {
-                    drop_console: true, // Removes console.log
+                    drop_console: true, // Removes console.log statements
                 },
-                mangle: true, // Optional: Mangle variable names for additional compression
+                format: {
+                    comments: false, // Removes all comments
+                },
+                mangle: false, // Prevents variable and function name mangling
+                // Optionally, preserve certain formatting aspects
+                // beautify: true could be used, but it's false by default in 'format'
             });
 
             if (result.error) {
-                console.error(`Error minifying ${file}:`, result.error);
+                console.error(`Error processing ${file}:`, result.error);
                 return;
             }
 
-            // Write minified file back to the root directory, overwriting the original
+            // Write the processed code back to the root directory, overwriting the original
             fs.writeFileSync(filePath, result.code, 'utf8');
-            console.log(`Minified ${file} and updated ${filePath}`);
+            console.log(`Processed ${file} and updated ${filePath}`);
         } catch (err) {
             console.error(`Failed to process ${file}:`, err);
         }
