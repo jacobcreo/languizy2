@@ -164,7 +164,7 @@ function getBrowserName(userAgent) {
     }
   }
 
-  return "Unknown"; // Default if no match.
+  return "Unknown"; // Default if no match..
 }
 
 function sendSignInLink(email) {
