@@ -4,7 +4,7 @@
   "description": "A language learning application focusing on nouns practice.",
   "scripts": {
     "build": "node build.js",
-    "deploy": "npm run build && cp dist/*.js . && rm -rf dist"
+    "deploy": "npm run build"
   },
   "keywords": [
     "language",
@@ -13,7 +13,7 @@
     "i18n",
     "education"
   ],
-  "author": "Koby OFOfekEK",
+  "author": "Koby Ofek",
   "license": "MIT",
   "dependencies": {
     "terser": "^5.37.0"
