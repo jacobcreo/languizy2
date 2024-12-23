@@ -448,7 +448,9 @@
     }
     
     #noun-image {
-        max-width: 75%;
+        /* max-width: 75%; */
+        max-width: calc(min(374px, 75%));
+
     }
 
     .example-sentence-text {

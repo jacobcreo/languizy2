@@ -626,6 +626,7 @@ function loadNoun(user, currentCourse) {
 
     if (maxOrder < 7) {
         nounDisplayMode = "regular";
+        // nounDisplayMode = "matching-mode";
     } else {
         while (lastValue === nounDisplayMode && attempts < 5) {
             console.log('Attempt: ' + attempts);
@@ -926,20 +927,20 @@ function afterAnswerSubmission(isCorrect, type = "translation") {
     if (type !== "four-images") {
         // Feedback to user
         if (isCorrect) {
-            $('#feedback').text(UIString[interfaceLanguage].correctExclemation).removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
+            $('#feedback').text(UIString[interfaceLanguage].correctExclemation).removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
             if (!isMultipleChoice) {
                 $('#user-answer').val(`${window.currentNounData.noun}`).css('font-weight', 'bold');
             }
         } else {
-            $('#feedback').text(UIString[interfaceLanguage].incorrectPart1 + ` "${window.currentNounData.noun}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+            $('#feedback').text(UIString[interfaceLanguage].incorrectPart1 + ` "${window.currentNounData.noun}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible').css('display', 'block');
         }
     } else {
         if (isCorrect) {
             let correction = UIString[interfaceLanguage].correctExclemation + ' <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> ' + UIString[interfaceLanguage].correctPart2 + ' <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
-            $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible');
+            $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
         } else {
             let correction = UIString[interfaceLanguage].incorrect + '. <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> ' + UIString[interfaceLanguage].correctPart2 + ' <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
-            $('#feedback').html(correction).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+            $('#feedback').html(correction).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible').css('display', 'block');
         }
     }
 
@@ -1108,11 +1109,11 @@ function resetAllExerciseUI() {
     // $("#multiple-choice-options").hide();
     $("#multiple-choice-options").css('visibility', 'hidden');
     // $("#special-characters").hide();
-    $("#special-characters").css('visibility', 'hidden');
+    $("#special-characters").css('visibility', 'hidden').css('display', 'none');
     $('#replay-audio').prop('disabled', true);
     // $('#text-input-area').hide();
     $('#text-input-area').css('visibility', 'hidden');
-    $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden');
+    $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden').css('display', 'none');
     $(document).off('keydown.multipleChoice');
     $(document).off('keydown.matching');
     $(document).off('keydown.matching-images');
@@ -1217,6 +1218,7 @@ function displayNoun(noun, nounId, currentCourse) {
         $('#noun-image').on('load', handleNounImageLoad);
 
         function handleNounImageLoad() {
+            // regular mode + multiple choice
             console.log('Noun image loaded');
             hideLoadingProgress();
             showEncouragementMessage();
@@ -1248,10 +1250,10 @@ function displayNoun(noun, nounId, currentCourse) {
                 $('#multiple-choice-options').hide();
                 // Remove multiple-choice keydown event
                 $(document).off('keydown.multipleChoice');
-                $('#special-characters').show();
+                $('#special-characters').css('visibility', 'visible').css('display', 'block');
                 $('#submit-answer').show();
             } else {
-                $('#special-characters').hide();
+                $('#special-characters').css('visibility', 'hidden').css('display', 'none');
                 $('#text-input-area').hide();
                 $('#submit-answer').hide();
 
@@ -1267,6 +1269,7 @@ function displayNoun(noun, nounId, currentCourse) {
                     }
                 });
             }
+            doneloading();
         }
 
         $('#noun-image').attr('src', imageUrl);
@@ -1346,7 +1349,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     });
 
-    $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden');
+    $('#feedback').removeClass('visible text-success text-danger').css('visibility', 'hidden').css('display', 'none');
 
     $('.option-btn').removeClass('selected'); // Remove selected class from all options (relevant to multiple choice, but in case user switches)
     $('.option-btn').prop('disabled', false);
@@ -1493,6 +1496,7 @@ function displayNoun(noun, nounId, currentCourse) {
                         $('#matching-images-container').show();
                         console.log('Matching images container shown: ' + new Date().getTime());
                         imagesLoaded = 0;
+                        doneloading();
 
                     }
                 });
@@ -1685,6 +1689,9 @@ function displayNoun(noun, nounId, currentCourse) {
             rightButtons.push(btn);
         }
 
+        adjustFontSizeToFit(leftButtons.concat(rightButtons));
+
+
         // Adjust heights of matching pairs
         for (let i = 0; i < 4; i++) {
             const leftHeight = leftButtons[i].outerHeight();
@@ -1701,7 +1708,37 @@ function displayNoun(noun, nounId, currentCourse) {
             handleMatchingButtonClick(this);
         });
     }
-
+    function adjustFontSizeToFit(buttons) {
+        debugger;
+        let sizeAdjusted = false;
+        buttons.forEach(btn => btn.css('padding', '10px'));
+        buttons.forEach(button => {
+            let fontSize = parseFloat(button.css('font-size'));
+            const originalFontSize = fontSize;
+    
+            // Reduce font size until text fits within the button
+            while (isTextOverflowing(button) && fontSize > 0) {
+                fontSize -= 0.5; // Decrease font size gradually
+                button.css('font-size', fontSize + 'px');
+            }
+    
+            // Set all buttons to the same font size if adjusted
+            if (fontSize < originalFontSize) {
+                buttons.forEach(btn => btn.css('font-size', fontSize + 'px'));
+                sizeAdjusted = true;
+                
+            }
+            if (sizeAdjusted) {
+                buttons.forEach(btn => btn.css('padding', '10px 5px'));
+            }
+        });
+    }
+    
+    function isTextOverflowing(element) {
+        const el = element[0];
+        return el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight;
+    }
+    
     function handleMatchingButtonClick(btnElem) {
         const $btn = $(btnElem);
         if ($btn.hasClass('matched')) return; // Already matched
@@ -1768,7 +1805,7 @@ function displayNoun(noun, nounId, currentCourse) {
         // Update stats the same way a correct answer does:
         const timeTaken = Math.min(Math.floor((new Date() - questionStartTime) / 1000), 30);
         updateUserProgress(window.currentNounId, true, window.currentCourse, timeTaken);
-        $('#feedback').text('All pairs matched!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
+        $('#feedback').text('All pairs matched!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
         updateVisualStats(true);
         loadNoun(user, currentCourse);
         // $('#next-question').show();
@@ -1821,11 +1858,12 @@ function displayNoun(noun, nounId, currentCourse) {
             // Update the #feedback area with the translations
             $('#feedback')
                 .html(`<span class="noun-translations">${translationsText}</span>`)
-                .addClass('visible')
+                .css('visibility', 'visible')
+                .css('display', 'block')
                 .removeClass('text-success text-danger'); // Remove any previous feedback classes
         } else {
             // Hide the feedback area if there are no translations
-            $('#feedback').removeClass('visible').html('');
+            $('#feedback').css('visibility', 'hidden').css('display', 'none').html('');
         }
     }
 
@@ -1909,8 +1947,33 @@ function displayNoun(noun, nounId, currentCourse) {
             handleDebounce(() => $('#next-question').click());
         }
     });
+
+
+    
 }
 
+function doneloading(){
+    checkCoachposition();
+}
+
+function checkCoachposition() {
+    debugger;
+
+
+    const coachContainer = $('#coach-container');
+    const coachContainerHeight = coachContainer.outerHeight();
+    const windowHeight = $(window).height();
+    const scrollPosition = $(window).scrollTop();
+    const containerTop = coachContainer.offset().top;
+    const containerBottom = containerTop + coachContainerHeight;
+
+    if (containerTop < windowHeight && containerBottom > windowHeight) {
+        coachContainer.css('padding-top', (windowHeight - containerTop) + 'px');
+    } else {
+        coachContainer.css('padding-top', '0');
+    }
+
+}
 // Function to display multiple-choice options
 function displayMultipleChoiceOptions(noun) {
     // Combine the correct answer with distractors
@@ -2570,8 +2633,10 @@ function updateSpecialCharacters(targetLanguage) {
     // Show the special characters container if there are characters to display
     if (specialChars.length > 0) {
         specialCharsContainer.style.display = 'block';
+        specialCharsContainer.style.visibility = 'visible';
     } else {
         specialCharsContainer.style.display = 'none';
+        specialCharsContainer.style.visibility  = 'hidden';
     }
 }
 
@@ -2720,7 +2785,7 @@ function setCoachImage(imageFilename) {
 
 
 function modifyInterfaceLanguage() {
-    debugger;
+    
     if (UIString[interfaceLanguage]) {
         const lang = UIString[interfaceLanguage];
 
