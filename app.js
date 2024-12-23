@@ -178,7 +178,7 @@ function sendSignInLink(email) {
   window.localStorage.setItem('log', JSON.stringify(log));
 
   // Construct the redirect URL with tracking parameters
-  const redirectUrl = `${window.location.origin}/?fbclid=${encodeURIComponent(getURLParameter('fbclid')) || ''}&fbp=${encodeURIComponent(fbp)}&fbc=${encodeURIComponent(fbc)}&utm_source=${encodeURIComponent(utm_source)}&utm_medium=${encodeURIComponent(utm_medium)}&utm_campaign=${encodeURIComponent(utm_campaign)}&country=${encodeURIComponent(country)}`;
+  const redirectUrl = `${window.location.origin}/?fbclid=${encodeURIComponent(getURLParameter('fbclid')) || ''}&em=${encodeURIComponent(email)}&utm_source=${encodeURIComponent(utm_source)}&utm_medium=${encodeURIComponent(utm_medium)}&utm_campaign=${encodeURIComponent(utm_campaign)}&country=${encodeURIComponent(country)}`;
 debugger;
   var actionCodeSettings = {
     url: redirectUrl,
