@@ -14,6 +14,7 @@ db.settings({ timestampsInSnapshots: true });
     utm_source: queryParams.get('utm_source') || a,
     utm_medium: queryParams.get('utm_medium') || null,
     utm_campaign: queryParams.get('utm_campaign') || null,
+    em : queryParams.get('em') || null,
     fbclid: queryParams.get('fbclid') || null,
     referrer: document.referrer || null,
     refurl: window.location.href,
