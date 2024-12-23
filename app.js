@@ -7,7 +7,7 @@ db.settings({ timestampsInSnapshots: true });
 
 // Capture URL parameters and other relevant data
 (async function() {
-  let a='test';
+  let a='testosh';
   const queryParams = new URLSearchParams(window.location.search);
   const { fbp, fbc } = getFBPAndFBC();
   const sourceData = {
