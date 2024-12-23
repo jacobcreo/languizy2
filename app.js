@@ -11,7 +11,7 @@ db.settings({ timestampsInSnapshots: true });
   const queryParams = new URLSearchParams(window.location.search);
   const { fbp, fbc } = getFBPAndFBC();
   const sourceData = {
-    utm_source: queryParams.get('utm_source') || null,
+    utm_source: queryParams.get('utm_source') || a,
     utm_medium: queryParams.get('utm_medium') || null,
     utm_campaign: queryParams.get('utm_campaign') || null,
     fbclid: queryParams.get('fbclid') || null,
