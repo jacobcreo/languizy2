@@ -27,7 +27,7 @@ const minifyFile = async (file) => {
                 },
                 mangle: false, // Prevents variable and function name mangling
                 // Optionally, preserve certain formatting aspects
-                // beautify: true could be used, but it's false by default in 'format'
+                beautify: true
             });
 
             if (result.error) {
