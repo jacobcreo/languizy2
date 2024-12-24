@@ -128,30 +128,31 @@
     try {
         const fileRef = storage.ref("restrictedHTML/logExaminer.html");
         const fileUrl = await fileRef.getDownloadURL();
-
         const response = await fetch(fileUrl);
         const fileContent = await response.text();
 
-        // Inject the fetched HTML into the page
+        // Inject the fetched HTML
         fileContentDiv.innerHTML = fileContent;
 
-        // Find and execute all <script> tags
+        // Process all <script> tags in the fetched content
         const scripts = fileContentDiv.querySelectorAll("script");
-
         for (const script of scripts) {
             const newScript = document.createElement("script");
 
             if (script.src) {
-                // If the script has a src attribute, copy it
-                newScript.src = script.src;
-                newScript.async = true;
+                // Skip loading external scripts that are already in the DOM
+                if (!document.querySelector(`script[src="${script.src}"]`)) {
+                    newScript.src = script.src;
+                    newScript.async = true;
+                    document.body.appendChild(newScript);
+                }
             } else {
-                // Otherwise, copy the inline script's content
-                newScript.textContent = script.textContent;
+                // Execute inline scripts while skipping Firebase initialization
+                if (!script.textContent.includes("firebase.initializeApp")) {
+                    newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                }
             }
-
-            // Append and execute the script in the document
-            document.body.appendChild(newScript);
         }
 
         console.log("HTML and scripts executed successfully");
@@ -160,6 +161,7 @@
         alert("Error fetching or processing file: " + error.message);
     }
 };
+
 
         // Handle Authentication State Changes
         auth.onAuthStateChanged((user) => {
