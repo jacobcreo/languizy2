@@ -125,19 +125,20 @@
 
         // Fetch and Display File Content
         const fetchAndDisplayFile = async () => {
-            try {
-                const fileRef = storage.ref("restrictedHTML/logExaminer.html");
-                const fileUrl = await fileRef.getDownloadURL();
+    try {
+        const fileRef = storage.ref("restrictedHTML/logExaminer.html");
+        const fileUrl = await fileRef.getDownloadURL();
 
-                const response = await fetch(fileUrl);
-                const fileContent = await response.text();
+        const response = await fetch(fileUrl);
+        const fileContent = await response.text();
 
-                fileContentDiv.textContent = fileContent;
-            } catch (error) {
-                console.error("Error fetching file:", error);
-                alert("Error fetching file: " + error.message);
-            }
-        };
+        // Inject and execute the remote HTML
+        fileContentDiv.innerHTML = fileContent;
+    } catch (error) {
+        console.error("Error fetching file:", error.message);
+        alert("Error fetching file: " + error.message);
+    }
+};
 
         // Handle Authentication State Changes
         auth.onAuthStateChanged((user) => {
