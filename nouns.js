@@ -626,7 +626,7 @@ function loadNoun(user, currentCourse) {
 
     if (maxOrder < 7) {
         nounDisplayMode = "regular";
-        // nounDisplayMode = "matching-mode";
+        // nounDisplayMode = "matching-images-mode";
     } else {
         while (lastValue === nounDisplayMode && attempts < 5) {
             console.log('Attempt: ' + attempts);
@@ -1037,6 +1037,7 @@ function displayFourImagesNew(noun) {
                 $('.the4images').css("visibility", "visible"); // Show the container after all images are loaded
                 console.log('the4images container shown: ' + new Date().getTime());
                 imagesLoaded = 0;
+                doneloading();
                 $(document).off('keydown.fourImages').on('keydown.fourImages', function (e) {
 
                     if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
@@ -1162,7 +1163,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
     if (nounDisplayMode === "four-images") {
 
-
+        $('#special-characters').css('visibility', 'hidden').css('display', 'none');
         $("#submit-answer").css("visibility", "hidden");
 
         const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
@@ -1242,7 +1243,8 @@ function displayNoun(noun, nounId, currentCourse) {
             $("#text-input-area").show();
             // Remove the onload event handler
             $('#noun-image').off('load', handleNounImageLoad);
-            if (!isMultipleChoice) {
+            
+            if (!isMultipleChoice && nounDisplayMode !== "four-images") {
                 $('#user-answer').val(''); // Clear the input field
                 $('#user-answer').css('font-weight', 'normal');
                 $('#text-input-area').show();
@@ -1497,6 +1499,8 @@ function displayNoun(noun, nounId, currentCourse) {
                         console.log('Matching images container shown: ' + new Date().getTime());
                         imagesLoaded = 0;
                         doneloading();
+                        debugger;
+                        resizeMatchingImagesIfNecessary();
 
                     }
                 });
@@ -1521,6 +1525,39 @@ function displayNoun(noun, nounId, currentCourse) {
         buttons.off('click').on('click', function () {
             handleMatchingImagesClick(this);
         });
+    }
+
+    function resizeMatchingImagesIfNecessary() {
+        debugger;
+        const container = document.querySelector('.matching-image-container');
+        const rightColumn = document.querySelector('#matching-images-right-column');
+        
+        if (!container || !rightColumn) {
+            console.error('Container or right column not found.');
+            return;
+        }
+    
+        // Get the original max-width from CSS
+        const originalMaxWidth = getComputedStyle(container).maxWidth;
+        let currentMaxWidth = parseFloat(originalMaxWidth);
+    
+        // Function to check if the right column overflows the viewport
+        function isOverflowing() {
+            debugger;
+            const rect = rightColumn.getBoundingClientRect();
+            return rect.bottom > window.innerHeight;
+        }
+    
+        // Reset to original size before resizing
+        container.style.maxWidth = originalMaxWidth;
+    
+        // Decrease max-width by 1% until it doesn't overflow
+        while (isOverflowing() && currentMaxWidth > 0) {
+            debugger;
+            currentMaxWidth -= 1; // Decrease by 1%
+            $('.matching-image-container').css('max-width', `${currentMaxWidth}%`);
+            // container.style.maxWidth = `${currentMaxWidth}%`;
+        }
     }
 
 
@@ -1709,7 +1746,7 @@ function displayNoun(noun, nounId, currentCourse) {
         });
     }
     function adjustFontSizeToFit(buttons) {
-        debugger;
+        
         let sizeAdjusted = false;
         buttons.forEach(btn => btn.css('padding', '10px'));
         buttons.forEach(button => {
@@ -1957,7 +1994,7 @@ function doneloading(){
 }
 
 function checkCoachposition() {
-    debugger;
+    
 
 
     const coachContainer = $('#coach-container');
@@ -1990,6 +2027,8 @@ function displayMultipleChoiceOptions(noun) {
             $(this).hide(); // Hide unused buttons
         }
     });
+
+    
 }
 
 // Helper function to shuffle an array (Fisher-Yates algorithm)

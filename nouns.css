@@ -490,6 +490,10 @@
         }
         .matching-btn-left {
             margin-bottom:0px !important;
+            padding: 7px !important;
+        }
+        .option-btn::before {
+            display: none;
         }
     }
     #four-images-container {
