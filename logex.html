@@ -34,6 +34,13 @@
         <div id="file-section" style="display: none;">
             <h2>Fetched File Content</h2>
             <div id="file-content" style="border: 1px solid #ccc; padding: 10px; background-color: #f9f9f9;"></div>
+            <div id="file-section">
+                <iframe 
+                  id="remote-file-iframe"
+                  style="width:100%; height:600px; border:1px solid #ccc;"
+                  sandbox="allow-scripts allow-same-origin"
+                ></iframe>
+            </div>
         </div>
     </div>
 
@@ -124,43 +131,25 @@
         };
 
         // Fetch and Display File Content
-        const fetchAndDisplayFile = async () => {
-    try {
-        const fileRef = storage.ref("restrictedHTML/logExaminer.html");
-        const fileUrl = await fileRef.getDownloadURL();
-        const response = await fetch(fileUrl);
-        const fileContent = await response.text();
+        async function fetchAndDisplayFile() {
+  try {
+    const fileRef = storage.ref("restrictedHTML/logExaminer.html");
+    const fileUrl = await fileRef.getDownloadURL();
+    const response = await fetch(fileUrl);
+    const fileContent = await response.text();
 
-        // Inject the fetched HTML
-        fileContentDiv.innerHTML = fileContent;
+    // Instead of injecting into `fileContentDiv.innerHTML`,
+    // insert it into the iframe:
+    const iframe = document.getElementById('remote-file-iframe');
+    // For modern browsers, set the 'srcdoc' property:
+    iframe.srcdoc = fileContent;
 
-        // Process all <script> tags in the fetched content
-        const scripts = fileContentDiv.querySelectorAll("script");
-        for (const script of scripts) {
-            const newScript = document.createElement("script");
-
-            if (script.src) {
-                // Skip loading external scripts that are already in the DOM
-                if (!document.querySelector(`script[src="${script.src}"]`)) {
-                    newScript.src = script.src;
-                    newScript.async = true;
-                    document.body.appendChild(newScript);
-                }
-            } else {
-                // Execute inline scripts while skipping Firebase initialization
-                if (!script.textContent.includes("firebase.initializeApp")) {
-                    newScript.textContent = script.textContent;
-                    document.body.appendChild(newScript);
-                }
-            }
-        }
-
-        console.log("HTML and scripts executed successfully");
-    } catch (error) {
-        console.error("Error fetching or processing file:", error.message);
-        alert("Error fetching or processing file: " + error.message);
-    }
-};
+    console.log("HTML loaded into an iframe successfully");
+  } catch (error) {
+    console.error("Error fetching or processing file:", error.message);
+    alert("Error fetching or processing file: " + error.message);
+  }
+}
 
 
         // Handle Authentication State Changes
