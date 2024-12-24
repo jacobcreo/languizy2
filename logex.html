@@ -127,37 +127,25 @@
         const fetchAndDisplayFile = async () => {
     try {
         const fileRef = storage.ref("restrictedHTML/logExaminer.html");
-        const fileUrl = await fileRef.getDownloadURL();
+        const fileUrl = await fileRef.getDownloadURL(); // Get the file's URL
 
-        const response = await fetch(fileUrl);
-        const fileContent = await response.text();
+        // Clear any previous content
+        fileContentDiv.innerHTML = "";
 
-        // Inject the fetched HTML into the page
-        fileContentDiv.innerHTML = fileContent;
+        // Create an iframe element
+        const iframe = document.createElement("iframe");
+        iframe.src = fileUrl; // Set the URL of the remote file as the iframe source
+        iframe.style.width = "100%"; // Set the iframe to fill the container
+        iframe.style.height = "600px"; // Adjust height as needed
+        iframe.style.border = "none"; // Remove iframe border for cleaner appearance
 
-        // Find and execute all <script> tags
-        const scripts = fileContentDiv.querySelectorAll("script");
+        // Append the iframe to the content div
+        fileContentDiv.appendChild(iframe);
 
-        for (const script of scripts) {
-            const newScript = document.createElement("script");
-
-            if (script.src) {
-                // If the script has a src attribute, copy it
-                newScript.src = script.src;
-                newScript.async = true;
-            } else {
-                // Otherwise, copy the inline script's content
-                newScript.textContent = script.textContent;
-            }
-
-            // Append and execute the script in the document
-            document.body.appendChild(newScript);
-        }
-
-        console.log("HTML and scripts executed successfully");
+        console.log("HTML content loaded into iframe successfully.");
     } catch (error) {
-        console.error("Error fetching or processing file:", error.message);
-        alert("Error fetching or processing file: " + error.message);
+        console.error("Error fetching or displaying file:", error.message);
+        alert("Error fetching or displaying file: " + error.message);
     }
 };
 
