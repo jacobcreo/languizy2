@@ -132,8 +132,24 @@
         const response = await fetch(fileUrl);
         const fileContent = await response.text();
 
-        // Inject and execute the remote HTML
+        // Inject the fetched HTML into the page
         fileContentDiv.innerHTML = fileContent;
+
+        // Find and execute all <script> tags
+        const scripts = fileContentDiv.querySelectorAll("script");
+        scripts.forEach((script) => {
+            const newScript = document.createElement("script");
+            if (script.src) {
+                // If the script has a src attribute, load it from the URL
+                newScript.src = script.src;
+                newScript.async = true;
+            } else {
+                // Otherwise, execute the inline script
+                newScript.textContent = script.textContent;
+            }
+            document.body.appendChild(newScript);
+            document.body.removeChild(newScript); // Optional cleanup
+        });
     } catch (error) {
         console.error("Error fetching file:", error.message);
         alert("Error fetching file: " + error.message);
