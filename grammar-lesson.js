@@ -318,10 +318,10 @@ firebase.auth().onAuthStateChanged(function (user) {
                 updateSpecialCharacters(language);
 
                 // After loading the initial question, check if started at 100%
-                if (startedAt100 && !hasShownCompletionModal) {
-                    await showCompletionModal(currentLesson);
-                    hasShownCompletionModal = true;
-                }
+                // if (!startedAt100 && !hasShownCompletionModal) {
+                //     await showCompletionModal(currentLesson);
+                //     hasShownCompletionModal = true;
+                // }
             }).catch((error) => {
                 console.error('Error fetching current lesson:', error);
                 window.location.href = 'course_selection.html';
