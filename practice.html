@@ -373,6 +373,25 @@
     </div>
   </div>
 
+  <!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 shadow-lg">
+          <div class="modal-header bg-warning text-dark">
+              <h5 class="modal-title" id="errorModalLabel">Oops! Something went wrong.</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+              <p>We couldn't load the questions. There might be an issue with your internet connection.</p>
+          </div>
+          <div class="modal-footer justify-content-center">
+              <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'">Back to Main Screen</button>
+              <button type="button" class="btn btn-secondary" onclick="resetAndRetry()">Try Again</button>
+          </div>
+      </div>
+  </div>
+</div>
+
   <!-- Scripts -->
 
 

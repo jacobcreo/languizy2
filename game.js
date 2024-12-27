@@ -11,6 +11,9 @@ let previousQuestionId = null; // Ensure this is correctly initialized
 let questionStartTime; // Variable to store the start time of the question
 let showCoachFeedback = true;
 
+let questionsToIgnore = []; // new array for ignoring failing question IDs
+
+
 
 
 let uid = null;
@@ -500,203 +503,239 @@ function loadDailyScore(user, currentCourse) {
   });
 }
 
-// Load a question from Firestore
-function loadQuestion(user, currentCourse) {
+//=================================================
+// loadQuestion - The main orchestrator
+//=================================================
+async function loadQuestion(user, currentCourse) {
   showLoadingProgress();
 
   if (!user) {
     console.error("User is not authenticated.");
     return;
   }
-
   if (!currentCourse) {
-    console.error('User has not selected a course.');
+    console.error("User has not selected a course.");
     window.location.href = 'course_selection.html';
     return;
   }
 
-  checkDrillsLimit(user, currentCourse);
+  // Check daily drill limit or subscription
+  await checkDrillsLimit(user, currentCourse);
 
-  // Show a random encouragement message when loading a new question
+  // Show a random encouragement message
   showEncouragementMessage();
 
-  // Fetch the due questions based on scheduling algorithm
-  db.collection('users').doc(user.uid)
-    .collection('courses').doc(currentCourse)
-    .collection('progress')
-    .where('nextDue', '<=', new Date())
-    .orderBy('nextDue')
-    .limit(2) // Fetch two due questions to handle potential duplicates
-    .get()
-    .then(progressSnapshot => {
-      if (!progressSnapshot.empty) {
-        // Iterate through fetched questions to find one that's not the same as the previous
-        let selectedQuestionDoc = null;
-        progressSnapshot.forEach(doc => {
-          if (doc.id !== previousQuestionId && !selectedQuestionDoc) {
-            selectedQuestionDoc = doc;
-          }
-        });
+  try {
+    // 1) Attempt to fetch a "due" question
+    let questionDoc = await getDueQuestion(user, currentCourse);
 
-        // If all fetched questions are same as previous, select the first one (to avoid missing questions)
-        if (!selectedQuestionDoc && progressSnapshot.size > 0) {
-          selectedQuestionDoc = progressSnapshot.docs[0];
-        }
+    // 2) If no due question found, try new question
+    if (!questionDoc) {
+      questionDoc = await getNewQuestion(user, currentCourse);
+    }
 
-        if (selectedQuestionDoc) {
-          var questionId = selectedQuestionDoc.id;
-          loadQuestionData(questionId, currentCourse); // Pass currentCourse as a parameter
-          previousQuestionId = questionId; // Update the previousQuestionId
-        } else {
-          console.log('No suitable due questions found. Attempting to load a new question.');
-          loadNewQuestion(user, currentCourse);
-        }
-      } else {
-        // No due questions; attempt to load a new question
-        loadNewQuestion(user, currentCourse);
-      }
-    }).catch(error => {
-      console.error('Error fetching due questions:', error);
-    });
+    // 3) If still none, try next-early question
+    if (!questionDoc) {
+      questionDoc = await getNextEarlyQuestion(user, currentCourse);
+    }
+
+    // 4) If we have a question, display it
+    if (questionDoc) {
+      previousQuestionId = questionDoc.id; // Remember it to avoid duplicates
+      loadQuestionData(questionDoc.id, currentCourse); 
+    } else {
+      console.log('No questions found at all.');
+      hideLoadingProgress();
+      showErrorModal();  // <---- NEW
+
+    }
+  } catch (error) {
+    console.error('Error loading question:', error);
+    hideLoadingProgress();
+    showErrorModal(); // <---- NEW
+
+  }
 }
 
-// Load question data and display
+//=================================================
+// getDueQuestion - Returns a doc from Firestore
+//   that is nextDue <= now, sorted by nextDue
+//=================================================
+async function getDueQuestion(user, currentCourse) {
+  try {
+    const progressRef = db.collection('users')
+      .doc(user.uid)
+      .collection('courses')
+      .doc(currentCourse)
+      .collection('progress');
+
+    const snapshot = await progressRef
+      .where('nextDue', '<=', new Date())
+      .orderBy('nextDue', 'asc')
+      .limit(5)
+      .get();
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    // local filter to skip question IDs in questionsToIgnore
+    const docs = snapshot.docs.filter(doc => !questionsToIgnore.includes(doc.id));
+    
+    // from these, pick one that’s not the previous question
+    let validDoc = null;
+    docs.forEach(doc => {
+      if (!validDoc && doc.id !== previousQuestionId) {
+        validDoc = doc;
+      }
+    });
+
+    // fallback if they're all the same
+    if (!validDoc && docs.length > 0) {
+      validDoc = docs[0];
+    }
+
+    if (!validDoc) return null;
+
+    console.log('Due question found:', validDoc.id);
+    return validDoc;
+  } catch (err) {
+    console.error('Error in getDueQuestion:', err);
+    return null;
+  }
+}
+
+//=================================================
+// getNewQuestion - Return a question the user has
+//   never answered (unseen).
+//=================================================
+async function getNewQuestion(user, currentCourse) {
+  try {
+    const [knownLang, targetLang] = currentCourse.split('-');
+    const allQsSnap = await db.collection('questions')
+      .where('knownLanguage', '==', knownLang)
+      .where('language', '==', targetLang)
+      .limit(100)
+      .get();
+
+    if (allQsSnap.empty) {
+      console.log('No questions for this course in "questions" collection.');
+      return null;
+    }
+
+    const allQs = allQsSnap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+
+    const userProgressSnap = await db.collection('users')
+      .doc(user.uid)
+      .collection('courses')
+      .doc(currentCourse)
+      .collection('progress')
+      .get();
+
+    const seenIds = userProgressSnap.docs.map(d => d.id);
+
+    // filter out seen + questionsToIgnore + previous
+    const unseen = allQs.filter(q =>
+      !seenIds.includes(q.id) &&
+      !questionsToIgnore.includes(q.id) &&
+      q.id !== previousQuestionId
+    );
+
+    if (unseen.length === 0) {
+      console.log('No brand-new questions available.');
+      return null;
+    }
+
+    console.log('New question found:', unseen[0].id);
+    return unseen[0];
+  } catch (error) {
+    console.error('Error in getNewQuestion:', error);
+    return null;
+  }
+}
+
+
+//=================================================
+// getNextEarlyQuestion - Return a doc for a question
+//   that is not due yet but can still be practiced
+//=================================================
+async function getNextEarlyQuestion(user, currentCourse) {
+  try {
+    const progressRef = db.collection('users')
+      .doc(user.uid)
+      .collection('courses')
+      .doc(currentCourse)
+      .collection('progress');
+
+    const snapshot = await progressRef
+      .orderBy('nextDue', 'asc')
+      .limit(5)
+      .get();
+
+    if (snapshot.empty) {
+      console.log('No next-early questions found.');
+      return null;
+    }
+
+    const docs = snapshot.docs.filter(doc => !questionsToIgnore.includes(doc.id));
+    
+    let validDoc = null;
+    docs.forEach(doc => {
+      if (!validDoc && doc.id !== previousQuestionId) {
+        validDoc = doc;
+      }
+    });
+
+    if (!validDoc && docs.length > 0) {
+      validDoc = docs[0];
+    }
+
+    if (!validDoc) return null;
+
+    console.log('Next-early question found:', validDoc.id);
+    return validDoc;
+  } catch (err) {
+    console.error('Error in getNextEarlyQuestion:', err);
+    return null;
+  }
+}
+
+//=================================================
+// loadQuestionData - Given a question ID, load from
+//   "questions" and then call displayQuestion(...).
+//=================================================
 function loadQuestionData(questionId, currentCourse) {
   db.collection('questions').doc(questionId).get()
     .then(questionDoc => {
       if (questionDoc.exists) {
-        displayQuestion(questionDoc.data(), questionId, currentCourse); // Pass currentCourse as a parameter
-        previousQuestionId = questionId; // Ensure previousQuestionId is updated
-
+        displayQuestion(questionDoc.data(), questionId, currentCourse);
+        previousQuestionId = questionId; // Make sure we don't show it again
       } else {
-        console.error('Question not found:', questionId);
+        console.error('Question doc not found:', questionId);
+        questionsToIgnore.push(questionId); // <--- Mark it as invalid
+        hideLoadingProgress();
       }
+    })
+    .catch(error => {
+      console.error('Error loading question data:', error);
+      questionsToIgnore.push(questionId); // <--- Mark as invalid
+      hideLoadingProgress();
     });
 }
 
-// Load a new question that hasn't been answered yet or from a specific course
-function loadNewQuestion(user, courseId) {
-  // Fetch user's selected course details (knownLanguage and targetLanguage)
-  db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
-    .then(courseDoc => {
-      var courseData = courseDoc.data();
-
-      if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
-        // Course data might not be ready, let's retry once after a short delay
-        console.warn('Course data not found. Retrying...');
-        setTimeout(() => {
-          if ((typeof (courseData.targetLanguage) !== 'undefined') && (typeof (courseData.knownLanguage) !== 'undefined')) {
-            // Retry fetching course data
-            db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
-              .then(retryDoc => {
-                courseData = retryDoc.data();
-                if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
-                  console.error('User has not selected a course after retry.');
-                  window.location.href = 'course_selection.html';
-                } else {
-                  // Proceed with loading questions after retry
-                  fetchAndLoadQuestions(courseData);
-                }
-              }).catch(error => {
-                console.error('Error fetching course data during retry:', error);
-                window.location.href = 'course_selection.html';
-              });
-          } else {
-            console.error('User has not selected a course correctly.');
-            window.location.href = 'course_selection.html';
-          }
-        }, 1000);  // 1-second delay for retry
-      } else {
-        // Proceed if course data is available
-        fetchAndLoadQuestions(courseData);
-      }
-    }).catch(error => {
-      console.error('Error loading user course data:', error);
-    });
+// Show an error modal if we cannot load any question
+function showErrorModal() {
+  $('#errorModal').modal('show');
 }
 
-// Helper function to fetch and load questions
-function fetchAndLoadQuestions(courseData) {
-  if ((typeof (courseData.targetLanguage) !== 'undefined') && (typeof (courseData.knownLanguage) !== 'undefined')) {
-    courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
-  }
-  db.collection('questions')
-    .where('language', '==', courseData.targetLanguage)
-    .where('knownLanguage', '==', courseData.knownLanguage)
-    .orderBy('frequency', 'asc')  // Order by frequency in ascending order
-    .get()
-    .then(questionSnapshot => {
-      var questions = [];
-      questionSnapshot.forEach(doc => {
-        questions.push({ id: doc.id, data: doc.data() });
-      });
-
-      // Filter out questions the user has already answered (progress collection)
-      db.collection('users').doc(firebase.auth().currentUser.uid)
-        .collection('courses').doc(courseData.courseId)
-        .collection('progress').get()
-        .then(progressSnapshot => {
-          var seenQuestions = progressSnapshot.docs.map(doc => doc.id);
-          var unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
-
-          // Shuffle unseenQuestions to add randomness
-          // shuffleArray(unseenQuestions);
-
-          // Find the first question that is not the same as previousQuestionId
-          let selectedQuestion = unseenQuestions.find(q => q.id !== previousQuestionId);
-
-          if (!selectedQuestion && unseenQuestions.length > 0) {
-            // If all unseen questions are same as previous (unlikely), select the first one
-            selectedQuestion = unseenQuestions[0];
-          }
-
-          if (selectedQuestion) {
-            displayQuestion(selectedQuestion.data, selectedQuestion.id, courseData.courseId);
-            previousQuestionId = selectedQuestion.id; // Update the previousQuestionId
-          } else {
-            console.log('No new questions available. Loading next early question.');
-            loadNextEarlyQuestion(firebase.auth().currentUser, courseData.courseId); // Load the next question even if it's not yet due
-          }
-        });
-    });
+// Reset the questionsToIgnore and retry loading
+function resetAndRetry() {
+  questionsToIgnore = [];
+  $('#errorModal').modal('hide');
+  // Attempt loading again
+  loadQuestion(firebase.auth().currentUser, window.currentCourse);
 }
 
-// Load the next question even if it's not yet due
-function loadNextEarlyQuestion(user, courseId) {
-  db.collection('users').doc(user.uid)
-    .collection('courses').doc(courseId)
-    .collection('progress')
-    .orderBy('nextDue', 'asc')
-    .limit(2) // Fetch two to handle potential duplicates
-    .get()
-    .then(progressSnapshot => {
-      if (!progressSnapshot.empty) {
-        let selectedQuestionDoc = null;
-        progressSnapshot.forEach(doc => {
-          if (doc.id !== previousQuestionId && !selectedQuestionDoc) {
-            selectedQuestionDoc = doc;
-          }
-        });
-
-        // If all fetched questions are same as previous, select the first one
-        if (!selectedQuestionDoc && progressSnapshot.size > 0) {
-          selectedQuestionDoc = progressSnapshot.docs[0];
-        }
-
-        if (selectedQuestionDoc) {
-          var questionId = selectedQuestionDoc.id;
-          loadQuestionData(questionId, courseId); // Pass currentCourse as a parameter
-          previousQuestionId = questionId; // Update the previousQuestionId
-        } else {
-          console.log('No questions found at all.');
-        }
-      } else {
-        console.log('No questions found at all.');
-      }
-    }).catch(error => {
-      console.error('Error fetching next early question:', error);
-    });
-}
 
 function showLoadingMessages() {
   // Use coach-specific loading messages
