@@ -121,17 +121,17 @@ const UIString = {
         'reportCommentPlaceholder': 'Explain what went wrong...',
 
         // Dynamic Content
-        'freeUser' : 'FREE',
-        'ProUser' : 'Pro',
-        'Proficiency Level' : 'Proficiency Level',
-        'MakeItHarder' : 'Make it harder',
-        'MakeItEasier' : 'Make it easier',
-        'correctExclemation' : 'Correct!',
-        'incorrectPart1' : 'Incorrect. The correct answer was',
-        'correctPart2' : 'is',
-        'incorrect' : 'Incorrect',
-        'newNoun' : '(new noun)',
-        
+        'freeUser': 'FREE',
+        'ProUser': 'Pro',
+        'Proficiency Level': 'Proficiency Level',
+        'MakeItHarder': 'Make it harder',
+        'MakeItEasier': 'Make it easier',
+        'correctExclemation': 'Correct!',
+        'incorrectPart1': 'Incorrect. The correct answer was',
+        'correctPart2': 'is',
+        'incorrect': 'Incorrect',
+        'newNoun': '(new noun)',
+
     },
     'es': {
         // General
@@ -231,16 +231,16 @@ const UIString = {
         'reportCommentPlaceholder': 'Explica qué salió mal...',
 
         // Dynamic Content
-        'freeUser' : 'GRATIS',
-        'ProUser' : 'PRO',
-        'Proficiency Level' : 'Nivel de Competencia',
-        'MakeItHarder' : 'Hacerlo más difícil',
-        'MakeItEasier' : 'Hacerlo más fácil',
-        'correctExclemation' : '¡Correcto!',
-        'incorrectPart1' : 'Incorrecto. La respuesta correcta era',
-        'correctPart2' : 'es',
-        'incorrect' : 'Incorrecto',
-        'newNoun' : '(nuevo sustantivo)',
+        'freeUser': 'GRATIS',
+        'ProUser': 'PRO',
+        'Proficiency Level': 'Nivel de Competencia',
+        'MakeItHarder': 'Hacerlo más difícil',
+        'MakeItEasier': 'Hacerlo más fácil',
+        'correctExclemation': '¡Correcto!',
+        'incorrectPart1': 'Incorrecto. La respuesta correcta era',
+        'correctPart2': 'es',
+        'incorrect': 'Incorrecto',
+        'newNoun': '(nuevo sustantivo)',
     },
     // Add more languages as needed
 };
@@ -308,7 +308,7 @@ function loadUserAvatar(user) {
             const photoURL = userData.photoURL;
             const displayName = userData.displayName || '';
             const email = userData.email || '';
-            
+
             showCoachFeedback = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
             if (showCoachFeedback) {
                 $('#coach-container').addClass('d-flex').removeClass('d-none');
@@ -1243,7 +1243,7 @@ function displayNoun(noun, nounId, currentCourse) {
             $("#text-input-area").show();
             // Remove the onload event handler
             $('#noun-image').off('load', handleNounImageLoad);
-            
+
             if (!isMultipleChoice && nounDisplayMode !== "four-images") {
                 $('#user-answer').val(''); // Clear the input field
                 $('#user-answer').css('font-weight', 'normal');
@@ -1277,8 +1277,8 @@ function displayNoun(noun, nounId, currentCourse) {
         $('#noun-image').attr('src', imageUrl);
         console.log('noun-image src set to: ' + imageUrl + ' timestamp is: ' + new Date().getTime());
         $('#noun-image').show();
-
-        displayNounTranslations(noun.translations);
+        debugger;
+        displayNounTranslations(noun.missingWordTranslation);
 
 
 
@@ -1531,26 +1531,26 @@ function displayNoun(noun, nounId, currentCourse) {
         debugger;
         const container = document.querySelector('.matching-image-container');
         const rightColumn = document.querySelector('#matching-images-right-column');
-        
+
         if (!container || !rightColumn) {
             console.error('Container or right column not found.');
             return;
         }
-    
+
         // Get the original max-width from CSS
         const originalMaxWidth = getComputedStyle(container).maxWidth;
         let currentMaxWidth = parseFloat(originalMaxWidth);
-    
+
         // Function to check if the right column overflows the viewport
         function isOverflowing() {
             debugger;
             const rect = rightColumn.getBoundingClientRect();
             return rect.bottom > window.innerHeight;
         }
-    
+
         // Reset to original size before resizing
         container.style.maxWidth = originalMaxWidth;
-    
+
         // Decrease max-width by 1% until it doesn't overflow
         while (isOverflowing() && currentMaxWidth > 0) {
             debugger;
@@ -1746,36 +1746,36 @@ function displayNoun(noun, nounId, currentCourse) {
         });
     }
     function adjustFontSizeToFit(buttons) {
-        
+
         let sizeAdjusted = false;
         buttons.forEach(btn => btn.css('padding', '10px'));
         buttons.forEach(button => {
             let fontSize = parseFloat(button.css('font-size'));
             const originalFontSize = fontSize;
-    
+
             // Reduce font size until text fits within the button
             while (isTextOverflowing(button) && fontSize > 0) {
                 fontSize -= 0.5; // Decrease font size gradually
                 button.css('font-size', fontSize + 'px');
             }
-    
+
             // Set all buttons to the same font size if adjusted
             if (fontSize < originalFontSize) {
                 buttons.forEach(btn => btn.css('font-size', fontSize + 'px'));
                 sizeAdjusted = true;
-                
+
             }
             if (sizeAdjusted) {
                 buttons.forEach(btn => btn.css('padding', '10px 5px'));
             }
         });
     }
-    
+
     function isTextOverflowing(element) {
         const el = element[0];
         return el.scrollWidth > el.clientWidth || el.scrollHeight > el.clientHeight;
     }
-    
+
     function handleMatchingButtonClick(btnElem) {
         const $btn = $(btnElem);
         if ($btn.hasClass('matched')) return; // Already matched
@@ -1885,994 +1885,1011 @@ function displayNoun(noun, nounId, currentCourse) {
     // Function to display noun translations
     function displayNounTranslations(translationsArray) {
 
-        // Ensure translationsArray is an array and limit to 3 entries
-        const translations = Array.isArray(translationsArray) ? translationsArray.slice(0, 3) : [];
+        let translations;
+        let translationsText;
 
-        if (translations.length > 0) {
-            // Create a comma-separated string of translations
-            const translationsText = translations.join(', ');
+        // if translationsArray is an array, limit to 3 entries
 
-            // Update the #feedback area with the translations
-            $('#feedback')
-                .html(`<span class="noun-translations">${translationsText}</span>`)
-                .css('visibility', 'visible')
-                .css('display', 'block')
-                .removeClass('text-success text-danger'); // Remove any previous feedback classes
+        if (Array.isArray(translationsArray)) {
+
+            translations = translationsArray.slice(0, 3);
+
+            if (translations.length > 0) {
+                // Create a comma-separated string of translations
+                translationsText = translations.join(', ');
+
+            }
+            
         } else {
-            // Hide the feedback area if there are no translations
-            $('#feedback').css('visibility', 'hidden').css('display', 'none').html('');
+
+                translationsText = translationsArray; // already a string
+        }
+
+        if (translationsText.length > 0) {
+            
+
+                // Update the #feedback area with the translations
+                $('#text-input-question-text')
+                    .html(`${UIString[interfaceLanguage].textInputQuestion} (${translationsText})`);
+                        
+                    
+            } else {
+                // Hide the feedback area if there are no translations
+                $('#text-input-question-text')
+                .html(`${UIString[interfaceLanguage].textInputQuestion}`);
+                
+            }
+        }
+
+
+
+        /**
+         * Sets up the Replay Audio button to play the noun audio when clicked.
+         * @param {string} nounId - The unique identifier for the noun.
+         * @param {string} nounWord - The noun word to be pronounced.
+         */
+        function setupReplayButton(nounId, nounWord) {
+            $('#replay-audio').off('click').on('click', function () {
+                playNounAudio(nounId, nounWord);
+            });
+        }
+
+
+
+        if (isMultipleChoice) {
+            // Event listener for multiple-choice option buttons
+            $('.option-btn').off('click').on('click', function () {
+                const selectedOption = $(this).data('option');
+                var isCorrect = normalizeString(selectedOption) === normalizeString(noun.noun);
+
+                // Visually mark the selected option
+                $('.option-btn').removeClass('selected'); // Remove selected class from all options
+                $(this).addClass('selected'); // Add selected class to the clicked button
+
+                // Disable all option buttons
+                $('.option-btn').prop('disabled', true);
+
+                afterAnswerSubmission(isCorrect, selectedOption);
+            });
+
+            // Add keydown event for keys 1-4
+            $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
+                if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
+                if (nounDisplayMode !== "regular") return;
+                const key = e.which - 48; // For top number keys
+                if (key >= 1 && key <= 4) {
+                    e.preventDefault();
+                    const optionBtn = $('.option-btn').eq(key - 1);
+
+                    // Trigger click on the option button
+                    optionBtn.click();
+                }
+            });
+        } else {
+            // Remove multiple-choice keydown event
+            $(document).off('keydown.multipleChoice');
+
+            // Event listener for Enter key to submit answer
+            $('#user-answer').off('keypress').on('keypress', function (e) {
+                if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
+                    handleDebounce(handleSubmit);
+                }
+            });
+
+            // Handle submit answer button click
+            $('#submit-answer').off('click').on('click', function () {
+                handleDebounce(handleSubmit);
+            });
+        }
+
+        $('#next-question').off('click').on('click', function () {
+            // stopNounAudio(); // Stop audio when moving to the next question
+            $(".noun-img").removeClass("green-border red-border");
+            handleDebounce(() => {
+                $('#noun-image').attr('src', '');
+                loadNoun(user, currentCourse);
+                $('#toggle-mode').show(); // Show the toggle button back
+            });
+        });
+
+        // Event listener for Enter key to move to the next question
+        $(document).off('keypress').on('keypress', function (e) {
+            if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
+
+                // stopNounAudio();
+                e.preventDefault(); // Prevent default behavior
+                handleDebounce(() => $('#next-question').click());
+            }
+        });
+
+
+
+    }
+
+    function doneloading() {
+        checkCoachposition();
+    }
+
+    function checkCoachposition() {
+
+
+
+        const coachContainer = $('#coach-container');
+        const coachContainerHeight = coachContainer.outerHeight();
+        const windowHeight = $(window).height();
+        const scrollPosition = $(window).scrollTop();
+        const containerTop = coachContainer.offset().top;
+        const containerBottom = containerTop + coachContainerHeight;
+
+        if (containerTop < windowHeight && containerBottom > windowHeight) {
+            coachContainer.css('padding-top', (windowHeight - containerTop) + 'px');
+        } else {
+            coachContainer.css('padding-top', '0');
+        }
+
+    }
+    // Function to display multiple-choice options
+    function displayMultipleChoiceOptions(noun) {
+        // Combine the correct answer with distractors
+        const options = [...noun.distractors, noun.noun];
+
+        // Shuffle the options array
+        shuffleArray(options);
+
+        // Display the options in the buttons
+        $('.option-btn').each(function (index) {
+            if (index < options.length) {
+                $(this).text(options[index]).data('option', options[index]).show();
+            } else {
+                $(this).hide(); // Hide unused buttons
+            }
+        });
+
+
+    }
+
+    // Helper function to shuffle an array (Fisher-Yates algorithm)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
     }
 
-
-
     /**
-     * Sets up the Replay Audio button to play the noun audio when clicked.
+     * Plays the audio for a given noun.
      * @param {string} nounId - The unique identifier for the noun.
      * @param {string} nounWord - The noun word to be pronounced.
      */
-    function setupReplayButton(nounId, nounWord) {
-        $('#replay-audio').off('click').on('click', function () {
-            playNounAudio(nounId, nounWord);
-        });
+    function playNounAudio(nounId, nounWord) {
+
+        var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${nounId}.mp3`;
+
+        const targetLanguage = window.currentCourse.split('-')[1];
+        nounAudioElement.src = audioUrl;
+        nounAudioElement.play()
+            .then(() => {
+                console.log("Noun audio playback started successfully.");
+            })
+            .catch((error) => {
+                if (!error.message.includes("pause()")) {
+                    console.error("Error playing noun audio:", error);
+                    console.log("Attempting to generate audio since playback failed.");
+                    generateNounAudio(nounId, nounWord, targetLanguage);
+                } else {
+                    console.log("Audio playback interrupted by pause, not generating new audio.");
+                }
+            });
+
+        nounAudioElement.onended = function () {
+            console.log("Noun audio playback ended.");
+        };
+
+        nounAudioElement.onerror = function () {
+            console.error("Error loading noun audio from S3:", audioUrl);
+            console.log("Attempting to generate audio due to loading error.");
+            generateNounAudio(nounId, nounWord, targetLanguage);
+        };
     }
 
-
-
-    if (isMultipleChoice) {
-        // Event listener for multiple-choice option buttons
-        $('.option-btn').off('click').on('click', function () {
-            const selectedOption = $(this).data('option');
-            var isCorrect = normalizeString(selectedOption) === normalizeString(noun.noun);
-
-            // Visually mark the selected option
-            $('.option-btn').removeClass('selected'); // Remove selected class from all options
-            $(this).addClass('selected'); // Add selected class to the clicked button
-
-            // Disable all option buttons
-            $('.option-btn').prop('disabled', true);
-
-            afterAnswerSubmission(isCorrect, selectedOption);
-        });
-
-        // Add keydown event for keys 1-4
-        $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
-            if ($('#next-question').is(':visible')) return; // Ignore if next-question is visible
-            if (nounDisplayMode !== "regular") return;
-            const key = e.which - 48; // For top number keys
-            if (key >= 1 && key <= 4) {
-                e.preventDefault();
-                const optionBtn = $('.option-btn').eq(key - 1);
-
-                // Trigger click on the option button
-                optionBtn.click();
-            }
-        });
-    } else {
-        // Remove multiple-choice keydown event
-        $(document).off('keydown.multipleChoice');
-
-        // Event listener for Enter key to submit answer
-        $('#user-answer').off('keypress').on('keypress', function (e) {
-            if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
-                handleDebounce(handleSubmit);
-            }
-        });
-
-        // Handle submit answer button click
-        $('#submit-answer').off('click').on('click', function () {
-            handleDebounce(handleSubmit);
-        });
+    /**
+         * Stops the noun audio playback and resets the audio element.
+         */
+    function stopNounAudio() {
+        nounAudioElement.pause();
+        nounAudioElement.currentTime = 0; // Reset the audio playback
     }
 
-    $('#next-question').off('click').on('click', function () {
-        // stopNounAudio(); // Stop audio when moving to the next question
-        $(".noun-img").removeClass("green-border red-border");
-        handleDebounce(() => {
-            $('#noun-image').attr('src', '');
-            loadNoun(user, currentCourse);
-            $('#toggle-mode').show(); // Show the toggle button back
-        });
-    });
-
-    // Event listener for Enter key to move to the next question
-    $(document).off('keypress').on('keypress', function (e) {
-        if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
-
-            // stopNounAudio();
-            e.preventDefault(); // Prevent default behavior
-            handleDebounce(() => $('#next-question').click());
-        }
-    });
-
-
-    
-}
-
-function doneloading(){
-    checkCoachposition();
-}
-
-function checkCoachposition() {
-    
-
-
-    const coachContainer = $('#coach-container');
-    const coachContainerHeight = coachContainer.outerHeight();
-    const windowHeight = $(window).height();
-    const scrollPosition = $(window).scrollTop();
-    const containerTop = coachContainer.offset().top;
-    const containerBottom = containerTop + coachContainerHeight;
-
-    if (containerTop < windowHeight && containerBottom > windowHeight) {
-        coachContainer.css('padding-top', (windowHeight - containerTop) + 'px');
-    } else {
-        coachContainer.css('padding-top', '0');
-    }
-
-}
-// Function to display multiple-choice options
-function displayMultipleChoiceOptions(noun) {
-    // Combine the correct answer with distractors
-    const options = [...noun.distractors, noun.noun];
-
-    // Shuffle the options array
-    shuffleArray(options);
-
-    // Display the options in the buttons
-    $('.option-btn').each(function (index) {
-        if (index < options.length) {
-            $(this).text(options[index]).data('option', options[index]).show();
-        } else {
-            $(this).hide(); // Hide unused buttons
-        }
-    });
-
-    
-}
-
-// Helper function to shuffle an array (Fisher-Yates algorithm)
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
-/**
- * Plays the audio for a given noun.
- * @param {string} nounId - The unique identifier for the noun.
- * @param {string} nounWord - The noun word to be pronounced.
- */
-function playNounAudio(nounId, nounWord) {
-
-    var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${nounId}.mp3`;
-
-    const targetLanguage = window.currentCourse.split('-')[1];
-    nounAudioElement.src = audioUrl;
-    nounAudioElement.play()
-        .then(() => {
-            console.log("Noun audio playback started successfully.");
-        })
-        .catch((error) => {
-            if (!error.message.includes("pause()")) {
-                console.error("Error playing noun audio:", error);
-                console.log("Attempting to generate audio since playback failed.");
-                generateNounAudio(nounId, nounWord, targetLanguage);
-            } else {
-                console.log("Audio playback interrupted by pause, not generating new audio.");
-            }
-        });
-
-    nounAudioElement.onended = function () {
-        console.log("Noun audio playback ended.");
-    };
-
-    nounAudioElement.onerror = function () {
-        console.error("Error loading noun audio from S3:", audioUrl);
-        console.log("Attempting to generate audio due to loading error.");
-        generateNounAudio(nounId, nounWord, targetLanguage);
-    };
-}
-
-/**
-     * Stops the noun audio playback and resets the audio element.
+    /**
+     * Generates audio for a noun using AWS Polly via a Lambda function.
+     * @param {string} nounId - The unique identifier for the noun.
+     * @param {string} nounWord - The noun word to be pronounced.
      */
-function stopNounAudio() {
-    nounAudioElement.pause();
-    nounAudioElement.currentTime = 0; // Reset the audio playback
-}
-
-/**
- * Generates audio for a noun using AWS Polly via a Lambda function.
- * @param {string} nounId - The unique identifier for the noun.
- * @param {string} nounWord - The noun word to be pronounced.
- */
-function generateNounAudio(nounId, nounWord, targetLanguage) {
-    // const languageCode = window.currentCourse.split('-')[1]; // Extract the second part of the course name
-    // const voice = getVoiceForLanguage(languageCode); // Assuming a function to get voice based on language code
+    function generateNounAudio(nounId, nounWord, targetLanguage) {
+        // const languageCode = window.currentCourse.split('-')[1]; // Extract the second part of the course name
+        // const voice = getVoiceForLanguage(languageCode); // Assuming a function to get voice based on language code
 
 
-    const [languageCode, voice] = getLanguageAndVoice(targetLanguage);
+        const [languageCode, voice] = getLanguageAndVoice(targetLanguage);
 
 
-    if (!languageCode || !voice) {
-        console.error(`Error: No language and voice found for course: ${currentCourse}`);
-        return;
-    }
-
-    console.log(`Generating new audio using AWS Polly with language: ${languageCode} and voice: ${voice}`);
-
-    $.ajax({
-        url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
-        type: 'GET', // Adjust based on your API
-        data: {
-            filename: nounId,
-            text: nounWord,
-            language: languageCode,
-            voice: voice
-        },
-        success: function (response) {
-            console.log("AWS Polly audio generation request succeeded.");
-            const audioUrl = JSON.parse(response).url;
-
-            console.log(`Audio generated successfully and available at: ${audioUrl}`);
-            nounAudioElement.src = audioUrl;
-            nounAudioElement.play()
-                .then(() => {
-                    console.log("Generated noun audio playback started successfully.");
-                })
-                .catch((error) => {
-                    console.error("Error playing generated noun audio:", error);
-                });
-        },
-        error: function (error) {
-            console.error('Error generating noun audio using AWS Polly:', error);
+        if (!languageCode || !voice) {
+            console.error(`Error: No language and voice found for course: ${currentCourse}`);
+            return;
         }
-    });
-}
 
-// Function to get the language code and female voice based on the target language
-function getLanguageAndVoice(countryCode) {
-    console.log(`Attempting to find language and voice for country code: ${countryCode}`);
+        console.log(`Generating new audio using AWS Polly with language: ${languageCode} and voice: ${voice}`);
 
-    const entry = countryToLanguage[countryCode.toLowerCase()];
+        $.ajax({
+            url: 'https://hml8eek21e.execute-api.us-east-2.amazonaws.com/check-audio', // Replace with your API endpoint
+            type: 'GET', // Adjust based on your API
+            data: {
+                filename: nounId,
+                text: nounWord,
+                language: languageCode,
+                voice: voice
+            },
+            success: function (response) {
+                console.log("AWS Polly audio generation request succeeded.");
+                const audioUrl = JSON.parse(response).url;
 
-    if (!entry) {
-        console.error(`No language and voice found for country code: ${countryCode}`);
-        return [null, null]; // Return null values to indicate failure
+                console.log(`Audio generated successfully and available at: ${audioUrl}`);
+                nounAudioElement.src = audioUrl;
+                nounAudioElement.play()
+                    .then(() => {
+                        console.log("Generated noun audio playback started successfully.");
+                    })
+                    .catch((error) => {
+                        console.error("Error playing generated noun audio:", error);
+                    });
+            },
+            error: function (error) {
+                console.error('Error generating noun audio using AWS Polly:', error);
+            }
+        });
     }
 
-    const { languageCode, voice } = entry;
-    console.log(`Success: Found language code '${languageCode}' and voice '${voice}' for country code '${countryCode}'`);
+    // Function to get the language code and female voice based on the target language
+    function getLanguageAndVoice(countryCode) {
+        console.log(`Attempting to find language and voice for country code: ${countryCode}`);
 
-    return [languageCode, voice];
-}
+        const entry = countryToLanguage[countryCode.toLowerCase()];
 
-// Normalization function to ignore special characters
-function normalizeString(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ß/g, "ss").replace(/ẞ/g, "Ss").replace(/L'/g, "Le ").replace(/l'/g, "le ").toLowerCase();
-}
+        if (!entry) {
+            console.error(`No language and voice found for country code: ${countryCode}`);
+            return [null, null]; // Return null values to indicate failure
+        }
 
-// Update user progress in the database
-function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
-    var user = firebase.auth().currentUser;
+        const { languageCode, voice } = entry;
+        console.log(`Success: Found language code '${languageCode}' and voice '${voice}' for country code '${countryCode}'`);
 
-    var userProgressRef = db.collection('users').doc(user.uid)
-        .collection('nouns').doc(currentCourse)
-        .collection('nouns').doc(nounId);
+        return [languageCode, voice];
+    }
 
-    var userStatsRef = db.collection('users').doc(user.uid)
-        .collection('courses').doc(currentCourse)
-        .collection('stats');
+    // Normalization function to ignore special characters
+    function normalizeString(str) {
+        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ß/g, "ss").replace(/ẞ/g, "Ss").replace(/L'/g, "Le ").replace(/l'/g, "le ").toLowerCase();
+    }
 
-    var allTimeStatsRef = userStatsRef.doc('all-time');
+    // Update user progress in the database
+    function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
+        var user = firebase.auth().currentUser;
 
-    // First, fetch the noun data to get its order outside the transaction
-    db.collection('nouns').doc(nounId).get().then(nounDoc => {
-        if (nounDoc.exists) {
-            var nounOrder = nounDoc.data().order; // Order of the current noun
+        var userProgressRef = db.collection('users').doc(user.uid)
+            .collection('nouns').doc(currentCourse)
+            .collection('nouns').doc(nounId);
 
-            // Now, run the transaction to update progress and stats
-            db.runTransaction(transaction => {
-                return transaction.get(userProgressRef).then(doc => {
-                    var data = doc.exists ? doc.data() : {
-                        timesCorrect: 0,
-                        timesIncorrect: 0,
-                        timesCorrectInARow: 0,
-                        timesIncorrectInARow: 0,
-                        lastAnswered: null,
-                        nextDue: null,
-                        initialAppearance: true
+        var userStatsRef = db.collection('users').doc(user.uid)
+            .collection('courses').doc(currentCourse)
+            .collection('stats');
+
+        var allTimeStatsRef = userStatsRef.doc('all-time');
+
+        // First, fetch the noun data to get its order outside the transaction
+        db.collection('nouns').doc(nounId).get().then(nounDoc => {
+            if (nounDoc.exists) {
+                var nounOrder = nounDoc.data().order; // Order of the current noun
+
+                // Now, run the transaction to update progress and stats
+                db.runTransaction(transaction => {
+                    return transaction.get(userProgressRef).then(doc => {
+                        var data = doc.exists ? doc.data() : {
+                            timesCorrect: 0,
+                            timesIncorrect: 0,
+                            timesCorrectInARow: 0,
+                            timesIncorrectInARow: 0,
+                            lastAnswered: null,
+                            nextDue: null,
+                            initialAppearance: true
+                        };
+
+                        // Get the user's local timezone
+                        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+                        // Create a date object for the current date
+                        let now = new Date();
+
+                        // Format the date according to the user's timezone
+                        const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+                        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+
+                        // Split the formatted date into parts
+                        const [month, day, year] = formattedDate.split('/');
+
+                        // Create the date in yyyy-mm-dd format
+                        var today = `${year}-${month}-${day}`;
+
+                        var points = isCorrect ? 10 : 0;
+
+                        if (isMultipleChoice) {
+                            points = Math.ceil(points / 2); // Half points for multiple choice
+                        }
+
+                        if (isCorrect) {
+                            streakCorrect += 1;
+                            streakWrong = 0;
+                            data.timesCorrect += 1;
+                            data.timesCorrectInARow += 1;
+                            data.timesIncorrectInARow = 0; // Reset incorrect streak
+                            var daysToAdd = data.initialAppearance ? 28 : 2 * data.timesCorrectInARow;
+                            data.nextDue = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
+                            updateStats(userStatsRef, today, points, true, timeTaken); // Pass timeTaken
+                            dailyScore += points; // Update the daily score
+                            $('#score').text(dailyScore); // Update the score on screen
+                        } else {
+                            streakWrong += 1;
+                            streakCorrect = 0;
+                            data.timesIncorrect += 1;
+                            data.timesCorrectInARow = 0; // Reset correct streak
+                            data.timesIncorrectInARow += 1; // Increment incorrect streak
+                            data.nextDue = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes
+                            updateStats(userStatsRef, today, points, false, timeTaken); // Pass timeTaken
+                        }
+
+                        updateCoachFeedback(streakCorrect, streakWrong);
+
+                        // Update `lastAnswered` to the current time
+                        data.lastAnswered = firebase.firestore.Timestamp.fromDate(now);
+                        data.initialAppearance = false;
+
+                        // Fetch the current maxOrder and update if necessary
+                        return transaction.get(allTimeStatsRef).then(allTimeDoc => {
+                            var allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {};
+
+                            // Ensure maxOrder is set, even if the document exists but the field is missing
+                            if (typeof allTimeData.maxOrder === 'undefined') {
+                                allTimeData.maxOrder = 0;
+                            }
+
+                            // Compare noun order and update if necessary
+                            if (nounOrder > allTimeData.maxOrder) {
+                                // Only update maxOrder if not in matching mode
+                                if (nounDisplayMode !== "matching-mode") {
+                                    allTimeData.maxOrder = nounOrder;
+                                    maxOrder = nounOrder; // updating the global maxOrder variable
+
+                                    var maxOrderPercentage = (nounOrder / 2500 * 100).toFixed(2) + '%';
+                                }
+                                $('#proficiencyLevel').text(maxOrderPercentage);
+                                $('#profTooltip').text(maxOrderPercentage + ' Proficiency Level');
+
+                            }
+
+                            // Write the updated progress and stats back to Firestore
+                            transaction.set(userProgressRef, data);
+                            transaction.set(allTimeStatsRef, allTimeData);
+
+                            return Promise.resolve(data); // Return updated data
+                        });
+                    });
+                }).then((data) => {
+                    console.log('Transaction successful');
+                    updateCoachFeedback(streakCorrect, streakWrong);
+                }).catch(error => {
+                    console.error('Transaction failed:', error);
+                });
+
+            } else {
+                console.error("Noun not found");
+            }
+        }).catch(error => {
+            console.error('Error fetching noun data:', error);
+        });
+    }
+
+    // Function to update the coach message with a random encouragement statement
+    function showEncouragementMessage() {
+        if (!showCoachFeedback) {
+            return;
+        }
+        const randomIndex = Math.floor(Math.random() * window.coachData.encouragementMessages.length);
+        const message = window.coachData.encouragementMessages[randomIndex];
+
+        $('#coach-message').text(message);
+        $('#coach-container').show();
+    }
+
+
+    function updateCoachFeedback(correctStreak, incorrectStreak) {
+        if (!showCoachFeedback) {
+            return;
+        }
+        let coachMessage = '';
+
+        if (correctStreak >= 9) {
+            coachMessage = getRandomMessage(window.coachData.tonsOfCorrectsInARowMessages);
+        } else if (correctStreak == 7) {
+            coachMessage = getRandomMessage(window.coachData.sevenCorrectMessages);
+        } else if (correctStreak == 5) {
+            coachMessage = getRandomMessage(window.coachData.fiveCorrectMessages);
+        } else if (correctStreak == 3) {
+            coachMessage = getRandomMessage(window.coachData.threeCorrectMessages);
+        } else if (correctStreak > 0) {
+            coachMessage = getRandomMessage(window.coachData.correctMessages);
+        } else if (incorrectStreak >= 9) {
+            coachMessage = getRandomMessage(window.coachData.tonsOfMistakesInARowMessages);
+        } else if (incorrectStreak == 7) {
+            coachMessage = getRandomMessage(window.coachData.sevenMistakesMessages);
+        } else if (incorrectStreak == 5) {
+            coachMessage = getRandomMessage(window.coachData.fiveMistakesMessages);
+        } else if (incorrectStreak == 3) {
+            coachMessage = getRandomMessage(window.coachData.threeMistakesMessages);
+        } else {
+            coachMessage = getRandomMessage(window.coachData.mistakeMessages);
+        }
+
+        $('#coach-message').text(coachMessage);
+        $('#coach-container').show();
+    }
+
+    function getRandomMessage(messagesArray) {
+        return messagesArray[Math.floor(Math.random() * messagesArray.length)];
+    }
+
+
+    // Function to update the visual stats (correct/wrong counts and last 5 answers)
+    function updateVisualStats(isCorrect) {
+        // Update correct/wrong counts
+        if (isCorrect) {
+            correctAnswers++;
+        } else {
+            wrongAnswers++;
+        }
+
+        // Update last 5 answers (push new answer and maintain only 5)
+        if (lastFiveAnswers.length >= 5) {
+            lastFiveAnswers.shift(); // Remove the oldest entry
+        }
+        lastFiveAnswers.push(isCorrect ? 'correct' : 'wrong');
+
+        // Update UI for correct/wrong counts
+        $('#correct-count').text(correctAnswers);
+        $('#wrong-count').text(wrongAnswers);
+
+        // Update last 5 answers (display boxes)
+        updateLastFiveAnswers();
+    }
+
+    // Function to visually update the last 5 answers
+    function updateLastFiveAnswers() {
+        const container = $('#last-five-answers');
+        container.empty(); // Clear the container
+
+        // Add boxes based on last 5 answers
+        for (let i = 0; i < 5; i++) {
+            let answerClass = 'gray'; // Default is gray
+            if (i < lastFiveAnswers.length) {
+                answerClass = lastFiveAnswers[i] === 'correct' ? 'green' : 'red';
+            }
+            const box = $('<div></div>').addClass('answer-box').css('background-color', answerClass);
+            container.append(box);
+        }
+    }
+
+    // Update stats in the database
+    function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
+
+        const dailyStatsRef = userStatsRef.doc(date);
+        const allTimeStatsRef = userStatsRef.doc('all-time');
+
+        db.runTransaction(transaction => {
+            return transaction.get(dailyStatsRef).then(dailyDoc => {
+                return transaction.get(allTimeStatsRef).then(allTimeDoc => {
+                    // Helper function to validate and sanitize fields
+                    function ensureNumber(value, defaultValue = 0) {
+                        return (typeof value === 'number' && !isNaN(value)) ? value : defaultValue;
+                    }
+
+                    // Process daily stats
+                    const dailyData = dailyDoc.exists ? dailyDoc.data() : {
+                        correctAnswers: 0,
+                        wrongAnswers: 0,
+                        totalDrills: 0,
+                        score: 0,
+                        nouns_correctAnswers: 0,
+                        nouns_wrongAnswers: 0,
+                        nouns_totalDrills: 0,
+                        nouns_score: 0,
+                        nouns_DailyTime: 0, // Initialize DailyTime
+                        DailyTime: 0 // Initialize DailyTime
                     };
 
-                    // Get the user's local timezone
-                    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    // Ensure all fields are numbers
+                    dailyData.totalDrills = ensureNumber(dailyData.totalDrills);
+                    dailyData.score = ensureNumber(dailyData.score);
+                    dailyData.correctAnswers = ensureNumber(dailyData.correctAnswers);
+                    dailyData.wrongAnswers = ensureNumber(dailyData.wrongAnswers);
+                    dailyData.nouns_totalDrills = ensureNumber(dailyData.nouns_totalDrills);
+                    dailyData.nouns_score = ensureNumber(dailyData.nouns_score);
+                    dailyData.nouns_correctAnswers = ensureNumber(dailyData.nouns_correctAnswers);
+                    dailyData.nouns_wrongAnswers = ensureNumber(dailyData.nouns_wrongAnswers);
+                    dailyData.DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
+                    dailyData.nouns_DailyTime = ensureNumber(dailyData.nouns_DailyTime); // Ensure DailyTime is a number
 
-                    // Create a date object for the current date
-                    let now = new Date();
-
-                    // Format the date according to the user's timezone
-                    const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
-                    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
-
-                    // Split the formatted date into parts
-                    const [month, day, year] = formattedDate.split('/');
-
-                    // Create the date in yyyy-mm-dd format
-                    var today = `${year}-${month}-${day}`;
-
-                    var points = isCorrect ? 10 : 0;
-
-                    if (isMultipleChoice) {
-                        points = Math.ceil(points / 2); // Half points for multiple choice
-                    }
+                    // Update stats safely
+                    dailyData.totalDrills += 1;
+                    dailyData.score += score;
+                    dailyData.nouns_totalDrills += 1;
+                    dailyData.nouns_score += score;
+                    dailyData.nouns_DailyTime += timeTaken; // Add time taken to DailyTime
+                    dailyData.DailyTime += timeTaken; // Add time taken to DailyTime
 
                     if (isCorrect) {
-                        streakCorrect += 1;
-                        streakWrong = 0;
-                        data.timesCorrect += 1;
-                        data.timesCorrectInARow += 1;
-                        data.timesIncorrectInARow = 0; // Reset incorrect streak
-                        var daysToAdd = data.initialAppearance ? 28 : 2 * data.timesCorrectInARow;
-                        data.nextDue = new Date(now.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
-                        updateStats(userStatsRef, today, points, true, timeTaken); // Pass timeTaken
-                        dailyScore += points; // Update the daily score
-                        $('#score').text(dailyScore); // Update the score on screen
+                        dailyData.correctAnswers += 1;
+                        dailyData.nouns_correctAnswers += 1;
                     } else {
-                        streakWrong += 1;
-                        streakCorrect = 0;
-                        data.timesIncorrect += 1;
-                        data.timesCorrectInARow = 0; // Reset correct streak
-                        data.timesIncorrectInARow += 1; // Increment incorrect streak
-                        data.nextDue = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes
-                        updateStats(userStatsRef, today, points, false, timeTaken); // Pass timeTaken
+                        dailyData.wrongAnswers += 1;
+                        dailyData.nouns_wrongAnswers += 1;
                     }
 
-                    updateCoachFeedback(streakCorrect, streakWrong);
+                    // Process all-time stats
+                    const allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {
+                        totalCorrectAnswers: 0,
+                        totalWrongAnswers: 0,
+                        totalDrills: 0,
+                        totalScore: 0,
+                        nouns_totalCorrectAnswers: 0,
+                        nouns_totalWrongAnswers: 0,
+                        nouns_totalDrills: 0,
+                        nouns_totalScore: 0,
+                        nouns_TimeSpent: 0, // Initialize TimeSpent
+                        TimeSpent: 0 // Initialize TimeSpent
+                    };
 
-                    // Update `lastAnswered` to the current time
-                    data.lastAnswered = firebase.firestore.Timestamp.fromDate(now);
-                    data.initialAppearance = false;
+                    // Ensure all fields are numbers
+                    allTimeData.totalDrills = ensureNumber(allTimeData.totalDrills);
+                    allTimeData.totalScore = ensureNumber(allTimeData.totalScore);
+                    allTimeData.totalCorrectAnswers = ensureNumber(allTimeData.totalCorrectAnswers);
+                    allTimeData.totalWrongAnswers = ensureNumber(allTimeData.totalWrongAnswers);
+                    allTimeData.nouns_totalDrills = ensureNumber(allTimeData.nouns_totalDrills);
+                    allTimeData.nouns_totalScore = ensureNumber(allTimeData.nouns_totalScore);
+                    allTimeData.nouns_totalCorrectAnswers = ensureNumber(allTimeData.nouns_totalCorrectAnswers);
+                    allTimeData.nouns_totalWrongAnswers = ensureNumber(allTimeData.nouns_totalWrongAnswers);
+                    allTimeData.nouns_TimeSpent = ensureNumber(allTimeData.nouns_TimeSpent); // Ensure TimeSpent is a number
+                    allTimeData.TimeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
 
-                    // Fetch the current maxOrder and update if necessary
-                    return transaction.get(allTimeStatsRef).then(allTimeDoc => {
-                        var allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {};
 
-                        // Ensure maxOrder is set, even if the document exists but the field is missing
-                        if (typeof allTimeData.maxOrder === 'undefined') {
-                            allTimeData.maxOrder = 0;
-                        }
+                    // Update stats safely
+                    allTimeData.totalDrills += 1;
+                    allTimeData.totalScore += score;
+                    allTimeData.nouns_totalDrills += 1;
+                    allTimeData.nouns_totalScore += score;
+                    allTimeData.nouns_TimeSpent += timeTaken; // Add time taken to TimeSpent
+                    allTimeData.TimeSpent += timeTaken; // Add time taken to TimeSpent
 
-                        // Compare noun order and update if necessary
-                        if (nounOrder > allTimeData.maxOrder) {
-                            // Only update maxOrder if not in matching mode
-                            if (nounDisplayMode !== "matching-mode") {
-                                allTimeData.maxOrder = nounOrder;
-                                maxOrder = nounOrder; // updating the global maxOrder variable
+                    if (isCorrect) {
+                        allTimeData.totalCorrectAnswers += 1;
+                        allTimeData.nouns_totalCorrectAnswers += 1;
+                    } else {
+                        allTimeData.totalWrongAnswers += 1;
+                        allTimeData.nouns_totalWrongAnswers += 1;
+                    }
 
-                                var maxOrderPercentage = (nounOrder / 2500 * 100).toFixed(2) + '%';
-                            }
-                            $('#proficiencyLevel').text(maxOrderPercentage);
-                            $('#profTooltip').text(maxOrderPercentage + ' Proficiency Level');
+                    // Write both sets of stats after all reads
+                    transaction.set(dailyStatsRef, dailyData);
+                    transaction.set(allTimeStatsRef, allTimeData);
 
-                        }
-
-                        // Write the updated progress and stats back to Firestore
-                        transaction.set(userProgressRef, data);
-                        transaction.set(allTimeStatsRef, allTimeData);
-
-                        return Promise.resolve(data); // Return updated data
-                    });
+                    return Promise.resolve(); // Indicate the transaction is complete
                 });
-            }).then((data) => {
-                console.log('Transaction successful');
-                updateCoachFeedback(streakCorrect, streakWrong);
-            }).catch(error => {
-                console.error('Transaction failed:', error);
             });
-
-        } else {
-            console.error("Noun not found");
-        }
-    }).catch(error => {
-        console.error('Error fetching noun data:', error);
-    });
-}
-
-// Function to update the coach message with a random encouragement statement
-function showEncouragementMessage() {
-    if (!showCoachFeedback) {
-        return;
-    }
-    const randomIndex = Math.floor(Math.random() * window.coachData.encouragementMessages.length);
-    const message = window.coachData.encouragementMessages[randomIndex];
-
-    $('#coach-message').text(message);
-    $('#coach-container').show();
-}
-
-
-function updateCoachFeedback(correctStreak, incorrectStreak) {
-    if (!showCoachFeedback) {
-        return;
-    }
-    let coachMessage = '';
-
-    if (correctStreak >= 9) {
-        coachMessage = getRandomMessage(window.coachData.tonsOfCorrectsInARowMessages);
-    } else if (correctStreak == 7) {
-        coachMessage = getRandomMessage(window.coachData.sevenCorrectMessages);
-    } else if (correctStreak == 5) {
-        coachMessage = getRandomMessage(window.coachData.fiveCorrectMessages);
-    } else if (correctStreak == 3) {
-        coachMessage = getRandomMessage(window.coachData.threeCorrectMessages);
-    } else if (correctStreak > 0) {
-        coachMessage = getRandomMessage(window.coachData.correctMessages);
-    } else if (incorrectStreak >= 9) {
-        coachMessage = getRandomMessage(window.coachData.tonsOfMistakesInARowMessages);
-    } else if (incorrectStreak == 7) {
-        coachMessage = getRandomMessage(window.coachData.sevenMistakesMessages);
-    } else if (incorrectStreak == 5) {
-        coachMessage = getRandomMessage(window.coachData.fiveMistakesMessages);
-    } else if (incorrectStreak == 3) {
-        coachMessage = getRandomMessage(window.coachData.threeMistakesMessages);
-    } else {
-        coachMessage = getRandomMessage(window.coachData.mistakeMessages);
-    }
-
-    $('#coach-message').text(coachMessage);
-    $('#coach-container').show();
-}
-
-function getRandomMessage(messagesArray) {
-    return messagesArray[Math.floor(Math.random() * messagesArray.length)];
-}
-
-
-// Function to update the visual stats (correct/wrong counts and last 5 answers)
-function updateVisualStats(isCorrect) {
-    // Update correct/wrong counts
-    if (isCorrect) {
-        correctAnswers++;
-    } else {
-        wrongAnswers++;
-    }
-
-    // Update last 5 answers (push new answer and maintain only 5)
-    if (lastFiveAnswers.length >= 5) {
-        lastFiveAnswers.shift(); // Remove the oldest entry
-    }
-    lastFiveAnswers.push(isCorrect ? 'correct' : 'wrong');
-
-    // Update UI for correct/wrong counts
-    $('#correct-count').text(correctAnswers);
-    $('#wrong-count').text(wrongAnswers);
-
-    // Update last 5 answers (display boxes)
-    updateLastFiveAnswers();
-}
-
-// Function to visually update the last 5 answers
-function updateLastFiveAnswers() {
-    const container = $('#last-five-answers');
-    container.empty(); // Clear the container
-
-    // Add boxes based on last 5 answers
-    for (let i = 0; i < 5; i++) {
-        let answerClass = 'gray'; // Default is gray
-        if (i < lastFiveAnswers.length) {
-            answerClass = lastFiveAnswers[i] === 'correct' ? 'green' : 'red';
-        }
-        const box = $('<div></div>').addClass('answer-box').css('background-color', answerClass);
-        container.append(box);
-    }
-}
-
-// Update stats in the database
-function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
-
-    const dailyStatsRef = userStatsRef.doc(date);
-    const allTimeStatsRef = userStatsRef.doc('all-time');
-
-    db.runTransaction(transaction => {
-        return transaction.get(dailyStatsRef).then(dailyDoc => {
-            return transaction.get(allTimeStatsRef).then(allTimeDoc => {
-                // Helper function to validate and sanitize fields
-                function ensureNumber(value, defaultValue = 0) {
-                    return (typeof value === 'number' && !isNaN(value)) ? value : defaultValue;
-                }
-
-                // Process daily stats
-                const dailyData = dailyDoc.exists ? dailyDoc.data() : {
-                    correctAnswers: 0,
-                    wrongAnswers: 0,
-                    totalDrills: 0,
-                    score: 0,
-                    nouns_correctAnswers: 0,
-                    nouns_wrongAnswers: 0,
-                    nouns_totalDrills: 0,
-                    nouns_score: 0,
-                    nouns_DailyTime: 0, // Initialize DailyTime
-                    DailyTime: 0 // Initialize DailyTime
-                };
-
-                // Ensure all fields are numbers
-                dailyData.totalDrills = ensureNumber(dailyData.totalDrills);
-                dailyData.score = ensureNumber(dailyData.score);
-                dailyData.correctAnswers = ensureNumber(dailyData.correctAnswers);
-                dailyData.wrongAnswers = ensureNumber(dailyData.wrongAnswers);
-                dailyData.nouns_totalDrills = ensureNumber(dailyData.nouns_totalDrills);
-                dailyData.nouns_score = ensureNumber(dailyData.nouns_score);
-                dailyData.nouns_correctAnswers = ensureNumber(dailyData.nouns_correctAnswers);
-                dailyData.nouns_wrongAnswers = ensureNumber(dailyData.nouns_wrongAnswers);
-                dailyData.DailyTime = ensureNumber(dailyData.DailyTime); // Ensure DailyTime is a number
-                dailyData.nouns_DailyTime = ensureNumber(dailyData.nouns_DailyTime); // Ensure DailyTime is a number
-
-                // Update stats safely
-                dailyData.totalDrills += 1;
-                dailyData.score += score;
-                dailyData.nouns_totalDrills += 1;
-                dailyData.nouns_score += score;
-                dailyData.nouns_DailyTime += timeTaken; // Add time taken to DailyTime
-                dailyData.DailyTime += timeTaken; // Add time taken to DailyTime
-
-                if (isCorrect) {
-                    dailyData.correctAnswers += 1;
-                    dailyData.nouns_correctAnswers += 1;
-                } else {
-                    dailyData.wrongAnswers += 1;
-                    dailyData.nouns_wrongAnswers += 1;
-                }
-
-                // Process all-time stats
-                const allTimeData = allTimeDoc.exists ? allTimeDoc.data() : {
-                    totalCorrectAnswers: 0,
-                    totalWrongAnswers: 0,
-                    totalDrills: 0,
-                    totalScore: 0,
-                    nouns_totalCorrectAnswers: 0,
-                    nouns_totalWrongAnswers: 0,
-                    nouns_totalDrills: 0,
-                    nouns_totalScore: 0,
-                    nouns_TimeSpent: 0, // Initialize TimeSpent
-                    TimeSpent: 0 // Initialize TimeSpent
-                };
-
-                // Ensure all fields are numbers
-                allTimeData.totalDrills = ensureNumber(allTimeData.totalDrills);
-                allTimeData.totalScore = ensureNumber(allTimeData.totalScore);
-                allTimeData.totalCorrectAnswers = ensureNumber(allTimeData.totalCorrectAnswers);
-                allTimeData.totalWrongAnswers = ensureNumber(allTimeData.totalWrongAnswers);
-                allTimeData.nouns_totalDrills = ensureNumber(allTimeData.nouns_totalDrills);
-                allTimeData.nouns_totalScore = ensureNumber(allTimeData.nouns_totalScore);
-                allTimeData.nouns_totalCorrectAnswers = ensureNumber(allTimeData.nouns_totalCorrectAnswers);
-                allTimeData.nouns_totalWrongAnswers = ensureNumber(allTimeData.nouns_totalWrongAnswers);
-                allTimeData.nouns_TimeSpent = ensureNumber(allTimeData.nouns_TimeSpent); // Ensure TimeSpent is a number
-                allTimeData.TimeSpent = ensureNumber(allTimeData.TimeSpent); // Ensure TimeSpent is a number
-
-
-                // Update stats safely
-                allTimeData.totalDrills += 1;
-                allTimeData.totalScore += score;
-                allTimeData.nouns_totalDrills += 1;
-                allTimeData.nouns_totalScore += score;
-                allTimeData.nouns_TimeSpent += timeTaken; // Add time taken to TimeSpent
-                allTimeData.TimeSpent += timeTaken; // Add time taken to TimeSpent
-
-                if (isCorrect) {
-                    allTimeData.totalCorrectAnswers += 1;
-                    allTimeData.nouns_totalCorrectAnswers += 1;
-                } else {
-                    allTimeData.totalWrongAnswers += 1;
-                    allTimeData.nouns_totalWrongAnswers += 1;
-                }
-
-                // Write both sets of stats after all reads
-                transaction.set(dailyStatsRef, dailyData);
-                transaction.set(allTimeStatsRef, allTimeData);
-
-                return Promise.resolve(); // Indicate the transaction is complete
-            });
+        }).then(() => {
+            console.log('Stats updated successfully');
+        }).catch(error => {
+            console.error('Transaction failed:', error);
         });
-    }).then(() => {
-        console.log('Stats updated successfully');
-    }).catch(error => {
-        console.error('Transaction failed:', error);
-    });
-}
-
-// Helper function to calculate time difference
-function timeDifference(lastAnswered) {
-    if (!lastAnswered) {
-        return "(new noun)";
     }
 
-    let now = new Date();
-    const diff = now - lastAnswered.toDate(); // Calculate time difference in milliseconds
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const weeks = Math.floor(days / 7);
-    const months = Math.floor(days / 30);
-    const years = Math.floor(days / 365);
-
-    if (years > 0) {
-        return `(shown last ${years} year${years > 1 ? 's' : ''} ago)`;
-    } else if (months > 0) {
-        return `(shown last ${months} month${months > 1 ? 's' : ''} ago)`;
-    } else if (weeks > 0) {
-        return `(shown last ${weeks} week${weeks > 1 ? 's' : ''} ago)`;
-    } else if (days > 0) {
-        return `(shown last ${days} day${days > 1 ? 's' : ''} ago)`;
-    } else if (hours > 0) {
-        return `(shown last ${hours} hour${hours > 1 ? 's' : ''} ago)`;
-    } else if (minutes > 0) {
-        return `(shown last ${minutes} minute${minutes > 1 ? 's' : ''} ago)`;
-    } else {
-        return "(new noun)";
-    }
-}
-
-function buttonClick(which) {
-    if (which === 'stats') {
-        window.location.href = 'stats.html';
-    }
-}
-
-function addCharacter(character) {
-    const inputField = document.getElementById('user-answer');
-    if (inputField) {
-        const maxLength = inputField.maxLength;
-        const currentValue = inputField.value;
-        const startPos = inputField.selectionStart;
-        const endPos = inputField.selectionEnd;
-
-        // Calculate the new length after insertion
-        const newLength = currentValue.length - (endPos - startPos) + character.length;
-
-        // Check if the new length exceeds the max length
-        if (newLength <= maxLength) {
-            // Insert the character at the current cursor position
-            inputField.value = currentValue.substring(0, startPos) + character + currentValue.substring(endPos);
-
-            // Move the cursor to the end of the inserted character
-            const newCursorPos = startPos + character.length;
-            inputField.setSelectionRange(newCursorPos, newCursorPos);
+    // Helper function to calculate time difference
+    function timeDifference(lastAnswered) {
+        if (!lastAnswered) {
+            return "(new noun)";
         }
 
-        // Focus the input field
-        inputField.focus();
+        let now = new Date();
+        const diff = now - lastAnswered.toDate(); // Calculate time difference in milliseconds
+
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const weeks = Math.floor(days / 7);
+        const months = Math.floor(days / 30);
+        const years = Math.floor(days / 365);
+
+        if (years > 0) {
+            return `(shown last ${years} year${years > 1 ? 's' : ''} ago)`;
+        } else if (months > 0) {
+            return `(shown last ${months} month${months > 1 ? 's' : ''} ago)`;
+        } else if (weeks > 0) {
+            return `(shown last ${weeks} week${weeks > 1 ? 's' : ''} ago)`;
+        } else if (days > 0) {
+            return `(shown last ${days} day${days > 1 ? 's' : ''} ago)`;
+        } else if (hours > 0) {
+            return `(shown last ${hours} hour${hours > 1 ? 's' : ''} ago)`;
+        } else if (minutes > 0) {
+            return `(shown last ${minutes} minute${minutes > 1 ? 's' : ''} ago)`;
+        } else {
+            return "(new noun)";
+        }
     }
-}
 
-function backToCourseSelection() {
-    window.location.href = '/course_selection.html';
-}
+    function buttonClick(which) {
+        if (which === 'stats') {
+            window.location.href = 'stats.html';
+        }
+    }
 
-$('#help-button').on('click', function () {
-    $('#helpModal').modal('show'); // Show the help modal
-});
+    function addCharacter(character) {
+        const inputField = document.getElementById('user-answer');
+        if (inputField) {
+            const maxLength = inputField.maxLength;
+            const currentValue = inputField.value;
+            const startPos = inputField.selectionStart;
+            const endPos = inputField.selectionEnd;
 
-// Event listener for the Report button
-$('#report-button').on('click', function () {
-    $('#report-question-id').val(window.currentNounId); // Set the current noun ID
-    $('#reportModal').modal('show'); // Show the report modal
-});
+            // Calculate the new length after insertion
+            const newLength = currentValue.length - (endPos - startPos) + character.length;
 
-// Event listener for the Submit button in the report modal
-$('#submit-report').on('click', function () {
-    const comment = $('#report-comment').val().trim();
-    const nounId = $('#report-question-id').val();
-    const user = firebase.auth().currentUser;
-    const currentTime = new Date().toISOString();
+            // Check if the new length exceeds the max length
+            if (newLength <= maxLength) {
+                // Insert the character at the current cursor position
+                inputField.value = currentValue.substring(0, startPos) + character + currentValue.substring(endPos);
 
-    if (comment && nounId && user) {
-        // Prepare the report data
-        const reportData = {
-            questionType: "nouns",
-            nounId: nounId,
-            timeOfUpdate: currentTime,
-            comment: comment,
-            language: window.currentNounData.language,
-            knownLanguage: window.currentNounData.knownLanguage,
-            isMultipleChoice: isMultipleChoice,
-            userId: uid,
-            status: 'created'
-        };
+                // Move the cursor to the end of the inserted character
+                const newCursorPos = startPos + character.length;
+                inputField.setSelectionRange(newCursorPos, newCursorPos);
+            }
 
-        // Insert the report into Firestore
-        db.collection('reports').add(reportData)
+            // Focus the input field
+            inputField.focus();
+        }
+    }
+
+    function backToCourseSelection() {
+        window.location.href = '/course_selection.html';
+    }
+
+    $('#help-button').on('click', function () {
+        $('#helpModal').modal('show'); // Show the help modal
+    });
+
+    // Event listener for the Report button
+    $('#report-button').on('click', function () {
+        $('#report-question-id').val(window.currentNounId); // Set the current noun ID
+        $('#reportModal').modal('show'); // Show the report modal
+    });
+
+    // Event listener for the Submit button in the report modal
+    $('#submit-report').on('click', function () {
+        const comment = $('#report-comment').val().trim();
+        const nounId = $('#report-question-id').val();
+        const user = firebase.auth().currentUser;
+        const currentTime = new Date().toISOString();
+
+        if (comment && nounId && user) {
+            // Prepare the report data
+            const reportData = {
+                questionType: "nouns",
+                nounId: nounId,
+                timeOfUpdate: currentTime,
+                comment: comment,
+                language: window.currentNounData.language,
+                knownLanguage: window.currentNounData.knownLanguage,
+                isMultipleChoice: isMultipleChoice,
+                userId: uid,
+                status: 'created'
+            };
+
+            // Insert the report into Firestore
+            db.collection('reports').add(reportData)
+                .then(() => {
+                    $('#reportForm')[0].reset(); // Clear the form
+                    $('#reportModal').modal('hide'); // Close the modal
+                    alert('Report submitted successfully.');
+                })
+                .catch(error => {
+                    console.error('Error submitting report:', error);
+                    alert('Failed to submit report. Please try again.');
+                });
+        } else {
+            alert('Please enter a comment before submitting.');
+        }
+    });
+
+    // Function to check drills and show modal if limit is reached
+    async function checkDrillsLimit(user, currentCourse) {
+
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        // Create a date object for the current date
+        let now = new Date();
+
+        // Format the date according to the user's timezone
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+
+        // Split the formatted date into parts
+        const [month, day, year] = formattedDate.split('/');
+
+        // Create the date in yyyy-mm-dd format
+        var today = `${year}-${month}-${day}`;
+
+        const userDocRef = db.collection('users').doc(user.uid);
+        const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
+
+        try {
+            const statsDoc = await courseDocRef.collection('stats').doc(today).get();
+            let totalDrills = 0;
+
+            if (statsDoc.exists) {
+                const data = statsDoc.data();
+                totalDrills = (data.totalDrills || 0);
+            }
+
+            // Check subscription level
+            const userData = await userDocRef.get();
+            populateSubLevelBadge(userData);
+            const subLevel = userData.data().subLevel;
+
+            if (subLevel === 'Free' && totalDrills >= 50) {
+                // Show modal if drills limit is reached
+                const modalElement = new bootstrap.Modal(document.getElementById('drillsLimitModal'), {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                modalElement.show();
+            } else {
+                // Proceed with loading drills or nouns
+            }
+        } catch (error) {
+            console.error("Error checking drills limit:", error);
+        }
+    }
+
+    function afterDrillCompleted(user, currentCourse) {
+        checkDrillsLimit(user, currentCourse);
+    }
+
+    function updateSpecialCharacters(targetLanguage) {
+        const specialChars = languageToSpecialChars[targetLanguage] || [];
+        const specialCharsContainer = document.getElementById('special-characters');
+
+        // Clear existing buttons
+        specialCharsContainer.innerHTML = '';
+
+        // Create buttons for each special character
+        specialChars.forEach(char => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-light';
+            button.textContent = char;
+            button.onclick = () => addCharacter(char);
+            specialCharsContainer.appendChild(button);
+        });
+
+        // Show the special characters container if there are characters to display
+        if (specialChars.length > 0) {
+            specialCharsContainer.style.display = 'block';
+            specialCharsContainer.style.visibility = 'visible';
+        } else {
+            specialCharsContainer.style.display = 'none';
+            specialCharsContainer.style.visibility = 'hidden';
+        }
+    }
+
+    function adjustInputField(noun, currentCourse) {
+
+
+        const inputField = document.getElementById('user-answer');
+        const padding = 2; // Additional padding in 'rem' for better appearance
+
+        // Set the maximum length of the input field
+        inputField.maxLength = noun.length;
+
+        let language = currentCourse.split('-')[1];
+        if (language == 'de') {
+            if (noun.includes('ß')) {
+                inputField.maxLength += 1;
+            }
+
+        } else if (language == 'fr') {
+            if (noun.includes("'")) {
+                inputField.maxLength += 1;
+            }
+        }
+
+        // Create a canvas element to measure text width
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = window.getComputedStyle(inputField).font; // Use the same font as the input field
+
+        // Measure the width of the noun
+        const textWidth = context.measureText(noun).width;
+
+        // Convert the width from pixels to rems
+        const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        const calculatedWidth = (textWidth / remSize) + padding;
+
+        // Set the width of the input field
+        inputField.style.width = `${calculatedWidth}rem`;
+    }
+
+
+
+    function loadRandomImages(imgNumber) {
+        // Generate a random number in the range of currentOrder - 20 to currentOrder + 20
+        // const randomOrder = Math.floor(Math.random() * 41) + (currentOrder - 20);
+        const randomOrder = Math.floor(Math.random() * 98) + 1; // Generate a random number between 1 and 98
+
+
+
+
+        const imgUrl = `https://languizy.com/myimages/nouns/noun-${randomOrder}.png/smaller`;
+        if (!fourImagesToLoad.includes(imgUrl)) { // Check if the image URL is not already in the array
+            const img = new Image();
+            img.src = imgUrl;
+            img.onload = () => {
+
+                fourImagesToLoad.push(imgUrl);
+                imgNumber++;
+                if (imgNumber === 4) {
+
+                    // displayImages();
+                } else {
+
+                    loadRandomImages(imgNumber); // Load the next image
+                }
+            };
+            img.onerror = () => {
+                loadRandomImages(imgNumber); // Retry loading another image if there's an error
+            };
+        } else {
+            loadRandomImages(imgNumber); // Retry loading another image if the URL is already in the array
+        }
+
+    }
+
+    // Function to play feedback sound
+    function playFeedbackSound(isCorrect) {
+        const feedbackAudio = new Audio();
+        feedbackAudio.src = isCorrect ? '/assets/audio/correct.mp3' : '/assets/audio/wrong.mp3';
+
+        // Play the feedback sound
+        feedbackAudio.play()
             .then(() => {
-                $('#reportForm')[0].reset(); // Clear the form
-                $('#reportModal').modal('hide'); // Close the modal
-                alert('Report submitted successfully.');
+                console.log("Feedback sound played successfully.");
             })
-            .catch(error => {
-                console.error('Error submitting report:', error);
-                alert('Failed to submit report. Please try again.');
+            .catch((error) => {
+                console.error("Error playing feedback sound:", error);
             });
-    } else {
-        alert('Please enter a comment before submitting.');
-    }
-});
 
-// Function to check drills and show modal if limit is reached
-async function checkDrillsLimit(user, currentCourse) {
-
-    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    // Create a date object for the current date
-    let now = new Date();
-
-    // Format the date according to the user's timezone
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
-    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
-
-    // Split the formatted date into parts
-    const [month, day, year] = formattedDate.split('/');
-
-    // Create the date in yyyy-mm-dd format
-    var today = `${year}-${month}-${day}`;
-
-    const userDocRef = db.collection('users').doc(user.uid);
-    const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
-
-    try {
-        const statsDoc = await courseDocRef.collection('stats').doc(today).get();
-        let totalDrills = 0;
-
-        if (statsDoc.exists) {
-            const data = statsDoc.data();
-            totalDrills = (data.totalDrills || 0);
-        }
-
-        // Check subscription level
-        const userData = await userDocRef.get();
-        populateSubLevelBadge(userData);
-        const subLevel = userData.data().subLevel;
-
-        if (subLevel === 'Free' && totalDrills >= 50) {
-            // Show modal if drills limit is reached
-            const modalElement = new bootstrap.Modal(document.getElementById('drillsLimitModal'), {
-                backdrop: 'static',
-                keyboard: false
-            });
-            modalElement.show();
-        } else {
-            // Proceed with loading drills or nouns
-        }
-    } catch (error) {
-        console.error("Error checking drills limit:", error);
-    }
-}
-
-function afterDrillCompleted(user, currentCourse) {
-    checkDrillsLimit(user, currentCourse);
-}
-
-function updateSpecialCharacters(targetLanguage) {
-    const specialChars = languageToSpecialChars[targetLanguage] || [];
-    const specialCharsContainer = document.getElementById('special-characters');
-
-    // Clear existing buttons
-    specialCharsContainer.innerHTML = '';
-
-    // Create buttons for each special character
-    specialChars.forEach(char => {
-        const button = document.createElement('button');
-        button.className = 'btn btn-light';
-        button.textContent = char;
-        button.onclick = () => addCharacter(char);
-        specialCharsContainer.appendChild(button);
-    });
-
-    // Show the special characters container if there are characters to display
-    if (specialChars.length > 0) {
-        specialCharsContainer.style.display = 'block';
-        specialCharsContainer.style.visibility = 'visible';
-    } else {
-        specialCharsContainer.style.display = 'none';
-        specialCharsContainer.style.visibility  = 'hidden';
-    }
-}
-
-function adjustInputField(noun, currentCourse) {
-
-
-    const inputField = document.getElementById('user-answer');
-    const padding = 2; // Additional padding in 'rem' for better appearance
-
-    // Set the maximum length of the input field
-    inputField.maxLength = noun.length;
-
-    let language = currentCourse.split('-')[1];
-    if (language == 'de') {
-        if (noun.includes('ß')) {
-            inputField.maxLength += 1;
-        }
-
-    } else if (language == 'fr') {
-        if (noun.includes("'")) {
-            inputField.maxLength += 1;
-        }
     }
 
-    // Create a canvas element to measure text width
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    context.font = window.getComputedStyle(inputField).font; // Use the same font as the input field
-
-    // Measure the width of the noun
-    const textWidth = context.measureText(noun).width;
-
-    // Convert the width from pixels to rems
-    const remSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-    const calculatedWidth = (textWidth / remSize) + padding;
-
-    // Set the width of the input field
-    inputField.style.width = `${calculatedWidth}rem`;
-}
-
-
-
-function loadRandomImages(imgNumber) {
-    // Generate a random number in the range of currentOrder - 20 to currentOrder + 20
-    // const randomOrder = Math.floor(Math.random() * 41) + (currentOrder - 20);
-    const randomOrder = Math.floor(Math.random() * 98) + 1; // Generate a random number between 1 and 98
-
-
-
-
-    const imgUrl = `https://languizy.com/myimages/nouns/noun-${randomOrder}.png/smaller`;
-    if (!fourImagesToLoad.includes(imgUrl)) { // Check if the image URL is not already in the array
-        const img = new Image();
-        img.src = imgUrl;
-        img.onload = () => {
-
-            fourImagesToLoad.push(imgUrl);
-            imgNumber++;
-            if (imgNumber === 4) {
-
-                // displayImages();
-            } else {
-
-                loadRandomImages(imgNumber); // Load the next image
+    async function fetchOrAssignCoach(user) {
+        const userRef = db.collection('users').doc(user.uid);
+        try {
+            const userDoc = await userRef.get();
+            let coachId = userDoc.exists && userDoc.data().coach;
+            if (!coachId) {
+                coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
+                await userRef.update({ coach: coachId });
             }
-        };
-        img.onerror = () => {
-            loadRandomImages(imgNumber); // Retry loading another image if there's an error
-        };
-    } else {
-        loadRandomImages(imgNumber); // Retry loading another image if the URL is already in the array
-    }
-
-}
-
-// Function to play feedback sound
-function playFeedbackSound(isCorrect) {
-    const feedbackAudio = new Audio();
-    feedbackAudio.src = isCorrect ? '/assets/audio/correct.mp3' : '/assets/audio/wrong.mp3';
-
-    // Play the feedback sound
-    feedbackAudio.play()
-        .then(() => {
-            console.log("Feedback sound played successfully.");
-        })
-        .catch((error) => {
-            console.error("Error playing feedback sound:", error);
-        });
-
-}
-
-async function fetchOrAssignCoach(user) {
-    const userRef = db.collection('users').doc(user.uid);
-    try {
-        const userDoc = await userRef.get();
-        let coachId = userDoc.exists && userDoc.data().coach;
-        if (!coachId) {
-            coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
-            await userRef.update({ coach: coachId });
+            const coachData = await fetchCoachData(coachId);
+            window.coachData = coachData;
+            setCoachImage(coachData.image);
+        } catch (error) {
+            console.error('Error fetching or assigning coach:', error);
         }
-        const coachData = await fetchCoachData(coachId);
-        window.coachData = coachData;
-        setCoachImage(coachData.image);
-    } catch (error) {
-        console.error('Error fetching or assigning coach:', error);
     }
-}
 
-async function fetchCoachData(coachId) {
-    try {
-        const coachDoc = await db.collection('coaches').doc(coachId).get();
-        if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
+    async function fetchCoachData(coachId) {
+        try {
+            const coachDoc = await db.collection('coaches').doc(coachId).get();
+            if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
 
-        const coachData = coachDoc.data();
+            const coachData = coachDoc.data();
 
-        function getRandomMessages(array, count = 10) {
-            return array.sort(() => 0.5 - Math.random()).slice(0, count);
+            function getRandomMessages(array, count = 10) {
+                return array.sort(() => 0.5 - Math.random()).slice(0, count);
+            }
+
+            return {
+                coachName: coachData.coachName,
+                image: coachData.image,
+                correctMessages: getRandomMessages(coachData.correctMessages),
+                encouragementMessages: getRandomMessages(coachData.encouragementMessages),
+                fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
+                fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
+                loadingMessages: getRandomMessages(coachData.loadingMessages),
+                mistakeMessages: getRandomMessages(coachData.mistakeMessages),
+                sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
+                sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
+                threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
+                threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
+                tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
+                tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
+            };
+        } catch (error) {
+            console.error('Error fetching coach data:', error);
         }
-
-        return {
-            coachName: coachData.coachName,
-            image: coachData.image,
-            correctMessages: getRandomMessages(coachData.correctMessages),
-            encouragementMessages: getRandomMessages(coachData.encouragementMessages),
-            fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
-            fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
-            loadingMessages: getRandomMessages(coachData.loadingMessages),
-            mistakeMessages: getRandomMessages(coachData.mistakeMessages),
-            sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
-            sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
-            threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
-            threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
-            tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
-            tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
-        };
-    } catch (error) {
-        console.error('Error fetching coach data:', error);
     }
-}
 
-function setCoachImage(imageFilename) {
-    const imagePath = `assets/images/${imageFilename}`;
-    $('#coachImage').attr('src', imagePath);
-    $('#coachImage').removeClass('invisible');
-}
+    function setCoachImage(imageFilename) {
+        const imagePath = `assets/images/${imageFilename}`;
+        $('#coachImage').attr('src', imagePath);
+        $('#coachImage').removeClass('invisible');
+    }
 
 
-function modifyInterfaceLanguage() {
-    
-    if (UIString[interfaceLanguage]) {
-        const lang = UIString[interfaceLanguage];
+    function modifyInterfaceLanguage() {
 
-        // Update all elements with data-i18n attribute (text content)
-        $('[data-i18n]').each(function() {
-            const key = $(this).data('i18n');
-            if (key.includes('.')) {
-                // Handle nested keys e.g. 'RecommendationNames.Basics'
-                const keys = key.split('.');
-                let text = lang;
-                keys.forEach(k => {
-                    text = text[k] || '';
-                });
-                $(this).text(text);
-            } else {
-                // Direct key in the UIString
-                if (lang[key] !== undefined) {
-                    $(this).text(lang[key]);
+        if (UIString[interfaceLanguage]) {
+            const lang = UIString[interfaceLanguage];
+
+            // Update all elements with data-i18n attribute (text content)
+            $('[data-i18n]').each(function () {
+                const key = $(this).data('i18n');
+                if (key.includes('.')) {
+                    // Handle nested keys e.g. 'RecommendationNames.Basics'
+                    const keys = key.split('.');
+                    let text = lang;
+                    keys.forEach(k => {
+                        text = text[k] || '';
+                    });
+                    $(this).text(text);
+                } else {
+                    // Direct key in the UIString
+                    if (lang[key] !== undefined) {
+                        $(this).text(lang[key]);
+                    }
                 }
-            }
-        });
+            });
 
-        // Update elements with data-i18n-alt (for alt attributes)
-        $('[data-i18n-alt]').each(function() {
-            const key = $(this).data('i18n-alt');
-            if (lang[key] !== undefined) {
-                $(this).attr('alt', lang[key]);
-            }
-        });
+            // Update elements with data-i18n-alt (for alt attributes)
+            $('[data-i18n-alt]').each(function () {
+                const key = $(this).data('i18n-alt');
+                if (lang[key] !== undefined) {
+                    $(this).attr('alt', lang[key]);
+                }
+            });
 
-        // Update elements with data-i18n-title (for title attributes)
-        $('[data-i18n-title]').each(function() {
-            const key = $(this).data('i18n-title');
-            if (lang[key] !== undefined) {
-                $(this).attr('title', lang[key]);
-            }
-        });
+            // Update elements with data-i18n-title (for title attributes)
+            $('[data-i18n-title]').each(function () {
+                const key = $(this).data('i18n-title');
+                if (lang[key] !== undefined) {
+                    $(this).attr('title', lang[key]);
+                }
+            });
 
-        // Update elements with data-i18n-placeholder (for placeholders)
-        $('[data-i18n-placeholder]').each(function() {
-            const key = $(this).data('i18n-placeholder');
-            if (lang[key] !== undefined) {
-                $(this).attr('placeholder', lang[key]);
-            }
-        });
+            // Update elements with data-i18n-placeholder (for placeholders)
+            $('[data-i18n-placeholder]').each(function () {
+                const key = $(this).data('i18n-placeholder');
+                if (lang[key] !== undefined) {
+                    $(this).attr('placeholder', lang[key]);
+                }
+            });
 
-        
 
-        
+
+
+        }
     }
-}
