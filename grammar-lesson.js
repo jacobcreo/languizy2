@@ -10,6 +10,7 @@ let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
 let showCoachFeedback = true;
+let questionsToIgnore = [];
 
 let questionStartTime; // Variable to store the start time of the question
 
@@ -43,57 +44,57 @@ const encouragementStatements = [
 ];
 
 const loadingMessages = [
-   "Hang tight! We're fetching some cool grammar tips...",
-  "Just a moment! Your explanation is on the way...",
-  "Patience is key! Almost there with your breakdown...",
-  "Great things take time, and so does your explanation...",
-  "Did you know? We're crafting the perfect explanation just for you...",
-  "A little longer... Good things come to those who wait!",
-  "Loading... the suspense is building!",
-  "Grabbing the grammar gnomes... they can be tricky to catch!",
-  "We're halfway there... keep your linguistic curiosity strong!",
-  "Cooking up some tasty grammar for your brain. Yum!",
-  "Just a sec... the grammar elves are polishing their explanations.",
-  "Almost ready! Good explanations can't be rushed!",
-  "Brushing up the words, cleaning up the commas...",
-  "Did you know? Explaining things is 70% magic, 30% caffeine.",
-  "Your grammar wish is our command... almost granted!",
-  "Making sure every word is in its proper place...",
-  "Loading... this is a great time to stretch, don't you think?",
-  "Our grammar detectives are connecting all the clues!",
-  "Fetching some A+ explanations for your learning pleasure...",
-  "It's like brewing coffee, but with words. Hold on!",
-  "Loading... our language squirrel is gathering all the nuts of knowledge!",
-  "Meanwhile, in the Land of Verbs... your answer is being prepared.",
-  "Ever wonder how explanations are made? Well, you’re about to find out...",
-  "Beep boop... translating grammar magic into human-readable form.",
-  "The words are warming up... almost ready to jump onto your screen!",
-  "We're making sure every comma and full stop is in tip-top shape...",
-  "Spinning up the Grammar Machine... almost done!",
-  "Words are like cheese... they get better with a little time.",
-  "Practicing some word yoga... stretching those definitions!",
-  "Adding some pizzazz to those explanations... sparkle, sparkle!",
-  "Taking a grammar selfie... it just needs the right angle.",
-  "Pouring a cup of linguistic tea... patience is brewed!",
-  "Shhh... the words are concentrating. Silence, please.",
-  "Our grammar gremlins are triple-checking everything!",
-  "Your explanation is coming... it's fashionably late, but worth it.",
-  "Grabbing some words from the adjective jungle... they'll be back soon.",
-  "Counting all the verbs... and there are a lot of them!",
-  "Just fluffing up the explanations so they look nice and neat.",
-  "Filling in the missing word... with style and precision!",
-  "All the commas are lining up in a row... very orderly.",
-  "Your explanation is being wrapped with a bow. Almost ready to open!",
-  "Generating some A-grade grammar jokes... and your explanation too.",
-  "Crossing all the t's and dotting all the i's... literally.",
-  "Finding just the right words... it's a very picky process.",
-  "Patience, grasshopper. Your grammar lesson will be worth the wait!",
-  "We’re talking to a noun about your explanation... nouns talk slow.",
-  "We're fishing for some top-notch explanations... almost caught one!",
-  "Balancing out the sentence structure... it's like word acrobatics!",
-  "The missing word is shy... coaxing it out for you.",
-  "Putting the final touches on your word masterpiece... voila!",
-  "Loading... trust me, your brain is going to love this!"
+    "Hang tight! We're fetching some cool grammar tips...",
+    "Just a moment! Your explanation is on the way...",
+    "Patience is key! Almost there with your breakdown...",
+    "Great things take time, and so does your explanation...",
+    "Did you know? We're crafting the perfect explanation just for you...",
+    "A little longer... Good things come to those who wait!",
+    "Loading... the suspense is building!",
+    "Grabbing the grammar gnomes... they can be tricky to catch!",
+    "We're halfway there... keep your linguistic curiosity strong!",
+    "Cooking up some tasty grammar for your brain. Yum!",
+    "Just a sec... the grammar elves are polishing their explanations.",
+    "Almost ready! Good explanations can't be rushed!",
+    "Brushing up the words, cleaning up the commas...",
+    "Did you know? Explaining things is 70% magic, 30% caffeine.",
+    "Your grammar wish is our command... almost granted!",
+    "Making sure every word is in its proper place...",
+    "Loading... this is a great time to stretch, don't you think?",
+    "Our grammar detectives are connecting all the clues!",
+    "Fetching some A+ explanations for your learning pleasure...",
+    "It's like brewing coffee, but with words. Hold on!",
+    "Loading... our language squirrel is gathering all the nuts of knowledge!",
+    "Meanwhile, in the Land of Verbs... your answer is being prepared.",
+    "Ever wonder how explanations are made? Well, you’re about to find out...",
+    "Beep boop... translating grammar magic into human-readable form.",
+    "The words are warming up... almost ready to jump onto your screen!",
+    "We're making sure every comma and full stop is in tip-top shape...",
+    "Spinning up the Grammar Machine... almost done!",
+    "Words are like cheese... they get better with a little time.",
+    "Practicing some word yoga... stretching those definitions!",
+    "Adding some pizzazz to those explanations... sparkle, sparkle!",
+    "Taking a grammar selfie... it just needs the right angle.",
+    "Pouring a cup of linguistic tea... patience is brewed!",
+    "Shhh... the words are concentrating. Silence, please.",
+    "Our grammar gremlins are triple-checking everything!",
+    "Your explanation is coming... it's fashionably late, but worth it.",
+    "Grabbing some words from the adjective jungle... they'll be back soon.",
+    "Counting all the verbs... and there are a lot of them!",
+    "Just fluffing up the explanations so they look nice and neat.",
+    "Filling in the missing word... with style and precision!",
+    "All the commas are lining up in a row... very orderly.",
+    "Your explanation is being wrapped with a bow. Almost ready to open!",
+    "Generating some A-grade grammar jokes... and your explanation too.",
+    "Crossing all the t's and dotting all the i's... literally.",
+    "Finding just the right words... it's a very picky process.",
+    "Patience, grasshopper. Your grammar lesson will be worth the wait!",
+    "We’re talking to a noun about your explanation... nouns talk slow.",
+    "We're fishing for some top-notch explanations... almost caught one!",
+    "Balancing out the sentence structure... it's like word acrobatics!",
+    "The missing word is shy... coaxing it out for you.",
+    "Putting the final touches on your word masterpiece... voila!",
+    "Loading... trust me, your brain is going to love this!"
 ];
 
 let interimMessageInterval;
@@ -129,7 +130,7 @@ const languageToSpecialChars = {
     da: ['æ', 'ø', 'å'],      // Danish
     no: ['æ', 'ø', 'å'],      // Norwegian
     pl: ['ą', 'ć', 'ę', 'ł']  // Polish
-  };
+};
 
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
@@ -173,9 +174,9 @@ async function fetchOrAssignCoach(user) {
         const userDoc = await userRef.get();
         let userData = userDoc.data();
         showCoachFeedback = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
-            if (showCoachFeedback) {
-                $('#coach-container').addClass('d-flex').removeClass('d-none');
-            } else {
+        if (showCoachFeedback) {
+            $('#coach-container').addClass('d-flex').removeClass('d-none');
+        } else {
             $('#coach-container').addClass('d-none').removeClass('d-flex');
         }
 
@@ -240,7 +241,7 @@ function setCoachImage(imageFilename) {
 function updateFlagIcons(currentLesson) {
     const flagCard = document.getElementById('flag-card');
     if (!flagCard) return;
-    debugger;
+
     // Clear existing flags
     flagCard.innerHTML = '';
 
@@ -286,7 +287,7 @@ firebase.auth().onAuthStateChanged(function (user) {
                     window.location.href = 'course_selection.html';
                     return;
                 }
-                debugger;
+
                 fetchLessonName(currentLesson).then(name => {
                     lessonName = name;
                     console.log(`Current Lesson Name: ${lessonName}`);
@@ -295,20 +296,26 @@ firebase.auth().onAuthStateChanged(function (user) {
                     console.error('Error fetching lesson name:', error);
                 });
 
+                debugger;
+                const  knownLanguage = window.currentLanguagePair.split('-')[0];
+                const language = window.currentLanguagePair.split('-')[1];
+                
+                // Check if the user has completed the lesson before this session.
+                // In this case, no need to show the completion modal upon completion again.
+                const userDocRef = db.collection('users').doc(user.uid);
+                const { totalQuestions, correctQuestions } = await fetchTotalQuestionsAndCorrect(userDocRef, currentLesson, language, knownLanguage);
+                if (totalQuestions == correctQuestions) {
+                    startedAt100 = true;
+                }
+
                 // Initialize default mode and load question
                 initializeDefaultMode();
                 loadQuestion(user, currentLesson);
                 updateFlagIcons(currentLesson);
                 loadDailyScore(user, currentLesson);
 
-                const targetLanguage = window.currentLanguagePair.split('-')[1];
-                updateSpecialCharacters(targetLanguage);
- 
-
-                // Fetch and store the lesson name, then display it
                 
-
-                
+                updateSpecialCharacters(language);
 
                 // After loading the initial question, check if started at 100%
                 if (startedAt100 && !hasShownCompletionModal) {
@@ -357,7 +364,7 @@ function toggleMode() {
 // Function to fetch the current lesson based on URL or Firestore
 function fetchCurrentLesson(user) {
     return new Promise((resolve, reject) => {
-        debugger;
+
         const urlParams = new URLSearchParams(window.location.search);
         const topicFromUrl = urlParams.get('topic');
         const targetLanguage = urlParams.get('language');
@@ -368,7 +375,7 @@ function fetchCurrentLesson(user) {
             console.log(`Lesson ID found in URL: ${lessonId}`);
             window.currentLanguagePair = knownLanguage + '-' + targetLanguage;
             $("#topicNum").html(lessonId);
-            
+
 
             // Check if the lesson exists (validate that questions exist for this lesson)
             validateLesson(lessonId, targetLanguage, knownLanguage).then((isValidLesson) => {
@@ -447,30 +454,30 @@ function validateLesson(lessonId, language, knownLanguage) {
             console.error('Error validating lesson:', error);
             return false;
         });
-    }
+}
 
 // Function to load daily score from Firestore
 function loadDailyScore(user, currentCourse) {
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-// Create a date object for the current date
-const now = new Date();
+    // Create a date object for the current date
+    const now = new Date();
 
-// Format the date according to the user's timezone
-const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
-const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
+    // Format the date according to the user's timezone
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
 
-// Split the formatted date into parts
-const [month, day, year] = formattedDate.split('/');
+    // Split the formatted date into parts
+    const [month, day, year] = formattedDate.split('/');
 
-// Create the date in yyyy-mm-dd format
-var today = `${year}-${month}-${day}`;
-    
+    // Create the date in yyyy-mm-dd format
+    var today = `${year}-${month}-${day}`;
+
 
     // Fetch user's current lesson stats from the "grammar" sub-collection
     var userStatsRef = db.collection('users').doc(user.uid)
-    .collection('courses').doc(window.currentLanguagePair)
-    .collection('stats').doc(today);
+        .collection('courses').doc(window.currentLanguagePair)
+        .collection('stats').doc(today);
 
     // Fetch today's stats
     userStatsRef.get().then(doc => {
@@ -485,240 +492,248 @@ var today = `${year}-${month}-${day}`;
     });
 }
 
-// Load a question from Firestore
-function loadQuestion(user, currentLesson) {
-    debugger;
-    showLoadingProgress();
+// ==============================================
+// 1) High-Level Function: loadQuestion
+//    Decides which question to show next
+// ==============================================
+async function loadQuestion(user, currentLesson) {
+    try {
+        showLoadingProgress();
+        if (!user) {
+            console.error("User is not authenticated.");
+            return;
+        }
+        if (!currentLesson) {
+            console.error("User has not selected a lesson.");
+            window.location.href = 'course_selection.html';
+            return;
+        }
 
-    if (!user) {
-        console.error("User is not authenticated.");
-        return;
+        // Check drills limit
+        await checkDrillsLimit(user, window.currentLanguagePair);
+
+        // Show a random encouragement message
+        showEncouragementMessage();
+
+        // 1) Fetch a due question
+        let questionDoc = await getDueQuestion(user, currentLesson);
+
+        // 2) If no valid due question was found, try a new question
+        if (!questionDoc) {
+            questionDoc = await getNewQuestion(user, currentLesson);
+        }
+
+        // 3) If still no question, try next early question
+        if (!questionDoc) {
+            questionDoc = await getNextEarlyQuestion(user, currentLesson);
+        }
+
+        // 4) If we finally have a question, display it
+        if (questionDoc) {
+            previousQuestionId = questionDoc.id;
+            loadQuestionData(questionDoc.id, currentLesson);
+        } else {
+            console.log('No questions found at all.');
+            hideLoadingProgress(); // Make sure to hide if no question
+            showErrorModal(); // Show error modal
+        }
+    } catch (error) {
+        console.error('Error loading question:', error);
+        hideLoadingProgress();
+        showErrorModal(); // Show error modal
     }
+}
 
-    if (!currentLesson) {
-        console.error('User has not selected a lesson.');
-        window.location.href = 'course_selection.html';
-        return;
+// ==============================================
+// 2) getDueQuestion: Return a Firestore doc that
+//    is nextDue <= now, matching currentLesson, 
+//    not in questionsToIgnore, not same as previousQ
+// ==============================================
+async function getDueQuestion(user, currentLesson) {
+    try {
+        const grammarRef = db.collection('users')
+            .doc(user.uid)
+            .collection('grammar')
+            .doc(window.currentLanguagePair)
+            .collection('questions');
+
+        // Query up to some limit (like 5) 
+        // so we can locally filter out repeats or ignore list
+        const snapshot = await grammarRef
+            .where('topic', '==', parseInt(currentLesson))
+            .where('nextDue', '<=', new Date())
+            .orderBy('nextDue', 'asc')
+            .limit(10)
+            .get();
+
+        if (snapshot.empty) {
+            return null; // No due questions
+        }
+
+        // Convert to array
+        const docs = snapshot.docs;
+
+        // Local filter: skip if doc.id is in questionsToIgnore or doc.id == previousQuestionId
+        const validDocs = docs.filter(d =>
+            !questionsToIgnore.includes(d.id) &&
+            d.id !== previousQuestionId
+        );
+
+        if (validDocs.length === 0) {
+            return null; // All are invalid
+        }
+
+        // Return the first valid doc
+        console.log('Due question found:', validDocs[0].id);
+        return validDocs[0];
+    } catch (error) {
+        console.error('Error in getDueQuestion:', error);
+        return null;
     }
-debugger;
-    checkDrillsLimit(user, window.currentLanguagePair);
+}
 
-    // Show a random encouragement message when loading a new question
-    showEncouragementMessage();
+// ==============================================
+// 3) getNewQuestion: Return a question doc that 
+//    the user has never seen (unseen in progress).
+// ==============================================
+async function getNewQuestion(user, lessonId) {
+    try {
+        if (!window.currentLanguagePair) {
+            console.error('Language pair not defined.');
+            return null;
+        }
 
-    // Step 1: Pull the next due question, ensuring it's not the same as the previous one
-    db.collection('users').doc(user.uid)
-        .collection('grammar').doc(window.currentLanguagePair)
-        .collection('questions')
-        .where('nextDue', '<=', new Date())
-        .where('topic', '==', parseInt(currentLesson))
-        .orderBy('nextDue')
-        .limit(1)
-        .get()
-        .then(progressSnapshot => {
-            console.log('Step 1 - ');
-            if (!progressSnapshot.empty) {
-                console.log('progressSnapshot isnt empty');
-                let nextQuestionDoc = progressSnapshot.docs[0];
-                    console.log('loading the first doc from progressSnapshot');
-                    console.log('next question Id is: ',nextQuestionDoc.id);
+        const [knownLanguage, language] = window.currentLanguagePair.split('-');
 
-                // If the next due question is the same as the previous one, get the next available question
-                if (nextQuestionDoc.id === previousQuestionId) {
-                    console.log('next question is supposed to be the same as the previous one already shown...');
-                    return db.collection('users').doc(user.uid)
-                        .collection('grammar').doc(window.currentLanguagePair)
-                        .collection('questions')
-                        .where('nextDue', '<=', new Date())
-                        .where('topic', '==', parseInt(currentLesson))
-                        .orderBy('nextDue')
-                        .limit(2) // Pull 2 questions and skip the first
-                        .get()
-                        .then(secondSnapshot => {
-                            console.log('pulling the second possible match as the first question for review is identical to the one just shown');
-                            return secondSnapshot.docs[1] || null; // Return the next question if available
+        // Query grammar_questions for this topic + language
+        const allQsSnap = await db.collection('grammar_questions')
+            .where('topic', '==', parseInt(lessonId))
+            .where('language', '==', language)
+            .where('knownLanguage', '==', knownLanguage)
+            .limit(100)
+            .get();
 
-                        });
-                } else {
-                    return nextQuestionDoc; // Return the next question if it's different
-                }
+        if (allQsSnap.empty) {
+            console.log('No grammar questions found for this lesson & language.');
+            return null;
+        }
+
+        // Convert to array
+        const allQs = allQsSnap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+
+        // Now get user progress
+        const userProgressSnap = await db.collection('users')
+            .doc(user.uid)
+            .collection('grammar')
+            .doc(window.currentLanguagePair)
+            .collection('questions')
+            .get();
+
+        const seenIds = userProgressSnap.docs.map(d => d.id);
+
+        // Filter out seen + ignoreList + same as previous
+        const unseen = allQs.filter(q =>
+            !seenIds.includes(q.id) &&
+            !questionsToIgnore.includes(q.id) &&
+            q.id !== previousQuestionId
+        );
+
+        if (unseen.length === 0) {
+            console.log('No brand-new questions available.');
+            return null;
+        }
+
+        console.log('New question found:', unseen[0].id);
+        return unseen[0]; // Return first
+    } catch (error) {
+        console.error('Error in getNewQuestion:', error);
+        return null;
+    }
+}
+
+// ==============================================
+// 4) getNextEarlyQuestion: Return a question doc
+//    that is not due yet, but still available to practice
+// ==============================================
+async function getNextEarlyQuestion(user, lessonId) {
+    try {
+        if (!window.currentLanguagePair) {
+            console.error('Language pair not defined.');
+            return null;
+        }
+
+        const grammarRef = db.collection('users')
+            .doc(user.uid)
+            .collection('grammar')
+            .doc(window.currentLanguagePair)
+            .collection('questions');
+
+        // Query a few docs in ascending order of nextDue
+        const snapshot = await grammarRef
+            .where('topic', '==', parseInt(lessonId))
+            .orderBy('nextDue', 'asc')
+            .limit(10)
+            .get();
+
+        if (snapshot.empty) {
+            console.log('No questions found at all (nextEarly).');
+            return null;
+        }
+
+        // Local filter out ignore list + same as previous
+        const docs = snapshot.docs.filter(d =>
+            !questionsToIgnore.includes(d.id) &&
+            d.id !== previousQuestionId
+        );
+
+        if (docs.length === 0) {
+            console.log('All nextEarly docs are in ignore list or are the same as previous.');
+            return null;
+        }
+
+        // Return the first valid doc
+        console.log('Next early question found:', docs[0].id);
+        return docs[0];
+    } catch (error) {
+        console.error('Error in getNextEarlyQuestion:', error);
+        return null;
+    }
+}
+
+
+
+
+// ==============================================
+// 5) loadQuestionData: We keep the same code as before
+//    to actually "display" the question and attach events
+// ==============================================
+function loadQuestionData(questionId, currentLesson) {
+    db.collection('grammar_questions').doc(questionId).get()
+        .then(questionDoc => {
+            if (questionDoc.exists) {
+                displayQuestion(questionDoc.data(), questionId, currentLesson);
             } else {
-                // No due questions found; proceed to load a new question
-                console.log('No due questions found; proceed to load a new question');
-                return loadNewQuestion(user, currentLesson).then(newQuestionDoc => {
-                    return newQuestionDoc || loadNextEarlyQuestion(user, currentLesson); // Fallback to next early question
-                });
-            }
-        })
-        .then(nextQuestionDoc => {
-            if (nextQuestionDoc) {
-                const questionId = nextQuestionDoc.id;
-                loadQuestionData(questionId, currentLesson); // Load and display the question
-                previousQuestionId = questionId; // Update the previous question ID
-            } else {
-                console.log('No questions found at all.');
+                console.error('Question doc not found:', questionId);
+                questionsToIgnore.push(questionId);
+                loadQuestion(firebase.auth().currentUser, currentLesson);
             }
         })
         .catch(error => {
-            console.error('Error fetching next question:', error);
+            console.error('Error in loadQuestionData:', error);
+            questionsToIgnore.push(questionId);
+            loadQuestion(firebase.auth().currentUser, currentLesson);
         });
 }
 
-
-// Load question data and display
-function loadQuestionData(questionId, currentLesson) {
-    db.collection('grammar_questions').doc(questionId).get()
-    .then(questionDoc => {
-        if (questionDoc.exists) {
-            
-            displayQuestion(questionDoc.data(), questionId, currentLesson);
-        } else {
-            console.error('Question not found:', questionId);
-        }
-    });
+function showErrorModal() {
+    $('#errorModal').modal('show');
 }
 
-
-// Load a new question that hasn't been answered yet or from a specific lesson
-function loadNewQuestion(user, lessonId) {
-    console.log('loadNewQuestion function... Trying to load a new question that the user didnt see yet');
-    return new Promise((resolve, reject) => {
-        if (typeof(window.currentLanguagePair) !== 'undefined') {
-            fetchAndLoadQuestions(window.currentLanguagePair, lessonId)
-                .then(newQuestionDoc => {
-                    // Check that the new question is not identical to the previous question
-                    if (newQuestionDoc && newQuestionDoc.id !== previousQuestionId) {
-                        displayQuestion(newQuestionDoc.data, newQuestionDoc.id, window.currentLanguagePair);
-                        previousQuestionId = newQuestionDoc.id; // Update the previous question ID
-                        resolve(newQuestionDoc); // Resolve with the new question document
-                    } else {
-                        // If no new question or duplicate, proceed to load the next early question
-                        loadNextEarlyQuestion(user, window.currentLanguagePair, lessonId)
-                            .then(resolve)
-                            .catch(reject); // Propagate errors
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading new question:', error);
-                    reject(error);
-                });
-        } else {
-            console.error('Error loading user lesson data');
-            reject(new Error('Language pair not defined.'));
-        }
-    });
+function resetAndRetry() {
+    questionsToIgnore = [];
+    loadQuestion(firebase.auth().currentUser, window.currentLesson);
 }
 
-// Fetch questions and progress for the given language pair (e.g., 'en-de')
-function fetchAndLoadQuestions(languagePair, topic) {
-    console.log(`Fetching questions for language pair: ${languagePair} and topic: ${topic}`);
-    
-    const [knownLanguage, language] = languagePair.split('-');
-
-    return new Promise((resolve, reject) => {
-        // Fetch questions from grammar_questions collection based on the topic
-        db.collection('grammar_questions')
-            .where('topic', '==', parseInt(topic))
-            .where('language', '==', language)
-            .where('knownLanguage', '==', knownLanguage)
-            .limit(100) // Limit to 20 questions per lesson
-            .get()
-            .then(questionSnapshot => {
-                const questions = [];
-                questionSnapshot.forEach(doc => {
-                    questions.push({ id: doc.id, data: doc.data() });
-                });
-
-                // Fetch progress from the user's grammar collection (for the given languagePair)
-                db.collection('users').doc(firebase.auth().currentUser.uid)
-                    .collection('grammar').doc(languagePair)
-                    .collection('questions').get()
-                    .then(progressSnapshot => {
-                        const seenQuestions = progressSnapshot.docs.map(doc => doc.id);
-                        const unseenQuestions = questions.filter(q => !seenQuestions.includes(q.id));
-
-                        if (unseenQuestions.length > 0) {
-                            // Resolve with the first unseen question
-                            resolve(unseenQuestions[0]);
-                        } else {
-                            console.log('No new questions available.');
-                            resolve(null); // Resolve with null if no unseen questions
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching progress data:', error);
-                        reject(error);
-                    });
-            })
-            .catch(error => {
-                console.error('Error fetching grammar questions:', error);
-                reject(error);
-            });
-    });
-}
-
-// Load the next available question even if it's not due (based on the topic and language pair)
-function loadNextEarlyQuestion(user, languagePair, topic) {
-    return new Promise((resolve, reject) => {
-        db.collection('users').doc(user.uid)
-            .collection('grammar').doc(languagePair)
-            .collection('questions')
-            .where('topic', '==', parseInt(topic))
-            .orderBy('nextDue', 'asc')
-            .limit(2) // Fetch two questions to handle the case of repeating questions
-            .get()
-            .then(progressSnapshot => {
-                if (!progressSnapshot.empty) {
-                    const progressDocs = progressSnapshot.docs;
-
-                    // Find the first question that is not the same as the previous one
-                    const nextQuestionDoc = progressDocs.find(doc => doc.id !== previousQuestionId);
-
-                    if (nextQuestionDoc) {
-                        resolve({ id: nextQuestionDoc.id, data: nextQuestionDoc.data() });
-                    } else {
-                        // If all retrieved questions are the same as the previous one, resolve with the first one (fallback)
-                        resolve({ id: progressDocs[0].id, data: progressDocs[0].data() });
-                    }
-                } else {
-                    console.log('No questions found at all.');
-                    resolve(null);
-                }
-            })
-            .then(async (nextQuestionDoc) => {
-                if (nextQuestionDoc) {
-                    // Check if this question was answered correctly before
-                    if (nextQuestionDoc.data().timesCorrectInARow >= 1) {
-                        // Now, check if all questions are answered correctly
-                        const { totalQuestions, correctQuestions } = await fetchTotalQuestionsAndCorrect(
-                            db.collection('users').doc(user.uid),
-                            topic,
-                            languagePair.split('-')[1],
-                            languagePair.split('-')[0]
-                        );
-
-                        if (totalQuestions > 0 && correctQuestions === totalQuestions) {
-                            // Set startedAt100 to true
-                            startedAt100 = true;
-                            console.log('User has achieved 100% in this lesson.');
-
-                            // Do not show the modal
-                        }
-                    }
-
-                    const questionId = nextQuestionDoc.id;
-                    loadQuestionData(questionId, topic); // Load and display the question
-                    previousQuestionId = questionId; // Update the previous question ID
-                } else {
-                    console.log('No questions found.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching next early question:', error);
-                reject(error);
-            });
-    });
-}
 
 
 function showLoadingMessages() {
@@ -857,8 +872,8 @@ function displayQuestion(question, questionId, currentLesson) {
     // Retrieve the progress data for this question to get `lastAnswered`
     var user = firebase.auth().currentUser;
     var userProgressRef = db.collection('users').doc(user.uid)
-    .collection('grammar').doc(window.currentLanguagePair)
-    .collection('questions').doc(questionId);
+        .collection('grammar').doc(window.currentLanguagePair)
+        .collection('questions').doc(questionId);
 
     userProgressRef.get().then(progressDoc => {
         var questionStatus = "(new question)"; // Default if never answered before
@@ -954,7 +969,7 @@ function displayQuestion(question, questionId, currentLesson) {
     function handleSubmit() {
         var userAnswer = $('#user-answer').val().trim();
         var isCorrect = normalizeString(userAnswer) === normalizeString(question.missingWord);
-        handleAnswerSubmission(user, isCorrect, questionId, 
+        handleAnswerSubmission(user, isCorrect, questionId,
             currentQuestionData.topic, currentQuestionData.language, currentQuestionData.knownLanguage);
         afterAnswerSubmission(isCorrect);
     }
@@ -962,27 +977,27 @@ function displayQuestion(question, questionId, currentLesson) {
     // Function to display expected answer translations
     function displaymissingWordTranslation(translationsArray) {
 
-// Check if translationsArray is an array and limit to 3 entries, or if it's a non-empty string
-let translationsText = '';
-if (Array.isArray(translationsArray)) {
-    const translations = translationsArray.slice(0, 3);
-    if (translations.length > 0) {
-        translationsText = translations.join(', ');
-    }
-} else if (typeof translationsArray === 'string' && translationsArray.trim() !== '') {
-    translationsText = translationsArray.trim();
-}
+        // Check if translationsArray is an array and limit to 3 entries, or if it's a non-empty string
+        let translationsText = '';
+        if (Array.isArray(translationsArray)) {
+            const translations = translationsArray.slice(0, 3);
+            if (translations.length > 0) {
+                translationsText = translations.join(', ');
+            }
+        } else if (typeof translationsArray === 'string' && translationsArray.trim() !== '') {
+            translationsText = translationsArray.trim();
+        }
 
-if (translationsText) {
-    // Update the #feedback area with the translations
-    $('#feedback')
-        .html(`<span class="missing-word-translations">${translationsText}</span>`)
-        .addClass('visible')
-        .removeClass('text-success text-danger'); // Remove any previous feedback classes
-} else {
-    // Hide the feedback area if there are no translations
-    $('#feedback').removeClass('visible').html('');
-}
+        if (translationsText) {
+            // Update the #feedback area with the translations
+            $('#feedback')
+                .html(`<span class="missing-word-translations">${translationsText}</span>`)
+                .addClass('visible')
+                .removeClass('text-success text-danger'); // Remove any previous feedback classes
+        } else {
+            // Hide the feedback area if there are no translations
+            $('#feedback').removeClass('visible').html('');
+        }
     }
 
 
@@ -1000,9 +1015,9 @@ if (translationsText) {
         });
 
         // Calculate the time taken to answer the question
-  const questionEndTime = new Date();
-  let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
-  timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
+        const questionEndTime = new Date();
+        let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
+        timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
 
         // Disable the toggle button after submission
         $('#toggle-mode').prop('disabled', true);
@@ -1070,7 +1085,7 @@ if (translationsText) {
         // Event listener for Enter key to submit answer
         $('#user-answer').off('keypress').on('keypress', function (e) {
             if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
-                
+
                 handleDebounce(handleSubmit);
             }
         });
@@ -1246,7 +1261,7 @@ function getLanguageAndVoice(countryCode) {
 // Normalization function to ignore special characters
 function normalizeString(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ß/g, "ss").replace(/ẞ/g, "Ss").toLowerCase();
-    
+
 }
 
 // Update user progress in the database
@@ -1257,13 +1272,13 @@ function updateUserProgress(questionId, isCorrect, languagePair, timeTaken) {
         .collection('grammar').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
         .collection('questions').doc(questionId);
 
-        var userProgressRef = db.collection('users').doc(user.uid)
-    .collection('courses').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
-    .collection('progress').doc(questionId); // This is for updating daily stats
+    var userProgressRef = db.collection('users').doc(user.uid)
+        .collection('courses').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
+        .collection('progress').doc(questionId); // This is for updating daily stats
 
-  var userStatsRef = db.collection('users').doc(user.uid)
-    .collection('courses').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
-    .collection('stats'); // This is for updating all-time stats
+    var userStatsRef = db.collection('users').doc(user.uid)
+        .collection('courses').doc(currentQuestionData.knownLanguage + '-' + currentQuestionData.language)
+        .collection('stats'); // This is for updating all-time stats
 
     db.runTransaction(transaction => {
         return transaction.get(questionProgressRef).then(doc => {
@@ -1285,18 +1300,18 @@ function updateUserProgress(questionId, isCorrect, languagePair, timeTaken) {
 
             // Create a date object for the current date
             const now = new Date();
-            
+
             // Format the date according to the user's timezone
             const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
             const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
-            
+
             // Split the formatted date into parts
             const [month, day, year] = formattedDate.split('/');
-            
+
             // Create the date in yyyy-mm-dd format
             var today = `${year}-${month}-${day}`;
-            
-            
+
+
 
             var points = isCorrect ? 10 : 0;
 
@@ -1304,11 +1319,11 @@ function updateUserProgress(questionId, isCorrect, languagePair, timeTaken) {
                 points = Math.ceil(points / 2); // Half points for multiple choice
             }
 
-            debugger;
+
             if (isCorrect) {
                 data.timesCorrect++;
                 streakCorrect++;
-                streakWrong=0;
+                streakWrong = 0;
                 data.timesCorrectInARow++;
                 data.timesIncorrectInARow = 0; // Reset incorrect streak
                 data.nextDue = new Date(now.getTime() + (data.timesCorrectInARow * 24 * 60 * 60 * 1000)); // Add more days
@@ -1318,7 +1333,7 @@ function updateUserProgress(questionId, isCorrect, languagePair, timeTaken) {
                 $('#score').text(dailyScore); // Update the score on screen
             } else {
                 data.timesIncorrect++;
-                streakCorrect=0;
+                streakCorrect = 0;
                 streakWrong++;
                 data.timesIncorrectInARow++;
                 data.timesCorrectInARow = 0; // Reset correct streak
@@ -1336,10 +1351,10 @@ function updateUserProgress(questionId, isCorrect, languagePair, timeTaken) {
             console.log(data);
         });
     }).then(() => {
-        debugger;
+
         updateCoachFeedback(streakCorrect, streakWrong);
         console.log('User progress updated successfully');
-       
+
     }).catch(error => {
         console.error('Error updating progress:', error);
     });
@@ -1431,7 +1446,7 @@ function updateLastFiveAnswers() {
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
-    debugger;
+
     const dailyStatsRef = userStatsRef.doc(date);
     const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -1471,7 +1486,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 
 
                 // Update stats safely
-                
+
                 dailyData.score += score;
                 dailyData.totalDrills += 1;
                 dailyData.grammar_totalDrills += 1;
@@ -1516,14 +1531,14 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 
 
                 // Update stats safely
-                
+
                 allTimeData.totalScore += score;
                 allTimeData.grammar_totalScore += score;
                 allTimeData.grammar_totalDrills += 1;
                 allTimeData.totalDrills += 1;
                 allTimeData.grammar_timeSpent += timeTaken; // Add time taken to TimeSpent
                 allTimeData.TimeSpent += timeTaken; // Add time taken to TimeSpent
-                
+
 
                 if (isCorrect) {
                     allTimeData.totalCorrectAnswers += 1;
@@ -1590,7 +1605,7 @@ function buttonClick(which) {
 
 async function generateExplanation(questionId, fullSentence, missingWord, targetLanguage, userLanguage) {
     try {
-        debugger;
+
         const response = await fetch('https://us-central1-languizy2.cloudfunctions.net/explainSentence', {
             method: 'POST',
             headers: {
@@ -1602,7 +1617,7 @@ async function generateExplanation(questionId, fullSentence, missingWord, target
                 missingWord,
                 targetLanguage,
                 userLanguage,
-                grammar: true 
+                grammar: true
             })
         });
 
@@ -1712,19 +1727,19 @@ $('#explain-sentence-btn').off('click').on('click', async function () {
 async function fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, knownLanguage) {
     // Fetch total number of questions for this topic in the grammar_questions collection
     let totalQuestionsSnapshot = await db.collection('grammar_questions')
-        .where('topic', '==', topicNumber)
+        .where('topic', '==', parseInt(topicNumber))
         .where('language', '==', language)
         .where('knownLanguage', '==', knownLanguage)
         .get();
-    
+
     const totalQuestions = totalQuestionsSnapshot.size;
 
     // Fetch user's correct answers for this topic
     let correctQuestionsSnapshot = await userDocRef
         .collection('grammar')
-        .doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language)
+        .doc(knownLanguage + "-" + language)
         .collection('questions')
-        .where('topic', '==', topicNumber)
+        .where('topic', '==', parseInt(topicNumber))
         .where('timesCorrectInARow', '>', 0)
         .get();
 
@@ -1734,16 +1749,37 @@ async function fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, 
 }
 
 async function updateTopicScore(userDocRef, topicNumber, totalQuestions, correctQuestions) {
-    // Calculate the topic score as a percentage
+    // Calculate the topic score as a percentage and saves it to the user's grammar collection,
+    // and updates the completed lessons array if the score is 100. This is saved even if score drops below 100 later.
+    debugger;
     let topicScore = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
 
-    // Save the score in the scores array (index corresponds to the topic)
+    let scoreIs100 = false;
+
+    if (topicScore == 100) {
+        scoreIs100 = true;
+    }
+
+    // Update the scores
     await userDocRef
         .collection('grammar')
         .doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language)
         .set({
             scores: { [topicNumber]: topicScore }
         }, { merge: true });
+
+    if (scoreIs100) {
+        // Update the completed array
+        const grammarDoc = await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).get();
+        const completed = grammarDoc.exists && grammarDoc.data().completed ? grammarDoc.data().completed : [];
+
+        if (!completed.includes(topicNumber)) {
+            completed.push(topicNumber);
+            await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).update({
+                completed: completed
+            });
+        }
+    }
 
     return topicScore;
 }
@@ -1807,21 +1843,6 @@ async function handleAnswerSubmission(user, isCorrect, questionId, topicNumber, 
     }
 }
 
-// async function fetchLessonName(lessonId) {
-//     try {
-//         const lessonDoc = await db.collection('grammar_topics').doc(lessonId.toString()).get();
-//         if (lessonDoc.exists) {
-//             return lessonDoc.data().name || 'this lesson';
-//         } else {
-//             console.warn(`No lesson name found for lesson ID: ${lessonId}`);
-//             return 'this lesson';
-//         }
-//     } catch (error) {
-//         console.error('Error fetching lesson name:', error);
-//         return 'this lesson';
-//     }
-// }
-
 async function showCompletionModal(lessonId) {
     // Fetch the lesson name using the topic number
     const fetchedLessonName = await fetchLessonName(lessonId);
@@ -1868,7 +1889,7 @@ async function fetchLessonName(topicNumber) {
             .where('knownLanguage', '==', knownLanguage)
             .limit(1) // Assuming each topic number is unique
             .get();
-        
+
         if (!grammarSnapshot.empty) {
             const lessonData = grammarSnapshot.docs[0].data();
             return lessonData.name || 'this lesson';
@@ -1895,29 +1916,29 @@ function displayLessonName(name) {
 function addCharacter(character) {
     const inputField = document.getElementById('user-answer');
     if (inputField) {
-      const maxLength = inputField.maxLength;
-      const currentValue = inputField.value;
-      const startPos = inputField.selectionStart;
-      const endPos = inputField.selectionEnd;
-  
-      // Calculate the new length after insertion
-      const newLength = currentValue.length - (endPos - startPos) + character.length;
-  
-      // Check if the new length exceeds the max length
-      if (newLength <= maxLength) {
-        // Insert the character at the current cursor position
-        inputField.value = currentValue.substring(0, startPos) + character + currentValue.substring(endPos);
-  
-        // Move the cursor to the end of the inserted character
-        const newCursorPos = startPos + character.length;
-        inputField.setSelectionRange(newCursorPos, newCursorPos);
-      }
-  
-      // Focus the input field
-      inputField.focus();
+        const maxLength = inputField.maxLength;
+        const currentValue = inputField.value;
+        const startPos = inputField.selectionStart;
+        const endPos = inputField.selectionEnd;
+
+        // Calculate the new length after insertion
+        const newLength = currentValue.length - (endPos - startPos) + character.length;
+
+        // Check if the new length exceeds the max length
+        if (newLength <= maxLength) {
+            // Insert the character at the current cursor position
+            inputField.value = currentValue.substring(0, startPos) + character + currentValue.substring(endPos);
+
+            // Move the cursor to the end of the inserted character
+            const newCursorPos = startPos + character.length;
+            inputField.setSelectionRange(newCursorPos, newCursorPos);
+        }
+
+        // Focus the input field
+        inputField.focus();
     }
-  }
-  
+}
+
 
 function backToSelection(what) {
     if (what === "course") {
@@ -1925,104 +1946,104 @@ function backToSelection(what) {
     } else {
         window.location.href = '/grammar-topics.html';
     }
-  }
-  
+}
 
-   // Event listener for the Report button
-   $('#report-button').on('click', function () {
+
+// Event listener for the Report button
+$('#report-button').on('click', function () {
     $('#report-question-id').val(window.currentQuestionId); // Set the current question ID
     $('#reportModal').modal('show'); // Show the report modal
-  });
+});
 
-  // Event listener for the Submit button in the report modal
-  $('#submit-report').on('click', function () {
+// Event listener for the Submit button in the report modal
+$('#submit-report').on('click', function () {
     const comment = $('#report-comment').val().trim();
     const questionId = $('#report-question-id').val();
     const user = firebase.auth().currentUser;
     const currentTime = new Date().toISOString();
 
     if (comment && questionId && user) {
-      // Prepare the report data
-      const reportData = {
-        questionType: "grammar",
-        questionId: questionId,
-        timeOfUpdate: currentTime,
-        comment: comment,
-        language: window.currentQuestionData.language,
-        knownLanguage: window.currentQuestionData.knownLanguage,
-        isMultipleChoice: isMultipleChoice,
-        userId: uid,
-        status: 'created'
-      };
+        // Prepare the report data
+        const reportData = {
+            questionType: "grammar",
+            questionId: questionId,
+            timeOfUpdate: currentTime,
+            comment: comment,
+            language: window.currentQuestionData.language,
+            knownLanguage: window.currentQuestionData.knownLanguage,
+            isMultipleChoice: isMultipleChoice,
+            userId: uid,
+            status: 'created'
+        };
 
-      // Insert the report into Firestore
-      db.collection('reports').add(reportData)
-        .then(() => {
-          $('#reportForm')[0].reset(); // Clear the form
-          $('#reportModal').modal('hide'); // Close the modal
-          alert('Report submitted successfully.');
-        })
-        .catch(error => {
-          console.error('Error submitting report:', error);
-          alert('Failed to submit report. Please try again.');
-        });
+        // Insert the report into Firestore
+        db.collection('reports').add(reportData)
+            .then(() => {
+                $('#reportForm')[0].reset(); // Clear the form
+                $('#reportModal').modal('hide'); // Close the modal
+                alert('Report submitted successfully.');
+            })
+            .catch(error => {
+                console.error('Error submitting report:', error);
+                alert('Failed to submit report. Please try again.');
+            });
     } else {
-      alert('Please enter a comment before submitting.');
+        alert('Please enter a comment before submitting.');
     }
-  });
+});
 
-  async function populateSubLevelBadge(userDoc) {
+async function populateSubLevelBadge(userDoc) {
     const subLevel = userDoc.data().subLevel;
     const subLevelBadge = document.getElementById('subLevelBadge');
     subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
     if (subLevel === 'Free') {
-      subLevelBadge.textContent = 'FREE';
-      subLevelBadge.className = 'badge bg-secondary';
-      debugger;
-      subLevelBadge.onclick = function() {
-        window.location.href = '/course_selection.html?upgrade=true';
-      };
-  } else {
-      subLevelBadge.textContent = 'PRO';
-      subLevelBadge.className = 'badge bg-danger';
-      subLevelBadge.onclick = null; // No action on click for PRO
-  }
-  }
+        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.className = 'badge bg-secondary';
 
-  // Function to check drills and show modal if limit is reached
+        subLevelBadge.onclick = function () {
+            window.location.href = '/course_selection.html?upgrade=true';
+        };
+    } else {
+        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.className = 'badge bg-danger';
+        subLevelBadge.onclick = null; // No action on click for PRO
+    }
+}
+
+// Function to check drills and show modal if limit is reached
 async function checkDrillsLimit(user, currentCourse) {
 
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  
+
     // Create a date object for the current date
     const now = new Date();
-    
+
     // Format the date according to the user's timezone
     const options = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: userTimezone };
     const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now);
-    
+
     // Split the formatted date into parts
     const [month, day, year] = formattedDate.split('/');
-    
+
     // Create the date in yyyy-mm-dd format
     var today = `${year}-${month}-${day}`;
-    
+
     const userDocRef = db.collection('users').doc(user.uid);
     const courseDocRef = userDocRef.collection('courses').doc(currentCourse);
-    
+
     try {
         const statsDoc = await courseDocRef.collection('stats').doc(today).get();
         let totalDrills = 0;
-  
+
         if (statsDoc.exists) {
             const data = statsDoc.data();
             totalDrills = (data.grammar_totalDrills || 0) + (data.totalDrills || 0);
         }
-  
+
         // Check subscription level
         const userData = await userDocRef.get();
         const subLevel = userData.data().subLevel;
-        
+
         if (subLevel === 'Free' && totalDrills >= 50) {
             // Show modal if drills limit is reached
             const modalElement = new bootstrap.Modal(document.getElementById('drillsLimitModal'), {
@@ -2037,29 +2058,29 @@ async function checkDrillsLimit(user, currentCourse) {
     } catch (error) {
         console.error("Error checking drills limit:", error);
     }
-  }
-  
-  function updateSpecialCharacters(targetLanguage) {
-    debugger;
+}
+
+function updateSpecialCharacters(targetLanguage) {
+
     const specialChars = languageToSpecialChars[targetLanguage] || [];
     const specialCharsContainer = document.getElementById('special-characters');
-  
+
     // Clear existing buttons
     specialCharsContainer.innerHTML = '';
-  
+
     // Create buttons for each special character
     specialChars.forEach(char => {
-      const button = document.createElement('button');
-      button.className = 'btn btn-light';
-      button.textContent = char;
-      button.onclick = () => addCharacter(char);
-      specialCharsContainer.appendChild(button);
+        const button = document.createElement('button');
+        button.className = 'btn btn-light';
+        button.textContent = char;
+        button.onclick = () => addCharacter(char);
+        specialCharsContainer.appendChild(button);
     });
-  
+
     // Show the special characters container if there are characters to display
     if (specialChars.length > 0) {
-      specialCharsContainer.style.display = 'block';
+        specialCharsContainer.style.display = 'block';
     } else {
-      specialCharsContainer.style.display = 'none';
+        specialCharsContainer.style.display = 'none';
     }
-  }
+}
