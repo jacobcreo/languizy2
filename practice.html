@@ -26,22 +26,24 @@
     gtag('config', 'G-K8GMWBXC5J');
   </script>
   <!-- Meta Pixel Code -->
-<script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
+  <script>
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ?
+        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0;
+      t.src = v; s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s)
+    }(window, document, 'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '621064440260076');
     fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=621064440260076&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=621064440260076&ev=PageView&noscript=1" /></noscript>
+  <!-- End Meta Pixel Code -->
 
 </head>
 
@@ -85,6 +87,11 @@
             <i class="fa fa-list text-primary"></i>
             <span id="proficiencyLevel">0</span>
             <span id="profTooltip" class="tooltiptext"></span>
+          </span>
+          <!-- Due Questions Count Display -->
+          <span id="dueQuestions-box" class="dueQuestions-box d-inline mx-3">
+            <i class="fa fa-hourglass-start text-danger" aria-hidden="true"></i>
+            <span id="dueQuestions">0</span>
           </span>
           <span class="score-box d-inline me-3">
             <i class="fas fa-star text-warning"></i>
@@ -374,23 +381,24 @@
   </div>
 
   <!-- Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-4 shadow-lg">
-          <div class="modal-header bg-warning text-dark">
-              <h5 class="modal-title" id="errorModalLabel">Oops! Something went wrong.</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body text-center">
-              <p>We couldn't load the questions. There might be an issue with your internet connection.</p>
-          </div>
-          <div class="modal-footer justify-content-center">
-              <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'">Back to Main Screen</button>
-              <button type="button" class="btn btn-secondary" onclick="resetAndRetry()">Try Again</button>
-          </div>
+        <div class="modal-header bg-warning text-dark">
+          <h5 class="modal-title" id="errorModalLabel">Oops! Something went wrong.</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p>We couldn't load the questions. There might be an issue with your internet connection.</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'">Back to
+            Main Screen</button>
+          <button type="button" class="btn btn-secondary" onclick="resetAndRetry()">Try Again</button>
+        </div>
       </div>
+    </div>
   </div>
-</div>
 
   <!-- Scripts -->
 

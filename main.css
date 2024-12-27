@@ -602,3 +602,16 @@ h1, h3 {
   cursor: pointer;
   margin-right: 15px;
 }
+
+/* Due Questions Count Styles */
+.dueQuestions-box {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #dc3545; /* Bootstrap's red color for emphasis */
+}
+
+.dueQuestions-box i {
+  margin-right: 0.35rem;
+}

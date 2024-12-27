@@ -279,6 +279,7 @@ firebase.auth().onAuthStateChanged(function (user) {
   if (user) {
     fetchOrAssignCoach(user).then(() => {
       fetchCurrentCourse(user).then((currentCourse) => {
+        window.currentCourse = currentCourse;
         loadUserAvatar(user);
         if (!currentCourse) {
           console.error('No valid current course found.');
@@ -736,6 +737,33 @@ function resetAndRetry() {
   loadQuestion(firebase.auth().currentUser, window.currentCourse);
 }
 
+// Function to get the count of due questions
+async function getDueQuestionsCount() {
+  try {
+      const progressRef = db.collection('users')
+          .doc(uid)
+          .collection('courses')
+          .doc(window.currentCourse)
+          .collection('progress');
+
+      const countSnapshot = await progressRef
+          .where('nextDue', '<=', new Date())
+          .get();
+
+      return countSnapshot.size;
+  } catch (error) {
+      console.error('Error fetching due questions count:', error);
+      return 0;
+  }
+}
+
+// Function to update the due questions count in the UI
+async function updateDueQuestionsCount() {
+  const count = await getDueQuestionsCount();
+  document.getElementById('dueQuestions').innerText = count;
+}
+
+
 
 function showLoadingMessages() {
   // Use coach-specific loading messages
@@ -806,6 +834,9 @@ function displayQuestion(question, questionId, currentCourse) {
   console.log(question);
   hideLoadingProgress(); // Hide progress bar when the question loads
   $('#replay-audio').prop('disabled', true); // Disable and grey out the button
+  
+  updateDueQuestionsCount(); // Update the due questions count in the UI
+                             // We are doing this here because it's ensuring that the previous stats are updated before the new question is displayed
 
 
   // Store questionId and current question data globally for use in other functions
