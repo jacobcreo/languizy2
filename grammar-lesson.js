@@ -731,6 +731,8 @@ function showErrorModal() {
 
 function resetAndRetry() {
     questionsToIgnore = [];
+    $('#errorModal').modal('hide');
+
     loadQuestion(firebase.auth().currentUser, window.currentLesson);
 }
 
@@ -1435,6 +1437,7 @@ function updateLastFiveAnswers() {
 
     // Add boxes based on last 5 answers
     for (let i = 0; i < 5; i++) {
+        debugger;
         let answerClass = 'gray'; // Default is gray
         if (i < lastFiveAnswers.length) {
             answerClass = lastFiveAnswers[i] === 'correct' ? 'green' : 'red';

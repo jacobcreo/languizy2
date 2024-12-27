@@ -209,11 +209,11 @@ h1, h3 {
 }
 
 .answer-box.green {
-    background-color: #28a745;
+    background-color: #28a745 !important;
 }
 
 .answer-box.red {
-    background-color: #dc3545;
+    background-color: #dc3545 !important;
 }
 
 /* Small Screens: Five Thick Horizontal Lines */
