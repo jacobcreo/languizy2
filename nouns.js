@@ -982,10 +982,10 @@ function toggleMode() {
         'question_type': 'Nouns',
         'user_id': uid,
         'user_pressed': isMultipleChoice ? 'Make it easier' : 'Make it harder',
-        'course': window.currentCourse
+        'course': currentCourse
     });
     // Reload the current question with the new mode
-    displayNoun(window.currentNounData, window.currentNounId, window.currentCourse);
+    displayNoun(window.currentNounData, window.currentNounId, currentCourse);
 }
 
 // Function to fetch the current course based on URL or Firestore
@@ -1347,7 +1347,7 @@ function afterAnswerSubmission(isCorrect, type = "translation") {
         'question_type': 'Nouns',
         'user_id': uid,
         'answer': isCorrect,
-        'course': window.currentCourse,
+        'course': currentCourse,
         'mode': type === "four-images" ? 'four-images' : (isMultipleChoice ? 'Multiple_Choice' : 'Text_Input')
     });
 
@@ -1380,7 +1380,7 @@ function afterAnswerSubmission(isCorrect, type = "translation") {
 
     // Update visual stats and progress
     updateVisualStats(isCorrect);
-    updateUserProgress(window.currentNounId, isCorrect, window.currentCourse, timeTaken);
+    updateUserProgress(window.currentNounId, isCorrect, currentCourse, timeTaken);
 
     // Hide toggle-mode button after answer is submitted
     $('#toggle-mode').hide();
@@ -2507,7 +2507,7 @@ function playNounAudio(nounId, nounWord) {
 
     var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${nounId}.mp3`;
 
-    const targetLanguage = window.currentCourse.split('-')[1];
+    const targetLanguage = currentCourse.split('-')[1];
     nounAudioElement.src = audioUrl;
     nounAudioElement.play()
         .then(() => {
@@ -3349,7 +3349,7 @@ function showErrorModal() {
 function resetAndRetry() {
     nounsToIgnore = [];
     $('#errorModal').modal('hide');
-    loadNoun(firebase.auth().currentUser, window.currentCourse);
+    loadNoun(firebase.auth().currentUser, currentCourse);
 }
 
 
@@ -3359,7 +3359,7 @@ function afterAnswerSubmissionNew(isCorrect, type = "translation", user = null) 
         'question_type': 'Nouns',
         'user_id': uid,
         'answer': isCorrect,
-        'course': window.currentCourse,
+        'course': currentCourse,
         'mode': type
     });
 
@@ -3397,7 +3397,7 @@ function afterAnswerSubmissionNew(isCorrect, type = "translation", user = null) 
     const timeTaken = Math.min(Math.floor((new Date() - questionStartTime) / 1000), 30);
 
     updateVisualStats(isCorrect);
-    updateUserProgress(window.currentNounId, isCorrect, window.currentCourse, timeTaken);
+    updateUserProgress(currentNounId, isCorrect, currentCourse, timeTaken);
 
     if (type == "matching-mode" || type == "matching-images-mode") {
         loadNoun(user, currentCourse);
