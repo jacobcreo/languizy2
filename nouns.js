@@ -787,7 +787,7 @@ let isMultipleChoice; // Global variable to track the current mode (multiple-cho
 // Global variables to store the current noun data
 let currentNounId;
 let currentNounData;
-let currentCourse;
+var currentCourse;
 let interimMessageInterval;
 // Initialize audio element for noun audio playback
 var nounAudioElement = new Audio();
@@ -833,7 +833,7 @@ function loadUserAvatar(user) {
     });
 }
 
-function updateFlagIcons(currentCourse) {
+function updateFlagIcons(currentCourse = window.currentCourse) {
     const flagCard = document.getElementById('flag-card');
     if (!flagCard) return;
 
@@ -880,6 +880,7 @@ firebase.auth().onAuthStateChanged(function (user) {
         fetchOrAssignCoach(user).then(() => {
 
             fetchCurrentCourse(user).then((currentCourse) => {
+                window.currentCourse = currentCourse;
                 loadUserAvatar(user);
                 if (!currentCourse) {
                     console.error('No valid current course found.');
@@ -938,7 +939,7 @@ async function populateSubLevelBadge(userDoc) {
 }
 
 // New function to update maxOrder
-function updateMaxOrder(user, currentCourse) {
+function updateMaxOrder(user, currentCourse = window.currentCourse) {
 
     const allTimeStatsRef = db.collection('users').doc(user.uid)
         .collection('courses').doc(currentCourse)
@@ -985,7 +986,7 @@ function toggleMode() {
         'course': currentCourse
     });
     // Reload the current question with the new mode
-    displayNoun(window.currentNounData, window.currentNounId, currentCourse);
+    displayNoun(currentNounData, currentNounId, currentCourse);
 }
 
 // Function to fetch the current course based on URL or Firestore
@@ -1081,7 +1082,7 @@ function validateCourse(courseId) {
 }
 
 // Function to load daily score from Firestore
-function loadDailyScore(user, currentCourse) {
+function loadDailyScore(user, currentCourse = window.currentCourse) {
     // Get the user's local timezone
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -1116,7 +1117,7 @@ function loadDailyScore(user, currentCourse) {
     });
 }
 
-async function loadNoun(user, currentCourse) {
+async function loadNoun(user, currentCourse = window.currentCourse) {
     try {
         showLoadingProgress();
         resetAllExerciseUI();  // Hide all UI for a fresh start
@@ -1183,7 +1184,7 @@ function determineNounDisplayMode() {
 }
 
 // 1) getDueNoun
-async function getDueNoun(user, currentCourse) {
+async function getDueNoun(user, currentCourse = window.currentCourse) {
     try {
         const ref = db.collection('users').doc(user.uid)
             .collection('nouns').doc(currentCourse)
@@ -1214,15 +1215,17 @@ async function getDueNoun(user, currentCourse) {
 }
 
 // 2) getNewNoun
-async function getNewNoun(user, currentCourse) {
+async function getNewNoun(user, currentCourse = window.currentCourse) {
     try {
+        debugger;
         const [knownLang, targetLang] = currentCourse.split('-');
 
         // Query from “nouns” collection
         const allQsSnap = await db.collection('nouns')
             .where('knownLanguage', '==', knownLang)
             .where('language', '==', targetLang)
-            .limit(100)
+            .orderBy('order', 'asc') // Order by 'order' in ascending order
+            .limit(10)
             .get();
 
         if (allQsSnap.empty) return null;
@@ -1255,7 +1258,7 @@ async function getNewNoun(user, currentCourse) {
 }
 
 // 3) getNextEarlyNoun
-async function getNextEarlyNoun(user, currentCourse) {
+async function getNextEarlyNoun(user, currentCourse = window.currentCourse) {
     try {
         const ref = db.collection('users').doc(user.uid)
             .collection('nouns').doc(currentCourse)
@@ -1283,7 +1286,7 @@ async function getNextEarlyNoun(user, currentCourse) {
     }
 }
 
-function loadNounData(nounId, currentCourse) {
+function loadNounData(nounId, currentCourse = window.currentCourse) {
     db.collection('nouns').doc(nounId).get()
         .then(nounDoc => {
             if (nounDoc.exists) {
@@ -1560,7 +1563,7 @@ function resetAllExerciseUI() {
 }
 
 // Display the noun on the page
-function displayNoun(noun, nounId, currentCourse) {
+function displayNoun(noun, nounId, currentCourse = window.currentCourse) {
     // Store nounId and current noun data globally for use in other functions
     console.log('displayNoun called: ' + new Date().getTime());
 
@@ -2614,7 +2617,7 @@ function normalizeString(str) {
 }
 
 // Update user progress in the database
-function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
+function updateUserProgress(nounId, isCorrect, currentCourse = window.currentCourse, timeTaken = 0) {
 
     var user = firebase.auth().currentUser;
 
@@ -3065,7 +3068,7 @@ $('#submit-report').on('click', function () {
 });
 
 // Function to check drills and show modal if limit is reached
-async function checkDrillsLimit(user, currentCourse) {
+async function checkDrillsLimit(user, currentCourse = window.currentCourse) {
 
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -3114,7 +3117,7 @@ async function checkDrillsLimit(user, currentCourse) {
     }
 }
 
-function afterDrillCompleted(user, currentCourse) {
+function afterDrillCompleted(user, currentCourse = window.currentCourse) {
     checkDrillsLimit(user, currentCourse);
 }
 
@@ -3144,7 +3147,7 @@ function updateSpecialCharacters(targetLanguage) {
     }
 }
 
-function adjustInputField(noun, currentCourse) {
+function adjustInputField(noun, currentCourse = window.currentCourse) {
 
 
     const inputField = document.getElementById('user-answer');
