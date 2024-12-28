@@ -2507,7 +2507,7 @@ function playNounAudio(nounId, nounWord) {
 
     var audioUrl = `https://s3.us-east-2.amazonaws.com/audio1.languizy.com/audio/${nounId}.mp3`;
 
-    const targetLanguage = currentCourse.split('-')[1];
+    const targetLanguage = window.currentCourse.split('-')[1];
     nounAudioElement.src = audioUrl;
     nounAudioElement.play()
         .then(() => {
