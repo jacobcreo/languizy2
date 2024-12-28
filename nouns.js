@@ -1,29 +1,507 @@
-// Initialize Firestore
-var db = firebase.firestore();
-var dailyScore = 0;
-var debounceTimeout = null; // Use a debounce timeout instead of a boolean flag
-let correctAnswers = 0;
-let wrongAnswers = 0;
-let streakCorrect = 0;
-let streakWrong = 0;
-let lastFiveAnswers = [];
-let previousNounId = null; // Ensure this is correctly initialized
-let questionStartTime; // Variable to store the start time of the question
-let nounDisplayMode = "four-images";
-let listOfSeenNouns = [];
-let maxOrder = 0;
-let imagesLoaded = 0;
-let showCoachFeedback = true;
-let interfaceLanguage = 'en';
+// consts:
 
-let nounsToIgnore = []; // Array to skip failing or problematic Noun IDs for this session
-
-
-
-
-let matchingPairs = []; // Store {target: "", origin: ""}
-let selectedMatchingBtn = null; // Track the currently selected button
-let matchedCount = 0; // Count how many pairs have been matched in this drill
+const LEVELS_LIST = [
+    {
+        "level": 1,
+        "name": "Word Wanderer",
+        "correctDrillsRequired": 0
+    },
+    {
+        "level": 2,
+        "name": "Letter Explorer",
+        "correctDrillsRequired": 20
+    },
+    {
+        "level": 3,
+        "name": "Phrase Pioneer",
+        "correctDrillsRequired": 50
+    },
+    {
+        "level": 4,
+        "name": "Sound Adventurer",
+        "correctDrillsRequired": 90
+    },
+    {
+        "level": 5,
+        "name": "Grammar Glider",
+        "correctDrillsRequired": 140
+    },
+    {
+        "level": 6,
+        "name": "Sentence Sprout",
+        "correctDrillsRequired": 200
+    },
+    {
+        "level": 7,
+        "name": "Accent Apprentice",
+        "correctDrillsRequired": 270
+    },
+    {
+        "level": 8,
+        "name": "Vocab Voyager",
+        "correctDrillsRequired": 350
+    },
+    {
+        "level": 9,
+        "name": "Syntax Seeker",
+        "correctDrillsRequired": 440
+    },
+    {
+        "level": 10,
+        "name": "Culture Enthusiast",
+        "correctDrillsRequired": 540
+    },
+    {
+        "level": 11,
+        "name": "Language Pathfinder",
+        "correctDrillsRequired": 650
+    },
+    {
+        "level": 12,
+        "name": "Article Architect",
+        "correctDrillsRequired": 770
+    },
+    {
+        "level": 13,
+        "name": "Dialogue Discoverer",
+        "correctDrillsRequired": 900
+    },
+    {
+        "level": 14,
+        "name": "Noun Navigator",
+        "correctDrillsRequired": 1040
+    },
+    {
+        "level": 15,
+        "name": "Verb Conqueror",
+        "correctDrillsRequired": 1190
+    },
+    {
+        "level": 16,
+        "name": "Preposition Pilot",
+        "correctDrillsRequired": 1350
+    },
+    {
+        "level": 17,
+        "name": "Basic Builder",
+        "correctDrillsRequired": 1520
+    },
+    {
+        "level": 18,
+        "name": "Wordsmith-in-Training",
+        "correctDrillsRequired": 1700
+    },
+    {
+        "level": 19,
+        "name": "Grammar Grower",
+        "correctDrillsRequired": 1890
+    },
+    {
+        "level": 20,
+        "name": "Pronunciation Prodigy",
+        "correctDrillsRequired": 2090
+    },
+    {
+        "level": 21,
+        "name": "Sentence Shaper",
+        "correctDrillsRequired": 2300
+    },
+    {
+        "level": 22,
+        "name": "Conjugation Crafter",
+        "correctDrillsRequired": 2520
+    },
+    {
+        "level": 23,
+        "name": "Idiom Investigator",
+        "correctDrillsRequired": 2750
+    },
+    {
+        "level": 24,
+        "name": "Conversation Champion",
+        "correctDrillsRequired": 2990
+    },
+    {
+        "level": 25,
+        "name": "Phrase Chaser",
+        "correctDrillsRequired": 3240
+    },
+    {
+        "level": 26,
+        "name": "Accent Aficionado",
+        "correctDrillsRequired": 3500
+    },
+    {
+        "level": 27,
+        "name": "Vocabulary Virtuoso",
+        "correctDrillsRequired": 3770
+    },
+    {
+        "level": 28,
+        "name": "Grammar Guardian",
+        "correctDrillsRequired": 4050
+    },
+    {
+        "level": 29,
+        "name": "Dialogue Dancer",
+        "correctDrillsRequired": 4340
+    },
+    {
+        "level": 30,
+        "name": "Cultural Connector",
+        "correctDrillsRequired": 4640
+    },
+    {
+        "level": 31,
+        "name": "Syntax Strategist",
+        "correctDrillsRequired": 4950
+    },
+    {
+        "level": 32,
+        "name": "Expression Enthusiast",
+        "correctDrillsRequired": 5270
+    },
+    {
+        "level": 33,
+        "name": "Linguistic Learner",
+        "correctDrillsRequired": 5600
+    },
+    {
+        "level": 34,
+        "name": "Word Weaver",
+        "correctDrillsRequired": 5940
+    },
+    {
+        "level": 35,
+        "name": "Translation Tactician",
+        "correctDrillsRequired": 6290
+    },
+    {
+        "level": 36,
+        "name": "Comprehension Conqueror",
+        "correctDrillsRequired": 6650
+    },
+    {
+        "level": 37,
+        "name": "Sentence Sculptor",
+        "correctDrillsRequired": 7020
+    },
+    {
+        "level": 38,
+        "name": "Accent Artist",
+        "correctDrillsRequired": 7400
+    },
+    {
+        "level": 39,
+        "name": "Phrase Specialist",
+        "correctDrillsRequired": 7790
+    },
+    {
+        "level": 40,
+        "name": "Grammar Sage",
+        "correctDrillsRequired": 8190
+    },
+    {
+        "level": 41,
+        "name": "Linguistic Voyager",
+        "correctDrillsRequired": 8600
+    },
+    {
+        "level": 42,
+        "name": "Polyglot Pathfinder",
+        "correctDrillsRequired": 9020
+    },
+    {
+        "level": 43,
+        "name": "Syntax Sorcerer",
+        "correctDrillsRequired": 9450
+    },
+    {
+        "level": 44,
+        "name": "Idiom Alchemist",
+        "correctDrillsRequired": 9890
+    },
+    {
+        "level": 45,
+        "name": "Phraseologist",
+        "correctDrillsRequired": 10340
+    },
+    {
+        "level": 46,
+        "name": "Expression Artisan",
+        "correctDrillsRequired": 10800
+    },
+    {
+        "level": 47,
+        "name": "Accent Maestro",
+        "correctDrillsRequired": 11270
+    },
+    {
+        "level": 48,
+        "name": "Fluent Trailblazer",
+        "correctDrillsRequired": 11750
+    },
+    {
+        "level": 49,
+        "name": "Cultural Whisperer",
+        "correctDrillsRequired": 12240
+    },
+    {
+        "level": 50,
+        "name": "Grammar Virtuoso",
+        "correctDrillsRequired": 12740
+    },
+    {
+        "level": 51,
+        "name": "Language Magician",
+        "correctDrillsRequired": 13250
+    },
+    {
+        "level": 52,
+        "name": "Multilingual Muse",
+        "correctDrillsRequired": 13770
+    },
+    {
+        "level": 53,
+        "name": "Conjugation Commander",
+        "correctDrillsRequired": 14300
+    },
+    {
+        "level": 54,
+        "name": "Sentence Sculptor Extraordinaire",
+        "correctDrillsRequired": 14840
+    },
+    {
+        "level": 55,
+        "name": "Expression Explorer",
+        "correctDrillsRequired": 15390
+    },
+    {
+        "level": 56,
+        "name": "Cultural Cartographer",
+        "correctDrillsRequired": 15950
+    },
+    {
+        "level": 57,
+        "name": "Polyglot Dreamer",
+        "correctDrillsRequired": 16520
+    },
+    {
+        "level": 58,
+        "name": "Dialogue Dynamo",
+        "correctDrillsRequired": 17100
+    },
+    {
+        "level": 59,
+        "name": "Vocabulary Visionary",
+        "correctDrillsRequired": 17690
+    },
+    {
+        "level": 60,
+        "name": "Linguistic Luminary",
+        "correctDrillsRequired": 18290
+    },
+    {
+        "level": 61,
+        "name": "Language Nomad",
+        "correctDrillsRequired": 18900
+    },
+    {
+        "level": 62,
+        "name": "Multilingual Mastermind",
+        "correctDrillsRequired": 19520
+    },
+    {
+        "level": 63,
+        "name": "Syntax Whisperer",
+        "correctDrillsRequired": 20150
+    },
+    {
+        "level": 64,
+        "name": "Prose Pioneer",
+        "correctDrillsRequired": 20790
+    },
+    {
+        "level": 65,
+        "name": "Vocabulary Vanguard",
+        "correctDrillsRequired": 21440
+    },
+    {
+        "level": 66,
+        "name": "Translation Titan",
+        "correctDrillsRequired": 22100
+    },
+    {
+        "level": 67,
+        "name": "Accent Virtuoso",
+        "correctDrillsRequired": 22770
+    },
+    {
+        "level": 68,
+        "name": "Idiom Enthusiast",
+        "correctDrillsRequired": 23450
+    },
+    {
+        "level": 69,
+        "name": "Cultural Ambassador",
+        "correctDrillsRequired": 24140
+    },
+    {
+        "level": 70,
+        "name": "Grammar Guru",
+        "correctDrillsRequired": 24840
+    },
+    {
+        "level": 71,
+        "name": "Fluent Pathfinder",
+        "correctDrillsRequired": 25550
+    },
+    {
+        "level": 72,
+        "name": "Global Conversationalist",
+        "correctDrillsRequired": 26270
+    },
+    {
+        "level": 73,
+        "name": "Prose Alchemist",
+        "correctDrillsRequired": 27000
+    },
+    {
+        "level": 74,
+        "name": "Wordplay Wizard",
+        "correctDrillsRequired": 27740
+    },
+    {
+        "level": 75,
+        "name": "Accent Perfectionist",
+        "correctDrillsRequired": 28490
+    },
+    {
+        "level": 76,
+        "name": "Language Liberator",
+        "correctDrillsRequired": 29250
+    },
+    {
+        "level": 77,
+        "name": "Idiom Illuminator",
+        "correctDrillsRequired": 30020
+    },
+    {
+        "level": 78,
+        "name": "Expression Strategist",
+        "correctDrillsRequired": 30800
+    },
+    {
+        "level": 79,
+        "name": "Communication Captain",
+        "correctDrillsRequired": 31590
+    },
+    {
+        "level": 80,
+        "name": "Cultural Crusader",
+        "correctDrillsRequired": 32390
+    },
+    {
+        "level": 81,
+        "name": "Multilingual Maestro",
+        "correctDrillsRequired": 33200
+    },
+    {
+        "level": 82,
+        "name": "Expression Innovator",
+        "correctDrillsRequired": 34020
+    },
+    {
+        "level": 83,
+        "name": "Linguistic Artisan",
+        "correctDrillsRequired": 34850
+    },
+    {
+        "level": 84,
+        "name": "Cultural Sage",
+        "correctDrillsRequired": 35690
+    },
+    {
+        "level": 85,
+        "name": "Language Connoisseur",
+        "correctDrillsRequired": 36540
+    },
+    {
+        "level": 86,
+        "name": "Grammar Grandmaster",
+        "correctDrillsRequired": 37400
+    },
+    {
+        "level": 87,
+        "name": "Syntax Champion",
+        "correctDrillsRequired": 38270
+    },
+    {
+        "level": 88,
+        "name": "Conversational Visionary",
+        "correctDrillsRequired": 39150
+    },
+    {
+        "level": 89,
+        "name": "Polyglot Pilgrim",
+        "correctDrillsRequired": 40040
+    },
+    {
+        "level": 90,
+        "name": "Linguistic Virtuoso",
+        "correctDrillsRequired": 40940
+    },
+    {
+        "level": 91,
+        "name": "Expressionist Extraordinaire",
+        "correctDrillsRequired": 41850
+    },
+    {
+        "level": 92,
+        "name": "Language Legend",
+        "correctDrillsRequired": 42770
+    },
+    {
+        "level": 93,
+        "name": "Fluent Star",
+        "correctDrillsRequired": 43700
+    },
+    {
+        "level": 94,
+        "name": "Sentence Symphony",
+        "correctDrillsRequired": 44640
+    },
+    {
+        "level": 95,
+        "name": "Accent Commander",
+        "correctDrillsRequired": 45590
+    },
+    {
+        "level": 96,
+        "name": "Translation Luminary",
+        "correctDrillsRequired": 46550
+    },
+    {
+        "level": 97,
+        "name": "Polyglot Pioneer",
+        "correctDrillsRequired": 47520
+    },
+    {
+        "level": 98,
+        "name": "Linguistic Sage",
+        "correctDrillsRequired": 48500
+    },
+    {
+        "level": 99,
+        "name": "Global Wordsmith",
+        "correctDrillsRequired": 49490
+    },
+    {
+        "level": 100,
+        "name": "Master of Tongues",
+        "correctDrillsRequired": 50490
+    }
+];
 
 const UIString = {
     'en': {
@@ -248,24 +726,6 @@ const UIString = {
     // Add more languages as needed
 };
 
-let fourImagesToLoad = [];
-
-let uid = null;
-
-// Global variable to track the current mode (multiple-choice or text input)
-let isMultipleChoice;
-
-// Global variables to store the current noun data
-let currentNounId;
-let currentNounData;
-let currentCourse;
-
-
-
-
-
-
-let interimMessageInterval;
 const countryToLanguage = {
     cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
     in: { languageCode: "hi-IN", voice: "Aditi" },         // India
@@ -297,6 +757,38 @@ const languageToSpecialChars = {
     pl: ['ą', 'ć', 'ę', 'ł'] // Polish
 };
 
+// various consts not shown for brevity
+
+// Initialize Firestore
+var db = firebase.firestore();
+var dailyScore = 0;
+var debounceTimeout = null; // Use a debounce timeout instead of a boolean flag
+let correctAnswers = 0;
+let wrongAnswers = 0;
+let streakCorrect = 0;
+let streakWrong = 0;
+let lastFiveAnswers = [];
+let previousNounId = null; // Ensure this is correctly initialized
+let questionStartTime; // Variable to store the start time of the question
+let nounDisplayMode = "four-images";
+let listOfSeenNouns = [];
+let maxOrder = 0;
+let imagesLoaded = 0;
+let showCoachFeedback = true;
+let interfaceLanguage = 'en';
+let userCurrentLevel = 1; // default
+let nounsToIgnore = []; // Array to skip failing or problematic Noun IDs for this session
+let matchingPairs = []; // Store {target: "", origin: ""}
+let selectedMatchingBtn = null; // Track the currently selected button
+let matchedCount = 0; // Count how many pairs have been matched in this drill
+let fourImagesToLoad = [];
+let uid = null;
+let isMultipleChoice; // Global variable to track the current mode (multiple-choice or text input)
+// Global variables to store the current noun data
+let currentNounId;
+let currentNounData;
+let currentCourse;
+let interimMessageInterval;
 // Initialize audio element for noun audio playback
 var nounAudioElement = new Audio();
 
@@ -403,6 +895,17 @@ firebase.auth().onAuthStateChanged(function (user) {
                 updateFlagIcons(currentCourse);
                 updateMaxOrder(user, currentCourse);
 
+                // fetch user level from all-time doc once, store in window.userCurrentLevel
+                fetchCurrentLevel(user, currentCourse)
+                    .then((lvl) => {
+                        userCurrentLevel = lvl;
+                        console.log("User current level is:", lvl);
+                    })
+                    .catch((err) => {
+                        console.warn("Couldn't fetch user level, defaulting to 1:", err);
+                        userCurrentLevel = 1;
+                    });
+
                 const targetLanguage = currentCourse.split('-')[1];
                 updateSpecialCharacters(targetLanguage);
 
@@ -471,7 +974,7 @@ function initializeDefaultMode() {
     $('#toggle-mode').off('click').on('click', toggleMode);
 }
 
-// Function to toggle between modes
+// Function to toggle between modes (multiple choice / regular)
 function toggleMode() {
     isMultipleChoice = !isMultipleChoice; // Toggle the mode
     $('#toggle-mode').text(isMultipleChoice ? UIString[interfaceLanguage].MakeItHarder : UIString[interfaceLanguage].MakeItEasier);
@@ -655,410 +1158,149 @@ async function loadNoun(user, currentCourse) {
 function determineNounDisplayMode() {
     let lastMode = nounDisplayMode;
     let tries = 0;
-  
+
     if (maxOrder < 7) {
-      // Force “regular” if user hasn’t progressed enough
-      nounDisplayMode = "regular";
-      return;
+        // Force “regular” if user hasn’t progressed enough
+        nounDisplayMode = "regular";
+        return;
     }
-  
+
     // Otherwise pick a random mode, skipping same as last if possible
     // (just an example approach)
     while (nounDisplayMode === lastMode && tries < 5) {
-      const randVal = Math.random();
-      if (randVal < 0.15) {
-        nounDisplayMode = "matching-mode";
-      } else if (randVal < 0.30) {
-        nounDisplayMode = "matching-images-mode";
-      } else if (randVal < 0.5) {
-        nounDisplayMode = "four-images";
-      } else {
-        nounDisplayMode = "regular";
-      }
-      tries++;
+        const randVal = Math.random();
+        if (randVal < 0.15) {
+            nounDisplayMode = "matching-mode";
+        } else if (randVal < 0.30) {
+            nounDisplayMode = "matching-images-mode";
+        } else if (randVal < 0.5) {
+            nounDisplayMode = "four-images";
+        } else {
+            nounDisplayMode = "regular";
+        }
+        tries++;
     }
-  }
+}
 
-  // 1) getDueNoun
+// 1) getDueNoun
 async function getDueNoun(user, currentCourse) {
     try {
-      const ref = db.collection('users').doc(user.uid)
-        .collection('nouns').doc(currentCourse)
-        .collection('nouns');
-      
-      const snapshot = await ref
-        .where('nextDue', '<=', new Date())
-        .orderBy('nextDue')
-        .limit(5)
-        .get();
-  
-      if (snapshot.empty) return null;
-  
-      // Filter out ignore and same as previous
-      const validDocs = snapshot.docs.filter(doc => 
-        !nounsToIgnore.includes(doc.id) &&
-        doc.id !== previousNounId
-      );
-  
-      if (validDocs.length === 0) return null;
-  
-      // Return the first valid doc
-      return validDocs[0];
+        const ref = db.collection('users').doc(user.uid)
+            .collection('nouns').doc(currentCourse)
+            .collection('nouns');
+
+        const snapshot = await ref
+            .where('nextDue', '<=', new Date())
+            .orderBy('nextDue')
+            .limit(5)
+            .get();
+
+        if (snapshot.empty) return null;
+
+        // Filter out ignore and same as previous
+        const validDocs = snapshot.docs.filter(doc =>
+            !nounsToIgnore.includes(doc.id) &&
+            doc.id !== previousNounId
+        );
+
+        if (validDocs.length === 0) return null;
+
+        // Return the first valid doc
+        return validDocs[0];
     } catch (err) {
-      console.error('Error in getDueNoun:', err);
-      return null;
+        console.error('Error in getDueNoun:', err);
+        return null;
     }
-  }
-  
-  // 2) getNewNoun
-  async function getNewNoun(user, currentCourse) {
+}
+
+// 2) getNewNoun
+async function getNewNoun(user, currentCourse) {
     try {
-      const [knownLang, targetLang] = currentCourse.split('-');
-  
-      // Query from “nouns” collection
-      const allQsSnap = await db.collection('nouns')
-        .where('knownLanguage', '==', knownLang)
-        .where('language', '==', targetLang)
-        .limit(100)
-        .get();
-  
-      if (allQsSnap.empty) return null;
-  
-      const allNouns = allQsSnap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
-  
-      // Now fetch user progress
-      const userProgressSnap = await db.collection('users').doc(user.uid)
-        .collection('nouns').doc(currentCourse)
-        .collection('nouns')
-        .get();
-  
-      const seenIds = userProgressSnap.docs.map(d => d.id);
-  
-      // Filter out any in ignore or previously shown
-      const unseen = allNouns.filter(q => 
-        !seenIds.includes(q.id) &&
-        !nounsToIgnore.includes(q.id) &&
-        q.id !== previousNounId
-      );
-  
-      if (unseen.length === 0) return null;
-  
-      // Return the first unseen
-      return unseen[0];
+        const [knownLang, targetLang] = window.currentCourse.split('-');
+
+        // Query from “nouns” collection
+        const allQsSnap = await db.collection('nouns')
+            .where('knownLanguage', '==', knownLang)
+            .where('language', '==', targetLang)
+            .limit(100)
+            .get();
+
+        if (allQsSnap.empty) return null;
+
+        const allNouns = allQsSnap.docs.map(doc => ({ id: doc.id, data: doc.data() }));
+
+        // Now fetch user progress
+        const userProgressSnap = await db.collection('users').doc(user.uid)
+            .collection('nouns').doc(currentCourse)
+            .collection('nouns')
+            .get();
+
+        const seenIds = userProgressSnap.docs.map(d => d.id);
+
+        // Filter out any in ignore or previously shown
+        const unseen = allNouns.filter(q =>
+            !seenIds.includes(q.id) &&
+            !nounsToIgnore.includes(q.id) &&
+            q.id !== previousNounId
+        );
+
+        if (unseen.length === 0) return null;
+
+        // Return the first unseen
+        return unseen[0];
     } catch (error) {
-      console.error('Error in getNewNoun:', error);
-      return null;
+        console.error('Error in getNewNoun:', error);
+        return null;
     }
-  }
-  
-  // 3) getNextEarlyNoun
-  async function getNextEarlyNoun(user, currentCourse) {
+}
+
+// 3) getNextEarlyNoun
+async function getNextEarlyNoun(user, currentCourse) {
     try {
-      const ref = db.collection('users').doc(user.uid)
-        .collection('nouns').doc(currentCourse)
-        .collection('nouns');
-  
-      const snapshot = await ref
-        .orderBy('nextDue', 'asc')
-        .limit(5)
-        .get();
-  
-      if (snapshot.empty) return null;
-  
-      // Filter out ignore + previous
-      const validDocs = snapshot.docs.filter(doc => 
-        !nounsToIgnore.includes(doc.id) &&
-        doc.id !== previousNounId
-      );
-  
-      if (validDocs.length === 0) return null;
-  
-      return validDocs[0];
+        const ref = db.collection('users').doc(user.uid)
+            .collection('nouns').doc(currentCourse)
+            .collection('nouns');
+
+        const snapshot = await ref
+            .orderBy('nextDue', 'asc')
+            .limit(5)
+            .get();
+
+        if (snapshot.empty) return null;
+
+        // Filter out ignore + previous
+        const validDocs = snapshot.docs.filter(doc =>
+            !nounsToIgnore.includes(doc.id) &&
+            doc.id !== previousNounId
+        );
+
+        if (validDocs.length === 0) return null;
+
+        return validDocs[0];
     } catch (err) {
-      console.error('Error in getNextEarlyNoun:', err);
-      return null;
+        console.error('Error in getNextEarlyNoun:', err);
+        return null;
     }
-  }
+}
 
-  function loadNounData(nounId, currentCourse) {
+function loadNounData(nounId, currentCourse) {
     db.collection('nouns').doc(nounId).get()
-      .then(nounDoc => {
-        if (nounDoc.exists) {
-          displayNoun(nounDoc.data(), nounId, currentCourse);
-        } else {
-          console.error('Noun doc not found:', nounId);
-          nounsToIgnore.push(nounId); // <---- Mark it so we skip next time
-          loadNoun(firebase.auth().currentUser, currentCourse);
-        }
-      })
-      .catch(error => {
-        console.error('Error in loadNounData:', error);
-        nounsToIgnore.push(nounId); // <---- Mark it so we skip next time
-        loadNoun(firebase.auth().currentUser, currentCourse);
-      });
-  }
-  
-  
+        .then(nounDoc => {
+            if (nounDoc.exists) {
+                displayNoun(nounDoc.data(), nounId, currentCourse);
+            } else {
+                console.error('Noun doc not found:', nounId);
+                nounsToIgnore.push(nounId); // <---- Mark it so we skip next time
+                loadNoun(firebase.auth().currentUser, currentCourse);
+            }
+        })
+        .catch(error => {
+            console.error('Error in loadNounData:', error);
+            nounsToIgnore.push(nounId); // <---- Mark it so we skip next time
+            loadNoun(firebase.auth().currentUser, currentCourse);
+        });
+}
 
-
-
-// // Load a noun from Firestore
-// function Previous_loadNoun(user, currentCourse) {
-//     console.log('loadNoun called: ' + new Date().getTime());
-//     showLoadingProgress();
-
-//     // $('h3').css('visibility', 'hidden');
-//     resetAllExerciseUI();
-
-//     // nounDisplayMode = Math.random() < 0.33 ? "four-images" : "regular";
-//     // nounDisplayMode = "four-images";
-//     const randVal = Math.random();
-//     let attempts = 0;
-//     let lastValue = nounDisplayMode;
-
-//     if (maxOrder < 7) {
-//         nounDisplayMode = "regular";
-//         // nounDisplayMode = "matching-images-mode";
-//     } else {
-//         while (lastValue === nounDisplayMode && attempts < 5) {
-//             console.log('Attempt: ' + attempts);
-//             console.log('randVal: ' + randVal);
-//             console.log('nounDisplayMode: ' + nounDisplayMode);
-//             console.log('lastValue: ' + lastValue);
-//             if (randVal < 0.15) {
-//                 nounDisplayMode = "matching-mode";
-//             } else if (randVal < 0.3) {
-//                 nounDisplayMode = "matching-images-mode"; // our new mode
-//                 $('.matching-image').attr('src', '');
-//             } else if (randVal < 0.5) {
-//                 nounDisplayMode = "four-images";
-//                 $('#noun-img1').attr('src', '');
-//                 $('#noun-img2').attr('src', '');
-//                 $('#noun-img3').attr('src', '');
-//                 $('#noun-img4').attr('src', '');
-//             } else {
-//                 nounDisplayMode = "regular";
-//             }
-//             attempts++;
-//         }
-//     }
-
-
-
-//     // const randVal = Math.random();
-//     // if (randVal < 0.33) {
-//     //     nounDisplayMode = "matching-mode";
-//     // } else if (randVal < 0.66) {
-//     //     nounDisplayMode = "four-images";
-
-//     // $('#noun-img1').attr('src', '');
-//     // $('#noun-img2').attr('src', '');
-//     // $('#noun-img3').attr('src', '');
-//     // $('#noun-img4').attr('src', '');
-//     // } else {
-//     //     nounDisplayMode = "regular";
-//     // }
-
-//     if (!user) {
-//         console.error("User is not authenticated.");
-//         return;
-//     }
-
-//     if (!currentCourse) {
-//         console.error('User has not selected a course.');
-//         window.location.href = 'course_selection.html';
-//         return;
-//     }
-
-
-
-//     // Show a random encouragement message when loading a new noun
-//     showEncouragementMessage();
-
-//     // Fetch the due nouns based on scheduling algorithm - nextDue
-//     db.collection('users').doc(user.uid)
-//         .collection('nouns').doc(currentCourse)
-//         .collection('nouns')
-//         .where('nextDue', '<=', new Date())
-//         .orderBy('nextDue')
-//         .limit(2) // Fetch two due nouns to handle potential duplicates
-//         .get()
-//         .then(progressSnapshot => {
-//             if (!progressSnapshot.empty) {
-//                 // Iterate through fetched nouns to find one that's not the same as the previous
-//                 let selectedNounDoc = null;
-//                 progressSnapshot.forEach(doc => {
-//                     if (doc.id !== previousNounId && !selectedNounDoc) {
-//                         let imgToLoad = `https://languizy.com/myimages/nouns/noun-${doc.data().order}.png/smaller`;
-//                         let img = new Image();
-//                         img.src = imgToLoad; // Prefetch the image
-
-//                         selectedNounDoc = doc;
-//                     }
-//                 });
-
-//                 // If all fetched nouns are same as previous, select the first one (to avoid missing nouns)
-//                 if (!selectedNounDoc && progressSnapshot.size > 0) {
-//                     selectedNounDoc = progressSnapshot.docs[0];
-//                 }
-
-//                 if (selectedNounDoc) {
-//                     var nounId = selectedNounDoc.id;
-//                     loadNounData(nounId, currentCourse); // Pass currentCourse as a parameter
-//                     previousNounId = nounId; // Update the previousNounId
-//                 } else {
-//                     console.log('No suitable due nouns found. Attempting to load a new noun.');
-//                     loadNewNoun(user, currentCourse);
-//                 }
-//             } else {
-//                 // No due nouns; attempt to load a new noun
-//                 loadNewNoun(user, currentCourse);
-//             }
-//         }).catch(error => {
-//             console.error('Error fetching due nouns:', error);
-//         });
-// }
-
-// Load noun data and display
-// function Previous_loadNounData(nounId, currentCourse) {
-//     db.collection('nouns').doc(nounId).get()
-//         .then(nounDoc => {
-//             if (nounDoc.exists) {
-//                 displayNoun(nounDoc.data(), nounId, currentCourse); // Pass currentCourse as a parameter
-//                 previousNounId = nounId; // Ensure previousNounId is updated
-
-//             } else {
-//                 console.error('Noun not found:', nounId);
-//             }
-//         });
-// }
-
-// Load a new noun that hasn't been answered yet or from a specific course
-// function loadNewNoun(user, courseId) {
-//     // Fetch user's selected course details (knownLanguage and targetLanguage)
-//     db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
-//         .then(courseDoc => {
-//             var courseData = courseDoc.data();
-
-//             if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
-//                 // Course data might not be ready, let's retry once after a short delay
-//                 console.warn('Course data not found. Retrying...');
-//                 setTimeout(() => {
-//                     if ((typeof (courseData.targetLanguage) !== 'undefined') && (typeof (courseData.knownLanguage) !== 'undefined')) {
-//                         // Retry fetching course data
-//                         db.collection('users').doc(user.uid).collection('courses').doc(courseId).get()
-//                             .then(retryDoc => {
-//                                 courseData = retryDoc.data();
-//                                 if (!courseData || !courseData.knownLanguage || !courseData.targetLanguage) {
-//                                     console.error('User has not selected a course after retry.');
-//                                     window.location.href = 'course_selection.html';
-//                                 } else {
-//                                     // Proceed with loading nouns after retry
-//                                     fetchAndLoadNouns(courseData);
-//                                 }
-//                             }).catch(error => {
-//                                 console.error('Error fetching course data during retry:', error);
-//                                 window.location.href = 'course_selection.html';
-//                             });
-//                     } else {
-//                         console.error('User has not selected a course correctly.');
-//                         window.location.href = 'course_selection.html';
-//                     }
-//                 }, 1000); // 1-second delay for retry
-//             } else {
-//                 // Proceed if course data is available
-//                 fetchAndLoadNouns(courseData);
-//             }
-//         }).catch(error => {
-//             console.error('Error loading user course data:', error);
-//         });
-// }
-
-// Helper function to fetch and load nouns
-// function fetchAndLoadNouns(courseData) {
-
-//     if ((typeof (courseData.targetLanguage) !== 'undefined') && (typeof (courseData.knownLanguage) !== 'undefined')) {
-//         courseData.courseId = courseData.knownLanguage + '-' + courseData.targetLanguage;
-//     }
-
-//     db.collection('nouns')
-//         .where('language', '==', courseData.targetLanguage)
-//         .where('knownLanguage', '==', courseData.knownLanguage)
-//         .where('order', '>=', Math.max(0, maxOrder - 5)) // Ensure order is at least 0 and within the range
-//         .where('order', '<=', maxOrder + 5) // Ensure order is within the range of maxOrder +5
-//         .orderBy('order', 'asc') // Order by 'order' in ascending order
-//         .get()
-//         .then(nounSnapshot => {
-//             var nouns = [];
-//             nounSnapshot.forEach(doc => {
-//                 nouns.push({ id: doc.id, data: doc.data() });
-//             });
-//             // Filter out nouns the user has already answered
-//             db.collection('users').doc(firebase.auth().currentUser.uid)
-//                 .collection('nouns').doc(courseData.courseId)
-//                 .collection('nouns').get()
-//                 .then(progressSnapshot => {
-//                     var seenNouns = progressSnapshot.docs.map(doc => doc.id);
-//                     var unseenNouns = nouns.filter(q => !seenNouns.includes(q.id));
-
-//                     // Shuffle unseenNouns to add randomness
-//                     // shuffleArray(unseenNouns);
-
-//                     // Find the first noun that is not the same as previousNounId
-//                     let selectedNoun = unseenNouns.find(q => q.id !== previousNounId);
-
-//                     if (!selectedNoun && unseenNouns.length > 0) {
-//                         // If all unseen nouns are same as previous (unlikely), select the first one
-//                         selectedNoun = unseenNouns[0];
-//                     }
-
-//                     if (selectedNoun) {
-//                         displayNoun(selectedNoun.data, selectedNoun.id, courseData.courseId);
-//                         previousNounId = selectedNoun.id; // Update the previousNounId
-//                     } else {
-//                         console.log('No new nouns available. Loading next early noun.');
-//                         loadNextEarlyNoun(firebase.auth().currentUser, courseData.courseId); // Load the next noun even if it's not yet due
-//                     }
-//                 });
-//         });
-// }
-
-// Load the next noun even if it's not yet due
-// function loadNextEarlyNoun(user, courseId) {
-//     db.collection('users').doc(user.uid)
-//         .collection('nouns').doc(courseId)
-//         .collection('nouns')
-//         .orderBy('nextDue', 'asc')
-//         .limit(2) // Fetch two to handle potential duplicates
-//         .get()
-//         .then(progressSnapshot => {
-//             if (!progressSnapshot.empty) {
-//                 let selectedNounDoc = null;
-//                 progressSnapshot.forEach(doc => {
-//                     if (doc.id !== previousNounId && !selectedNounDoc) {
-//                         selectedNounDoc = doc;
-//                     }
-//                 });
-
-//                 // If all fetched nouns are same as previous, select the first one
-//                 if (!selectedNounDoc && progressSnapshot.size > 0) {
-//                     selectedNounDoc = progressSnapshot.docs[0];
-//                 }
-
-//                 if (selectedNounDoc) {
-//                     var nounId = selectedNounDoc.id;
-//                     loadNounData(nounId, courseId); // Pass currentCourse as a parameter
-//                     previousNounId = nounId; // Update the previousNounId
-//                 } else {
-//                     console.log('No nouns found at all.');
-//                 }
-//             } else {
-//                 console.log('No nouns found at all.');
-//             }
-//         }).catch(error => {
-//             console.error('Error fetching next early noun:', error);
-//         });
-// }
 
 
 
@@ -1168,7 +1410,7 @@ function handleFourImagesSubmit(imgNumber) {
             }
         }
     }
-    afterAnswerSubmission(isCorrect, "four-images");
+    afterAnswerSubmissionNew(isCorrect, "four-images");
 }
 
 function displayFourImagesNew(noun) {
@@ -1357,7 +1599,7 @@ function displayNoun(noun, nounId, currentCourse) {
 
         $('#special-characters').css('visibility', 'hidden').css('display', 'none');
         $("#submit-answer").css("visibility", "hidden");
-
+        debugger;
         const imageUrl = `https://languizy.com/myimages/nouns/noun-${noun.order}.png/smaller`;
         const pimg = new Image();
         pimg.src = imageUrl;
@@ -1580,9 +1822,10 @@ function displayNoun(noun, nounId, currentCourse) {
         var userAnswer = $('#user-answer').val().trim();
         var isCorrect = normalizeString(userAnswer) === normalizeString(noun.noun);
         $('#replay-audio').prop('disabled', false);
-        afterAnswerSubmission(isCorrect);
+        afterAnswerSubmissionNew(isCorrect, "translation");
     }
 
+    // Starts the four image mode answer submission
     $('.noun-img').on('click', function () {
         handleDebounce(() => {
             const imgId = $(this).attr('id'); // Get the id of the clicked image
@@ -1784,7 +2027,10 @@ function displayNoun(noun, nounId, currentCourse) {
                 selectedMatchingBtn = null;
                 matchedCount++;
                 if (matchedCount === 4) {
-                    afterAllPairsMatched();
+                    // afterAllPairsMatched();
+                    $('#feedback').text('All pairs matched!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
+                    afterAnswerSubmissionNew(true, "matching-images-mode", user);
+
                 }
             } else {
                 playWrongSound();
@@ -2000,7 +2246,9 @@ function displayNoun(noun, nounId, currentCourse) {
                 matchedCount++;
                 if (matchedCount === 4) {
                     // All matched
-                    afterAllPairsMatched();
+                    // afterAllPairsMatched();
+                    $('#feedback').text('All pairs matched!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
+                    afterAnswerSubmissionNew(true, "matching-mode", user);
                 }
             } else {
                 // Incorrect pair
@@ -2025,21 +2273,23 @@ function displayNoun(noun, nounId, currentCourse) {
         return false;
     }
 
-    function afterAllPairsMatched() {
-        // Similar to afterAnswerSubmission for a correct answer:
-        // Hide matching container and show next button, update stats as correct.
-        // No "submit-answer" here, just directly call what a correct answer would do.
 
-        // We'll treat this as a correct completion of this "drill"
-        // Update stats the same way a correct answer does:
-        const timeTaken = Math.min(Math.floor((new Date() - questionStartTime) / 1000), 30);
-        updateUserProgress(window.currentNounId, true, window.currentCourse, timeTaken);
-        $('#feedback').text('All pairs matched!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
-        updateVisualStats(true);
-        loadNoun(user, currentCourse);
-        // $('#next-question').show();
-        // Enter key now moves to next question as normal.
-    }
+
+    // function Previous_afterAllPairsMatched() {
+    //     // Similar to afterAnswerSubmission for a correct answer:
+    //     // Hide matching container and show next button, update stats as correct.
+    //     // No "submit-answer" here, just directly call what a correct answer would do.
+
+    //     // We'll treat this as a correct completion of this "drill"
+    //     // Update stats the same way a correct answer does:
+    //    +  const timeTaken = Math.min(Math.floor((new Date() - questionStartTime) / 1000), 30);
+    //    + updateUserProgress(window.currentNounId, true, window.currentCourse, timeTaken);
+    //    + $('#feedback').text('All pairs matched!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
+    //    + updateVisualStats(true);
+    //    + loadNoun(user, currentCourse);
+    //     // $('#next-question').show();
+    //     // Enter key now moves to next question as normal.
+    // }
 
     function setupMatchingKeyBindings() {
         // Key bindings: 1-4 for left column, 5-8 for right column
@@ -2141,7 +2391,7 @@ function displayNoun(noun, nounId, currentCourse) {
             // Disable all option buttons
             $('.option-btn').prop('disabled', true);
 
-            afterAnswerSubmission(isCorrect, selectedOption);
+            afterAnswerSubmissionNew(isCorrect, "multiple-choice");
         });
 
         // Add keydown event for keys 1-4
@@ -2161,14 +2411,14 @@ function displayNoun(noun, nounId, currentCourse) {
         // Remove multiple-choice keydown event
         $(document).off('keydown.multipleChoice');
 
-        // Event listener for Enter key to submit answer
+        // Event listener for Enter key to submit answer - Regular mode
         $('#user-answer').off('keypress').on('keypress', function (e) {
             if (e.which === 13 && $('#submit-answer').is(':visible')) { // Enter key pressed and submit button visible
                 handleDebounce(handleSubmit);
             }
         });
 
-        // Handle submit answer button click
+        // Handle submit answer button click - Regular Mode
         $('#submit-answer').off('click').on('click', function () {
             handleDebounce(handleSubmit);
         });
@@ -2365,6 +2615,7 @@ function normalizeString(str) {
 
 // Update user progress in the database
 function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
+
     var user = firebase.auth().currentUser;
 
     var userProgressRef = db.collection('users').doc(user.uid)
@@ -2455,8 +2706,8 @@ function updateUserProgress(nounId, isCorrect, currentCourse, timeTaken) {
 
                         // Compare noun order and update if necessary
                         if (nounOrder > allTimeData.maxOrder) {
-                            // Only update maxOrder if not in matching mode
-                            if (nounDisplayMode !== "matching-mode") {
+                            // Only update maxOrder if not in matching mode and not in image-match mode
+                            if (nounDisplayMode !== "matching-mode" && nounDisplayMode !== "matching-images-mode") {
                                 allTimeData.maxOrder = nounOrder;
                                 maxOrder = nounOrder; // updating the global maxOrder variable
 
@@ -2648,6 +2899,8 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
                     TimeSpent: 0 // Initialize TimeSpent
                 };
 
+                
+
                 // Ensure all fields are numbers
                 allTimeData.totalDrills = ensureNumber(allTimeData.totalDrills);
                 allTimeData.totalScore = ensureNumber(allTimeData.totalScore);
@@ -2676,6 +2929,9 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
                     allTimeData.totalWrongAnswers += 1;
                     allTimeData.nouns_totalWrongAnswers += 1;
                 }
+
+                checkAndHandleLevelUps(firebase.auth().currentUser, currentCourse, allTimeData, dailyData);
+
 
                 // Write both sets of stats after all reads
                 transaction.set(dailyStatsRef, dailyData);
@@ -3095,3 +3351,148 @@ function resetAndRetry() {
     $('#errorModal').modal('hide');
     loadNoun(firebase.auth().currentUser, window.currentCourse);
 }
+
+
+function afterAnswerSubmissionNew(isCorrect, type = "translation", user = null) {
+
+    gtag('event', 'User Answered', {
+        'question_type': 'Nouns',
+        'user_id': uid,
+        'answer': isCorrect,
+        'course': window.currentCourse,
+        'mode': type
+    });
+
+    if (type === "translation" || type === "multiple-choice" || type === "four-images") {
+        $('#submit-answer').hide();
+        $('#toggle-mode').prop('disabled', true);
+        $('#toggle-mode').hide();
+        $('#next-question').show();
+        playNounAudio(window.currentNounId, window.currentNounData.noun);
+    }
+
+    if (type == "translation" || type == "multiple-choice") {
+        // Feedback to user
+        if (isCorrect) {
+            $('#feedback').text(UIString[interfaceLanguage].correctExclemation).removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
+            if (!isMultipleChoice) {
+                $('#user-answer').val(`${window.currentNounData.noun}`).css('font-weight', 'bold');
+            }
+        } else {
+            $('#feedback').text(UIString[interfaceLanguage].incorrectPart1 + ` "${window.currentNounData.noun}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible').css('display', 'block');
+        }
+    }
+
+    if (type == "four-images") {
+        if (isCorrect) {
+            let correction = UIString[interfaceLanguage].correctExclemation + ' <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> ' + UIString[interfaceLanguage].correctPart2 + ' <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
+            $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
+        } else {
+            let correction = UIString[interfaceLanguage].incorrect + '. <span class="text-decoration-underline">' + window.currentNounData.noun + '</span> ' + UIString[interfaceLanguage].correctPart2 + ' <span class="text-decoration-underline">' + window.currentNounData.missingWordTranslation + '</span>';
+            $('#feedback').html(correction).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible').css('display', 'block');
+        }
+    }
+
+
+    const timeTaken = Math.min(Math.floor((new Date() - questionStartTime) / 1000), 30);
+
+    updateVisualStats(isCorrect);
+    updateUserProgress(window.currentNounId, isCorrect, window.currentCourse, timeTaken);
+
+    if (type == "matching-mode" || type == "matching-images-mode") {
+        loadNoun(user, currentCourse);
+    }
+
+
+}
+
+
+async function fetchCurrentLevel(user, theCourse) {
+    debugger;
+    let currentLevel=1;
+    const allTimeStatsRef = db
+      .collection('users')
+      .doc(user.uid)
+      .collection('courses')
+      .doc(theCourse)
+      .collection('stats')
+      .doc('all-time');
+  
+    const snapshot = await allTimeStatsRef.get();
+    if (!snapshot.exists) {
+        currentLevel = 1;
+    }
+    const data = snapshot.data();
+    if (!data.currentLevel) {
+        currentLevel = 1;
+    }
+    console.log("Current level is:", currentLevel);
+    return currentLevel;
+  }
+
+  function checkAndHandleLevelUps(user, theCourse, allTimeData, dailyData) {
+    // 1) We need the user’s totalCorrectAnswers
+    debugger;
+    const totalCorrect = allTimeData.totalCorrectAnswers || 0;
+  
+    // 2) Compare with your LEVELS_LIST to see which level the user belongs to.
+    // We'll find the highest level whose correctDrillsRequired <= totalCorrect
+    let newLevel = 1;
+    for (let i = 0; i < LEVELS_LIST.length; i++) {
+      if (totalCorrect >= LEVELS_LIST[i].correctDrillsRequired) {
+        newLevel = LEVELS_LIST[i].level;
+      } else {
+        break; 
+      }
+    }
+  
+    // 3) Compare newLevel with the user’s old level
+    const oldLevel = userCurrentLevel || 1;
+    if (newLevel > oldLevel) {
+      // user has advanced one or multiple levels
+  
+      // 3a) store all newly passed levels in today's doc
+      // e.g. if user was level 2 and jumped to level 4, then user passed levels 3 and 4
+      let passedLevels = [];
+      for (let lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
+        passedLevels.push(lvl);
+      }
+  
+      dailyData.levelsPassed = dailyData.levelsPassed || [];
+      dailyData.levelsPassed.push(...passedLevels);
+  
+      // 3b) set allTimeData.currentLevel = newLevel
+      allTimeData.currentLevel = newLevel;
+  
+      // 3c) show "Congrats new level" UI:
+      // example: show a bootstrap modal or a banner
+      // We'll just do something quick:
+      showLevelCongratsPopup(newLevel);
+  
+      // 3d) also update window.userCurrentLevel so we don't keep re-triggering next time
+      userCurrentLevel = newLevel;
+    }
+  }
+
+  function showLevelCongratsPopup(newLevel) {
+    // find the level object
+    const found = LEVELS_LIST.find(obj => obj.level === newLevel);
+    if (!found) return;
+    
+    // e.g. fill a hidden div
+    const name = found.name;
+    const lvlStr = "You've unlocked the " + name + " stage!";
+    $('#newLevelNum').text(newLevel);
+    
+    $('#levelUpMessage').text(lvlStr);
+    $('#congratsModal').modal('show'); // or your own logic
+  }
+
+  function continuePracticing() {
+    $('#congratsModal').modal('hide');
+  }
+
+  function quit() {
+    $('#congratsModal').modal('hide');
+    window.location.href = '/course_selection.html';
+  }
