@@ -1,30 +1,4 @@
-// Initialize Firestore
-var db = firebase.firestore();
-var dailyScore = 0;
-var debounceTimeout = null; // Use a debounce timeout instead of a boolean flag
-let correctAnswers = 0;
-let wrongAnswers = 0;
-let streakCorrect = 0;
-let streakWrong = 0;
-let lastFiveAnswers = [];
-let previousQuestionId = null; // Ensure this is correctly initialized
-let questionStartTime; // Variable to store the start time of the question
-let showCoachFeedback = true;
-
-let questionsToIgnore = []; // new array for ignoring failing question IDs
-
-
-
-
-let uid = null;
-
-// Global variable to track the current mode (multiple-choice or text input)
-let isMultipleChoice;
-
-// Global variables to store the current question data
-let currentQuestionId;
-let currentQuestionData;
-let currentCourse;
+// consts
 
 // Array of random encouragement statements
 const encouragementStatements = [
@@ -89,11 +63,6 @@ const loadingMessages = [
   "Loading... trust me, your brain is going to love this!"
 ];
 
-
-let interimMessageInterval;
-
-
-var audioElement = new Audio(); // Create a new audio element
 const countryToLanguage = {
   cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
   in: { languageCode: "hi-IN", voice: "Aditi" },         // India
@@ -125,6 +94,45 @@ const languageToSpecialChars = {
   no: ['æ', 'ø', 'å'],      // Norwegian
   pl: ['ą', 'ć', 'ę', 'ł']  // Polish
 };
+
+
+// Initialize Firestore
+var db = firebase.firestore();
+var dailyScore = 0;
+var debounceTimeout = null; // Use a debounce timeout instead of a boolean flag
+let correctAnswers = 0;
+let wrongAnswers = 0;
+let streakCorrect = 0;
+let streakWrong = 0;
+let lastFiveAnswers = [];
+let previousQuestionId = null; // Ensure this is correctly initialized
+let questionStartTime; // Variable to store the start time of the question
+let showCoachFeedback = true;
+
+let questionsToIgnore = []; // new array for ignoring failing question IDs
+
+
+
+
+let uid = null;
+
+// Global variable to track the current mode (multiple-choice or text input)
+let isMultipleChoice;
+
+// Global variables to store the current question data
+let currentQuestionId;
+let currentQuestionData;
+let currentCourse;
+
+let maxFrequency = 0;
+
+
+
+let interimMessageInterval;
+
+
+var audioElement = new Audio(); // Create a new audio element
+
 
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
@@ -276,32 +284,44 @@ function updateFlagIcons(currentCourse) {
 }
 
 firebase.auth().onAuthStateChanged(function (user) {
+  
   if (user) {
+    
     fetchOrAssignCoach(user).then(() => {
-      fetchCurrentCourse(user).then((currentCourse) => {
+      fetchCurrentCourse(user).then((currentCourse) => { 
+        fetchMaxFrequency(user, currentCourse).then(() => {
         window.currentCourse = currentCourse;
+         
+
         loadUserAvatar(user);
         if (!currentCourse) {
+          
           console.error('No valid current course found.');
           window.location.href = 'course_selection.html';
           return;
         }
-
+        
         loadDailyScore(user, currentCourse);
         initializeDefaultMode();
         loadQuestion(user, currentCourse);
         updateFlagIcons(currentCourse);
-        updateMaxFrequency(user, currentCourse);
-
+        updateMaxFrequencyUI();
+        
         const targetLanguage = currentCourse.split('-')[1];
         updateSpecialCharacters(targetLanguage);
-
+        }).catch((error) => {
+          
+          console.error('error fetching max frequency:', error);
+          window.location.href = 'course_selection.html';
+        });
       }).catch((error) => {
+        
         console.error('Error fetching current course:', error);
         window.location.href = 'course_selection.html';
       });
     });
   } else {
+    
     window.location.href = '/';
   }
 });
@@ -313,7 +333,7 @@ async function populateSubLevelBadge(userDoc) {
   if (subLevel === 'Free') {
     subLevelBadge.textContent = 'FREE';
     subLevelBadge.className = 'badge bg-secondary';
-    debugger;
+    
     subLevelBadge.onclick = function() {
       window.location.href = '/course_selection.html?upgrade=true';
     };
@@ -324,28 +344,23 @@ async function populateSubLevelBadge(userDoc) {
 }
 }
 
-// New function to update maxFrequency
-function updateMaxFrequency(user, currentCourse) {
-  const allTimeStatsRef = db.collection('users').doc(user.uid)
-    .collection('courses').doc(currentCourse)
-    .collection('stats').doc('all-time');
-
-  allTimeStatsRef.get().then(doc => {
-    if (doc.exists) {
-      const maxFrequency = doc.data().maxFrequency || 0;
+// New function to update maxFrequency UI
+function updateMaxFrequencyUI() {
+  
+  
+  
+  if (maxFrequency > 0) {
       let maxFrequencyPercentage = (maxFrequency / 10000 * 100).toFixed(2) + '%';
       $('#proficiencyLevel').text(maxFrequencyPercentage);
       $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
     } else {
-      $('#proficiencyLevel').text('0.00%');
+      let maxFrequencyPercentage = '0.00%';
+      $('#proficiencyLevel').text(maxFrequencyPercentage);
       $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
 
     }
-  }).catch(error => {
-    console.error('Error fetching maxFrequency:', error);
-    $('#proficiencyLevel').text('0.00%');
-  });
-}
+  }
+
 // Function to initialize the default mode based on screen size
 function initializeDefaultMode() {
   if (window.innerWidth < 768) { // Mobile devices
@@ -362,6 +377,8 @@ function initializeDefaultMode() {
 
 // Function to toggle between modes
 function toggleMode() {
+  debugger;
+  
   isMultipleChoice = !isMultipleChoice; // Toggle the mode
   $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
   gtag('event', 'Toggle Mode', {
@@ -371,18 +388,20 @@ function toggleMode() {
     'course': window.currentCourse
 });
   // Reload the current question with the new mode
+  debugger;
   displayQuestion(currentQuestionData, currentQuestionId, currentCourse);
 }
 
 // Function to fetch the current course based on URL or Firestore
 function fetchCurrentCourse(user) {
+  
   return new Promise((resolve, reject) => {
     const urlParams = new URLSearchParams(window.location.search);
     const courseIdFromUrl = urlParams.get('courseId');
 
     if (courseIdFromUrl) {
       console.log(`Course ID found in URL: ${courseIdFromUrl}`);
-
+      
       // Check if the course exists (validate that questions exist for this course)
       validateCourse(courseIdFromUrl).then((isValidCourse) => {
         if (isValidCourse) {
@@ -516,6 +535,7 @@ async function loadQuestion(user, currentCourse) {
   }
   if (!currentCourse) {
     console.error("User has not selected a course.");
+    
     window.location.href = 'course_selection.html';
     return;
   }
@@ -616,7 +636,9 @@ async function getNewQuestion(user, currentCourse) {
     const allQsSnap = await db.collection('questions')
       .where('knownLanguage', '==', knownLang)
       .where('language', '==', targetLang)
-      .limit(100)
+      .where('frequency', '>=', maxFrequency - 5)
+      .orderBy('frequency', 'asc')
+      .limit(15)
       .get();
 
     if (allQsSnap.empty) {
@@ -960,6 +982,7 @@ function displayQuestion(question, questionId, currentCourse) {
   if (isMultipleChoice) {
     $('#user-answer').hide();
     $('#multiple-choice-options').show();
+    debugger;
     displayMultipleChoiceOptions(question);
     // Add keydown event for keys 1-4
     $(document).off('keydown.multipleChoice').on('keydown.multipleChoice', function (e) {
@@ -1378,10 +1401,12 @@ function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
             if (typeof allTimeData.maxFrequency === 'undefined') {
               allTimeData.maxFrequency = 0;
             }
-
+            debugger;
             // Compare question frequency and update if necessary
             if (questionFrequency > allTimeData.maxFrequency) {
               allTimeData.maxFrequency = questionFrequency;
+              // updating the global maxFrequency
+              maxFrequency = questionFrequency;
 
               var maxFrequencyPercentage = (questionFrequency / 10000 * 100).toFixed(2) + '%';
               $('#proficiencyLevel').text(maxFrequencyPercentage);
@@ -1500,7 +1525,7 @@ function updateLastFiveAnswers() {
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
-  debugger;
+  
   const dailyStatsRef = userStatsRef.doc(date);
   const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -1931,5 +1956,62 @@ function updateSpecialCharacters(targetLanguage) {
     specialCharsContainer.style.display = 'block';
   } else {
     specialCharsContainer.style.display = 'none';
+  }
+}
+
+async function fetchMaxFrequency(user, currentCourse) {
+  try {
+    
+      const allTimeDocRef = db
+          .collection('users')
+          .doc(user.uid)
+          .collection('courses')
+          .doc(currentCourse)
+          .collection('stats')
+          .doc('all-time');
+      
+      const allTimeDoc = await allTimeDocRef.get();
+      
+      if (allTimeDoc.exists) {
+          const data = allTimeDoc.data();
+          maxFrequency = data.maxFrequency || 0;
+          console.log(`Max Frequency for course ${currentCourse}: ${maxFrequency}`);
+      } else {
+          console.warn(`All-time document does not exist for course ${currentCourse}. Initializing maxFrequency to 0.`);
+          maxFrequency = 0;
+          // Initialize the all-time document if it doesn't exist
+          await allTimeDocRef.set({ maxFrequency: 0 }, { merge: true });
+      }
+  } catch (error) {
+      console.error('Error fetching maxFrequency:', error);
+  }
+}
+
+/**
+ * Updates the maxFrequency in Firestore and the global variable.
+ *
+ * @param {Object} user - The authenticated user object.
+ * @param {string} currentCourse - The identifier for the current course.
+ * @param {number} newMaxFrequency - The new maxFrequency value to set.
+ */
+async function updateMaxFrequency(user, currentCourse, newMaxFrequency) {
+  try {
+      const allTimeDocRef = db
+          .collection('users')
+          .doc(user.uid)
+          .collection('courses')
+          .doc(currentCourse)
+          .collection('stats')
+          .doc('all-time');
+      
+      // Update Firestore
+      await allTimeDocRef.set({ maxFrequency: newMaxFrequency }, { merge: true });
+      
+      // Update the global variable
+      maxFrequency = newMaxFrequency;
+      console.log(`maxFrequency updated to ${maxFrequency} for course ${currentCourse}`);
+      
+  } catch (error) {
+      console.error('Error updating maxFrequency:', error);
   }
 }
