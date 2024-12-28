@@ -2619,6 +2619,9 @@ function normalizeString(str) {
 // Update user progress in the database
 function updateUserProgress(nounId, isCorrect, currentCourse = window.currentCourse, timeTaken = 0) {
 
+    if (nounId == null || typeof(nounId) != 'string') {
+    nounId = window.currentNounId;
+    }
     var user = firebase.auth().currentUser;
 
     var userProgressRef = db.collection('users').doc(user.uid)
@@ -2834,7 +2837,7 @@ function updateLastFiveAnswers() {
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
-
+debugger;
     const dailyStatsRef = userStatsRef.doc(date);
     const allTimeStatsRef = userStatsRef.doc('all-time');
 
