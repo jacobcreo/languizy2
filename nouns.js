@@ -1216,7 +1216,7 @@ async function getDueNoun(user, currentCourse) {
 // 2) getNewNoun
 async function getNewNoun(user, currentCourse) {
     try {
-        const [knownLang, targetLang] = window.currentCourse.split('-');
+        const [knownLang, targetLang] = currentCourse.split('-');
 
         // Query from “nouns” collection
         const allQsSnap = await db.collection('nouns')
