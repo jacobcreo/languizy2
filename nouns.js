@@ -1224,6 +1224,7 @@ async function getNewNoun(user, currentCourse = window.currentCourse) {
         const allQsSnap = await db.collection('nouns')
             .where('knownLanguage', '==', knownLang)
             .where('language', '==', targetLang)
+            .where('order', '>=', maxOrder - 5) // Range query based on 'order' value
             .orderBy('order', 'asc') // Order by 'order' in ascending order
             .limit(10)
             .get();
