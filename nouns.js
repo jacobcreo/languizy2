@@ -1594,6 +1594,8 @@ function displayNoun(noun, nounId, currentCourse = window.currentCourse) {
         currentCourse = window.currentCourse;
     }
 
+    updateDueQuestionsCount(); // Update the due questions count in the UI
+
     // Reset matching mode UI if previously enabled
     $('#matching-container').hide();
     matchedCount = 0;
@@ -3419,6 +3421,32 @@ function afterAnswerSubmissionNew(isCorrect, type = "translation", user = null) 
 
 }
 
+// Function to get the count of due questions
+async function getDueQuestionsCount() {
+    try {
+        const progressRef = db.collection('users')
+            .doc(uid)
+            .collection('nouns')
+            .doc(window.currentCourse)
+            .collection('nouns');
+  
+        const countSnapshot = await progressRef
+            .where('nextDue', '<=', new Date())
+            .get();
+  
+        return countSnapshot.size;
+    } catch (error) {
+        console.error('Error fetching due questions count:', error);
+        return 0;
+    }
+  }
+  
+  // Function to update the due questions count in the UI
+  async function updateDueQuestionsCount() {
+    const count = await getDueQuestionsCount();
+    document.getElementById('dueQuestions').innerText = count;
+  }
+
 
 async function fetchCurrentLevel(user, theCourse) {
     debugger;
@@ -3479,7 +3507,7 @@ async function fetchCurrentLevel(user, theCourse) {
         dailyData.levelsPassed.push(level);
       }
     });
-    
+
       // 3b) set allTimeData.currentLevel = newLevel
       allTimeData.currentLevel = newLevel;
   
