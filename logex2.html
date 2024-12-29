@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remote File Viewer</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Optional: Transition for smooth hiding */
+        body, nav, #auth-section, #file-section {
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">Remote File Viewer</a>
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-light me-3" id="login-button">Login with Google</button>
+                <button class="btn btn-outline-light me-3" id="logout-button" style="display: none;">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container my-5">
+        <div id="auth-section" class="text-center" style="display: none;">
+            <p>You are not logged in. Please log in to view the file.</p>
+        </div>
+
+        <div id="file-section" style="display: none;">
+            <h2>Fetched File Content</h2>
+            <div id="iframe-container">
+                <iframe 
+                  id="remote-file-iframe"
+                  style="width:100%; border:1px solid #ccc;"
+                  sandbox="allow-scripts allow-same-origin"
+                ></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyABNU1wgjjFzannxm5wYGYlxXpsC0xWGJs",
+            authDomain: "languizy2.firebaseapp.com",
+            projectId: "languizy2",
+            storageBucket: "languizy2.firebasestorage.app",
+            messagingSenderId: "628938129894",
+            appId: "1:628938129894:web:d59633ea173be552e55627",
+            measurementId: "G-2L0H1T02HS"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const storage = firebase.storage();
+        const db = firebase.firestore();
+
+        // UI Elements
+        const loginButton = document.getElementById("login-button");
+        const logoutButton = document.getElementById("logout-button");
+        const authSection = document.getElementById("auth-section");
+        const fileSection = document.getElementById("file-section");
+        const iframe = document.getElementById("remote-file-iframe");
+
+        // Google Sign-In Function
+        loginButton.addEventListener("click", async () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                const result = await auth.signInWithPopup(provider);
+                console.log("Google Sign-In successful:", result.user);
+                fetchUserData(result.user);
+                toggleUI(true);
+            } catch (error) {
+                console.error("Google Sign-In error:", error);
+                alert("Error during Google Sign-In: " + error.message);
+            }
+        });
+
+        // Logout Function
+        logoutButton.addEventListener("click", async () => {
+            await auth.signOut();
+            alert("You have been logged out.");
+            toggleUI(false);
+        });
+
+        // Toggle UI Based on Authentication State
+        const toggleUI = (isLoggedIn) => {
+            if (isLoggedIn) {
+                authSection.style.display = "none";
+                fileSection.style.display = "block";
+                loginButton.style.display = "none";
+                logoutButton.style.display = "inline-block";
+            } else {
+                authSection.style.display = "block";
+                fileSection.style.display = "none";
+                loginButton.style.display = "inline-block";
+                logoutButton.style.display = "none";
+            }
+        };
+
+        // Fetch User Data and Fetch the File
+        const fetchUserData = async (user) => {
+            try {
+                const userRef = db.collection("users").doc(user.uid);
+                const userDoc = await userRef.get();
+
+                if (userDoc.exists) {
+                    console.log("User data:", userDoc.data());
+                } else {
+                    console.log("No user data found. Creating a new user...");
+                    await userRef.set({
+                        email: user.email,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL,
+                        lastLogin: firebase.firestore.Timestamp.now()
+                    });
+                }
+
+                // Fetch and display the file content
+                await fetchAndDisplayFile();
+            } catch (error) {
+                console.error("Error fetching user data or file:", error);
+            }
+        };
+
+        // Fetch and Display File Content
+        async function fetchAndDisplayFile() {
+            try {
+                const fileRef = storage.ref("restrictedHTML/logExaminer_v2.html");
+                const fileUrl = await fileRef.getDownloadURL();
+                const response = await fetch(fileUrl);
+                const fileContent = await response.text();
+
+                // Insert into iframe
+                iframe.srcdoc = fileContent;
+
+                // Add load event listener
+                iframe.addEventListener('load', () => {
+                    console.log("Iframe has loaded.");
+
+                    // Hide all other elements
+                    hideAllExceptIframe();
+
+                    // Resize iframe to cover the entire viewport
+                    makeIframeFullScreen();
+                });
+
+                console.log("HTML loaded into an iframe successfully");
+            } catch (error) {
+                console.error("Error fetching or processing file:", error.message);
+                alert("Error fetching or processing file: " + error.message);
+            }
+        }
+
+        // Hide all elements except the iframe
+        function hideAllExceptIframe() {
+            // Hide navigation bar
+            const nav = document.querySelector('nav');
+            if (nav) {
+                nav.style.display = 'none';
+            }
+
+            // Hide authentication section
+            if (authSection) {
+                authSection.style.display = 'none';
+            }
+
+            // Hide the main container (optional, since we've hidden nav and auth)
+            const mainContainer = document.querySelector('.container');
+            if (mainContainer) {
+                // Alternatively, you can set visibility to hidden
+                // mainContainer.style.visibility = 'hidden';
+                // But since we're showing the iframe, it's better to remove other elements
+                // However, in this case, the iframe is inside .container, so we'll manage via specific elements
+            }
+        }
+
+        // Make the iframe cover the entire viewport
+        function makeIframeFullScreen() {
+            iframe.style.position = 'fixed';
+            iframe.style.top = '0';
+            iframe.style.left = '0';
+            iframe.style.width = '100vw';
+            iframe.style.height = '100vh';
+            iframe.style.border = 'none';
+            iframe.style.zIndex = '9999';
+            iframe.style.padding = '10px';
+        
+        }
+
+        // Handle Authentication State Changes
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("User is logged in:", user.email);
+                fetchUserData(user);
+                toggleUI(true);
+            } else {
+                console.log("User is logged out.");
+                toggleUI(false);
+            }
+        });
+    </script>
+</body>
+
+</html>
