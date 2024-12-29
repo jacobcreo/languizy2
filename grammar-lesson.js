@@ -14,6 +14,8 @@ let questionsToIgnore = [];
 
 let questionStartTime; // Variable to store the start time of the question
 
+let userCurrentLevel = 1; // default
+
 
 let uid = null;
 
@@ -313,6 +315,18 @@ firebase.auth().onAuthStateChanged(function (user) {
                 loadQuestion(user, currentLesson);
                 updateFlagIcons(currentLesson);
                 loadDailyScore(user, currentLesson);
+
+                 // fetch user level from all-time doc once, store in window.userCurrentLevel
+                 fetchCurrentLevel(user, currentCourse)
+                 .then((lvl) => {
+                     userCurrentLevel = lvl;
+                     console.log("User current level is:", lvl);
+                 })
+                 .catch((err) => {
+                     console.warn("Couldn't fetch user level, defaulting to 1:", err);
+                     userCurrentLevel = 1;
+                 });
+
 
                 
                 updateSpecialCharacters(language);
@@ -1551,6 +1565,9 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
                     allTimeData.grammar_totalWrongAnswers += 1;
                 }
 
+                checkAndHandleLevelUps(allTimeData, dailyData);
+
+
                 // Write both sets of stats after all reads
                 transaction.set(dailyStatsRef, dailyData);
                 transaction.set(allTimeStatsRef, allTimeData);
@@ -2087,3 +2104,96 @@ function updateSpecialCharacters(targetLanguage) {
         specialCharsContainer.style.display = 'none';
     }
 }
+
+
+async function fetchCurrentLevel(user, theCourse) {
+    debugger;
+    let currentLevel=1;
+    const allTimeStatsRef = db
+      .collection('users')
+      .doc(user.uid)
+      .collection('courses')
+      .doc(theCourse)
+      .collection('stats')
+      .doc('all-time');
+  
+    const snapshot = await allTimeStatsRef.get();
+    if (!snapshot.exists) {
+        currentLevel = 1;
+    }
+    const data = snapshot.data();
+    if (!data.currentLevel) {
+        currentLevel = 1;
+    } else {
+        currentLevel = data.currentLevel;
+    }
+    console.log("Current level is:", currentLevel);
+    return currentLevel;
+  }
+
+  function checkAndHandleLevelUps(allTimeData, dailyData) {
+    // 1) We need the user’s totalCorrectAnswers
+    debugger;
+    const totalCorrect = allTimeData.totalCorrectAnswers || 0;
+  
+    // 2) Compare with your LEVELS_LIST to see which level the user belongs to.
+    // We'll find the highest level whose correctDrillsRequired <= totalCorrect
+    let newLevel = 1;
+    for (let i = 0; i < LEVELS_LIST.length; i++) {
+      if (totalCorrect >= LEVELS_LIST[i].correctDrillsRequired) {
+        newLevel = LEVELS_LIST[i].level;
+      } else {
+        break; 
+      }
+    }
+  
+    // 3) Compare newLevel with the user’s old level
+    const oldLevel = userCurrentLevel || 1;
+    if (newLevel > oldLevel) {
+      // user has advanced one or multiple levels
+  
+      // 3a) store all newly passed levels in today's doc
+      // e.g. if user was level 2 and jumped to level 4, then user passed levels 3 and 4
+      let passedLevels = [];
+      for (let lvl = oldLevel + 1; lvl <= newLevel; lvl++) {
+        passedLevels.push(lvl);
+      }
+  
+      dailyData.levelsPassed = dailyData.levelsPassed || [];
+      dailyData.levelsPassed.push(...passedLevels);
+  
+      // 3b) set allTimeData.currentLevel = newLevel
+      allTimeData.currentLevel = newLevel;
+  
+      // 3c) show "Congrats new level" UI:
+      // example: show a bootstrap modal or a banner
+      // We'll just do something quick:
+      showLevelCongratsPopup(newLevel);
+  
+      // 3d) also update window.userCurrentLevel so we don't keep re-triggering next time
+      userCurrentLevel = newLevel;
+    }
+  }
+
+  function showLevelCongratsPopup(newLevel) {
+    // find the level object
+    const found = LEVELS_LIST.find(obj => obj.level === newLevel);
+    if (!found) return;
+    
+    // e.g. fill a hidden div
+    const name = found.name;
+    const lvlStr = "You've unlocked the " + name + " stage!";
+    $('#newLevelNum').text(newLevel);
+    
+    $('#levelUpMessage').text(lvlStr);
+    $('#congratsModal').modal('show'); // or your own logic
+  }
+
+  function continuePracticing() {
+    $('#congratsModal').modal('hide');
+  }
+
+  function quit() {
+    $('#congratsModal').modal('hide');
+    window.location.href = '/course_selection.html';
+  }
