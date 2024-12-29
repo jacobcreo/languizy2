@@ -26,22 +26,24 @@
     gtag('config', 'G-K8GMWBXC5J');
   </script>
   <!-- Meta Pixel Code -->
-<script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
+  <script>
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ?
+          n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0;
+      t.src = v; s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s)
+    }(window, document, 'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '621064440260076');
     fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=621064440260076&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=621064440260076&ev=PageView&noscript=1" /></noscript>
+  <!-- End Meta Pixel Code -->
 
 </head>
 
@@ -74,7 +76,8 @@
 
       <!-- Score and Correct/Wrong Count -->
       <div class="tp col-6 d-lg-block col-lg-5 text-center" style="flex-grow: 1;">
-        <div class="close d-none d-lg-inline" style="float:left" onClick="backToCourseSelection();" data-i18n-title="closeButtonTitle">
+        <div class="close d-none d-lg-inline" style="float:left" onClick="backToCourseSelection();"
+          data-i18n-title="closeButtonTitle">
           <i class="fa-regular fa-circle-xmark fa-2x pt-1" data-i18n-alt="closeButtonAlt"></i>
         </div>
         <div class="d-flex justify-content-center align-items-center pt-1">
@@ -100,7 +103,8 @@
 
 
       <div class="tp col-3 d-lg-none text-center" style="width: 80px;">
-        <div class="close d-lg-none" style="float:right" onClick="backToCourseSelection();" data-i18n-title="closeButtonTitleMobile">
+        <div class="close d-lg-none" style="float:right" onClick="backToCourseSelection();"
+          data-i18n-title="closeButtonTitleMobile">
           <i class="fa-regular fa-circle-xmark fa-2x pt-2" data-i18n-alt="closeButtonAltMobile"></i>
         </div>
       </div>
@@ -160,8 +164,8 @@
       <!-- Text Input Area -->
       <div id="text-input-area" class="my-2" style="display: none;">
         <div id="text-input-question" class="mt-3">
-          <p id="text-input-question-text" data-i18n="textInputQuestion">What's this?<span id="noun-translation" class="mx-2"
-              style="text-decoration: underline;"></span></p>
+          <p id="text-input-question-text" data-i18n="textInputQuestion">What's this?<span id="noun-translation"
+              class="mx-2" style="text-decoration: underline;"></span></p>
         </div>
         <!-- Example Sentence Area -->
         <div id="example-sentence" class="mt-3" style="display: none;">
@@ -305,16 +309,20 @@
     <div class="container">
       <div class="row justify-content-center mt-4 button-container">
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button id="replay-audio" disabled class="btn btn-info w-100" data-i18n="replayAudio">Replay <i class="fas fa-volume-up"></i></button>
+          <button id="replay-audio" disabled class="btn btn-info w-100" data-i18n="replayAudio">Replay <i
+              class="fas fa-volume-up"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button id="help-button" class="btn btn-secondary w-100" data-i18n="help">Help <i class="fas fa-question-circle"></i></button>
+          <button id="help-button" class="btn btn-secondary w-100" data-i18n="help">Help <i
+              class="fas fa-question-circle"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button class="btn btn-warning w-100" onclick="buttonClick('stats')" data-i18n="stats">Stats <i class="fas fa-chart-line"></i></button>
+          <button class="btn btn-warning w-100" onclick="buttonClick('stats')" data-i18n="stats">Stats <i
+              class="fas fa-chart-line"></i></button>
         </div>
         <div class="col-6 col-md-3 mb-3 d-flex justify-content-center">
-          <button id="report-button" class="btn btn-danger w-100" data-i18n="report">Report <i class="fas fa-flag"></i></button>
+          <button id="report-button" class="btn btn-danger w-100" data-i18n="report">Report <i
+              class="fas fa-flag"></i></button>
         </div>
       </div>
     </div>
@@ -333,8 +341,10 @@
           <form id="reportForm">
             <input type="hidden" id="report-question-id">
             <div class="mb-3">
-              <label for="report-comment" class="form-label" data-i18n="describeIssue">Describe your issue with the question:</label>
-              <textarea class="form-control" id="report-comment" rows="3" data-i18n-placeholder="reportCommentPlaceholder"></textarea>
+              <label for="report-comment" class="form-label" data-i18n="describeIssue">Describe your issue with the
+                question:</label>
+              <textarea class="form-control" id="report-comment" rows="3"
+                data-i18n-placeholder="reportCommentPlaceholder"></textarea>
             </div>
           </form>
         </div>
@@ -356,17 +366,21 @@
         </div>
         <div class="modal-body">
           <h6 data-i18n="welcome">Welcome to the Nouns Practice Screen!</h6>
-          <p data-i18n="enhanceSkills">Here, you can enhance your language skills by practicing nouns identification in a fun and interactive way. Below are some tips and instructions to help you make the most of this experience.</p>
+          <p data-i18n="enhanceSkills">Here, you can enhance your language skills by practicing nouns identification in
+            a fun and interactive way. Below are some tips and instructions to help you make the most of this
+            experience.</p>
 
           <h6 data-i18n="navigationHeader">Navegación</h6>
           <ul>
             <li>
               <strong><span data-i18n="logoutLabel">Logout:</span></strong>
-              <span data-i18n="logoutDescription"> Click the "Logout" button in the top-right corner to safely exit your session.</span>
+              <span data-i18n="logoutDescription"> Click the "Logout" button in the top-right corner to safely exit your
+                session.</span>
             </li>
             <li>
               <strong><span data-i18n="courseSelectionLabel">Course Selection:</span></strong>
-              <span data-i18n="courseSelectionDescription"> Use the back arrow in the stats bar to return to the course selection screen.</span>
+              <span data-i18n="courseSelectionDescription"> Use the back arrow in the stats bar to return to the course
+                selection screen.</span>
             </li>
           </ul>
 
@@ -374,11 +388,13 @@
           <ul>
             <li>
               <strong><span data-i18n="questionAreaLabel">Area de Pregunta:</span></strong>
-              <span data-i18n="questionAreaDescription"> This is where an image representing a noun is displayed. Identify the noun in the target language.</span>
+              <span data-i18n="questionAreaDescription"> This is where an image representing a noun is displayed.
+                Identify the noun in the target language.</span>
             </li>
             <li>
               <strong><span data-i18n="multipleChoiceModeLabel">Modo de Opción Múltiple:</span></strong>
-              <span data-i18n="multipleChoiceModeDescription"> If enabled, select the correct noun from the given options.</span>
+              <span data-i18n="multipleChoiceModeDescription"> If enabled, select the correct noun from the given
+                options.</span>
             </li>
             <li>
               <strong><span data-i18n="textInputModeLabel">Modo de Entrada de Texto:</span></strong>
@@ -398,7 +414,8 @@
             </li>
             <li>
               <strong><span data-i18n="toggleModeLabel">Cambiar Modo:</span></strong>
-              <span data-i18n="toggleModeDescription"> Switch between multiple-choice and text input modes to adjust the difficulty level.</span>
+              <span data-i18n="toggleModeDescription"> Switch between multiple-choice and text input modes to adjust the
+                difficulty level.</span>
             </li>
             <li>
               <strong><span data-i18n="replayAudioLabel">Repetir Audio:</span></strong>
@@ -406,7 +423,8 @@
             </li>
             <li>
               <strong><span data-i18n="reportLabel">Informar:</span></strong>
-              <span data-i18n="reportDescription"> If you encounter an issue with a question, use this button to report it.</span>
+              <span data-i18n="reportDescription"> If you encounter an issue with a question, use this button to report
+                it.</span>
             </li>
           </ul>
 
@@ -414,7 +432,8 @@
           <ul>
             <li>
               <strong><span data-i18n="scoreLabel">Puntuación:</span></strong>
-              <span data-i18n="scoreDescription"> Your current score is displayed in the stats bar. Aim to improve it with each correct answer!</span>
+              <span data-i18n="scoreDescription"> Your current score is displayed in the stats bar. Aim to improve it
+                with each correct answer!</span>
             </li>
             <li>
               <strong><span data-i18n="correctWrongCountLabel">Cuenta de Correctos/Incorrectos:</span></strong>
@@ -422,21 +441,27 @@
             </li>
             <li>
               <strong><span data-i18n="lastFiveAnswersLabel">Últimas 5 Respuestas:</span></strong>
-              <span data-i18n="lastFiveAnswersDescription"> Visual feedback on your recent performance is shown with colored boxes.</span>
+              <span data-i18n="lastFiveAnswersDescription"> Visual feedback on your recent performance is shown with
+                colored boxes.</span>
             </li>
           </ul>
 
           <h6 data-i18n="tipsSuccessHeader">Consejos para el Éxito</h6>
           <ul>
-            <li data-i18n="tip1">Tómate tu tiempo para entender cada imagen y usa la función "Cambiar Modo" para desafiarte.</li>
-            <li data-i18n="tip2">Usa la función "Repetir Audio" para mejorar tu pronunciación y habilidades de escucha.</li>
-            <li data-i18n="tip3">Usa la función "Informar" para notificarnos sobre cualquier problema con las preguntas.</li>
+            <li data-i18n="tip1">Tómate tu tiempo para entender cada imagen y usa la función "Cambiar Modo" para
+              desafiarte.</li>
+            <li data-i18n="tip2">Usa la función "Repetir Audio" para mejorar tu pronunciación y habilidades de escucha.
+            </li>
+            <li data-i18n="tip3">Usa la función "Informar" para notificarnos sobre cualquier problema con las preguntas.
+            </li>
           </ul>
 
-          <p data-i18n-html="closingParagraph">We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel free to reach out to our support team. Happy learning!</p>
+          <p data-i18n-html="closingParagraph">We hope you enjoy your learning journey with us. If you have any
+            questions or need further assistance, feel free to reach out to our support team. Happy learning!</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal" data-i18n="close">Close</button>
+          <button type="button" class="btn btn-secondary rounded-pill" data-bs-dismiss="modal"
+            data-i18n="close">Close</button>
         </div>
       </div>
     </div>
@@ -451,11 +476,13 @@
           <h5 class="modal-title" id="drillsLimitModalLabel" data-i18n="drillsLimitReached">Drills Limit Reached</h5>
         </div>
         <div class="modal-body">
-          <p data-i18n="dailyLimitReached">You have reached your daily limit of 50 drills for the Free subscription. Please upgrade to continue
+          <p data-i18n="dailyLimitReached">You have reached your daily limit of 50 drills for the Free subscription.
+            Please upgrade to continue
             practicing.</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'" data-i18n="returnToCourseSelection">Return
+          <button type="button" class="btn btn-primary" onclick="window.location.href='/course_selection.html'"
+            data-i18n="returnToCourseSelection">Return
             to Course Selection</button>
         </div>
       </div>
@@ -463,57 +490,69 @@
   </div>
 
   <!-- Example Error Modal -->
-<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Error Loading Nouns</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        We encountered a problem trying to load your noun exercises. 
-        Please check your internet connection or try again.
-      </div>
-      <div class="modal-footer">
-        <!-- "Exit" closes the modal, "Retry" calls resetAndRetry() -->
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
-        <button type="button" class="btn btn-primary" onclick="resetAndRetry()">Retry</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="congratsModal" tabindex="-1" aria-labelledby="congratsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-3">
-      <div class="modal-header border-0">
-        <h5 class="modal-title w-100 text-center" id="congratsModalLabel">
-          🎉 Congratulations! 🎉
-        </h5>
-      </div>
-      <div class="modal-body text-center">
-        <!-- Video -->
-        <div class="video-container">
-          <video autoplay loop muted playsinline>
-            <source src="https://assets.languizy.com/jumping-boy.webm" type="video/webm">
-            Your browser does not support the video tag.
-          </video>
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Error Loading Nouns</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-
-        <!-- Level Info -->
-        <h2 class="mt-3 text-level">Level <span id="newLevelNum"></span></h2>
-        <p class="text-description">You've unlocked the "Amazing Adventurer" stage!</p>
-
-        <!-- Buttons -->
-        <div class="d-grid gap-2 mt-4">
-          <button onclick="continuePracticing()" class="btn btn-success btn-lg">Continue</button>
-          <button onclick="quit()" class="btn btn-warning btn-lg">Explore Other Options</button>
+        <div class="modal-body">
+          We encountered a problem trying to load your noun exercises.
+          Please check your internet connection or try again.
+        </div>
+        <div class="modal-footer">
+          <!-- "Exit" closes the modal, "Retry" calls resetAndRetry() -->
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
+          <button type="button" class="btn btn-primary" onclick="resetAndRetry()">Retry</button>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- LvlUp Congrats Modal -->
+  <div class="modal-body text-center">
+    <!-- Video -->
+    <div class="video-container">
+      <video id="congratsVideo" autoplay loop muted playsinline>
+        <source src="https://assets.languizy.com/jumping-boya.webm" type="video/webm">
+      </video>
+      <img id="fallbackGif" src="/assets/images/jumping-boy.gif" alt="Jumping Boy">
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const video = document.getElementById('congratsVideo');
+        const fallbackGif = document.getElementById('fallbackGif');
+
+        // Check if the video can play
+        video.onerror = function () {
+          // Hide the video and show the GIF if there's an error
+          video.style.display = 'none';
+          fallbackGif.style.display = 'block';
+        };
+
+        // Optionally, handle the case where the video is not supported at all
+        if (!video.canPlayType('video/webm')) {
+          video.style.display = 'none';
+          fallbackGif.style.display = 'block';
+        }
+      });
+    </script>
+
+    <!-- Level Info -->
+    <h2 class="mt-3 text-level">Level <span id="newLevelNum"></span></h2>
+    <p class="text-description">You've unlocked the "Amazing Adventurer" stage!</p>
+
+    <!-- Buttons -->
+      <div class="d-grid gap-2 mt-4">
+        <button onclick="continuePracticing()" class="btn btn-success btn-lg">Continue</button>
+        <button onclick="quit()" class="btn btn-warning btn-lg">Explore Other Options</button>
+      </div>
+    </div>
+  </div>
+
+
 
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
