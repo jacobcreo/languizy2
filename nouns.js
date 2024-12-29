@@ -9,62 +9,62 @@ const LEVELS_LIST = [
     {
         "level": 2,
         "name": "Letter Explorer",
-        "correctDrillsRequired": 20
+        "correctDrillsRequired": 10
     },
     {
         "level": 3,
         "name": "Phrase Pioneer",
-        "correctDrillsRequired": 50
+        "correctDrillsRequired": 30
     },
     {
         "level": 4,
         "name": "Sound Adventurer",
-        "correctDrillsRequired": 90
+        "correctDrillsRequired": 50
     },
     {
         "level": 5,
         "name": "Grammar Glider",
-        "correctDrillsRequired": 140
+        "correctDrillsRequired": 100
     },
     {
         "level": 6,
         "name": "Sentence Sprout",
-        "correctDrillsRequired": 200
+        "correctDrillsRequired": 170
     },
     {
         "level": 7,
         "name": "Accent Apprentice",
-        "correctDrillsRequired": 270
+        "correctDrillsRequired": 250
     },
     {
         "level": 8,
         "name": "Vocab Voyager",
-        "correctDrillsRequired": 350
+        "correctDrillsRequired": 325
     },
     {
         "level": 9,
         "name": "Syntax Seeker",
-        "correctDrillsRequired": 440
+        "correctDrillsRequired": 410
     },
     {
         "level": 10,
         "name": "Culture Enthusiast",
-        "correctDrillsRequired": 540
+        "correctDrillsRequired": 500
     },
     {
         "level": 11,
         "name": "Language Pathfinder",
-        "correctDrillsRequired": 650
+        "correctDrillsRequired": 600
     },
     {
         "level": 12,
         "name": "Article Architect",
-        "correctDrillsRequired": 770
+        "correctDrillsRequired": 620
     },
     {
         "level": 13,
         "name": "Dialogue Discoverer",
-        "correctDrillsRequired": 900
+        "correctDrillsRequired": 780
     },
     {
         "level": 14,
@@ -792,6 +792,10 @@ let interimMessageInterval;
 // Initialize audio element for noun audio playback
 var nounAudioElement = new Audio();
 
+let hasShownCompletionModal = false;
+let startedAt100 = false; // Initialize as false
+
+
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
     const userRef = db.collection('users').doc(user.uid);
@@ -906,6 +910,8 @@ firebase.auth().onAuthStateChanged(function (user) {
                         console.warn("Couldn't fetch user level, defaulting to 1:", err);
                         userCurrentLevel = 1;
                     });
+
+                debugger;
 
                 const targetLanguage = currentCourse.split('-')[1];
                 updateSpecialCharacters(targetLanguage);
@@ -2937,7 +2943,7 @@ debugger;
                     allTimeData.nouns_totalWrongAnswers += 1;
                 }
 
-                checkAndHandleLevelUps(firebase.auth().currentUser, currentCourse, allTimeData, dailyData);
+                checkAndHandleLevelUps(allTimeData, dailyData);
 
 
                 // Write both sets of stats after all reads
@@ -3432,12 +3438,14 @@ async function fetchCurrentLevel(user, theCourse) {
     const data = snapshot.data();
     if (!data.currentLevel) {
         currentLevel = 1;
+    } else {
+        currentLevel = data.currentLevel;
     }
     console.log("Current level is:", currentLevel);
     return currentLevel;
   }
 
-  function checkAndHandleLevelUps(user, theCourse, allTimeData, dailyData) {
+  function checkAndHandleLevelUps(allTimeData, dailyData) {
     // 1) We need the user’s totalCorrectAnswers
     debugger;
     const totalCorrect = allTimeData.totalCorrectAnswers || 0;
