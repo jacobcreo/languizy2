@@ -2589,7 +2589,11 @@ function checkAndHandleLevelUps(allTimeData, dailyData) {
     }
 
     dailyData.levelsPassed = dailyData.levelsPassed || [];
-    dailyData.levelsPassed.push(...passedLevels);
+    passedLevels.forEach(level => {
+      if (!dailyData.levelsPassed.includes(level)) {
+        dailyData.levelsPassed.push(level);
+      }
+    });
 
     // 3b) set allTimeData.currentLevel = newLevel
     allTimeData.currentLevel = newLevel;
