@@ -760,6 +760,9 @@ const languageToSpecialChars = {
 
 // various consts not shown for brevity
 
+let interfaceLanguage = 'es';
+
+
 // Initialize Firestore
 var db = firebase.firestore();
 var dailyScore = 0;
@@ -776,7 +779,6 @@ let listOfSeenNouns = [];
 let maxOrder = 0;
 let imagesLoaded = 0;
 let showCoachFeedback = true;
-let interfaceLanguage = 'en';
 let userCurrentLevel = 1; // default
 let nounsToIgnore = []; // Array to skip failing or problematic Noun IDs for this session
 let matchingPairs = []; // Store {target: "", origin: ""}
