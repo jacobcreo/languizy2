@@ -53,9 +53,11 @@ async function loadStory() {
         currentStoryData = storyDoc.data();
         language = currentStoryData.language;
         knownLanguage = currentStoryData.knownLanguage;
-
+        console.log(currentStoryData);
         document.getElementById('storyTitle').innerText = currentStoryData.storyTitle;
-        document.getElementById('storyImage').src = `assets/images/${currentStoryData.image || 'storyImage.jpg'}`;
+        let storyImg = 'https://languizy.com/myimages/stories/'+currentStoryData.knownLanguage + '-' + currentStoryData.language + '-' + storyId + '.png' + '/public';
+        
+        document.getElementById('storyImage').src = `${storyImg || 'storyImage.jpg'}`;
 
         const formattedStoryText = formatStoryText(currentStoryData.storyText);
         document.getElementById('storyText').innerHTML = formattedStoryText;
