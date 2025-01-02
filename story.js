@@ -24,6 +24,7 @@ const countryToLanguage = {
     cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
     in: { languageCode: "hi-IN", voice: "Aditi" },         // India
     us: { languageCode: "en-US", voice: "Joanna" },        // United States
+    en: { languageCode: "en-US", voice: "Joanna" },        // United States
     br: { languageCode: "pt-BR", voice: "Camila" },        // Brazil
     ru: { languageCode: "ru-RU", voice: "Tatyana" },       // Russia
     jp: { languageCode: "ja-JP", voice: "Mizuki" },        // Japan
