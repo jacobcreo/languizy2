@@ -724,13 +724,13 @@ const UIString = {
     errorModalRetry: "Try Again",
 
     // Congrats Modal
-    congratsTitle: "🎉 Congratulations! 🎉",
-    jumpingBoyAlt: "Jumping Boy",
-    newLevelHeading: "Level ",
-    newLevelDescription: "You've unlocked the 'Amazing Adventurer' stage!",
-    continueButton: "Continue",
-    exploreOptionsButton: "Explore Other Options",
+    congrats: 'Congratulations!',
+    level: 'Level',
+    continue: 'Continue',
+    exploreOtherOptions: 'Explore Other Options',
+    youUnlocked: 'You\'ve unlocked the stage:',
 
+    
     correctExclemation: 'Correct!',
     incorrectPart1: 'Incorrect. The correct answer was',
     correctPart2: 'is',
@@ -860,13 +860,12 @@ const UIString = {
     errorModalRetry: "Intentar de Nuevo",
 
     // Congrats Modal
-    congratsTitle: "🎉 ¡Felicidades! 🎉",
-    jumpingBoyAlt: "Niño Saltando",
-    newLevelHeading: "Nivel ",
-    newLevelDescription:
-      "¡Has desbloqueado la etapa de 'Aventurero Asombroso'!",
-    continueButton: "Continuar",
-    exploreOptionsButton: "Explorar Otras Opciones",
+    congrats: '¡Felicidades!',
+    level: 'Nivel',
+    continue: 'Continuar',
+    exploreOtherOptions: 'Explorar otras opciones',
+    youUnlocked: '¡Has desbloqueado el nivel:',
+
 
     correctExclemation: '¡Correcto!',
         incorrectPart1: 'Incorrecto. La respuesta correcta era',
@@ -2978,12 +2977,12 @@ function showLevelCongratsPopup(newLevel) {
   // find the level object
   const found = LEVELS_LIST.find(obj => obj.level === newLevel);
   if (!found) return;
-
+  
   // e.g. fill a hidden div
   const name = found.name;
-  const lvlStr = "You've unlocked the " + name + " stage!";
+  const lvlStr = UIString[interfaceLanguage].youUnlocked + " " + name;
   $('#newLevelNum').text(newLevel);
-
+  
   $('#levelUpMessage').text(lvlStr);
   $('#congratsModal').modal('show'); // or your own logic
 }

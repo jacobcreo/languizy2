@@ -522,7 +522,7 @@
     <div class="modal-content p-3">
       <div class="modal-header border-0">
         <h5 class="modal-title w-100 text-center" id="congratsModalLabel">
-          🎉 Congratulations! 🎉
+          🎉 <span data-i18n="congrats">Congratulations!</span> 🎉
         </h5>
       </div>
       <div class="modal-body text-center">
@@ -531,7 +531,7 @@
           <video id="congratsVideo" autoplay loop muted playsinline>
             <source src="https://assets.languizy.com/jumping-boy.webm" type="video/webm">
           </video>
-          <img id="fallbackGif" src="/assets/images/jumping-boy.gif" alt="Jumping Boy">
+          <img id="fallbackGif" src="/assets/images/jumping-boy.gif" alt="Jumping Boy" style="display: none;">
         </div>
 
         <script>
@@ -555,13 +555,13 @@
           </script>
 
         <!-- Level Info -->
-        <h2 class="mt-3 text-level">Level <span id="newLevelNum"></span></h2>
-        <p class="text-description">You've unlocked the "Amazing Adventurer" stage!</p>
+        <h2 class="mt-3 text-level"><span data-i18n="level">Level</span> <span id="newLevelNum"></span></h2>
+        <p class="text-description" id="levelUpMessage"></p>
 
         <!-- Buttons -->
         <div class="d-grid gap-2 mt-4">
-          <button onclick="continuePracticing()" class="btn btn-success btn-lg">Continue</button>
-          <button onclick="quit()" class="btn btn-warning btn-lg">Explore Other Options</button>
+          <button onclick="continuePracticing()" class="btn btn-success btn-lg" data-i18n="continue">Continue</button>
+          <button onclick="quit()" class="btn btn-warning btn-lg" data-i18n="exploreOtherOptions">Explore Other Options</button>
         </div>
       </div>
     </div>

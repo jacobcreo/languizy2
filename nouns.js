@@ -616,6 +616,13 @@ const UIString = {
         'incorrect': 'Incorrect',
         'newNoun': '(new noun)',
 
+        // Congrats Modal
+        'congrats': 'Congratulations!',
+        'level': 'Level',
+        'continue': 'Continue',
+        'exploreOtherOptions': 'Explore Other Options',
+        'youUnlocked': 'You\'ve unlocked the stage:'
+
     },
     'es': {
         // General
@@ -728,6 +735,13 @@ const UIString = {
         'correctPart2': 'es',
         'incorrect': 'Incorrecto',
         'newNoun': '(nuevo sustantivo)',
+
+        // Congrats Modal
+        'congrats': '¡Felicidades!',
+        'level': 'Nivel',
+        'continue': 'Continuar',
+        'exploreOtherOptions': 'Explorar otras opciones',
+        'youUnlocked': '¡Has desbloqueado el nivel:'
     },
     // Add more languages as needed
 };
@@ -3616,7 +3630,7 @@ async function fetchCurrentLevel(user, theCourse) {
     
     // e.g. fill a hidden div
     const name = found.name;
-    const lvlStr = "You've unlocked the " + name + " stage!";
+    const lvlStr = UIString[interfaceLanguage].youUnlocked + " " + name;
     $('#newLevelNum').text(newLevel);
     
     $('#levelUpMessage').text(lvlStr);
