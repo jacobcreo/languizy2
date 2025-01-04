@@ -601,7 +601,8 @@ const UIString = {
         'upgradeTerms1': 'All purchases are subject to our ',
         'upgradeTerms2': 'Terms & Conditions ',
         'upgradeTerms3': 'and ',
-        'upgradeTerms4': 'Refund Policy'
+        'upgradeTerms4': 'Refund Policy',
+        'drillsToNextLevel': 'drills to level up'
     },
     'es': {
         'currentCourseCardTitle': 'CURSO ACTUAL',
@@ -687,8 +688,10 @@ const UIString = {
         'featureStatsFree': 'Limitado',
         'featureStatsPro': 'Estadísticas Completas',
         'upgradeSuccessButton': 'Comenzar a Practicar',
-        'upgradeErrorButton': 'Intentar de Nuevo'
+        'upgradeErrorButton': 'Intentar de Nuevo',
+        'drillsToNextLevel': 'ejercicios para llegar al siguiente nivel'
     }
+
 }
 
 
@@ -826,7 +829,7 @@ async function loadCurrentCoach(coachId) {
             const coachData = coachDoc.data();
             $('#currentCoachImage').attr('src', `assets/images/${coachData.image}`);
             $('#currentCoachImage').css('visibility', 'visible');
-            $('#currentCoachName').text(coachData.coachName);
+            $('#currentCoachName').text(coachData.coachName[interfaceLanguage]);
             console.log(`Loaded coach details for coach ID: ${coachId}`);
             console.log(`Loaded coach details for coach ID: ${coachId}`);
             document.querySelector('#CurrentCoachCard .fill-effect').style.animation = 'none';
@@ -1968,13 +1971,13 @@ async function loadCurrentLevelCard(user, currentCourse) {
         // Update UI elements
         document.getElementById('currentLevel').textContent = currentLevel;
         document.getElementById('levelName').textContent = levelName;
-        document.getElementById('drillsToNextLevel').textContent = `${drillsForNextLevel} drills to level up`;
+        document.getElementById('drillsToNextLevel').textContent = `${drillsForNextLevel} ${UIString[interfaceLanguage].drillsToNextLevel}`;
 
     } catch (error) {
         console.error("Error loading current level:", error);
         // Default to level 1
         document.getElementById('currentLevel').textContent = 1;
         document.getElementById('levelName').textContent = levels[0].name;
-        document.getElementById('drillsToNextLevel').textContent = `${levels[1].correctDrillsRequired} drills to level up`;
+        document.getElementById('drillsToNextLevel').textContent = `${levels[1].correctDrillsRequired} ${UIString[interfaceLanguage].drillsToNextLevel}`;
     }
 }
