@@ -2,504 +2,504 @@
 
 const LEVELS_LIST = [
   {
-      "level": 1,
-      "name": "Word Wanderer",
-      "correctDrillsRequired": 0
+    "level": 1,
+    "name": "Word Wanderer",
+    "correctDrillsRequired": 0
   },
   {
-      "level": 2,
-      "name": "Letter Explorer",
-      "correctDrillsRequired": 10
+    "level": 2,
+    "name": "Letter Explorer",
+    "correctDrillsRequired": 10
   },
   {
-      "level": 3,
-      "name": "Phrase Pioneer",
-      "correctDrillsRequired": 30
+    "level": 3,
+    "name": "Phrase Pioneer",
+    "correctDrillsRequired": 30
   },
   {
-      "level": 4,
-      "name": "Sound Adventurer",
-      "correctDrillsRequired": 50
+    "level": 4,
+    "name": "Sound Adventurer",
+    "correctDrillsRequired": 50
   },
   {
-      "level": 5,
-      "name": "Grammar Glider",
-      "correctDrillsRequired": 100
+    "level": 5,
+    "name": "Grammar Glider",
+    "correctDrillsRequired": 100
   },
   {
-      "level": 6,
-      "name": "Sentence Sprout",
-      "correctDrillsRequired": 170
+    "level": 6,
+    "name": "Sentence Sprout",
+    "correctDrillsRequired": 170
   },
   {
-      "level": 7,
-      "name": "Accent Apprentice",
-      "correctDrillsRequired": 250
+    "level": 7,
+    "name": "Accent Apprentice",
+    "correctDrillsRequired": 250
   },
   {
-      "level": 8,
-      "name": "Vocab Voyager",
-      "correctDrillsRequired": 325
+    "level": 8,
+    "name": "Vocab Voyager",
+    "correctDrillsRequired": 325
   },
   {
-      "level": 9,
-      "name": "Syntax Seeker",
-      "correctDrillsRequired": 410
+    "level": 9,
+    "name": "Syntax Seeker",
+    "correctDrillsRequired": 410
   },
   {
-      "level": 10,
-      "name": "Culture Enthusiast",
-      "correctDrillsRequired": 500
+    "level": 10,
+    "name": "Culture Enthusiast",
+    "correctDrillsRequired": 500
   },
   {
-      "level": 11,
-      "name": "Language Pathfinder",
-      "correctDrillsRequired": 600
+    "level": 11,
+    "name": "Language Pathfinder",
+    "correctDrillsRequired": 600
   },
   {
-      "level": 12,
-      "name": "Article Architect",
-      "correctDrillsRequired": 620
+    "level": 12,
+    "name": "Article Architect",
+    "correctDrillsRequired": 620
   },
   {
-      "level": 13,
-      "name": "Dialogue Discoverer",
-      "correctDrillsRequired": 780
+    "level": 13,
+    "name": "Dialogue Discoverer",
+    "correctDrillsRequired": 780
   },
   {
-      "level": 14,
-      "name": "Noun Navigator",
-      "correctDrillsRequired": 1040
+    "level": 14,
+    "name": "Noun Navigator",
+    "correctDrillsRequired": 1040
   },
   {
-      "level": 15,
-      "name": "Verb Conqueror",
-      "correctDrillsRequired": 1190
+    "level": 15,
+    "name": "Verb Conqueror",
+    "correctDrillsRequired": 1190
   },
   {
-      "level": 16,
-      "name": "Preposition Pilot",
-      "correctDrillsRequired": 1350
+    "level": 16,
+    "name": "Preposition Pilot",
+    "correctDrillsRequired": 1350
   },
   {
-      "level": 17,
-      "name": "Basic Builder",
-      "correctDrillsRequired": 1520
+    "level": 17,
+    "name": "Basic Builder",
+    "correctDrillsRequired": 1520
   },
   {
-      "level": 18,
-      "name": "Wordsmith-in-Training",
-      "correctDrillsRequired": 1700
+    "level": 18,
+    "name": "Wordsmith-in-Training",
+    "correctDrillsRequired": 1700
   },
   {
-      "level": 19,
-      "name": "Grammar Grower",
-      "correctDrillsRequired": 1890
+    "level": 19,
+    "name": "Grammar Grower",
+    "correctDrillsRequired": 1890
   },
   {
-      "level": 20,
-      "name": "Pronunciation Prodigy",
-      "correctDrillsRequired": 2090
+    "level": 20,
+    "name": "Pronunciation Prodigy",
+    "correctDrillsRequired": 2090
   },
   {
-      "level": 21,
-      "name": "Sentence Shaper",
-      "correctDrillsRequired": 2300
+    "level": 21,
+    "name": "Sentence Shaper",
+    "correctDrillsRequired": 2300
   },
   {
-      "level": 22,
-      "name": "Conjugation Crafter",
-      "correctDrillsRequired": 2520
+    "level": 22,
+    "name": "Conjugation Crafter",
+    "correctDrillsRequired": 2520
   },
   {
-      "level": 23,
-      "name": "Idiom Investigator",
-      "correctDrillsRequired": 2750
+    "level": 23,
+    "name": "Idiom Investigator",
+    "correctDrillsRequired": 2750
   },
   {
-      "level": 24,
-      "name": "Conversation Champion",
-      "correctDrillsRequired": 2990
+    "level": 24,
+    "name": "Conversation Champion",
+    "correctDrillsRequired": 2990
   },
   {
-      "level": 25,
-      "name": "Phrase Chaser",
-      "correctDrillsRequired": 3240
+    "level": 25,
+    "name": "Phrase Chaser",
+    "correctDrillsRequired": 3240
   },
   {
-      "level": 26,
-      "name": "Accent Aficionado",
-      "correctDrillsRequired": 3500
+    "level": 26,
+    "name": "Accent Aficionado",
+    "correctDrillsRequired": 3500
   },
   {
-      "level": 27,
-      "name": "Vocabulary Virtuoso",
-      "correctDrillsRequired": 3770
+    "level": 27,
+    "name": "Vocabulary Virtuoso",
+    "correctDrillsRequired": 3770
   },
   {
-      "level": 28,
-      "name": "Grammar Guardian",
-      "correctDrillsRequired": 4050
+    "level": 28,
+    "name": "Grammar Guardian",
+    "correctDrillsRequired": 4050
   },
   {
-      "level": 29,
-      "name": "Dialogue Dancer",
-      "correctDrillsRequired": 4340
+    "level": 29,
+    "name": "Dialogue Dancer",
+    "correctDrillsRequired": 4340
   },
   {
-      "level": 30,
-      "name": "Cultural Connector",
-      "correctDrillsRequired": 4640
+    "level": 30,
+    "name": "Cultural Connector",
+    "correctDrillsRequired": 4640
   },
   {
-      "level": 31,
-      "name": "Syntax Strategist",
-      "correctDrillsRequired": 4950
+    "level": 31,
+    "name": "Syntax Strategist",
+    "correctDrillsRequired": 4950
   },
   {
-      "level": 32,
-      "name": "Expression Enthusiast",
-      "correctDrillsRequired": 5270
+    "level": 32,
+    "name": "Expression Enthusiast",
+    "correctDrillsRequired": 5270
   },
   {
-      "level": 33,
-      "name": "Linguistic Learner",
-      "correctDrillsRequired": 5600
+    "level": 33,
+    "name": "Linguistic Learner",
+    "correctDrillsRequired": 5600
   },
   {
-      "level": 34,
-      "name": "Word Weaver",
-      "correctDrillsRequired": 5940
+    "level": 34,
+    "name": "Word Weaver",
+    "correctDrillsRequired": 5940
   },
   {
-      "level": 35,
-      "name": "Translation Tactician",
-      "correctDrillsRequired": 6290
+    "level": 35,
+    "name": "Translation Tactician",
+    "correctDrillsRequired": 6290
   },
   {
-      "level": 36,
-      "name": "Comprehension Conqueror",
-      "correctDrillsRequired": 6650
+    "level": 36,
+    "name": "Comprehension Conqueror",
+    "correctDrillsRequired": 6650
   },
   {
-      "level": 37,
-      "name": "Sentence Sculptor",
-      "correctDrillsRequired": 7020
+    "level": 37,
+    "name": "Sentence Sculptor",
+    "correctDrillsRequired": 7020
   },
   {
-      "level": 38,
-      "name": "Accent Artist",
-      "correctDrillsRequired": 7400
+    "level": 38,
+    "name": "Accent Artist",
+    "correctDrillsRequired": 7400
   },
   {
-      "level": 39,
-      "name": "Phrase Specialist",
-      "correctDrillsRequired": 7790
+    "level": 39,
+    "name": "Phrase Specialist",
+    "correctDrillsRequired": 7790
   },
   {
-      "level": 40,
-      "name": "Grammar Sage",
-      "correctDrillsRequired": 8190
+    "level": 40,
+    "name": "Grammar Sage",
+    "correctDrillsRequired": 8190
   },
   {
-      "level": 41,
-      "name": "Linguistic Voyager",
-      "correctDrillsRequired": 8600
+    "level": 41,
+    "name": "Linguistic Voyager",
+    "correctDrillsRequired": 8600
   },
   {
-      "level": 42,
-      "name": "Polyglot Pathfinder",
-      "correctDrillsRequired": 9020
+    "level": 42,
+    "name": "Polyglot Pathfinder",
+    "correctDrillsRequired": 9020
   },
   {
-      "level": 43,
-      "name": "Syntax Sorcerer",
-      "correctDrillsRequired": 9450
+    "level": 43,
+    "name": "Syntax Sorcerer",
+    "correctDrillsRequired": 9450
   },
   {
-      "level": 44,
-      "name": "Idiom Alchemist",
-      "correctDrillsRequired": 9890
+    "level": 44,
+    "name": "Idiom Alchemist",
+    "correctDrillsRequired": 9890
   },
   {
-      "level": 45,
-      "name": "Phraseologist",
-      "correctDrillsRequired": 10340
+    "level": 45,
+    "name": "Phraseologist",
+    "correctDrillsRequired": 10340
   },
   {
-      "level": 46,
-      "name": "Expression Artisan",
-      "correctDrillsRequired": 10800
+    "level": 46,
+    "name": "Expression Artisan",
+    "correctDrillsRequired": 10800
   },
   {
-      "level": 47,
-      "name": "Accent Maestro",
-      "correctDrillsRequired": 11270
+    "level": 47,
+    "name": "Accent Maestro",
+    "correctDrillsRequired": 11270
   },
   {
-      "level": 48,
-      "name": "Fluent Trailblazer",
-      "correctDrillsRequired": 11750
+    "level": 48,
+    "name": "Fluent Trailblazer",
+    "correctDrillsRequired": 11750
   },
   {
-      "level": 49,
-      "name": "Cultural Whisperer",
-      "correctDrillsRequired": 12240
+    "level": 49,
+    "name": "Cultural Whisperer",
+    "correctDrillsRequired": 12240
   },
   {
-      "level": 50,
-      "name": "Grammar Virtuoso",
-      "correctDrillsRequired": 12740
+    "level": 50,
+    "name": "Grammar Virtuoso",
+    "correctDrillsRequired": 12740
   },
   {
-      "level": 51,
-      "name": "Language Magician",
-      "correctDrillsRequired": 13250
+    "level": 51,
+    "name": "Language Magician",
+    "correctDrillsRequired": 13250
   },
   {
-      "level": 52,
-      "name": "Multilingual Muse",
-      "correctDrillsRequired": 13770
+    "level": 52,
+    "name": "Multilingual Muse",
+    "correctDrillsRequired": 13770
   },
   {
-      "level": 53,
-      "name": "Conjugation Commander",
-      "correctDrillsRequired": 14300
+    "level": 53,
+    "name": "Conjugation Commander",
+    "correctDrillsRequired": 14300
   },
   {
-      "level": 54,
-      "name": "Sentence Sculptor Extraordinaire",
-      "correctDrillsRequired": 14840
+    "level": 54,
+    "name": "Sentence Sculptor Extraordinaire",
+    "correctDrillsRequired": 14840
   },
   {
-      "level": 55,
-      "name": "Expression Explorer",
-      "correctDrillsRequired": 15390
+    "level": 55,
+    "name": "Expression Explorer",
+    "correctDrillsRequired": 15390
   },
   {
-      "level": 56,
-      "name": "Cultural Cartographer",
-      "correctDrillsRequired": 15950
+    "level": 56,
+    "name": "Cultural Cartographer",
+    "correctDrillsRequired": 15950
   },
   {
-      "level": 57,
-      "name": "Polyglot Dreamer",
-      "correctDrillsRequired": 16520
+    "level": 57,
+    "name": "Polyglot Dreamer",
+    "correctDrillsRequired": 16520
   },
   {
-      "level": 58,
-      "name": "Dialogue Dynamo",
-      "correctDrillsRequired": 17100
+    "level": 58,
+    "name": "Dialogue Dynamo",
+    "correctDrillsRequired": 17100
   },
   {
-      "level": 59,
-      "name": "Vocabulary Visionary",
-      "correctDrillsRequired": 17690
+    "level": 59,
+    "name": "Vocabulary Visionary",
+    "correctDrillsRequired": 17690
   },
   {
-      "level": 60,
-      "name": "Linguistic Luminary",
-      "correctDrillsRequired": 18290
+    "level": 60,
+    "name": "Linguistic Luminary",
+    "correctDrillsRequired": 18290
   },
   {
-      "level": 61,
-      "name": "Language Nomad",
-      "correctDrillsRequired": 18900
+    "level": 61,
+    "name": "Language Nomad",
+    "correctDrillsRequired": 18900
   },
   {
-      "level": 62,
-      "name": "Multilingual Mastermind",
-      "correctDrillsRequired": 19520
+    "level": 62,
+    "name": "Multilingual Mastermind",
+    "correctDrillsRequired": 19520
   },
   {
-      "level": 63,
-      "name": "Syntax Whisperer",
-      "correctDrillsRequired": 20150
+    "level": 63,
+    "name": "Syntax Whisperer",
+    "correctDrillsRequired": 20150
   },
   {
-      "level": 64,
-      "name": "Prose Pioneer",
-      "correctDrillsRequired": 20790
+    "level": 64,
+    "name": "Prose Pioneer",
+    "correctDrillsRequired": 20790
   },
   {
-      "level": 65,
-      "name": "Vocabulary Vanguard",
-      "correctDrillsRequired": 21440
+    "level": 65,
+    "name": "Vocabulary Vanguard",
+    "correctDrillsRequired": 21440
   },
   {
-      "level": 66,
-      "name": "Translation Titan",
-      "correctDrillsRequired": 22100
+    "level": 66,
+    "name": "Translation Titan",
+    "correctDrillsRequired": 22100
   },
   {
-      "level": 67,
-      "name": "Accent Virtuoso",
-      "correctDrillsRequired": 22770
+    "level": 67,
+    "name": "Accent Virtuoso",
+    "correctDrillsRequired": 22770
   },
   {
-      "level": 68,
-      "name": "Idiom Enthusiast",
-      "correctDrillsRequired": 23450
+    "level": 68,
+    "name": "Idiom Enthusiast",
+    "correctDrillsRequired": 23450
   },
   {
-      "level": 69,
-      "name": "Cultural Ambassador",
-      "correctDrillsRequired": 24140
+    "level": 69,
+    "name": "Cultural Ambassador",
+    "correctDrillsRequired": 24140
   },
   {
-      "level": 70,
-      "name": "Grammar Guru",
-      "correctDrillsRequired": 24840
+    "level": 70,
+    "name": "Grammar Guru",
+    "correctDrillsRequired": 24840
   },
   {
-      "level": 71,
-      "name": "Fluent Pathfinder",
-      "correctDrillsRequired": 25550
+    "level": 71,
+    "name": "Fluent Pathfinder",
+    "correctDrillsRequired": 25550
   },
   {
-      "level": 72,
-      "name": "Global Conversationalist",
-      "correctDrillsRequired": 26270
+    "level": 72,
+    "name": "Global Conversationalist",
+    "correctDrillsRequired": 26270
   },
   {
-      "level": 73,
-      "name": "Prose Alchemist",
-      "correctDrillsRequired": 27000
+    "level": 73,
+    "name": "Prose Alchemist",
+    "correctDrillsRequired": 27000
   },
   {
-      "level": 74,
-      "name": "Wordplay Wizard",
-      "correctDrillsRequired": 27740
+    "level": 74,
+    "name": "Wordplay Wizard",
+    "correctDrillsRequired": 27740
   },
   {
-      "level": 75,
-      "name": "Accent Perfectionist",
-      "correctDrillsRequired": 28490
+    "level": 75,
+    "name": "Accent Perfectionist",
+    "correctDrillsRequired": 28490
   },
   {
-      "level": 76,
-      "name": "Language Liberator",
-      "correctDrillsRequired": 29250
+    "level": 76,
+    "name": "Language Liberator",
+    "correctDrillsRequired": 29250
   },
   {
-      "level": 77,
-      "name": "Idiom Illuminator",
-      "correctDrillsRequired": 30020
+    "level": 77,
+    "name": "Idiom Illuminator",
+    "correctDrillsRequired": 30020
   },
   {
-      "level": 78,
-      "name": "Expression Strategist",
-      "correctDrillsRequired": 30800
+    "level": 78,
+    "name": "Expression Strategist",
+    "correctDrillsRequired": 30800
   },
   {
-      "level": 79,
-      "name": "Communication Captain",
-      "correctDrillsRequired": 31590
+    "level": 79,
+    "name": "Communication Captain",
+    "correctDrillsRequired": 31590
   },
   {
-      "level": 80,
-      "name": "Cultural Crusader",
-      "correctDrillsRequired": 32390
+    "level": 80,
+    "name": "Cultural Crusader",
+    "correctDrillsRequired": 32390
   },
   {
-      "level": 81,
-      "name": "Multilingual Maestro",
-      "correctDrillsRequired": 33200
+    "level": 81,
+    "name": "Multilingual Maestro",
+    "correctDrillsRequired": 33200
   },
   {
-      "level": 82,
-      "name": "Expression Innovator",
-      "correctDrillsRequired": 34020
+    "level": 82,
+    "name": "Expression Innovator",
+    "correctDrillsRequired": 34020
   },
   {
-      "level": 83,
-      "name": "Linguistic Artisan",
-      "correctDrillsRequired": 34850
+    "level": 83,
+    "name": "Linguistic Artisan",
+    "correctDrillsRequired": 34850
   },
   {
-      "level": 84,
-      "name": "Cultural Sage",
-      "correctDrillsRequired": 35690
+    "level": 84,
+    "name": "Cultural Sage",
+    "correctDrillsRequired": 35690
   },
   {
-      "level": 85,
-      "name": "Language Connoisseur",
-      "correctDrillsRequired": 36540
+    "level": 85,
+    "name": "Language Connoisseur",
+    "correctDrillsRequired": 36540
   },
   {
-      "level": 86,
-      "name": "Grammar Grandmaster",
-      "correctDrillsRequired": 37400
+    "level": 86,
+    "name": "Grammar Grandmaster",
+    "correctDrillsRequired": 37400
   },
   {
-      "level": 87,
-      "name": "Syntax Champion",
-      "correctDrillsRequired": 38270
+    "level": 87,
+    "name": "Syntax Champion",
+    "correctDrillsRequired": 38270
   },
   {
-      "level": 88,
-      "name": "Conversational Visionary",
-      "correctDrillsRequired": 39150
+    "level": 88,
+    "name": "Conversational Visionary",
+    "correctDrillsRequired": 39150
   },
   {
-      "level": 89,
-      "name": "Polyglot Pilgrim",
-      "correctDrillsRequired": 40040
+    "level": 89,
+    "name": "Polyglot Pilgrim",
+    "correctDrillsRequired": 40040
   },
   {
-      "level": 90,
-      "name": "Linguistic Virtuoso",
-      "correctDrillsRequired": 40940
+    "level": 90,
+    "name": "Linguistic Virtuoso",
+    "correctDrillsRequired": 40940
   },
   {
-      "level": 91,
-      "name": "Expressionist Extraordinaire",
-      "correctDrillsRequired": 41850
+    "level": 91,
+    "name": "Expressionist Extraordinaire",
+    "correctDrillsRequired": 41850
   },
   {
-      "level": 92,
-      "name": "Language Legend",
-      "correctDrillsRequired": 42770
+    "level": 92,
+    "name": "Language Legend",
+    "correctDrillsRequired": 42770
   },
   {
-      "level": 93,
-      "name": "Fluent Star",
-      "correctDrillsRequired": 43700
+    "level": 93,
+    "name": "Fluent Star",
+    "correctDrillsRequired": 43700
   },
   {
-      "level": 94,
-      "name": "Sentence Symphony",
-      "correctDrillsRequired": 44640
+    "level": 94,
+    "name": "Sentence Symphony",
+    "correctDrillsRequired": 44640
   },
   {
-      "level": 95,
-      "name": "Accent Commander",
-      "correctDrillsRequired": 45590
+    "level": 95,
+    "name": "Accent Commander",
+    "correctDrillsRequired": 45590
   },
   {
-      "level": 96,
-      "name": "Translation Luminary",
-      "correctDrillsRequired": 46550
+    "level": 96,
+    "name": "Translation Luminary",
+    "correctDrillsRequired": 46550
   },
   {
-      "level": 97,
-      "name": "Polyglot Pioneer",
-      "correctDrillsRequired": 47520
+    "level": 97,
+    "name": "Polyglot Pioneer",
+    "correctDrillsRequired": 47520
   },
   {
-      "level": 98,
-      "name": "Linguistic Sage",
-      "correctDrillsRequired": 48500
+    "level": 98,
+    "name": "Linguistic Sage",
+    "correctDrillsRequired": 48500
   },
   {
-      "level": 99,
-      "name": "Global Wordsmith",
-      "correctDrillsRequired": 49490
+    "level": 99,
+    "name": "Global Wordsmith",
+    "correctDrillsRequired": 49490
   },
   {
-      "level": 100,
-      "name": "Master of Tongues",
-      "correctDrillsRequired": 50490
+    "level": 100,
+    "name": "Master of Tongues",
+    "correctDrillsRequired": 50490
   }
 ];
 
@@ -599,6 +599,285 @@ const languageToSpecialChars = {
   pl: ['ą', 'ć', 'ę', 'ł']  // Polish
 };
 
+const UIString = {
+  en: {
+    // General
+    pageTitle: "Vocabulary - Language Learning App",
+    navbarBrandTitle: "Languizy, Language Learning for Real",
+    navbarBrandAlt: "Languizy Logo",
+    logout: "Logout",
+    returnToCourseSelection: "Return to Course Selection",
+
+    // Stats & Counters
+    ProficiencyLevel: 'Proficiency Level',
+    ReviewQuestionsWaiting: 'Review Questions Waiting',
+    loadingMessage: "Loading...",
+    seenLabel: "Seen:",
+    timesWord: "times",
+    times: 'times',
+    seen: 'Seen',
+    once: 'once',
+    correctLabel: "Correct",
+    wrongLabel: "Wrong",
+
+    // Buttons
+    submitAnswer: "Submit Answer",
+    nextQuestion: "Next Question",
+    toggleMode: "Make it easier",
+    explainSentence: "Explain Sentence",
+    makeItEasier: "Make it easier",
+    makeItHarder: "Make it harder",
+
+    // Multiple Choice
+    multipleChoiceSection: "Multiple Choice",
+
+    // Coach
+    coachContainer: "Coach Container", // for dev reference
+    coachImageAlt: "Coach Image",
+    coachMessage: "You are doing great!",
+
+    // Special Characters
+    specialCharactersBlock: "Special characters block",
+
+    // Replay & Additional Buttons
+    replayAudio: "Replay",
+    help: "Help",
+    stats: "Stats",
+    report: "Report",
+
+    // Explanation Modal
+    explanationModalTitle: "Explanation",
+    closeButtonTitle: "Close",
+    close: "Close",
+
+    // Report Modal
+    reportIssue: "Report Issue",
+    describeIssue: "Describe your issue with the question:",
+    reportCommentPlaceholder: "Explain what went wrong...",
+    submit: "Submit",
+
+    // Help Modal
+    helpInstructions: "Help & Instructions",
+    welcome: "Welcome to the Vocabulary Practice Screen!",
+    enhanceSkills:
+      "Here, you can enhance your language skills by practicing vocabulary in a fun and interactive way...",
+    navigationHeader: "Navigation",
+    logoutLabel: "Logout:",
+    logoutDescription:
+      'Click the "Logout" button in the top-right corner to safely exit your session.',
+    courseSelectionLabel: "Course Selection:",
+    courseSelectionDescription:
+      "Use the back arrow in the stats bar to return to the course selection screen.",
+    interfaceUnderstandingHeader: "Understanding the Interface",
+    questionAreaLabel: "Question Area:",
+    questionAreaDescription:
+      "This is where your current question is displayed. Fill in the blank with the correct word.",
+    multipleChoiceModeLabel: "Multiple Choice Mode:",
+    multipleChoiceModeDescription:
+      "If enabled, select the correct answer from the given options.",
+    textInputModeLabel: "Text Input Mode:",
+    textInputModeDescription:
+      "Type your answer in the input field provided.",
+    buttonsFeaturesHeader: "Buttons and Features",
+    submitAnswerLabel: "Submit Answer:",
+    submitAnswerDescription:
+      "Click this button to submit your answer for evaluation.",
+    nextQuestionLabel: "Next Question:",
+    nextQuestionDescription:
+      "Move to the next question after submitting your answer.",
+    toggleModeLabel: "Toggle Mode:",
+    toggleModeDescription:
+      "Switch between multiple-choice and text input modes to adjust the difficulty level.",
+    replayAudioLabel: "Replay Audio:",
+    replayAudioDescription:
+      "Listen to the pronunciation of the sentence again.",
+    reportLabel: "Report:",
+    reportDescription:
+      "If you encounter an issue with a question, use this button to report it.",
+    statsFeedbackHeader: "Stats and Feedback",
+    scoreLabel: "Score:",
+    scoreDescription:
+      "Your current score is displayed in the stats bar. Aim to improve it with each correct answer!",
+    correctWrongCountLabel: "Correct/Wrong Count:",
+    correctWrongCountDescription:
+      "Keep track of your correct and incorrect answers.",
+    lastFiveAnswersLabel: "Last 5 Answers:",
+    lastFiveAnswersDescription:
+      "Visual feedback on your recent performance is shown with colored boxes.",
+    tipsSuccessHeader: "Tips for Success",
+    tip1: "Take your time to understand each question...",
+    tip2: "Switch between modes to challenge yourself...",
+    tip3: "Use the 'Replay Audio' feature to improve your pronunciation...",
+    closingParagraph:
+      "We hope you enjoy your learning journey with us. If you have any questions or need further assistance, feel free to reach out to our support team. Happy learning!",
+
+    // Drills Limit Modal
+    drillsLimitTitle: "Drills Limit Reached",
+    drillsLimitMessage:
+      "You have reached your daily limit of 50 drills for the Free subscription. Please upgrade to continue practicing.",
+
+    // Error Modal
+    errorModalTitle: "Oops! Something went wrong.",
+    errorModalMessage:
+      "We couldn't load the questions. There might be an issue with your internet connection.",
+    errorModalBack: "Back to Main Screen",
+    errorModalRetry: "Try Again",
+
+    // Congrats Modal
+    congratsTitle: "🎉 Congratulations! 🎉",
+    jumpingBoyAlt: "Jumping Boy",
+    newLevelHeading: "Level ",
+    newLevelDescription: "You've unlocked the 'Amazing Adventurer' stage!",
+    continueButton: "Continue",
+    exploreOptionsButton: "Explore Other Options",
+
+    correctExclemation: 'Correct!',
+    incorrectPart1: 'Incorrect. The correct answer was',
+    correctPart2: 'is',
+  },
+
+  es: {
+    // General
+    pageTitle: "Vocabulario - Aplicación de Aprendizaje de Idiomas",
+    navbarBrandTitle: "Languizy, Aprendizaje de Idiomas para la Vida Real",
+    navbarBrandAlt: "Logo de Languizy",
+    logout: "Cerrar sesión",
+    returnToCourseSelection: "Volver a la Selección de Curso",
+
+    // Stats & Counters
+    ProficiencyLevel: 'Nivel de Competencia',
+    ReviewQuestionsWaiting: 'Preguntas para Revisión',
+    loadingMessage: "Cargando...",
+    seenLabel: "Visto:",
+    timesWord: "veces",
+    times: "veces",
+    seen: "Visto",
+    once: "una vez",
+    correctLabel: "Correctos",
+    wrongLabel: "Incorrectos",
+
+    // Buttons
+    submitAnswer: "Enviar Respuesta",
+    nextQuestion: "Siguiente Pregunta",
+    toggleMode: "Hacerlo más fácil",
+    explainSentence: "Explicar Oración",
+    makeItEasier: "Hacerlo más fácil",
+    makeItHarder: "Hacerlo más difícil",
+
+    // Multiple Choice
+    multipleChoiceSection: "Opción Múltiple",
+
+    // Coach
+    coachContainer: "Contenedor del Entrenador",
+    coachImageAlt: "Imagen del Entrenador",
+    coachMessage: "¡Lo estás haciendo muy bien!",
+
+    // Special Characters
+    specialCharactersBlock: "Caracteres especiales",
+
+    // Replay & Additional Buttons
+    replayAudio: "Repetir",
+    help: "Ayuda",
+    stats: "Estadísticas",
+    report: "Informar",
+
+    // Explanation Modal
+    explanationModalTitle: "Explicación",
+    closeButtonTitle: "Cerrar",
+    close: "Cerrar",
+
+    // Report Modal
+    reportIssue: "Informar Problema",
+    describeIssue: "Describe tu problema con la pregunta:",
+    reportCommentPlaceholder: "Explica qué salió mal...",
+    submit: "Enviar",
+
+    // Help Modal
+    helpInstructions: "Ayuda e Instrucciones",
+    welcome: "¡Bienvenido a la Pantalla de Práctica de Vocabulario!",
+    enhanceSkills:
+      "Aquí puedes mejorar tus habilidades lingüísticas practicando vocabulario de manera divertida...",
+    navigationHeader: "Navegación",
+    logoutLabel: "Cerrar Sesión:",
+    logoutDescription:
+      'Haz clic en el botón "Cerrar sesión" en la esquina superior derecha para salir de tu sesión...',
+    courseSelectionLabel: "Selección de Curso:",
+    courseSelectionDescription:
+      "Usa la flecha de regreso en la barra de estadísticas para regresar a la pantalla de selección...",
+    interfaceUnderstandingHeader: "Entendiendo la Interfaz",
+    questionAreaLabel: "Área de Pregunta:",
+    questionAreaDescription:
+      "Aquí se muestra la pregunta actual. Completa el espacio en blanco con la palabra correcta.",
+    multipleChoiceModeLabel: "Modo de Opción Múltiple:",
+    multipleChoiceModeDescription:
+      "Si está habilitado, selecciona la respuesta correcta de las opciones dadas.",
+    textInputModeLabel: "Modo de Entrada de Texto:",
+    textInputModeDescription:
+      "Escribe tu respuesta en el campo de texto proporcionado.",
+    buttonsFeaturesHeader: "Botones y Funciones",
+    submitAnswerLabel: "Enviar Respuesta:",
+    submitAnswerDescription:
+      "Haz clic en este botón para enviar tu respuesta para evaluación.",
+    nextQuestionLabel: "Siguiente Pregunta:",
+    nextQuestionDescription:
+      "Pasa a la siguiente pregunta después de enviar tu respuesta.",
+    toggleModeLabel: "Cambiar Modo:",
+    toggleModeDescription:
+      "Cambia entre modo de opción múltiple y modo de entrada de texto para ajustar la dificultad.",
+    replayAudioLabel: "Repetir Audio:",
+    replayAudioDescription:
+      "Escucha nuevamente la pronunciación de la oración.",
+    reportLabel: "Informar:",
+    reportDescription:
+      "Si encuentras un problema con una pregunta, usa este botón para informarlo.",
+    statsFeedbackHeader: "Estadísticas y Retroalimentación",
+    scoreLabel: "Puntuación:",
+    scoreDescription:
+      "Tu puntuación actual se muestra en la barra de estadísticas. ¡Intenta mejorarla con cada respuesta correcta!",
+    correctWrongCountLabel: "Correctos/Incorrectos:",
+    correctWrongCountDescription:
+      "Lleva un registro de tus respuestas correctas e incorrectas.",
+    lastFiveAnswersLabel: "Últimas 5 Respuestas:",
+    lastFiveAnswersDescription:
+      "Se muestra retroalimentación visual de tu rendimiento reciente con cuadros de colores.",
+    tipsSuccessHeader: "Consejos para el Éxito",
+    tip1: "Tómate tu tiempo para entender cada pregunta...",
+    tip2: "Cambia de modo para desafiarte y mejorar tu aprendizaje...",
+    tip3: "Usa la función 'Repetir Audio' para mejorar tu pronunciación...",
+    closingParagraph:
+      "Esperamos que disfrutes tu experiencia de aprendizaje con nosotros. Si tienes alguna pregunta o necesitas ayuda adicional, ¡contáctanos!",
+
+    // Drills Limit Modal
+    drillsLimitTitle: "Límite de Ejercicios Alcanzado",
+    drillsLimitMessage:
+      "Has alcanzado tu límite diario de 50 ejercicios para la suscripción gratuita. Por favor, mejora tu plan para continuar practicando.",
+
+    // Error Modal
+    errorModalTitle: "¡Ups! Algo salió mal.",
+    errorModalMessage:
+      "No pudimos cargar las preguntas. Puede que tengas problemas con tu conexión a internet.",
+    errorModalBack: "Volver a la Pantalla Principal",
+    errorModalRetry: "Intentar de Nuevo",
+
+    // Congrats Modal
+    congratsTitle: "🎉 ¡Felicidades! 🎉",
+    jumpingBoyAlt: "Niño Saltando",
+    newLevelHeading: "Nivel ",
+    newLevelDescription:
+      "¡Has desbloqueado la etapa de 'Aventurero Asombroso'!",
+    continueButton: "Continuar",
+    exploreOptionsButton: "Explorar Otras Opciones",
+
+    correctExclemation: '¡Correcto!',
+        incorrectPart1: 'Incorrecto. La respuesta correcta era',
+        correctPart2: 'es',
+        incorrect: 'Incorrecto'
+        
+  },
+  // Additional languages can be added here
+};
+
+
 
 // Initialize Firestore
 var db = firebase.firestore();
@@ -614,6 +893,7 @@ let questionStartTime; // Variable to store the start time of the question
 let showCoachFeedback = true;
 let userCurrentLevel = 1; // default
 
+let interfaceLanguage = 'en';
 
 let questionsToIgnore = []; // new array for ignoring failing question IDs
 
@@ -656,11 +936,11 @@ function loadUserAvatar(user) {
       const userAvatar = document.getElementById('userAvatar');
 
       showCoachFeedback = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
-            if (showCoachFeedback) {
-                $('#coach-container').addClass('d-flex').removeClass('d-none');
-            } else {
-                $('#coach-container').addClass('d-none').removeClass('d-flex');
-            }
+      if (showCoachFeedback) {
+        $('#coach-container').addClass('d-flex').removeClass('d-none');
+      } else {
+        $('#coach-container').addClass('d-none').removeClass('d-flex');
+      }
 
       if (photoURL) {
         // If photoURL exists, display the user's profile image
@@ -696,7 +976,7 @@ async function fetchOrAssignCoach(user) {
     }
 
     // Fetch coach data from Firestore
-    const coachData = await fetchCoachData(coachId);
+    const coachData = await fetchCoachData(coachId, interfaceLanguage);
 
     // Set global variables or store coach data to be used throughout the practice screen
     window.coachData = coachData;
@@ -706,38 +986,100 @@ async function fetchOrAssignCoach(user) {
   }
 }
 
-async function fetchCoachData(coachId) {
+/**
+ * fetchCoachData(coachId, interfaceLanguage)
+ * 
+ *  - Fetches coach doc from Firestore
+ *  - Handles both the old and new structure for strings/arrays
+ *  - Falls back to English if the requested language is missing
+ *  - Returns only the data needed for the UI
+ */
+
+async function fetchCoachData(coachId, interfaceLanguage = 'en') {
   try {
     const coachDoc = await db.collection('coaches').doc(coachId).get();
-    if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
+    if (!coachDoc.exists) {
+      throw new Error(`Coach with ID ${coachId} not found.`);
+    }
 
-    const coachData = coachDoc.data();
+    const docData = coachDoc.data();
 
-    // Get 10 random entries from each message array
-    function getRandomMessages(array, count = 10) {
-      return array.sort(() => 0.5 - Math.random()).slice(0, count);
+    // Helper function to shuffle an array and get 'count' items
+    function getRandomMessages(arr, count = 10) {
+      return arr.sort(() => 0.5 - Math.random()).slice(0, count);
+    }
+
+    /**
+     * getStringField(fieldData):
+     * - If old structure => fieldData is just "some string"
+     * - If new structure => fieldData is { en: "some string", es: "algo" }
+     * - Return fieldData[interfaceLanguage] if it exists, else fallback to .en, else ""
+     */
+    function getStringField(fieldData) {
+      if (!fieldData) return "";
+      
+      // Old structure => string
+      if (typeof fieldData === 'string') {
+        return fieldData;
+      }
+      // New structure => object with subkeys
+      if (typeof fieldData === 'object') {
+        return fieldData[interfaceLanguage] || fieldData.en || "";
+      }
+
+      // Fallback
+      return "";
+    }
+
+    /**
+     * getArrayField(fieldData):
+     * - If old structure => fieldData is just ["some", "array", "strings"]
+     * - If new structure => fieldData is { en: [...], es: [...], fr: [...] }
+     * - Return the array for interfaceLanguage, fallback to .en if missing
+     */
+    function getArrayField(fieldData) {
+      if (!fieldData) return [];
+
+      // Old structure => array
+      if (Array.isArray(fieldData)) {
+        return fieldData;
+      }
+      // New structure => object with sub-arrays
+      if (typeof fieldData === 'object') {
+        const arr = fieldData[interfaceLanguage] || fieldData.en || [];
+        return Array.isArray(arr) ? arr : [];
+      }
+
+      // Fallback
+      return [];
     }
 
     return {
-      coachName: coachData.coachName,
-      image: coachData.image,
-      correctMessages: getRandomMessages(coachData.correctMessages),
-      encouragementMessages: getRandomMessages(coachData.encouragementMessages),
-      fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
-      fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
-      loadingMessages: getRandomMessages(coachData.loadingMessages),
-      mistakeMessages: getRandomMessages(coachData.mistakeMessages),
-      sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
-      sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
-      threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
-      threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
-      tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
-      tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
+      coachName: getStringField(docData.coachName),
+      characterDescription: getStringField(docData.characterDescription),
+      personality: getStringField(docData.personality),
+      image: docData.image || "",
+
+      // For each array field, we get up to 10 random messages
+      correctMessages: getRandomMessages(getArrayField(docData.correctMessages)),
+      encouragementMessages: getRandomMessages(getArrayField(docData.encouragementMessages)),
+      fiveCorrectMessages: getRandomMessages(getArrayField(docData.fiveCorrectMessages)),
+      fiveMistakesMessages: getRandomMessages(getArrayField(docData.fiveMistakesMessages)),
+      loadingMessages: getRandomMessages(getArrayField(docData.loadingMessages)),
+      mistakeMessages: getRandomMessages(getArrayField(docData.mistakeMessages)),
+      sevenCorrectMessages: getRandomMessages(getArrayField(docData.sevenCorrectMessages)),
+      sevenMistakesMessages: getRandomMessages(getArrayField(docData.sevenMistakesMessages)),
+      threeCorrectMessages: getRandomMessages(getArrayField(docData.threeCorrectMessages)),
+      threeMistakesMessages: getRandomMessages(getArrayField(docData.threeMistakesMessages)),
+      tonsOfCorrectsInARowMessages: getRandomMessages(getArrayField(docData.tonsOfCorrectsInARowMessages)),
+      tonsOfMistakesInARowMessages: getRandomMessages(getArrayField(docData.tonsOfMistakesInARowMessages)),
     };
   } catch (error) {
     console.error('Error fetching coach data:', error);
+    return null;
   }
 }
+
 
 function setCoachImage(imageFilename) {
   const imagePath = `assets/images/${imageFilename}`;
@@ -790,55 +1132,58 @@ function updateFlagIcons(currentCourse) {
 }
 
 firebase.auth().onAuthStateChanged(function (user) {
-  
+
   if (user) {
-    
+
+    modifyInterfaceLanguage();
+
+
     fetchOrAssignCoach(user).then(() => {
-      fetchCurrentCourse(user).then((currentCourse) => { 
+      fetchCurrentCourse(user).then((currentCourse) => {
         fetchMaxFrequency(user, currentCourse).then(() => {
-        window.currentCourse = currentCourse;
-         
+          window.currentCourse = currentCourse;
 
-        loadUserAvatar(user);
-        if (!currentCourse) {
-          
-          console.error('No valid current course found.');
-          window.location.href = 'course_selection.html';
-          return;
-        }
-        
-        loadDailyScore(user, currentCourse);
-        initializeDefaultMode();
-        loadQuestion(user, currentCourse);
-        updateFlagIcons(currentCourse);
-        updateMaxFrequencyUI();
 
-         // fetch user level from all-time doc once, store in window.userCurrentLevel
-         fetchCurrentLevel(user, currentCourse)
-         .then((lvl) => {
-             userCurrentLevel = lvl;
-             console.log("User current level is:", lvl);
-         })
-         .catch((err) => {
-             console.warn("Couldn't fetch user level, defaulting to 1:", err);
-             userCurrentLevel = 1;
-         });
-        
-        const targetLanguage = currentCourse.split('-')[1];
-        updateSpecialCharacters(targetLanguage);
+          loadUserAvatar(user);
+          if (!currentCourse) {
+
+            console.error('No valid current course found.');
+            window.location.href = 'course_selection.html';
+            return;
+          }
+
+          loadDailyScore(user, currentCourse);
+          initializeDefaultMode();
+          loadQuestion(user, currentCourse);
+          updateFlagIcons(currentCourse);
+          updateMaxFrequencyUI();
+
+          // fetch user level from all-time doc once, store in window.userCurrentLevel
+          fetchCurrentLevel(user, currentCourse)
+            .then((lvl) => {
+              userCurrentLevel = lvl;
+              console.log("User current level is:", lvl);
+            })
+            .catch((err) => {
+              console.warn("Couldn't fetch user level, defaulting to 1:", err);
+              userCurrentLevel = 1;
+            });
+
+          const targetLanguage = currentCourse.split('-')[1];
+          updateSpecialCharacters(targetLanguage);
         }).catch((error) => {
-          
+
           console.error('error fetching max frequency:', error);
           window.location.href = 'course_selection.html';
         });
       }).catch((error) => {
-        
+
         console.error('Error fetching current course:', error);
         window.location.href = 'course_selection.html';
       });
     });
   } else {
-    
+
     window.location.href = '/';
   }
 });
@@ -850,42 +1195,42 @@ async function populateSubLevelBadge(userDoc) {
   if (subLevel === 'Free') {
     subLevelBadge.textContent = 'FREE';
     subLevelBadge.className = 'badge bg-secondary';
-    
-    subLevelBadge.onclick = function() {
+
+    subLevelBadge.onclick = function () {
       window.location.href = '/course_selection.html?upgrade=true';
     };
-} else {
+  } else {
     subLevelBadge.textContent = 'PRO';
     subLevelBadge.className = 'badge bg-danger';
     subLevelBadge.onclick = null; // No action on click for PRO
-}
+  }
 }
 
 // New function to update maxFrequency UI
 function updateMaxFrequencyUI() {
-  
-  
-  
-  if (maxFrequency > 0) {
-      let maxFrequencyPercentage = (maxFrequency / 10000 * 100).toFixed(2) + '%';
-      $('#proficiencyLevel').text(maxFrequencyPercentage);
-      $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
-    } else {
-      let maxFrequencyPercentage = '0.00%';
-      $('#proficiencyLevel').text(maxFrequencyPercentage);
-      $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
 
-    }
+
+
+  if (maxFrequency > 0) {
+    let maxFrequencyPercentage = (maxFrequency / 10000 * 100).toFixed(2) + '%';
+    $('#proficiencyLevel').text(maxFrequencyPercentage);
+    $('#profTooltip').text(maxFrequencyPercentage + ' ' + UIString[interfaceLanguage].ProficiencyLevel);
+  } else {
+    let maxFrequencyPercentage = '0.00%';
+    $('#proficiencyLevel').text(maxFrequencyPercentage);
+    $('#profTooltip').text(maxFrequencyPercentage + ' ' + UIString[interfaceLanguage].ProficiencyLevel);
+
   }
+}
 
 // Function to initialize the default mode based on screen size
 function initializeDefaultMode() {
   if (window.innerWidth < 768) { // Mobile devices
     isMultipleChoice = true; // Set to multiple-choice
-    $('#toggle-mode').text('Make it harder');
+    $('#toggle-mode').text(UIString[interfaceLanguage].makeItHarder);
   } else {
     isMultipleChoice = false; // Set to text input
-    $('#toggle-mode').text('Make it easier');
+    $('#toggle-mode').text(UIString[interfaceLanguage].makeItEasier);
   }
 
   // Add an event listener for the toggle button
@@ -895,15 +1240,15 @@ function initializeDefaultMode() {
 // Function to toggle between modes
 function toggleMode() {
   debugger;
-  
+
   isMultipleChoice = !isMultipleChoice; // Toggle the mode
-  $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
+  $('#toggle-mode').text(isMultipleChoice ? UIString[interfaceLanguage].makeItHarder : UIString[interfaceLanguage].makeItEasier);
   gtag('event', 'Toggle Mode', {
     'question_type': 'Vocabulary',
     'user_id': uid,
-    'user_pressed': isMultipleChoice ? 'Make it easier' : 'Make it harder',
+    'user_pressed': isMultipleChoice ? UIString[interfaceLanguage].makeItEasier : UIString[interfaceLanguage].makeItHarder,
     'course': window.currentCourse
-});
+  });
   // Reload the current question with the new mode
   debugger;
   displayQuestion(currentQuestionData, currentQuestionId, currentCourse);
@@ -911,14 +1256,14 @@ function toggleMode() {
 
 // Function to fetch the current course based on URL or Firestore
 function fetchCurrentCourse(user) {
-  
+
   return new Promise((resolve, reject) => {
     const urlParams = new URLSearchParams(window.location.search);
     const courseIdFromUrl = urlParams.get('courseId');
 
     if (courseIdFromUrl) {
       console.log(`Course ID found in URL: ${courseIdFromUrl}`);
-      
+
       // Check if the course exists (validate that questions exist for this course)
       validateCourse(courseIdFromUrl).then((isValidCourse) => {
         if (isValidCourse) {
@@ -1052,7 +1397,7 @@ async function loadQuestion(user, currentCourse) {
   }
   if (!currentCourse) {
     console.error("User has not selected a course.");
-    
+
     window.location.href = 'course_selection.html';
     return;
   }
@@ -1080,7 +1425,7 @@ async function loadQuestion(user, currentCourse) {
     // 4) If we have a question, display it
     if (questionDoc) {
       previousQuestionId = questionDoc.id; // Remember it to avoid duplicates
-      loadQuestionData(questionDoc.id, currentCourse); 
+      loadQuestionData(questionDoc.id, currentCourse);
     } else {
       console.log('No questions found at all.');
       hideLoadingProgress();
@@ -1119,7 +1464,7 @@ async function getDueQuestion(user, currentCourse) {
 
     // local filter to skip question IDs in questionsToIgnore
     const docs = snapshot.docs.filter(doc => !questionsToIgnore.includes(doc.id));
-    
+
     // from these, pick one that’s not the previous question
     let validDoc = null;
     docs.forEach(doc => {
@@ -1218,7 +1563,7 @@ async function getNextEarlyQuestion(user, currentCourse) {
     }
 
     const docs = snapshot.docs.filter(doc => !questionsToIgnore.includes(doc.id));
-    
+
     let validDoc = null;
     docs.forEach(doc => {
       if (!validDoc && doc.id !== previousQuestionId) {
@@ -1279,20 +1624,20 @@ function resetAndRetry() {
 // Function to get the count of due questions
 async function getDueQuestionsCount() {
   try {
-      const progressRef = db.collection('users')
-          .doc(uid)
-          .collection('courses')
-          .doc(window.currentCourse)
-          .collection('progress');
+    const progressRef = db.collection('users')
+      .doc(uid)
+      .collection('courses')
+      .doc(window.currentCourse)
+      .collection('progress');
 
-      const countSnapshot = await progressRef
-          .where('nextDue', '<=', new Date())
-          .get();
+    const countSnapshot = await progressRef
+      .where('nextDue', '<=', new Date())
+      .get();
 
-      return countSnapshot.size;
+    return countSnapshot.size;
   } catch (error) {
-      console.error('Error fetching due questions count:', error);
-      return 0;
+    console.error('Error fetching due questions count:', error);
+    return 0;
   }
 }
 
@@ -1300,6 +1645,8 @@ async function getDueQuestionsCount() {
 async function updateDueQuestionsCount() {
   const count = await getDueQuestionsCount();
   document.getElementById('dueQuestions').innerText = count;
+  document.getElementById('dueQuestionsTooltip').innerText = count + ' ' + UIString[interfaceLanguage].ReviewQuestionsWaiting;
+
 }
 
 
@@ -1373,9 +1720,9 @@ function displayQuestion(question, questionId, currentCourse) {
   console.log(question);
   hideLoadingProgress(); // Hide progress bar when the question loads
   $('#replay-audio').prop('disabled', true); // Disable and grey out the button
-  
+
   updateDueQuestionsCount(); // Update the due questions count in the UI
-                             // We are doing this here because it's ensuring that the previous stats are updated before the new question is displayed
+  // We are doing this here because it's ensuring that the previous stats are updated before the new question is displayed
 
 
   // Store questionId and current question data globally for use in other functions
@@ -1452,22 +1799,36 @@ function displayQuestion(question, questionId, currentCourse) {
       var timesCorrect = progressData.timesCorrect || 0;
       var timesWrong = progressData.timesIncorrect || 0;
 
-      // Update HTML with the stats
-      $('#times-seen').text(timesSeen);
+      if (timesSeen == 1) {
+        $('#once').text(UIString[interfaceLanguage].once);
+        $('#once').removeClass('d-none');
+        $('#times-seen').addClass('d-none');
+        $('#times').addClass('d-none');
+      } else {
+        $('#once').addClass('d-none');
+        $('#times-seen').text(timesSeen);
+        $('#times-seen').removeClass('d-none');
+        $('#times').removeClass('d-none');
+      }
       $('#times-correct').text(timesCorrect);
       $('#times-wrong').text(timesWrong);
       $('#question-stats').show(); // Show the stats section
     } else {
+
       var timesSeen = 0;
       var timesCorrect = 0;
       var timesWrong = 0;
 
       // Update HTML with the stats
+      $('#once').addClass('d-none');
       $('#times-seen').text(timesSeen);
+      $('#times-seen').removeClass('d-none');
+      $('#times').removeClass('d-none');
       $('#times-correct').text(timesCorrect);
       $('#times-wrong').text(timesWrong);
       $('#question-stats').show(); // Show the stats section
     }
+
 
     // Display the phrase status
     $('#translation').append(` <span class="text-muted">${phraseStatus}</span>`);
@@ -1533,7 +1894,7 @@ function displayQuestion(question, questionId, currentCourse) {
   function handleSubmit() {
     var userAnswer = $('#user-answer').val().trim();
     var isCorrect = normalizeString(userAnswer) === normalizeString(question.missingWord);
-    
+
     afterAnswerSubmission(isCorrect);
   }
 
@@ -1570,12 +1931,12 @@ function displayQuestion(question, questionId, currentCourse) {
       'answer': isCorrect,
       'course': window.currentCourse,
       'mode': isMultipleChoice ? 'Multiple_Choice' : 'Cloze'
-  });
+    });
 
     const questionEndTime = new Date();
     let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
     timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
-    
+
 
     // Disable the toggle button after submission
     $('#toggle-mode').prop('disabled', true);
@@ -1587,9 +1948,13 @@ function displayQuestion(question, questionId, currentCourse) {
 
     // Feedback to user
     if (isCorrect) {
-      $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
+      // $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
+      $('#feedback').text(UIString[interfaceLanguage].correctExclemation).removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
+
     } else {
-      $('#feedback').text(`Incorrect. The correct answer was "${question.missingWord}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+      let correction = UIString[interfaceLanguage].incorrectPart1 + ' <span class="text-decoration-underline">' +question.missingWord + '</span>.';
+      $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
+      // $('#feedback').text(`Incorrect. The correct answer was "${question.missingWord}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
     }
 
     // Update visual stats and progress
@@ -1743,7 +2108,7 @@ function playAudio(questionId, completeSentence, targetLanguage) {
 
 // Function to stop the audio
 function stopAudio() {
-  
+
   audioElement.pause();
   audioElement.currentTime = 0; // Reset the audio playback
 }
@@ -1830,7 +2195,7 @@ function normalizeString(str) {
 
 // Update user progress in the database
 function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
-  
+
   var user = firebase.auth().currentUser;
 
   var userProgressRef = db.collection('users').doc(user.uid)
@@ -1851,7 +2216,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
       // Now, run the transaction to update progress and stats
       db.runTransaction(transaction => {
         return transaction.get(userProgressRef).then(doc => {
-          
+
           var data = doc.exists ? doc.data() : {
             timesCorrect: 0,
             timesIncorrect: 0,
@@ -1927,10 +2292,10 @@ function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
 
               var maxFrequencyPercentage = (questionFrequency / 10000 * 100).toFixed(2) + '%';
               $('#proficiencyLevel').text(maxFrequencyPercentage);
-              $('#profTooltip').text(maxFrequencyPercentage + ' Proficiency Level');
+              $('#profTooltip').text(maxFrequencyPercentage + ' ' + UIString[interfaceLanguage].ProficiencyLevel);
 
             }
-            
+
             // Write the updated progress and stats back to Firestore
             transaction.set(userProgressRef, data);
             transaction.set(allTimeStatsRef, allTimeData);
@@ -2042,7 +2407,7 @@ function updateLastFiveAnswers() {
 
 // Update stats in the database
 function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
-  
+
   const dailyStatsRef = userStatsRef.doc(date);
   const allTimeStatsRef = userStatsRef.doc('all-time');
 
@@ -2279,7 +2644,7 @@ function showExplanationModal(explanationData) {
     'question_type': 'Vocabulary',
     'user_id': uid,
     'course': window.currentCourse
-});
+  });
 
   // Show the modal
   $('#explanationModal').modal('show');
@@ -2455,7 +2820,7 @@ function afterDrillCompleted(user, currentCourse) {
 }
 
 function updateSpecialCharacters(targetLanguage) {
-  
+
   const specialChars = languageToSpecialChars[targetLanguage] || [];
   const specialCharsContainer = document.getElementById('special-characters');
 
@@ -2481,29 +2846,29 @@ function updateSpecialCharacters(targetLanguage) {
 
 async function fetchMaxFrequency(user, currentCourse) {
   try {
-    
-      const allTimeDocRef = db
-          .collection('users')
-          .doc(user.uid)
-          .collection('courses')
-          .doc(currentCourse)
-          .collection('stats')
-          .doc('all-time');
-      
-      const allTimeDoc = await allTimeDocRef.get();
-      
-      if (allTimeDoc.exists) {
-          const data = allTimeDoc.data();
-          maxFrequency = data.maxFrequency || 0;
-          console.log(`Max Frequency for course ${currentCourse}: ${maxFrequency}`);
-      } else {
-          console.warn(`All-time document does not exist for course ${currentCourse}. Initializing maxFrequency to 0.`);
-          maxFrequency = 0;
-          // Initialize the all-time document if it doesn't exist
-          await allTimeDocRef.set({ maxFrequency: 0 }, { merge: true });
-      }
+
+    const allTimeDocRef = db
+      .collection('users')
+      .doc(user.uid)
+      .collection('courses')
+      .doc(currentCourse)
+      .collection('stats')
+      .doc('all-time');
+
+    const allTimeDoc = await allTimeDocRef.get();
+
+    if (allTimeDoc.exists) {
+      const data = allTimeDoc.data();
+      maxFrequency = data.maxFrequency || 0;
+      console.log(`Max Frequency for course ${currentCourse}: ${maxFrequency}`);
+    } else {
+      console.warn(`All-time document does not exist for course ${currentCourse}. Initializing maxFrequency to 0.`);
+      maxFrequency = 0;
+      // Initialize the all-time document if it doesn't exist
+      await allTimeDocRef.set({ maxFrequency: 0 }, { merge: true });
+    }
   } catch (error) {
-      console.error('Error fetching maxFrequency:', error);
+    console.error('Error fetching maxFrequency:', error);
   }
 }
 
@@ -2516,29 +2881,29 @@ async function fetchMaxFrequency(user, currentCourse) {
  */
 async function updateMaxFrequency(user, currentCourse, newMaxFrequency) {
   try {
-      const allTimeDocRef = db
-          .collection('users')
-          .doc(user.uid)
-          .collection('courses')
-          .doc(currentCourse)
-          .collection('stats')
-          .doc('all-time');
-      
-      // Update Firestore
-      await allTimeDocRef.set({ maxFrequency: newMaxFrequency }, { merge: true });
-      
-      // Update the global variable
-      maxFrequency = newMaxFrequency;
-      console.log(`maxFrequency updated to ${maxFrequency} for course ${currentCourse}`);
-      
+    const allTimeDocRef = db
+      .collection('users')
+      .doc(user.uid)
+      .collection('courses')
+      .doc(currentCourse)
+      .collection('stats')
+      .doc('all-time');
+
+    // Update Firestore
+    await allTimeDocRef.set({ maxFrequency: newMaxFrequency }, { merge: true });
+
+    // Update the global variable
+    maxFrequency = newMaxFrequency;
+    console.log(`maxFrequency updated to ${maxFrequency} for course ${currentCourse}`);
+
   } catch (error) {
-      console.error('Error updating maxFrequency:', error);
+    console.error('Error updating maxFrequency:', error);
   }
 }
 
 async function fetchCurrentLevel(user, theCourse) {
   debugger;
-  let currentLevel=1;
+  let currentLevel = 1;
   const allTimeStatsRef = db
     .collection('users')
     .doc(user.uid)
@@ -2549,13 +2914,13 @@ async function fetchCurrentLevel(user, theCourse) {
 
   const snapshot = await allTimeStatsRef.get();
   if (!snapshot.exists) {
-      currentLevel = 1;
+    currentLevel = 1;
   }
   const data = snapshot.data();
   if (!data.currentLevel) {
-      currentLevel = 1;
+    currentLevel = 1;
   } else {
-      currentLevel = data.currentLevel;
+    currentLevel = data.currentLevel;
   }
   console.log("Current level is:", currentLevel);
   return currentLevel;
@@ -2573,7 +2938,7 @@ function checkAndHandleLevelUps(allTimeData, dailyData) {
     if (totalCorrect >= LEVELS_LIST[i].correctDrillsRequired) {
       newLevel = LEVELS_LIST[i].level;
     } else {
-      break; 
+      break;
     }
   }
 
@@ -2613,12 +2978,12 @@ function showLevelCongratsPopup(newLevel) {
   // find the level object
   const found = LEVELS_LIST.find(obj => obj.level === newLevel);
   if (!found) return;
-  
+
   // e.g. fill a hidden div
   const name = found.name;
   const lvlStr = "You've unlocked the " + name + " stage!";
   $('#newLevelNum').text(newLevel);
-  
+
   $('#levelUpMessage').text(lvlStr);
   $('#congratsModal').modal('show'); // or your own logic
 }
@@ -2632,3 +2997,70 @@ function quit() {
   window.location.href = '/course_selection.html';
 }
 
+function modifyInterfaceLanguage() {
+
+  if (UIString[interfaceLanguage]) {
+    const lang = UIString[interfaceLanguage];
+
+    // Update all elements with data-i18n attribute (text content)
+    $('[data-i18n]').each(function () {
+      const key = $(this).data('i18n');
+      if (key.includes('.')) {
+        // Handle nested keys e.g. 'RecommendationNames.Basics'
+        const keys = key.split('.');
+        let text = lang;
+        keys.forEach(k => {
+          text = text[k] || '';
+        });
+        $(this).text(text);
+      } else {
+        // Direct key in the UIString
+        if (lang[key] !== undefined) {
+          $(this).text(lang[key]);
+        }
+      }
+    });
+
+    // Update elements with data-i18n-alt (for alt attributes)
+    $('[data-i18n-alt]').each(function () {
+      const key = $(this).data('i18n-alt');
+      if (lang[key] !== undefined) {
+        $(this).attr('alt', lang[key]);
+      }
+    });
+
+    // Update elements with data-i18n-title (for title attributes)
+    $('[data-i18n-title]').each(function () {
+      const key = $(this).data('i18n-title');
+      if (lang[key] !== undefined) {
+        $(this).attr('title', lang[key]);
+      }
+    });
+
+    // Update elements with data-i18n-placeholder (for placeholders)
+    $('[data-i18n-placeholder]').each(function () {
+      const key = $(this).data('i18n-placeholder');
+      if (lang[key] !== undefined) {
+        $(this).attr('placeholder', lang[key]);
+      }
+    });
+
+
+
+
+  }
+}
+/*
+I have a firestore collection called "coaches" it contains documents that have info about coaches that I use in my language learning app. each document is built like the following: coachName (string), example: "Eccentric Chef", characterDescription (string), example: "A whimsical language learning coach who draws inspiration from the culinary arts, known for colorful metaphors and a penchant for theatrical flair. Imagine a cooking show host who loves mixing languages like ingredients in a zesty salad."  personality (string), contains a string, example: personality
+"Lively, humorous, encouraging, with a dash of the dramatic and a sprinkle of wisdom. Loves to make learning feel like a grand culinary adventure." correctMessages (array), contains an unfixed number of strings, example: correctMessages
+(array)
+0
+"Bravo! Your answer was as perfect as crème brûlée!"
+(string)
+1
+"Spot on, like a perfectly baked baguette!" (string).... encouragementMessages (array), contains an unfixed number of strings, example: 0
+"Keep stirring the pot, you're about to taste the success!"
+(string)
+1
+"Every great dish starts with a single ingredient, keep adding those language skills!" and the same array structure for the following field names that contains unfixed number of strings: fiveCorrectMessages, fiveMistakesMessages, loadingMessages, mistakeMessages, sevenCorrectMessages , sevenMistakesMessages, threeCorrectMessages, threeMistakesMessages,  tonsOfCorrectsInARowMessages, tonsOfMistakesInARowMessages
+*/

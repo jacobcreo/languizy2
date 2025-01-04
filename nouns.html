@@ -90,6 +90,7 @@
           <span id="dueQuestions-box" class="dueQuestions-box d-inline mx-3">
             <i class="fa fa-hourglass-start text-danger" aria-hidden="true"></i>
             <span id="dueQuestions">0</span>
+            <span id="dueQuestionsTooltip" class="tooltiptext"></span>
           </span>
           <span class="score-box d-inline me-3">
             <i class="fas fa-star text-warning" data-i18n-alt="scoreIconAlt"></i>
@@ -185,7 +186,7 @@
 
       <!-- Redesigned Question Stats Section -->
       <div id="question-stats" class="d-flex justify-content-center align-items-center mb-2 mb-md-4">
-        <span class="badge bg-secondary me-3"><span data-i18n="seen">Seen</span>: <span id="times-seen"></span> <span data-i18n="times"></span></span>
+        <span class="badge bg-secondary me-3"><span data-i18n="seen">Seen</span>: <span id="once" data-i18n="once" class="d-none"></span><span id="times-seen"></span> <span id="times" data-i18n="times"></span></span>
 
         <div class="d-flex align-items-center">
           <span class="badge bg-success me-2"><i class="fas fa-check-circle"></i> <span

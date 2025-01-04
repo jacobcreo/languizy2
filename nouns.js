@@ -524,11 +524,14 @@ const UIString = {
         'toggleMode': 'Make it easier',
 
         // Feedback and Stats
-        'proficiencyLevel': 'Proficiency Level',
+        'ProficiencyLevel': 'Proficiency Level',
+        'ReviewQuestionsWaiting': 'Review Questions Waiting',
         'score': 'Score',
         'correctCount': 'Correct',
         'wrongCount': 'Wrong',
-
+        'times': 'times',
+        'seen': 'Seen',
+        'once': 'once',
         // Image and Icon Alt Texts
         'navbarBrandAlt': 'Languizy Logo',
         'proficiencyIconAlt': 'Proficiency Icon',
@@ -634,11 +637,14 @@ const UIString = {
         'toggleMode': 'Hacerlo más fácil',
 
         // Feedback and Stats
-        'proficiencyLevel': 'Nivel de Competencia',
+        'ProficiencyLevel': 'Nivel de Competencia',
+        'ReviewQuestionsWaiting': 'Preguntas para Revisión',
         'score': 'Puntuación',
         'correctCount': 'Correctos',
         'wrongCount': 'Incorrectos',
-
+        'times': 'veces',
+        'seen': 'Visto',
+        'once': 'una vez',
         // Image and Icon Alt Texts
         'navbarBrandAlt': 'Logo de Languizy',
         'proficiencyIconAlt': 'Icono de Nivel de Competencia',
@@ -760,6 +766,8 @@ const languageToSpecialChars = {
 
 // various consts not shown for brevity
 
+let interfaceLanguage = 'en';
+
 // Initialize Firestore
 var db = firebase.firestore();
 var dailyScore = 0;
@@ -776,7 +784,6 @@ let listOfSeenNouns = [];
 let maxOrder = 0;
 let imagesLoaded = 0;
 let showCoachFeedback = true;
-let interfaceLanguage = 'en';
 let userCurrentLevel = 1; // default
 let nounsToIgnore = []; // Array to skip failing or problematic Noun IDs for this session
 let matchingPairs = []; // Store {target: "", origin: ""}
@@ -953,6 +960,7 @@ function updateMaxOrder(user, currentCourse = window.currentCourse) {
         .collection('stats').doc('all-time');
 
     allTimeStatsRef.get().then(doc => {
+        debugger;
         if (doc.exists) {
             maxOrder = doc.data().maxOrder || 0;
             let maxOrderPercentage = (maxOrder / 2500 * 100).toFixed(2) + '%';
@@ -1775,17 +1783,32 @@ function displayNoun(noun, nounId, currentCourse = window.currentCourse) {
             var timesWrong = progressData.timesIncorrect || 0;
 
             // Update HTML with the stats
-            $('#times-seen').text(timesSeen);
+            
+            if (timesSeen==1){
+                $('#once').text(UIString[interfaceLanguage].once);
+                $('#once').removeClass('d-none');
+                $('#times-seen').addClass('d-none');
+                $('#times').addClass('d-none');
+            } else {
+                $('#once').addClass('d-none');  
+                $('#times-seen').text(timesSeen);
+                $('#times-seen').removeClass('d-none');
+                $('#times').removeClass('d-none');
+            }
             $('#times-correct').text(timesCorrect);
             $('#times-wrong').text(timesWrong);
             $('#question-stats').show(); // Show the stats section
         } else {
+            
             var timesSeen = 0;
             var timesCorrect = 0;
             var timesWrong = 0;
 
             // Update HTML with the stats
+            $('#once').addClass('d-none');  
             $('#times-seen').text(timesSeen);
+            $('#times-seen').removeClass('d-none');
+            $('#times').removeClass('d-none');
             $('#times-correct').text(timesCorrect);
             $('#times-wrong').text(timesWrong);
             $('#question-stats').show(); // Show the stats section
@@ -3257,7 +3280,7 @@ async function fetchOrAssignCoach(user) {
             coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID
             await userRef.update({ coach: coachId });
         }
-        const coachData = await fetchCoachData(coachId);
+        const coachData = await fetchCoachData(coachId, interfaceLanguage);
         window.coachData = coachData;
         setCoachImage(coachData.image);
     } catch (error) {
@@ -3265,37 +3288,100 @@ async function fetchOrAssignCoach(user) {
     }
 }
 
-async function fetchCoachData(coachId) {
+/**
+ * fetchCoachData(coachId, interfaceLanguage)
+ * 
+ *  - Fetches coach doc from Firestore
+ *  - Handles both the old and new structure for strings/arrays
+ *  - Falls back to English if the requested language is missing
+ *  - Returns only the data needed for the UI
+ */
+
+async function fetchCoachData(coachId, interfaceLanguage = 'en') {
     try {
-        const coachDoc = await db.collection('coaches').doc(coachId).get();
-        if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
-
-        const coachData = coachDoc.data();
-
-        function getRandomMessages(array, count = 10) {
-            return array.sort(() => 0.5 - Math.random()).slice(0, count);
+      const coachDoc = await db.collection('coaches').doc(coachId).get();
+      if (!coachDoc.exists) {
+        throw new Error(`Coach with ID ${coachId} not found.`);
+      }
+  
+      const docData = coachDoc.data();
+  
+      // Helper function to shuffle an array and get 'count' items
+      function getRandomMessages(arr, count = 10) {
+        return arr.sort(() => 0.5 - Math.random()).slice(0, count);
+      }
+  
+      /**
+       * getStringField(fieldData):
+       * - If old structure => fieldData is just "some string"
+       * - If new structure => fieldData is { en: "some string", es: "algo" }
+       * - Return fieldData[interfaceLanguage] if it exists, else fallback to .en, else ""
+       */
+      function getStringField(fieldData) {
+        if (!fieldData) return "";
+        
+        // Old structure => string
+        if (typeof fieldData === 'string') {
+          return fieldData;
         }
-
-        return {
-            coachName: coachData.coachName,
-            image: coachData.image,
-            correctMessages: getRandomMessages(coachData.correctMessages),
-            encouragementMessages: getRandomMessages(coachData.encouragementMessages),
-            fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
-            fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
-            loadingMessages: getRandomMessages(coachData.loadingMessages),
-            mistakeMessages: getRandomMessages(coachData.mistakeMessages),
-            sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
-            sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
-            threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
-            threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
-            tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
-            tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
-        };
+        // New structure => object with subkeys
+        if (typeof fieldData === 'object') {
+          return fieldData[interfaceLanguage] || fieldData.en || "";
+        }
+  
+        // Fallback
+        return "";
+      }
+  
+      /**
+       * getArrayField(fieldData):
+       * - If old structure => fieldData is just ["some", "array", "strings"]
+       * - If new structure => fieldData is { en: [...], es: [...], fr: [...] }
+       * - Return the array for interfaceLanguage, fallback to .en if missing
+       */
+      function getArrayField(fieldData) {
+        if (!fieldData) return [];
+  
+        // Old structure => array
+        if (Array.isArray(fieldData)) {
+          return fieldData;
+        }
+        // New structure => object with sub-arrays
+        if (typeof fieldData === 'object') {
+          const arr = fieldData[interfaceLanguage] || fieldData.en || [];
+          return Array.isArray(arr) ? arr : [];
+        }
+  
+        // Fallback
+        return [];
+      }
+  
+      return {
+        coachName: getStringField(docData.coachName),
+        characterDescription: getStringField(docData.characterDescription),
+        personality: getStringField(docData.personality),
+        image: docData.image || "",
+  
+        // For each array field, we get up to 10 random messages
+        correctMessages: getRandomMessages(getArrayField(docData.correctMessages)),
+        encouragementMessages: getRandomMessages(getArrayField(docData.encouragementMessages)),
+        fiveCorrectMessages: getRandomMessages(getArrayField(docData.fiveCorrectMessages)),
+        fiveMistakesMessages: getRandomMessages(getArrayField(docData.fiveMistakesMessages)),
+        loadingMessages: getRandomMessages(getArrayField(docData.loadingMessages)),
+        mistakeMessages: getRandomMessages(getArrayField(docData.mistakeMessages)),
+        sevenCorrectMessages: getRandomMessages(getArrayField(docData.sevenCorrectMessages)),
+        sevenMistakesMessages: getRandomMessages(getArrayField(docData.sevenMistakesMessages)),
+        threeCorrectMessages: getRandomMessages(getArrayField(docData.threeCorrectMessages)),
+        threeMistakesMessages: getRandomMessages(getArrayField(docData.threeMistakesMessages)),
+        tonsOfCorrectsInARowMessages: getRandomMessages(getArrayField(docData.tonsOfCorrectsInARowMessages)),
+        tonsOfMistakesInARowMessages: getRandomMessages(getArrayField(docData.tonsOfMistakesInARowMessages)),
+      };
     } catch (error) {
-        console.error('Error fetching coach data:', error);
+      console.error('Error fetching coach data:', error);
+      return null;
     }
-}
+  }
+  
 
 function setCoachImage(imageFilename) {
     const imagePath = `assets/images/${imageFilename}`;
@@ -3446,6 +3532,7 @@ async function getDueQuestionsCount() {
   async function updateDueQuestionsCount() {
     const count = await getDueQuestionsCount();
     document.getElementById('dueQuestions').innerText = count;
+    document.getElementById('dueQuestionsTooltip').innerText = count + ' ' + UIString[interfaceLanguage].ReviewQuestionsWaiting;
   }
 
 

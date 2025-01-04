@@ -381,13 +381,13 @@
     animation: spin 1s linear infinite, bounce 0.5s ease-in-out infinite;
     }
     
-    #profBox {
+    #profBox, #dueQuestions-box {
     position: relative;
     display: inline-block;
     cursor: pointer; /* Optional: Changes cursor to a pointer */
     }
     
-    #profBox .tooltiptext {
+    #profBox .tooltiptext, #dueQuestions-box .tooltiptext {
     visibility: hidden;
     width: 200px; /* Adjust the width as necessary */
     background-color: black;
@@ -402,9 +402,11 @@
     transform: translateX(-50%);
     opacity: 0;
     transition: opacity 0.3s ease;
+    font-size: initial;
+    font-weight: normal;
     }
     
-    #profBox:hover .tooltiptext {
+    #profBox:hover .tooltiptext, #dueQuestions-box:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
     }

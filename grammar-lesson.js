@@ -12,6 +12,8 @@ let lastFiveAnswers = [];
 let showCoachFeedback = true;
 let questionsToIgnore = [];
 
+let interfaceLanguage = 'en';
+
 let questionStartTime; // Variable to store the start time of the question
 
 let userCurrentLevel = 1; // default
@@ -192,7 +194,7 @@ async function fetchOrAssignCoach(user) {
         }
 
         // Fetch coach data from Firestore
-        const coachData = await fetchCoachData(coachId);
+        const coachData = await fetchCoachData(coachId, interfaceLanguage);
 
         // Set global variables or store coach data to be used throughout the practice screen
         window.coachData = coachData;
@@ -202,38 +204,100 @@ async function fetchOrAssignCoach(user) {
     }
 }
 
-async function fetchCoachData(coachId) {
+/**
+ * fetchCoachData(coachId, interfaceLanguage)
+ * 
+ *  - Fetches coach doc from Firestore
+ *  - Handles both the old and new structure for strings/arrays
+ *  - Falls back to English if the requested language is missing
+ *  - Returns only the data needed for the UI
+ */
+
+async function fetchCoachData(coachId, interfaceLanguage = 'en') {
     try {
-        const coachDoc = await db.collection('coaches').doc(coachId).get();
-        if (!coachDoc.exists) throw new Error(`Coach with ID ${coachId} not found.`);
-
-        const coachData = coachDoc.data();
-
-        // Get 10 random entries from each message array
-        function getRandomMessages(array, count = 10) {
-            return array.sort(() => 0.5 - Math.random()).slice(0, count);
+      const coachDoc = await db.collection('coaches').doc(coachId).get();
+      if (!coachDoc.exists) {
+        throw new Error(`Coach with ID ${coachId} not found.`);
+      }
+  
+      const docData = coachDoc.data();
+  
+      // Helper function to shuffle an array and get 'count' items
+      function getRandomMessages(arr, count = 10) {
+        return arr.sort(() => 0.5 - Math.random()).slice(0, count);
+      }
+  
+      /**
+       * getStringField(fieldData):
+       * - If old structure => fieldData is just "some string"
+       * - If new structure => fieldData is { en: "some string", es: "algo" }
+       * - Return fieldData[interfaceLanguage] if it exists, else fallback to .en, else ""
+       */
+      function getStringField(fieldData) {
+        if (!fieldData) return "";
+        
+        // Old structure => string
+        if (typeof fieldData === 'string') {
+          return fieldData;
         }
-
-        return {
-            coachName: coachData.coachName,
-            image: coachData.image,
-            correctMessages: getRandomMessages(coachData.correctMessages),
-            encouragementMessages: getRandomMessages(coachData.encouragementMessages),
-            fiveCorrectMessages: getRandomMessages(coachData.fiveCorrectMessages),
-            fiveMistakesMessages: getRandomMessages(coachData.fiveMistakesMessages),
-            loadingMessages: getRandomMessages(coachData.loadingMessages),
-            mistakeMessages: getRandomMessages(coachData.mistakeMessages),
-            sevenCorrectMessages: getRandomMessages(coachData.sevenCorrectMessages),
-            sevenMistakesMessages: getRandomMessages(coachData.sevenMistakesMessages),
-            threeCorrectMessages: getRandomMessages(coachData.threeCorrectMessages),
-            threeMistakesMessages: getRandomMessages(coachData.threeMistakesMessages),
-            tonsOfCorrectsInARowMessages: getRandomMessages(coachData.tonsOfCorrectsInARowMessages),
-            tonsOfMistakesInARowMessages: getRandomMessages(coachData.tonsOfMistakesInARowMessages),
-        };
+        // New structure => object with subkeys
+        if (typeof fieldData === 'object') {
+          return fieldData[interfaceLanguage] || fieldData.en || "";
+        }
+  
+        // Fallback
+        return "";
+      }
+  
+      /**
+       * getArrayField(fieldData):
+       * - If old structure => fieldData is just ["some", "array", "strings"]
+       * - If new structure => fieldData is { en: [...], es: [...], fr: [...] }
+       * - Return the array for interfaceLanguage, fallback to .en if missing
+       */
+      function getArrayField(fieldData) {
+        if (!fieldData) return [];
+  
+        // Old structure => array
+        if (Array.isArray(fieldData)) {
+          return fieldData;
+        }
+        // New structure => object with sub-arrays
+        if (typeof fieldData === 'object') {
+          const arr = fieldData[interfaceLanguage] || fieldData.en || [];
+          return Array.isArray(arr) ? arr : [];
+        }
+  
+        // Fallback
+        return [];
+      }
+  
+      return {
+        coachName: getStringField(docData.coachName),
+        characterDescription: getStringField(docData.characterDescription),
+        personality: getStringField(docData.personality),
+        image: docData.image || "",
+  
+        // For each array field, we get up to 10 random messages
+        correctMessages: getRandomMessages(getArrayField(docData.correctMessages)),
+        encouragementMessages: getRandomMessages(getArrayField(docData.encouragementMessages)),
+        fiveCorrectMessages: getRandomMessages(getArrayField(docData.fiveCorrectMessages)),
+        fiveMistakesMessages: getRandomMessages(getArrayField(docData.fiveMistakesMessages)),
+        loadingMessages: getRandomMessages(getArrayField(docData.loadingMessages)),
+        mistakeMessages: getRandomMessages(getArrayField(docData.mistakeMessages)),
+        sevenCorrectMessages: getRandomMessages(getArrayField(docData.sevenCorrectMessages)),
+        sevenMistakesMessages: getRandomMessages(getArrayField(docData.sevenMistakesMessages)),
+        threeCorrectMessages: getRandomMessages(getArrayField(docData.threeCorrectMessages)),
+        threeMistakesMessages: getRandomMessages(getArrayField(docData.threeMistakesMessages)),
+        tonsOfCorrectsInARowMessages: getRandomMessages(getArrayField(docData.tonsOfCorrectsInARowMessages)),
+        tonsOfMistakesInARowMessages: getRandomMessages(getArrayField(docData.tonsOfMistakesInARowMessages)),
+      };
     } catch (error) {
-        console.error('Error fetching coach data:', error);
+      console.error('Error fetching coach data:', error);
+      return null;
     }
-}
+  }
+  
 
 function setCoachImage(imageFilename) {
     const imagePath = `assets/images/${imageFilename}`;
