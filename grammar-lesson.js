@@ -382,7 +382,7 @@ firebase.auth().onAuthStateChanged(function (user) {
                 loadDailyScore(user, currentLesson);
 
                  // fetch user level from all-time doc once, store in window.userCurrentLevel
-                 fetchCurrentLevel(user, currentCourse)
+                 fetchCurrentLevel(user, currentLesson)
                  .then((lvl) => {
                      userCurrentLevel = lvl;
                      console.log("User current level is:", lvl);
