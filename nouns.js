@@ -624,7 +624,25 @@ const UIString = {
         'level': 'Level',
         'continue': 'Continue',
         'exploreOtherOptions': 'Explore Other Options',
-        'youUnlocked': 'You\'ve unlocked the stage:'
+        'youUnlocked': 'You\'ve unlocked the stage:',
+
+        // Time Difference Templates
+    shownLast: "shown last {0} {1} ago",
+    newPhrase: "(new phrase)",
+
+    // Time Units
+    minute: "minute",
+    minutes: "minutes",
+    hour: "hour",
+    hours: "hours",
+    day: "day",
+    days: "days",
+    week: "week",
+    weeks: "weeks",
+    month: "month",
+    months: "months",
+    year: "year",
+    years: "years",
 
     },
     'es': {
@@ -747,7 +765,25 @@ const UIString = {
         'level': 'Nivel',
         'continue': 'Continuar',
         'exploreOtherOptions': 'Explorar otras opciones',
-        'youUnlocked': '¡Has desbloqueado el nivel:'
+        'youUnlocked': '¡Has desbloqueado el nivel:',
+
+        // Time Difference Templates
+    shownLast: "mostrado hace {0} {1}",
+    newPhrase: "(nueva frase)",
+
+        // Time Units
+    minute: "minuto",
+    minutes: "minutos",
+    hour: "hora",
+    hours: "horas",
+    day: "día",
+    days: "días",
+    week: "semana",
+    weeks: "semanas",
+    month: "mes",
+    months: "meses",
+    year: "año",
+    years: "años",
     },
     // Add more languages as needed
 };
@@ -1800,7 +1836,7 @@ function displayNoun(noun, nounId, currentCourse = window.currentCourse) {
             var progressData = progressDoc.data();
             if (progressData.lastAnswered) {
                 // Calculate time difference for display
-                phraseStatus = timeDifference(progressData.lastAnswered);
+                phraseStatus = timeDifference(progressData.lastAnswered, interfaceLanguage);
             }
 
             // ** NEW: Update Noun Stats **
@@ -3016,14 +3052,16 @@ debugger;
 }
 
 // Helper function to calculate time difference
-function timeDifference(lastAnswered) {
+// Helper function to calculate time difference
+function timeDifference(lastAnswered, interfaceLanguage = 'en') {
+    debugger;
     if (!lastAnswered) {
-        return "(new noun)";
+      return UIString[interfaceLanguage].newPhrase || "(new phrase)";
     }
-
-    let now = new Date();
+  
+    const now = new Date();
     const diff = now - lastAnswered.toDate(); // Calculate time difference in milliseconds
-
+  
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -3031,23 +3069,33 @@ function timeDifference(lastAnswered) {
     const weeks = Math.floor(days / 7);
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
-
+  
+    let value, unitKey;
+  
     if (years > 0) {
-        return `(shown last ${years} year${years > 1 ? 's' : ''} ago)`;
+      value = years;
+      unitKey = years > 1 ? 'years' : 'year';
     } else if (months > 0) {
-        return `(shown last ${months} month${months > 1 ? 's' : ''} ago)`;
+      value = months;
+      unitKey = months > 1 ? 'months' : 'month';
     } else if (weeks > 0) {
-        return `(shown last ${weeks} week${weeks > 1 ? 's' : ''} ago)`;
+      value = weeks;
+      unitKey = weeks > 1 ? 'weeks' : 'week';
     } else if (days > 0) {
-        return `(shown last ${days} day${days > 1 ? 's' : ''} ago)`;
+      value = days;
+      unitKey = days > 1 ? 'days' : 'day';
     } else if (hours > 0) {
-        return `(shown last ${hours} hour${hours > 1 ? 's' : ''} ago)`;
+      value = hours;
+      unitKey = hours > 1 ? 'hours' : 'hour';
     } else if (minutes > 0) {
-        return `(shown last ${minutes} minute${minutes > 1 ? 's' : ''} ago)`;
+      value = minutes;
+      unitKey = minutes > 1 ? 'minutes' : 'minute';
     } else {
-        return "(new noun)";
+      return UIString[interfaceLanguage].newPhrase || "(new phrase)";
     }
-}
+  
+    return '(' + localize('shownLast', interfaceLanguage, value, UIString[interfaceLanguage][unitKey]) + ')';
+  }
 
 function buttonClick(which) {
     if (which === 'stats') {
@@ -3659,4 +3707,18 @@ async function fetchCurrentLevel(user, theCourse) {
   function quit() {
     $('#congratsModal').modal('hide');
     window.location.href = '/course_selection.html';
+  }
+
+  function localize(key, language, ...args) {
+    let template = UIString[language][key];
+    
+    if (!template) {
+      console.warn(`Missing translation for key: ${key} in language: ${language}`);
+      // Fallback to English if translation is missing
+      template = UIString['en'][key] || key;
+    }
+    
+    return template.replace(/{(\d+)}/g, (match, number) => {
+      return typeof args[number] !== 'undefined' ? args[number] : match;
+    });
   }

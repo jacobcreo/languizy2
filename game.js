@@ -1836,13 +1836,13 @@ function displayQuestion(question, questionId, currentCourse) {
     .collection('progress').doc(questionId);
 
   userProgressRef.get().then(progressDoc => {
-    var phraseStatus = "(new phrase)"; // Default if never answered before
+    var phraseStatus = UIString[interfaceLanguage].newPhrase; // Default if never answered before
 
     if (progressDoc.exists) {
       var progressData = progressDoc.data();
       if (progressData.lastAnswered) {
         // Calculate time difference for display
-        phraseStatus = timeDifference(progressData.lastAnswered);
+        phraseStatus = timeDifference(progressData.lastAnswered, interfaceLanguage);
       }
 
       // ** NEW: Update Question Stats **
@@ -2581,6 +2581,7 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 
 // Helper function to calculate time difference
 function timeDifference(lastAnswered, interfaceLanguage = 'en') {
+  debugger;
   if (!lastAnswered) {
     return UIString[interfaceLanguage].newPhrase || "(new phrase)";
   }
@@ -2620,7 +2621,7 @@ function timeDifference(lastAnswered, interfaceLanguage = 'en') {
     return UIString[interfaceLanguage].newPhrase || "(new phrase)";
   }
 
-  return localize('shownLast', interfaceLanguage, value, UIString[interfaceLanguage][unitKey]);
+  return '(' + localize('shownLast', interfaceLanguage, value, UIString[interfaceLanguage][unitKey]) + ')';
 }
 
 function buttonClick(which) {

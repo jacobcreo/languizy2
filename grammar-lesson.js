@@ -71,12 +71,16 @@ const UIString = {
       lessonTypeBox: "",
       topicNum: "",
       profTooltip: "",
+      scoreTooltip: "Daily Score: ",
+      correctTooltip: "Correct Answers: ",
+      wrongTooltip: "Incorrect Answers: ",
       scoreBox: "",
       scoreCounter: "",
       correctBox: "",
       correctCounter: "",
       wrongBox: "",
       wrongCounter: "",
+      lessonNumber: "Lesson Number",
       topCornerForMobile: "",
       returnToCourseSelectionMobile: "Return to Course Selection",
       lastFiveAnswersContainer: "",
@@ -223,6 +227,24 @@ const UIString = {
       lessonExplanation: "Lesson Explanation",
       generalExplanation: "General Explanation",
       theMissingWord: "The Missing Word",
+
+      // Time Difference Templates
+    shownLast: "shown last {0} {1} ago",
+    newPhrase: "(new phrase)",
+
+    // Time Units
+    minute: "minute",
+    minutes: "minutes",
+    hour: "hour",
+    hours: "hours",
+    day: "day",
+    days: "days",
+    week: "week",
+    weeks: "weeks",
+    month: "month",
+    months: "months",
+    year: "year",
+    years: "years",
     },
   
     es: {
@@ -259,12 +281,16 @@ const UIString = {
       lessonTypeBox: "",
       topicNum: "",
       profTooltip: "",
+      scoreTooltip: 'Puntuación Diaria: ',
+      correctTooltip: 'Respuestas Correctas: ',
+      wrongTooltip: 'Respuestas Incorrectas: ',
       scoreBox: "",
       scoreCounter: "",
       correctBox: "",
       correctCounter: "",
       wrongBox: "",
       wrongCounter: "",
+      lessonNumber: "Lección Número",
       topCornerForMobile: "",
       returnToCourseSelectionMobile: "Volver a la Selección de Curso",
       lastFiveAnswersContainer: "",
@@ -411,6 +437,24 @@ const UIString = {
       lessonExplanation: "Explicación de la Lección",
       generalExplanation: "Explicación General",
       theMissingWord: "La Palabra Faltante",
+
+      // Time Difference Templates
+    shownLast: "mostrado hace {0} {1}",
+    newPhrase: "(nueva frase)",
+
+      // Time Units
+    minute: "minuto",
+    minutes: "minutos",
+    hour: "hora",
+    hours: "horas",
+    day: "día",
+    days: "días",
+    week: "semana",
+    weeks: "semanas",
+    month: "mes",
+    months: "meses",
+    year: "año",
+    years: "años",
     },
     // You can add more languages...
   };
@@ -888,6 +932,7 @@ function fetchCurrentLesson(user) {
             console.log(`Lesson ID found in URL: ${lessonId}`);
             window.currentLanguagePair = knownLanguage + '-' + targetLanguage;
             $("#topicNum").html(lessonId);
+            $("#topicTooltip").html(UIString[interfaceLanguage].lessonNumber + ' ' + lessonId);
 
 
             // Check if the lesson exists (validate that questions exist for this lesson)
@@ -1000,6 +1045,9 @@ function loadDailyScore(user, currentCourse) {
             dailyScore = 0; // If no score for today, initialize it
         }
         $('#score').text(dailyScore); // Display the current daily score
+        $('#scoreTooltip').text(UIString[interfaceLanguage].scoreTooltip + ': ' + dailyScore); // Display the current daily score
+        $('#correctTooltip').text(UIString[interfaceLanguage].correctTooltip + ': 0'); // Starting with 0 correct answers
+        $('#wrongTooltip').text(UIString[interfaceLanguage].wrongTooltip + ': 0'); // Starting with 0 wrong answers
     }).catch(error => {
         console.error('Error loading daily score:', error);
     });
@@ -1397,7 +1445,7 @@ function displayQuestion(question, questionId, currentLesson) {
             var progressData = progressDoc.data();
             if (progressData.lastAnswered) {
                 // Calculate time difference for display
-                questionStatus = timeDifference(progressData.lastAnswered);
+                questionStatus = timeDifference(progressData.lastAnswered, interfaceLanguage);
             }
 
             // ** NEW: Update Question Stats **
@@ -1938,6 +1986,8 @@ function updateVisualStats(isCorrect) {
     // Update UI for correct/wrong counts
     $('#correct-count').text(correctAnswers);
     $('#wrong-count').text(wrongAnswers);
+    $('#correctTooltip').text(UIString[interfaceLanguage].correctTooltip + ': ' + correctAnswers); // Display the current daily score
+    $('#wrongTooltip').text(UIString[interfaceLanguage].wrongTooltip + ': ' + wrongAnswers); // Display the current daily score
 
     // Update last 5 answers (display boxes)
     updateLastFiveAnswers();
@@ -2083,14 +2133,16 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 }
 
 // Helper function to calculate time difference
-function timeDifference(lastAnswered) {
+// Helper function to calculate time difference
+function timeDifference(lastAnswered, interfaceLanguage = 'en') {
+    debugger;
     if (!lastAnswered) {
-        return "(new question)";
+      return UIString[interfaceLanguage].newPhrase || "(new phrase)";
     }
-
+  
     const now = new Date();
     const diff = now - lastAnswered.toDate(); // Calculate time difference in milliseconds
-
+  
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -2098,23 +2150,33 @@ function timeDifference(lastAnswered) {
     const weeks = Math.floor(days / 7);
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
-
+  
+    let value, unitKey;
+  
     if (years > 0) {
-        return `(shown last ${years} year${years > 1 ? 's' : ''} ago)`;
+      value = years;
+      unitKey = years > 1 ? 'years' : 'year';
     } else if (months > 0) {
-        return `(shown last ${months} month${months > 1 ? 's' : ''} ago)`;
+      value = months;
+      unitKey = months > 1 ? 'months' : 'month';
     } else if (weeks > 0) {
-        return `(shown last ${weeks} week${weeks > 1 ? 's' : ''} ago)`;
+      value = weeks;
+      unitKey = weeks > 1 ? 'weeks' : 'week';
     } else if (days > 0) {
-        return `(shown last ${days} day${days > 1 ? 's' : ''} ago)`;
+      value = days;
+      unitKey = days > 1 ? 'days' : 'day';
     } else if (hours > 0) {
-        return `(shown last ${hours} hour${hours > 1 ? 's' : ''} ago)`;
+      value = hours;
+      unitKey = hours > 1 ? 'hours' : 'hour';
     } else if (minutes > 0) {
-        return `(shown last ${minutes} minute${minutes > 1 ? 's' : ''} ago)`;
+      value = minutes;
+      unitKey = minutes > 1 ? 'minutes' : 'minute';
     } else {
-        return "(new question)";
+      return UIString[interfaceLanguage].newPhrase || "(new phrase)";
     }
-}
+  
+    return '(' + localize('shownLast', interfaceLanguage, value, UIString[interfaceLanguage][unitKey]) + ')';
+  }
 
 function buttonClick(which) {
     if (which === 'stats') {
@@ -2753,3 +2815,17 @@ async function fetchCurrentLevel(user, theCourse) {
 
     }
 }
+
+function localize(key, language, ...args) {
+    let template = UIString[language][key];
+    
+    if (!template) {
+      console.warn(`Missing translation for key: ${key} in language: ${language}`);
+      // Fallback to English if translation is missing
+      template = UIString['en'][key] || key;
+    }
+    
+    return template.replace(/{(\d+)}/g, (match, number) => {
+      return typeof args[number] !== 'undefined' ? args[number] : match;
+    });
+  }
