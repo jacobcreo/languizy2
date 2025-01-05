@@ -527,8 +527,11 @@ const UIString = {
         'ProficiencyLevel': 'Proficiency Level',
         'ReviewQuestionsWaiting': 'Review Questions Waiting',
         'score': 'Score',
+        'scoreTooltip': 'Daily Score: ',
         'correctCount': 'Correct',
+        'correctTooltip': 'Correct Answers: ',
         'wrongCount': 'Wrong',
+        'wrongTooltip': 'Incorrect Answers: ',
         'times': 'times',
         'seen': 'Seen',
         'once': 'once',
@@ -647,8 +650,11 @@ const UIString = {
         'ProficiencyLevel': 'Nivel de Competencia',
         'ReviewQuestionsWaiting': 'Preguntas para Revisión',
         'score': 'Puntuación',
+        'scoreTooltip': 'Puntuación Diaria: ',
         'correctCount': 'Correctos',
+        'correctTooltip': 'Respuestas Correctas: ',
         'wrongCount': 'Incorrectos',
+        'wrongTooltip': 'Respuestas Incorrectas: ',
         'times': 'veces',
         'seen': 'Visto',
         'once': 'una vez',
@@ -876,6 +882,7 @@ function updateFlagIcons(currentCourse = window.currentCourse) {
         'en-cn': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],
         'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
         'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
+        'es-en': ['assets/icons/es-flag.png', 'assets/icons/en-flag.png'],
         // Add more courses and their corresponding flags here
     };
 
@@ -968,7 +975,9 @@ async function populateSubLevelBadge(userDoc) {
 
 // New function to update maxOrder
 function updateMaxOrder(user, currentCourse = window.currentCourse) {
-
+    
+    
+    
     const allTimeStatsRef = db.collection('users').doc(user.uid)
         .collection('courses').doc(currentCourse)
         .collection('stats').doc('all-time');
@@ -1141,6 +1150,9 @@ function loadDailyScore(user, currentCourse = window.currentCourse) {
             dailyScore = 0; // If no score for today, initialize it
         }
         $('#score').text(dailyScore); // Display the current daily score
+        $('#scoreTooltip').text(UIString[interfaceLanguage].scoreTooltip + ': ' + dailyScore); // Display the current daily score
+        $('#correctTooltip').text(UIString[interfaceLanguage].correctTooltip + ': 0'); // Starting with 0 correct answers
+        $('#wrongTooltip').text(UIString[interfaceLanguage].wrongTooltip + ': 0'); // Starting with 0 wrong answers
     }).catch(error => {
         console.error('Error loading daily score:', error);
     });
@@ -2732,6 +2744,7 @@ function updateUserProgress(nounId, isCorrect, currentCourse = window.currentCou
                         updateStats(userStatsRef, today, points, true, timeTaken); // Pass timeTaken
                         dailyScore += points; // Update the daily score
                         $('#score').text(dailyScore); // Update the score on screen
+                        $('#scoreTooltip').text(UIString[interfaceLanguage].scoreTooltip + ': ' + dailyScore); // Display the current daily score
                     } else {
                         streakWrong += 1;
                         streakCorrect = 0;
@@ -2861,6 +2874,8 @@ function updateVisualStats(isCorrect) {
     // Update UI for correct/wrong counts
     $('#correct-count').text(correctAnswers);
     $('#wrong-count').text(wrongAnswers);
+    $('#correctTooltip').text(UIString[interfaceLanguage].correctTooltip + ': ' + correctAnswers); // Display the current daily score
+    $('#wrongTooltip').text(UIString[interfaceLanguage].wrongTooltip + ': ' + wrongAnswers); // Display the current daily score
 
     // Update last 5 answers (display boxes)
     updateLastFiveAnswers();

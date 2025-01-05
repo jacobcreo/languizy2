@@ -12,7 +12,7 @@ let lastFiveAnswers = [];
 let showCoachFeedback = true;
 let questionsToIgnore = [];
 
-let interfaceLanguage = 'en';
+let interfaceLanguage = 'es';
 
 let questionStartTime; // Variable to store the start time of the question
 
@@ -36,7 +36,385 @@ let currentLanguagePair;
 let previousQuestionId = null;
 let lessonName = ''; // Global variable to store the lesson name
 
-
+const UIString = {
+    en: {
+      // General
+      htmlLanguage: "en",
+      metaCharset: "",
+      metaViewport: "",
+      pageTitle: "Vocabulary - Language Learning App",
+      bootstrapCssLink: "",
+      fontawesomeLink: "",
+      customCssLink: "",
+      googleTagScript: "",
+      googleTagInlineScript: "",
+      metaPixelScript: "",
+      metaPixelNoScript: "",
+      bodyTag: "",
+      // Navbar
+      navbar: "",
+      navbarContainer: "",
+      navbarBrand: "",
+      navbarBrandAlt: "Languizy Logo",
+      navbarBrandTitle: "Languizy, Language Learning for Real",
+      logoutAvatarContainer: "",
+      subLevelBadge: "",
+      userAvatar: "",
+      // Stats Bar
+      statsBarContainer: "",
+      statsRow: "",
+      courseFlagsContainer: "",
+      flagCard: "",
+      scoreCorrectWrongContainer: "",
+      returnToCourseSelection: "Return to Course Selection",
+      statsFlexContainer: "",
+      lessonTypeBox: "",
+      topicNum: "",
+      profTooltip: "",
+      scoreBox: "",
+      scoreCounter: "",
+      correctBox: "",
+      correctCounter: "",
+      wrongBox: "",
+      wrongCounter: "",
+      topCornerForMobile: "",
+      returnToCourseSelectionMobile: "Return to Course Selection",
+      lastFiveAnswersContainer: "",
+      lastFiveAnswers: "Last 5 Answers",
+      answerBox1: "",
+      answerBox2: "",
+      answerBox3: "",
+      answerBox4: "",
+      answerBox5: "",
+      // Main content
+      mainContentContainer: "",
+      loadingProgressContainer: "",
+      loadingProgressBar: "",
+      lessonNameContainer: "",
+      lessonNameDisplay: "",
+      questionArea: "",
+      loadingMessage: "Loading...",
+      translationText: "",
+      feedbackArea: "",
+      questionStatsSection: "",
+      seenLabel: "Seen:",
+      timesSeenCounter: "",
+      timesCorrectWrongContainer: "",
+      seenCorrectLabel: "",
+      timesCorrectCounter: "",
+      seenWrongLabel: "",
+      timesWrongCounter: "",
+      buttonsRow: "",
+      submitAnswer: "Submit Answer",
+      nextQuestion: "Next Question",
+      toggleMode: "Make it easier",
+      explainSentence: "Explain Sentence",
+      multipleChoiceSection: "Multiple Choice",
+      multipleChoiceRow: "",
+      mcOption1Container: "",
+      optionButton1: "",
+      mcOption2Container: "",
+      optionButton2: "",
+      mcOption3Container: "",
+      optionButton3: "",
+      mcOption4Container: "",
+      optionButton4: "",
+      coachContainer: "Coach Container",
+      coachImageContainer: "",
+      coachImageAlt: "Coach Image",
+      speechBubble: "",
+      bubbleContent: "",
+      coachMessage: "You are doing great!",
+      specialCharactersBlock: "Special characters block",
+      specialCharBtnA: "",
+      specialCharBtnO: "",
+      specialCharBtnU: "",
+      specialCharBtnSharpS: "",
+      bottomButtonsContainer: "",
+      bottomButtonsRow: "",
+      btnReplayContainer: "",
+      replayAudio: "Replay",
+      btnHelpContainer: "",
+      help: "Help",
+      btnStatsContainer: "",
+      stats: "Stats",
+      btnReportContainer: "",
+      report: "Report",
+      // Explanation Modal
+      explanationModal: "",
+      explanationModalDialog: "",
+      explanationModalContent: "",
+      explanationModalHeader: "",
+      explanationModalTitle: "Explanation",
+      explanationModalCloseButton: "",
+      explanationModalBody: "",
+      explanationModalFooter: "",
+      closeButtonTitle: "Close",
+      // Completion Modal
+      completionModal: "",
+      completionModalDialog: "",
+      completionModalContent: "",
+      completionModalHeader: "",
+      congrats: "Congratulations!",
+      completionModalBody: "",
+      completionMessage: "You've achieved 100% in this lesson.",
+      completionSecondaryMessage: "Great job on mastering the topic!",
+      completionModalFooter: "",
+      continue: "Continue",
+      exploreOtherOptions: "Explore Other Options",
+      // Report Modal
+      reportModal: "",
+      reportModalDialog: "",
+      reportModalContent: "",
+      reportModalHeader: "",
+      reportModalBody: "",
+      reportForm: "",
+      reportQuestionId: "",
+      reportCommentContainer: "",
+      reportIssue: "Report Issue",
+      describeIssue: "Describe your issue with the question:",
+      reportCommentPlaceholder: "Explain what went wrong...",
+      reportModalFooter: "",
+      submit: "Submit",
+      // Drills Limit Modal
+      drillsLimitModal: "",
+      drillsLimitModalDialog: "",
+      drillsLimitModalContent: "",
+      drillsLimitModalHeader: "",
+      drillsLimitModalBody: "",
+      drillsLimitModalFooter: "",
+      drillsLimitTitle: "Drills Limit Reached",
+      drillsLimitMessage:
+        "You have reached your daily limit of 50 drills for the Free subscription. Please upgrade to continue practicing.",
+      // Error Modal
+      errorModal: "",
+      errorModalDialog: "",
+      errorModalContent: "",
+      errorModalHeader: "",
+      errorModalTitle: "Oops! Something went wrong.",
+      errorModalBody: "",
+      errorModalMessage:
+        "We couldn't load the questions. There might be an issue with your internet connection.",
+      errorModalFooter: "",
+      errorModalBack: "Back to Main Screen",
+      errorModalRetry: "Try Again",
+      // LvlUp Congrats Modal
+      lvlUpModal: "",
+      lvlUpModalDialog: "",
+      lvlUpModalContent: "",
+      lvlUpModalHeader: "",
+      lvlUpModalBody: "",
+      videoContainer: "",
+      congratsVideo: "",
+      fallbackGifAlt: "Jumping Boy",
+      congratsVideoScript: "",
+      level: "Level",
+      youUnlocked: "You've unlocked the \"Amazing Adventurer\" stage!",
+      congratsButtonsContainer: "",
+      lvlUpModalFooter: "",
+      // Additional references
+      grammarLessonScript: "",
+      firebaseConfigScript: "",
+      firebaseAppScript: "",
+      firebaseAuthScript: "",
+      firebaseFirestoreScript: "",
+      bootstrapBundleScript: "",
+      jqueryScript: "",
+      lessonExplanation: "Lesson Explanation",
+      generalExplanation: "General Explanation",
+      theMissingWord: "The Missing Word",
+    },
+  
+    es: {
+      // General
+      htmlLanguage: "es",
+      metaCharset: "",
+      metaViewport: "",
+      pageTitle: "Vocabulario - Aplicación de Aprendizaje de Idiomas",
+      bootstrapCssLink: "",
+      fontawesomeLink: "",
+      customCssLink: "",
+      googleTagScript: "",
+      googleTagInlineScript: "",
+      metaPixelScript: "",
+      metaPixelNoScript: "",
+      bodyTag: "",
+      // Navbar
+      navbar: "",
+      navbarContainer: "",
+      navbarBrand: "",
+      navbarBrandAlt: "Logo de Languizy",
+      navbarBrandTitle: "Languizy, Aprendizaje de Idiomas para la Vida Real",
+      logoutAvatarContainer: "",
+      subLevelBadge: "",
+      userAvatar: "",
+      // Stats Bar
+      statsBarContainer: "",
+      statsRow: "",
+      courseFlagsContainer: "",
+      flagCard: "",
+      scoreCorrectWrongContainer: "",
+      returnToCourseSelection: "Volver a la Selección de Curso",
+      statsFlexContainer: "",
+      lessonTypeBox: "",
+      topicNum: "",
+      profTooltip: "",
+      scoreBox: "",
+      scoreCounter: "",
+      correctBox: "",
+      correctCounter: "",
+      wrongBox: "",
+      wrongCounter: "",
+      topCornerForMobile: "",
+      returnToCourseSelectionMobile: "Volver a la Selección de Curso",
+      lastFiveAnswersContainer: "",
+      lastFiveAnswers: "Últimas 5 Respuestas",
+      answerBox1: "",
+      answerBox2: "",
+      answerBox3: "",
+      answerBox4: "",
+      answerBox5: "",
+      // Main content
+      mainContentContainer: "",
+      loadingProgressContainer: "",
+      loadingProgressBar: "",
+      lessonNameContainer: "",
+      lessonNameDisplay: "",
+      questionArea: "",
+      loadingMessage: "Cargando...",
+      translationText: "",
+      feedbackArea: "",
+      questionStatsSection: "",
+      seenLabel: "Visto:",
+      timesSeenCounter: "",
+      timesCorrectWrongContainer: "",
+      seenCorrectLabel: "",
+      timesCorrectCounter: "",
+      seenWrongLabel: "",
+      timesWrongCounter: "",
+      buttonsRow: "",
+      submitAnswer: "Enviar Respuesta",
+      nextQuestion: "Siguiente Pregunta",
+      toggleMode: "Hacerlo más fácil",
+      explainSentence: "Explicar Oración",
+      multipleChoiceSection: "Opción Múltiple",
+      multipleChoiceRow: "",
+      mcOption1Container: "",
+      optionButton1: "",
+      mcOption2Container: "",
+      optionButton2: "",
+      mcOption3Container: "",
+      optionButton3: "",
+      mcOption4Container: "",
+      optionButton4: "",
+      coachContainer: "Contenedor del Entrenador",
+      coachImageContainer: "",
+      coachImageAlt: "Imagen del Entrenador",
+      speechBubble: "",
+      bubbleContent: "",
+      coachMessage: "¡Lo estás haciendo muy bien!",
+      specialCharactersBlock: "Bloque de caracteres especiales",
+      specialCharBtnA: "",
+      specialCharBtnO: "",
+      specialCharBtnU: "",
+      specialCharBtnSharpS: "",
+      bottomButtonsContainer: "",
+      bottomButtonsRow: "",
+      btnReplayContainer: "",
+      replayAudio: "Repetir",
+      btnHelpContainer: "",
+      help: "Ayuda",
+      btnStatsContainer: "",
+      stats: "Estadísticas",
+      btnReportContainer: "",
+      report: "Informar",
+      // Explanation Modal
+      explanationModal: "",
+      explanationModalDialog: "",
+      explanationModalContent: "",
+      explanationModalHeader: "",
+      explanationModalTitle: "Explicación",
+      explanationModalCloseButton: "",
+      explanationModalBody: "",
+      explanationModalFooter: "",
+      closeButtonTitle: "Cerrar",
+      // Completion Modal
+      completionModal: "",
+      completionModalDialog: "",
+      completionModalContent: "",
+      completionModalHeader: "",
+      congrats: "¡Felicidades!",
+      completionModalBody: "",
+      completionMessage: "Has obtenido el 100% en esta lección.",
+      completionSecondaryMessage: "¡Excelente trabajo dominando el tema!",
+      completionModalFooter: "",
+      continue: "Continuar",
+      exploreOtherOptions: "Explorar otras opciones",
+      // Report Modal
+      reportModal: "",
+      reportModalDialog: "",
+      reportModalContent: "",
+      reportModalHeader: "",
+      reportModalBody: "",
+      reportForm: "",
+      reportQuestionId: "",
+      reportCommentContainer: "",
+      reportIssue: "Informar Problema",
+      describeIssue: "Describe tu problema con la pregunta:",
+      reportCommentPlaceholder: "Explica qué salió mal...",
+      reportModalFooter: "",
+      submit: "Enviar",
+      // Drills Limit Modal
+      drillsLimitModal: "",
+      drillsLimitModalDialog: "",
+      drillsLimitModalContent: "",
+      drillsLimitModalHeader: "",
+      drillsLimitModalBody: "",
+      drillsLimitModalFooter: "",
+      drillsLimitTitle: "Límite de Ejercicios Alcanzado",
+      drillsLimitMessage:
+        "Has alcanzado tu límite diario de 50 ejercicios en la suscripción gratuita. Mejora tu plan para continuar practicando.",
+      // Error Modal
+      errorModal: "",
+      errorModalDialog: "",
+      errorModalContent: "",
+      errorModalHeader: "",
+      errorModalTitle: "¡Ups! Algo salió mal.",
+      errorModalBody: "",
+      errorModalMessage:
+        "No pudimos cargar las preguntas. Puede que tengas problemas con tu conexión a internet.",
+      errorModalFooter: "",
+      errorModalBack: "Volver a la Pantalla Principal",
+      errorModalRetry: "Intentar de Nuevo",
+      // LvlUp Congrats Modal
+      lvlUpModal: "",
+      lvlUpModalDialog: "",
+      lvlUpModalContent: "",
+      lvlUpModalHeader: "",
+      lvlUpModalBody: "",
+      videoContainer: "",
+      congratsVideo: "",
+      fallbackGifAlt: "Niño Saltando",
+      congratsVideoScript: "",
+      level: "Nivel",
+      youUnlocked: "¡Has desbloqueado la \"Maravillosa Aventura\"!",
+      congratsButtonsContainer: "",
+      lvlUpModalFooter: "",
+      // Additional references
+      grammarLessonScript: "",
+      firebaseConfigScript: "",
+      firebaseAppScript: "",
+      firebaseAuthScript: "",
+      firebaseFirestoreScript: "",
+      bootstrapBundleScript: "",
+      jqueryScript: "",
+      lessonExplanation: "Explicación de la Lección",
+      generalExplanation: "Explicación General",
+      theMissingWord: "La Palabra Faltante",
+    },
+    // You can add more languages...
+  };
+  
 
 // Array of random encouragement statements
 const encouragementStatements = [
@@ -136,6 +514,60 @@ const languageToSpecialChars = {
     no: ['æ', 'ø', 'å'],      // Norwegian
     pl: ['ą', 'ć', 'ę', 'ł']  // Polish
 };
+
+function modifyInterfaceLanguage() {
+
+    if (UIString[interfaceLanguage]) {
+        const lang = UIString[interfaceLanguage];
+
+        // Update all elements with data-i18n attribute (text content)
+        $('[data-i18n]').each(function () {
+            const key = $(this).data('i18n');
+            if (key.includes('.')) {
+                // Handle nested keys e.g. 'RecommendationNames.Basics'
+                const keys = key.split('.');
+                let text = lang;
+                keys.forEach(k => {
+                    text = text[k] || '';
+                });
+                $(this).text(text);
+            } else {
+                // Direct key in the UIString
+                if (lang[key] !== undefined) {
+                    $(this).text(lang[key]);
+                }
+            }
+        });
+
+        // Update elements with data-i18n-alt (for alt attributes)
+        $('[data-i18n-alt]').each(function () {
+            const key = $(this).data('i18n-alt');
+            if (lang[key] !== undefined) {
+                $(this).attr('alt', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-title (for title attributes)
+        $('[data-i18n-title]').each(function () {
+            const key = $(this).data('i18n-title');
+            if (lang[key] !== undefined) {
+                $(this).attr('title', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-placeholder (for placeholders)
+        $('[data-i18n-placeholder]').each(function () {
+            const key = $(this).data('i18n-placeholder');
+            if (lang[key] !== undefined) {
+                $(this).attr('placeholder', lang[key]);
+            }
+        });
+
+
+
+
+    }
+}
 
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
@@ -322,6 +754,7 @@ function updateFlagIcons(currentLesson) {
         'en-cn': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],
         'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
         'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
+        'es-en': ['assets/icons/es-flag.png', 'assets/icons/en-flag.png'],
         // Add more lessons and their corresponding flags here
     };
 
@@ -346,6 +779,7 @@ function updateFlagIcons(currentLesson) {
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
+        modifyInterfaceLanguage();
         fetchOrAssignCoach(user).then(() => {
             fetchCurrentLesson(user).then(async (currentLesson) => {
                 loadUserAvatar(user);
@@ -1741,10 +2175,10 @@ function showExplanationModal(explanationData) {
     }
 
     // Set the modal title to include the full sentence being explained
-    $('#explanationModalLabel').html(`Lesson Explanation: "${window.currentQuestionData.sentence}"`);
+    $('#explanationModalLabel').html(`${UIString[interfaceLanguage].lessonExplanation}: "${window.currentQuestionData.sentence}"`);
 
     // Build the explanation HTML with classes for styling
-    let explanationHtml = '<div class="general-explanation"><h2>General Explanation:</h2>';
+    let explanationHtml = '<div class="general-explanation"><h2>' + UIString[interfaceLanguage].generalExplanation + ':</h2>';
 
     parsedExplanation.sentence_breakdown.forEach(part => {
         const partOfSpeechClass = part.part_of_speech.toLowerCase(); // Use a CSS class based on part of speech
@@ -1757,7 +2191,7 @@ function showExplanationModal(explanationData) {
 
     explanationHtml += `</div>
     <div class="missing-word-section">
-        <h2 class="missing-word-title">The Missing Word: ${window.currentQuestionData.missingWord}</h2>
+        <h2 class="missing-word-title">${UIString[interfaceLanguage].theMissingWord}: ${window.currentQuestionData.missingWord}</h2>
         <p>${parsedExplanation.focus_word_explanation}</p>
     </div>`;
 
@@ -2265,3 +2699,57 @@ async function fetchCurrentLevel(user, theCourse) {
     $('#congratsModal').modal('hide');
     window.location.href = '/course_selection.html';
   }
+
+  function modifyInterfaceLanguage() {
+
+    if (UIString[interfaceLanguage]) {
+        const lang = UIString[interfaceLanguage];
+
+        // Update all elements with data-i18n attribute (text content)
+        $('[data-i18n]').each(function () {
+            const key = $(this).data('i18n');
+            if (key.includes('.')) {
+                // Handle nested keys e.g. 'RecommendationNames.Basics'
+                const keys = key.split('.');
+                let text = lang;
+                keys.forEach(k => {
+                    text = text[k] || '';
+                });
+                $(this).text(text);
+            } else {
+                // Direct key in the UIString
+                if (lang[key] !== undefined) {
+                    $(this).text(lang[key]);
+                }
+            }
+        });
+
+        // Update elements with data-i18n-alt (for alt attributes)
+        $('[data-i18n-alt]').each(function () {
+            const key = $(this).data('i18n-alt');
+            if (lang[key] !== undefined) {
+                $(this).attr('alt', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-title (for title attributes)
+        $('[data-i18n-title]').each(function () {
+            const key = $(this).data('i18n-title');
+            if (lang[key] !== undefined) {
+                $(this).attr('title', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-placeholder (for placeholders)
+        $('[data-i18n-placeholder]').each(function () {
+            const key = $(this).data('i18n-placeholder');
+            if (lang[key] !== undefined) {
+                $(this).attr('placeholder', lang[key]);
+            }
+        });
+
+
+
+
+    }
+}

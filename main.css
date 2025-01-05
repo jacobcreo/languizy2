@@ -552,13 +552,13 @@ h1, h3 {
 .spinner {
   animation: spin 1s linear infinite, bounce 0.5s ease-in-out infinite;
 }
-#profBox, #dueQuestions-box {
+#profBox, #dueQuestions-box, #score-box, #correct-box, #wrong-box {
   position: relative;
   display: inline-block;
   cursor: pointer; /* Optional: Changes cursor to a pointer */
   }
   
-  #profBox .tooltiptext, #dueQuestions-box .tooltiptext {
+  #profBox .tooltiptext, #dueQuestions-box .tooltiptext, #score-box .tooltiptext, #correct-box .tooltiptext, #wrong-box .tooltiptext {
   visibility: hidden;
   width: 200px; /* Adjust the width as necessary */
   background-color: black;
@@ -577,7 +577,7 @@ h1, h3 {
   font-weight: normal;
   }
   
-  #profBox:hover .tooltiptext, #dueQuestions-box:hover .tooltiptext {
+  #profBox:hover .tooltiptext, #dueQuestions-box:hover .tooltiptext, #score-box:hover .tooltiptext, #correct-box:hover .tooltiptext, #wrong-box:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
   z-index: 1000;

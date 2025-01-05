@@ -68,7 +68,7 @@
   <div class="container-fluid m-0 p-0">
     <div id="stats-row" class="row align-items-center justify-content-between stats-bar p-2">
       <!-- Course Flags -->
-      <div class="m80 col-6 col-lg-3 text-start d-flex align-items-center justify-content-start">
+      <div class="m80 col-6 col-lg-2 text-start d-flex align-items-center justify-content-start">
         <div id="flag-card" class="d-flex align-items-center pt-2">
           <!-- Flags will be dynamically inserted here -->
         </div>
@@ -92,17 +92,20 @@
             <span id="dueQuestions">0</span>
             <span id="dueQuestionsTooltip" class="tooltiptext"></span>
           </span>
-          <span class="score-box d-inline me-3">
+          <span id="score-box" class="d-inline me-3">
             <i class="fas fa-star text-warning" data-i18n-alt="scoreIconAlt"></i>
             <span id="score" data-i18n-key="score">0</span>
+            <span id="scoreTooltip" class="tooltiptext"></span>
           </span>
-          <span class="correct-box me-2">
+          <span id="correct-box" class="correct-box me-2">
             <i class="fas fa-check text-success" data-i18n-alt="correctIconAlt"></i>
             <span id="correct-count" data-i18n-key="correctCount">0</span>
+            <span id="correctTooltip" class="tooltiptext"></span>
           </span>
-          <span class="wrong-box">
+          <span id="wrong-box" class="wrong-box">
             <i class="fas fa-times text-danger" data-i18n-alt="wrongIconAlt"></i>
             <span id="wrong-count" data-i18n-key="wrongCount">0</span>
+            <span id="wrongTooltip" class="tooltiptext"></span>
           </span>
         </div>
       </div>
@@ -117,7 +120,7 @@
 
       <!-- Last 5 Answers -->
       <div id="lfa-container"
-        class="col-12 col-lg-4 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
+        class="col-12 col-lg-2 mt-1 mt-lg-0 text-end d-flex justify-content-end justify-content-center-sm">
         <div id="last-five-answers" class="d-flex align-items-center p-0">
           <div class="answer-box gray"></div>
           <div class="answer-box gray"></div>
@@ -462,7 +465,7 @@
             </li>
           </ul>
 
-          <p data-i18n-html="closingParagraph">We hope you enjoy your learning journey with us. If you have any
+          <p data-i18n="closingParagraph">We hope you enjoy your learning journey with us. If you have any
             questions or need further assistance, feel free to reach out to our support team. Happy learning!</p>
         </div>
         <div class="modal-footer">

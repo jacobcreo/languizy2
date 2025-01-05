@@ -696,11 +696,14 @@ const UIString = {
       "If you encounter an issue with a question, use this button to report it.",
     statsFeedbackHeader: "Stats and Feedback",
     scoreLabel: "Score:",
+    scoreTooltip: 'Daily Score: ',
     scoreDescription:
       "Your current score is displayed in the stats bar. Aim to improve it with each correct answer!",
     correctWrongCountLabel: "Correct/Wrong Count:",
     correctWrongCountDescription:
       "Keep track of your correct and incorrect answers.",
+    correctTooltip: 'Correct Answers: ',
+    wrongTooltip: 'Incorrect Answers: ',
     lastFiveAnswersLabel: "Last 5 Answers:",
     lastFiveAnswersDescription:
       "Visual feedback on your recent performance is shown with colored boxes.",
@@ -734,6 +737,10 @@ const UIString = {
     correctExclemation: 'Correct!',
     incorrectPart1: 'Incorrect. The correct answer was',
     correctPart2: 'is',
+
+    lessonExplanation: "Lesson Explanation",
+      generalExplanation: "General Explanation",
+      theMissingWord: "The Missing Word"
   },
 
   es: {
@@ -834,9 +841,12 @@ const UIString = {
     scoreLabel: "Puntuación:",
     scoreDescription:
       "Tu puntuación actual se muestra en la barra de estadísticas. ¡Intenta mejorarla con cada respuesta correcta!",
+    scoreTooltip: 'Puntuación Diaria: ',
     correctWrongCountLabel: "Correctos/Incorrectos:",
     correctWrongCountDescription:
       "Lleva un registro de tus respuestas correctas e incorrectas.",
+    correctTooltip: 'Respuestas Correctas: ',
+    wrongTooltip: 'Respuestas Incorrectas: ',
     lastFiveAnswersLabel: "Últimas 5 Respuestas:",
     lastFiveAnswersDescription:
       "Se muestra retroalimentación visual de tu rendimiento reciente con cuadros de colores.",
@@ -870,8 +880,10 @@ const UIString = {
     correctExclemation: '¡Correcto!',
         incorrectPart1: 'Incorrecto. La respuesta correcta era',
         correctPart2: 'es',
-        incorrect: 'Incorrecto'
-        
+        incorrect: 'Incorrecto',
+        lessonExplanation: "Explicación de la Lección",
+        generalExplanation: "Explicación General",
+        theMissingWord: "La Palabra Faltante"
   },
   // Additional languages can be added here
 };
@@ -892,7 +904,7 @@ let questionStartTime; // Variable to store the start time of the question
 let showCoachFeedback = true;
 let userCurrentLevel = 1; // default
 
-let interfaceLanguage = 'en';
+let interfaceLanguage = 'es';
 
 let questionsToIgnore = []; // new array for ignoring failing question IDs
 
@@ -1106,6 +1118,7 @@ function updateFlagIcons(currentCourse) {
     'en-cn': ['assets/icons/en-flag.png', 'assets/icons/cn-flag.png'],
     'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
     'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
+    'es-en': ['assets/icons/es-flag.png', 'assets/icons/en-flag.png'],
     // Add more courses and their corresponding flags here
   };
 
@@ -1379,6 +1392,9 @@ function loadDailyScore(user, currentCourse) {
       dailyScore = 0; // If no score for today, initialize it
     }
     $('#score').text(dailyScore); // Display the current daily score
+    $('#scoreTooltip').text(UIString[interfaceLanguage].scoreTooltip + ': ' + dailyScore); // Display the current daily score
+    $('#correctTooltip').text(UIString[interfaceLanguage].correctTooltip + ': 0'); // Starting with 0 correct answers
+    $('#wrongTooltip').text(UIString[interfaceLanguage].wrongTooltip + ': 0'); // Starting with 0 wrong answers
   }).catch(error => {
     console.error('Error loading daily score:', error);
   });
@@ -1950,6 +1966,7 @@ function displayQuestion(question, questionId, currentCourse) {
       // $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
       $('#feedback').text(UIString[interfaceLanguage].correctExclemation).removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
 
+
     } else {
       let correction = UIString[interfaceLanguage].incorrectPart1 + ' <span class="text-decoration-underline">' +question.missingWord + '</span>.';
       $('#feedback').html(correction).addClass('text-success visible').css('visibility', 'visible').css('display', 'block');
@@ -2260,6 +2277,7 @@ function updateUserProgress(questionId, isCorrect, currentCourse, timeTaken) {
             updateStats(userStatsRef, today, points, true, timeTaken); // Pass timeTaken
             dailyScore += points; // Update the daily score
             $('#score').text(dailyScore); // Update the score on screen
+            $('#scoreTooltip').text(UIString[interfaceLanguage].scoreTooltip + ': ' + dailyScore); // Display the current daily score
           } else {
             streakWrong += 1;
             streakCorrect = 0;
@@ -2383,6 +2401,8 @@ function updateVisualStats(isCorrect) {
   // Update UI for correct/wrong counts
   $('#correct-count').text(correctAnswers);
   $('#wrong-count').text(wrongAnswers);
+  $('#correctTooltip').text(UIString[interfaceLanguage].correctTooltip + ': ' + correctAnswers); // Display the current daily score
+  $('#wrongTooltip').text(UIString[interfaceLanguage].wrongTooltip + ': ' + wrongAnswers); // Display the current daily score
 
   // Update last 5 answers (display boxes)
   updateLastFiveAnswers();
@@ -2616,10 +2636,12 @@ function showExplanationModal(explanationData) {
   }
 
   // Set the modal title to include the full sentence being explained
-  $('#explanationModalLabel').html(`Sentence Explanation: "${window.currentQuestionData.sentence}"`);
+  // $('#explanationModalLabel').html(`Sentence Explanation: "${window.currentQuestionData.sentence}"`);
+  $('#explanationModalLabel').html(`${UIString[interfaceLanguage].lessonExplanation}: "${window.currentQuestionData.sentence}"`);
+
 
   // Build the explanation HTML with classes for styling
-  let explanationHtml = '<div class="general-explanation"><h2>General Explanation:</h2>';
+  let explanationHtml = '<div class="general-explanation"><h2>' + UIString[interfaceLanguage].generalExplanation + ':</h2>';
 
   parsedExplanation.sentence_breakdown.forEach(part => {
     const partOfSpeechClass = part.part_of_speech.toLowerCase(); // Use a CSS class based on part of speech
@@ -2632,7 +2654,8 @@ function showExplanationModal(explanationData) {
 
   explanationHtml += `</div>
     <div class="missing-word-section">
-      <h2 class="missing-word-title">The Missing Word: ${window.currentQuestionData.missingWord}</h2>
+     <h2 class="missing-word-title">${UIString[interfaceLanguage].theMissingWord}: ${window.currentQuestionData.missingWord}</h2>
+
       <p>${parsedExplanation.focus_word_explanation}</p>
     </div>`;
 
@@ -2663,7 +2686,7 @@ $('#explain-sentence-btn').off('click').on('click', async function () {
       showExplanationModal(window.currentQuestionData.explanation);
     } else {
       // Call the Cloud Function to generate the explanation
-      const explanation = await generateExplanation(window.currentQuestionId, window.currentQuestionData.sentence, window.currentQuestionData.missingWord, window.currentQuestionData.language, 'en');
+      const explanation = await generateExplanation(window.currentQuestionId, window.currentQuestionData.sentence, window.currentQuestionData.missingWord, window.currentQuestionData.language, window.currentCourse.split('-')[0]);
 
       console.log('Generated explanation:', explanation);
 
