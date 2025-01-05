@@ -342,7 +342,7 @@ function showTypingIndicator() {
 
     // Determine the user's subscription level
     const subLevel = (currentUser && currentUser.subLevel) ? currentUser.subLevel.toLowerCase() : 'free';
-    const maxMessages = (subLevel === 'free' || subLevel === 'basic') ? 4 : 10;
+    const maxMessages = (subLevel === 'free' || subLevel === 'basic') ? 6 : 20;
 
     // Determine which loading messages array to use
     const messagesToUse = (loadingMessageCounter >= maxMessages) ? lastLoadingMessages : (isFirstLoading ? initialLoadingMessages : subsequentLoadingMessages);
