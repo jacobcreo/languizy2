@@ -12,7 +12,7 @@ let lastFiveAnswers = [];
 let showCoachFeedback = true;
 let questionsToIgnore = [];
 
-let interfaceLanguage = 'es';
+let interfaceLanguage = 'en';
 
 let questionStartTime; // Variable to store the start time of the question
 

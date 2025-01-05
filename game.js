@@ -740,7 +740,25 @@ const UIString = {
 
     lessonExplanation: "Lesson Explanation",
       generalExplanation: "General Explanation",
-      theMissingWord: "The Missing Word"
+      theMissingWord: "The Missing Word",
+
+      // Time Difference Templates
+    shownLast: "shown last {0} {1} ago",
+    newPhrase: "(new phrase)",
+
+    // Time Units
+    minute: "minute",
+    minutes: "minutes",
+    hour: "hour",
+    hours: "hours",
+    day: "day",
+    days: "days",
+    week: "week",
+    weeks: "weeks",
+    month: "month",
+    months: "months",
+    year: "year",
+    years: "years",
   },
 
   es: {
@@ -883,7 +901,25 @@ const UIString = {
         incorrect: 'Incorrecto',
         lessonExplanation: "Explicación de la Lección",
         generalExplanation: "Explicación General",
-        theMissingWord: "La Palabra Faltante"
+        theMissingWord: "La Palabra Faltante",
+
+         // Time Difference Templates
+    shownLast: "mostrado hace {0} {1}",
+    newPhrase: "(nueva frase)",
+
+    // Time Units
+    minute: "minuto",
+    minutes: "minutos",
+    hour: "hora",
+    hours: "horas",
+    day: "día",
+    days: "días",
+    week: "semana",
+    weeks: "semanas",
+    month: "mes",
+    months: "meses",
+    year: "año",
+    years: "años",
   },
   // Additional languages can be added here
 };
@@ -904,7 +940,7 @@ let questionStartTime; // Variable to store the start time of the question
 let showCoachFeedback = true;
 let userCurrentLevel = 1; // default
 
-let interfaceLanguage = 'es';
+let interfaceLanguage = 'en';
 
 let questionsToIgnore = []; // new array for ignoring failing question IDs
 
@@ -2544,9 +2580,9 @@ function updateStats(userStatsRef, date, score, isCorrect, timeTaken) {
 }
 
 // Helper function to calculate time difference
-function timeDifference(lastAnswered) {
+function timeDifference(lastAnswered, interfaceLanguage = 'en') {
   if (!lastAnswered) {
-    return "(new phrase)";
+    return UIString[interfaceLanguage].newPhrase || "(new phrase)";
   }
 
   const now = new Date();
@@ -2560,21 +2596,31 @@ function timeDifference(lastAnswered) {
   const months = Math.floor(days / 30);
   const years = Math.floor(days / 365);
 
+  let value, unitKey;
+
   if (years > 0) {
-    return `(shown last ${years} year${years > 1 ? 's' : ''} ago)`;
+    value = years;
+    unitKey = years > 1 ? 'years' : 'year';
   } else if (months > 0) {
-    return `(shown last ${months} month${months > 1 ? 's' : ''} ago)`;
+    value = months;
+    unitKey = months > 1 ? 'months' : 'month';
   } else if (weeks > 0) {
-    return `(shown last ${weeks} week${weeks > 1 ? 's' : ''} ago)`;
+    value = weeks;
+    unitKey = weeks > 1 ? 'weeks' : 'week';
   } else if (days > 0) {
-    return `(shown last ${days} day${days > 1 ? 's' : ''} ago)`;
+    value = days;
+    unitKey = days > 1 ? 'days' : 'day';
   } else if (hours > 0) {
-    return `(shown last ${hours} hour${hours > 1 ? 's' : ''} ago)`;
+    value = hours;
+    unitKey = hours > 1 ? 'hours' : 'hour';
   } else if (minutes > 0) {
-    return `(shown last ${minutes} minute${minutes > 1 ? 's' : ''} ago)`;
+    value = minutes;
+    unitKey = minutes > 1 ? 'minutes' : 'minute';
   } else {
-    return "(new phrase)";
+    return UIString[interfaceLanguage].newPhrase || "(new phrase)";
   }
+
+  return localize('shownLast', interfaceLanguage, value, UIString[interfaceLanguage][unitKey]);
 }
 
 function buttonClick(which) {
@@ -3072,17 +3118,16 @@ function modifyInterfaceLanguage() {
 
   }
 }
-/*
-I have a firestore collection called "coaches" it contains documents that have info about coaches that I use in my language learning app. each document is built like the following: coachName (string), example: "Eccentric Chef", characterDescription (string), example: "A whimsical language learning coach who draws inspiration from the culinary arts, known for colorful metaphors and a penchant for theatrical flair. Imagine a cooking show host who loves mixing languages like ingredients in a zesty salad."  personality (string), contains a string, example: personality
-"Lively, humorous, encouraging, with a dash of the dramatic and a sprinkle of wisdom. Loves to make learning feel like a grand culinary adventure." correctMessages (array), contains an unfixed number of strings, example: correctMessages
-(array)
-0
-"Bravo! Your answer was as perfect as crème brûlée!"
-(string)
-1
-"Spot on, like a perfectly baked baguette!" (string).... encouragementMessages (array), contains an unfixed number of strings, example: 0
-"Keep stirring the pot, you're about to taste the success!"
-(string)
-1
-"Every great dish starts with a single ingredient, keep adding those language skills!" and the same array structure for the following field names that contains unfixed number of strings: fiveCorrectMessages, fiveMistakesMessages, loadingMessages, mistakeMessages, sevenCorrectMessages , sevenMistakesMessages, threeCorrectMessages, threeMistakesMessages,  tonsOfCorrectsInARowMessages, tonsOfMistakesInARowMessages
-*/
+function localize(key, language, ...args) {
+  let template = UIString[language][key];
+  
+  if (!template) {
+    console.warn(`Missing translation for key: ${key} in language: ${language}`);
+    // Fallback to English if translation is missing
+    template = UIString['en'][key] || key;
+  }
+  
+  return template.replace(/{(\d+)}/g, (match, number) => {
+    return typeof args[number] !== 'undefined' ? args[number] : match;
+  });
+}
