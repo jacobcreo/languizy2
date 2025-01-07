@@ -49,7 +49,7 @@
             </a>
             <div class="d-flex align-items-center">
                 <span id="subLevelBadge" class="badge me-3"></span>
-                <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+                <button class="btn btn-outline-light me-3" onclick="logout()" data-i18n="Logout">Logout</button>
                 <div id="userAvatar" class="avatar"></div>
             </div>
         </div>
@@ -65,15 +65,15 @@
                         <div class="mb-3 mb-md-0 text-center text-md-start">
                             <h5 class="card-title">
                                 <i class="fa-solid fa-circle-notch me-2" id="subscriptionIcon"></i>
-                                <span id="subscriptionLevel">Free</span> Subscription
+                                <span id="subscriptionLevel">Free Subscription</span>
                             </h5>
-                            <p id="subscriptionBenefits" class="mb-2">
+                            <p id="subscriptionBenefits" class="mb-2" data-i18n="SubscriptionBenefits">
                                 Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!
                             </p>
                             <div id="subscriptionInfo" class="d-none">
                                 <small class="text-muted">
-                                    <strong>Subscribed since:</strong> <span id="startDate">N/A</span><br>
-                                    <strong>Next Billing Date:</strong> <span id="nextBillingDate">N/A</span>
+                                    <strong><span data-i18n="SubscriptionSince"></span>Subscribed since:</span></strong> <span id="startDate">N/A</span><br>
+                                    <strong><span data-i18n="NextBillingDate">Next Billing Date:</span></strong> <span id="nextBillingDate">N/A</span>
                                 </small>
                             </div>
                         </div>
@@ -81,13 +81,13 @@
                         <!-- Action Buttons  -->
                         <div>
                             <button id="upgradeButton" class="btn btn-success me-2">
-                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> Upgrade to Pro
+                                <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> <span data-i18n="upgradeToPro">Upgrade to Pro</span>
                             </button>
                             <button id="cancelButton" class="btn btn-outline-danger me-2 d-none">
-                                <i class="fa-solid fa-ban me-1"></i> Cancel Subscription
+                                <i class="fa-solid fa-ban me-1"></i> <span data-i18n="CancelSubscription">Cancel Subscription</span>
                             </button>
                             <button id="manageButton" class="btn btn-primary d-none">
-                                <i class="fa-solid fa-gear me-1"></i> Manage Subscription
+                                <i class="fa-solid fa-gear me-1"></i> <span data-i18n="ManageSubscription">Manage Subscription</span>
                             </button>
                         </div>
                     </div>
@@ -116,40 +116,40 @@
                 <form id="profileForm">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Edit Profile</h5>
+                            <h5 class="card-title" data-i18n="editProfile">Edit Profile</h5>
                             <div class="mb-3">
-                                <label for="displayName" class="form-label">Display Name</label>
-                                <input type="text" class="form-control" id="displayName" placeholder="Enter Display Name">
+                                <label for="displayName" class="form-label" data-i18n="displayName">Display Name</label>
+                                <input type="text" class="form-control" id="displayName" placeholder="Enter Display Name" data-i18n-placeholder="DisplayNamePlaceholder">
                             </div>
                             <div class="mb-3">
-                                <label for="fullName" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name">
+                                <label for="fullName" class="form-label" data-i18n="fullName">Full Name</label>
+                                <input type="text" class="form-control" id="fullName" placeholder="Enter Full Name" data-i18n-placeholder="fullNamePlaceholder">
                             </div>
                             <div class="mb-3">
-                                <label for="coachFeedback" class="form-label">Coach Feedback</label>
+                                <label for="coachFeedback" class="form-label" data-i18n="coachFeedback">Coach Feedback</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="coachFeedback">
-                                    <label class="form-check-label" for="coachFeedback">
+                                    <label class="form-check-label" for="coachFeedback" data-i18n="coachFeedbackLabel">
                                         Receive feedback from the coach during exercises
                                     </label>
                                 </div>
                             </div>
                             <!-- Email Preferences -->
-                            <h5 class="card-title">Email Preferences</h5>
+                            <h5 class="card-title" data-i18n="emailPreferences">Email Preferences</h5>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="progressMail">
-                                <label class="form-check-label" for="progressMail">
+                                <label class="form-check-label" for="progressMail" data-i18n="progressMailLabel">
                                     Progress Updates
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="marketingMail">
-                                <label class="form-check-label" for="marketingMail">
+                                <label class="form-check-label" for="marketingMail" data-i18n="MarketingMailLabel">
                                     Offers, News, and Marketing Communication
                                 </label>
                             </div>
                             <!-- Save Button -->
-                            <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                            <button type="submit" class="btn btn-primary mt-3" data-i18n="saveChanges">Save Changes</button>
                         </div>
                     </div>
                 </form>
@@ -162,9 +162,9 @@
             <div class="col-12">
                 <div class="card bg-danger text-white text-center">
                     <div class="card-body">
-                        <h5 class="card-title">Reset Progress</h5>
-                        <p>Delete all your progress and start fresh</p>
-                        <button class="btn btn-light" onclick="showResetModal()">Reset Progress</button>
+                        <h5 class="card-title" data-i18n="resetProgress">Reset Progress</h5>
+                        <p data-i18n="resetProgressDescription">Delete all your progress and start fresh</p>
+                        <button class="btn btn-light" onclick="showResetModal()" data-i18n="resetProgressButton">Reset Progress</button>
                     </div>
                 </div>
             </div>
@@ -177,11 +177,11 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="resetModalLabel">Reset Progress</h5>
+                    <h5 class="modal-title" id="resetModalLabel" data-i18n="ResetProgressModalTitle">Reset Progress</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="closeResetModalButton"></button>
                 </div>
                 <div class="modal-body">
-                    Are you sure you want to reset all your progress? This action cannot be undone.
+                    <p data-i18n="ResetProgressModalDescription">Are you sure you want to reset all your progress? This action cannot be undone.</p>
                     <!-- Progress Bar -->
                     <div id="progressContainer" class="mt-3" style="display: none;">
                         <div class="progress">
@@ -190,8 +190,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelResetButton">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmResetButton" onclick="resetProgress()">Reset Progress</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelResetButton" data-i18n="cancel">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmResetButton" onclick="resetProgress()" data-i18n="resetProgressButton">Reset Progress</button>
                 </div>
             </div>
         </div>
@@ -202,14 +202,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Reset Successful</h5>
+                    <h5 class="modal-title" id="successModalLabel" data-i18n="resetSuccessful">Reset Successful</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Your progress has been reset successfully. You can now start fresh!
+                    <p data-i18n="resetSuccessfulDescription">Your progress has been reset successfully. You can now start fresh!</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-i18n="ok">OK</button>
                 </div>
             </div>
         </div>

@@ -602,7 +602,9 @@ const UIString = {
         'upgradeTerms2': 'Terms & Conditions ',
         'upgradeTerms3': 'and ',
         'upgradeTerms4': 'Refund Policy',
-        'drillsToNextLevel': 'drills to level up'
+        'drillsToNextLevel': 'drills to level up',
+        'yourLevel': "Your {0} level"
+
     },
     'es': {
         'currentCourseCardTitle': 'CURSO ACTUAL',
@@ -618,7 +620,7 @@ const UIString = {
         'TodaysDrillsCompletedToday': 'ejercicios completados hoy',
         'BasicsCardTitle': 'PRÁCTICA BÁSICA',
         'BasicsCardButton': 'Practicar los Básicos',
-        'VocabCardTitle': 'VOCABULARY COVERED', 
+        'VocabCardTitle': 'VOCABULARIO CUBIERTO',
         'VocabCardButton': 'Aprender Vocabulario',
         'GrammarCardTitle': 'GRAMÁTICA CUBIERTA',
         'GrammarCardButton': 'Aprender Gramática',
@@ -689,7 +691,8 @@ const UIString = {
         'featureStatsPro': 'Estadísticas Completas',
         'upgradeSuccessButton': 'Comenzar a Practicar',
         'upgradeErrorButton': 'Intentar de Nuevo',
-        'drillsToNextLevel': 'ejercicios para llegar al siguiente nivel'
+        'drillsToNextLevel': 'ejercicios para llegar al siguiente nivel',
+        'yourLevel': "Tu nivel de {0}"
     }
 
 }
@@ -744,7 +747,7 @@ const languageShorts = {
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-        modifyInterfaceLanguage();
+        
         checkReg(user);
 
         // Fetch the user document once
@@ -758,6 +761,13 @@ firebase.auth().onAuthStateChanged(async (user) => {
             const userData = userDoc.data();
             
             const currentCourse = userData.currentCourse;
+            let knownLanguage = userData.currentCourse.split('-')[0];
+            // check if knownLanguage is in languageShorts
+            if (languageShorts[knownLanguage]) {
+                interfaceLanguage = knownLanguage;
+            }
+            modifyInterfaceLanguage();
+
             checkUpgradeParameter(userData);
             populateModalCourses(user); // Populate modal with course options
 
@@ -1589,6 +1599,7 @@ async function loadCardData(user, currentCourse) {
     document.getElementById('currentCourseFlag').src = `assets/icons/${targetLanguageCode}-flag.png`;
     document.getElementById('currentCourseFlag').style.visibility = 'visible';
     document.getElementById('targetLanguageName').textContent = targetLanguageName;
+    $('#levelTitle').html(getYourLevelString(interfaceLanguage, targetLanguageCode));
 
 
     document.querySelector('#CurrentCourseCard .fill-effect').style.animation = 'none';
@@ -1981,3 +1992,35 @@ async function loadCurrentLevelCard(user, currentCourse) {
         document.getElementById('drillsToNextLevel').textContent = `${levels[1].correctDrillsRequired} ${UIString[interfaceLanguage].drillsToNextLevel}`;
     }
 }
+
+/**
+ * Retrieves and formats a localized string based on the key and language.
+ *
+ * @param {string} key - The key for the desired string in UIString.
+ * @param {string} language - The interface language code (e.g., 'en', 'es').
+ * @param {...any} args - Values to replace placeholders in the template.
+ * @returns {string} - The formatted, localized string.
+ */
+function localize(key, language, ...args) {
+    let template = UIString[language][key];
+    
+    if (!template) {
+      console.warn(`Missing translation for key: "${key}" in language: "${language}". Falling back to English.`);
+      // Fallback to English if translation is missing
+      template = UIString['en'][key] || key;
+    }
+    
+    return template.replace(/{(\d+)}/g, (match, number) => {
+      return typeof args[number] !== 'undefined' ? args[number] : match;
+    });
+  }
+
+  function getYourLevelString(interfaceLanguage, targetLanguageCode) {
+    // Retrieve the target language name in the interface language
+    const targetLanguageName = languageShorts[interfaceLanguage][targetLanguageCode] || 'Spanish';
+    
+    // Use the 'yourLevel' key from UIString with the target language name as a parameter
+    return localize('yourLevel', interfaceLanguage, targetLanguageName);
+  }
+  
+  

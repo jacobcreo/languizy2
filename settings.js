@@ -2,6 +2,108 @@
 const db = firebase.firestore();
 let userSubLevel = ''; // Declare a variable to hold subLevel
 
+const languageShorts = {
+    'en': {
+        'en': 'English',
+        'de': 'German',
+        'fr': 'French',
+        'it': 'Italian',
+        'es': 'Spanish',
+        'us': 'English',
+        'uk': 'English',
+        'ru': 'Russian',
+        'cn': 'Chinese',
+        'pt': 'Portuguese',
+        'nl': 'Dutch'
+    }, 'es' :
+    {
+        'en': 'Inglés',
+        'de': 'Alemán',
+        'fr': 'Francés',
+        'it': 'Italiano',
+        'es': 'Español',
+        'us': 'Inglés',
+        'uk': 'Inglés',
+        'ru': 'Ruso',
+        'cn': 'Chino',
+        'pt': 'Portugués',
+        'nl': 'Holandés'
+    }
+}
+
+let interfaceLanguage = 'es';
+
+let UIString = {
+    'en': {
+        'logout': 'Logout',
+        'editProfile': 'Edit Profile',
+        'displayName': 'Display Name',
+        'displayNamePlaceholder': 'Enter Display Name',
+        'fullName': 'Full Name',
+        'fullNamePlaceholder': 'Enter Full Name',
+        'coachFeedback': 'Coach Feedback',
+        'coachFeedbackLabel': 'Receive feedback from the coach during exercises',
+        'emailPreferences': 'Email Preferences',
+        'MarketingMailLabel': 'Offers, News, and Marketing Communication',
+        'progressMailLabel': 'Progress Updates',
+        'resetProgress': 'Reset Progress',
+        'resetProgressDescription': 'Delete all your progress and start fresh',
+        'resetProgressButton': 'Reset Progress',
+        'ResetProgressModalTitle': 'Reset Progress',
+        'ResetProgressModalDescription': 'Are you sure you want to reset all your progress? This action cannot be undone.',
+        'resetSuccessful': 'Reset Successful',
+        'resetSuccessfulDescription': 'Your progress has been reset successfully. You can now start fresh!',
+        'cancel': 'Cancel',
+        'ok': 'OK',
+        'saveChanges': 'Save Changes',
+        'upgradeToPro': 'Upgrade to Pro',
+        'subscriptionBenefits': 'Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!',
+        'subscriptionSince': 'Subscribed since:',
+        'nextBillingDate': 'Next Billing Date:',
+        'cancelSubscription': 'Cancel Subscription',
+        'manageSubscription': 'Manage Subscription',
+        'cancelSubscription': 'Cancel Subscription',
+        'manageSubscription': 'Manage Subscription',
+        'freeSubscription': 'Free Subscription',
+        'proSubscription': 'Pro Subscription',
+        'freeUser': 'FREE',
+        'ProUser': 'Pro',
+    },
+    'es': {
+        'logout': 'Cerrar sesión',
+        'editProfile': 'Editar perfil',
+        'displayName': 'Nombre de pantalla',
+        'displayNamePlaceholder': 'Ingrese su nombre de pantalla',
+        'fullName': 'Nombre completo',
+        'fullNamePlaceholder': 'Ingrese su nombre completo',
+        'coachFeedback': 'Feedback del entrenador',
+        'coachFeedbackLabel': 'Reciba feedback del entrenador durante los ejercicios',
+        'emailPreferences': 'Preferencias de correo electrónico',
+        'MarketingMailLabel': 'Ofertas, noticias y comunicación de marketing',
+        'progressMailLabel': 'Actualizaciones de progreso',
+        'resetProgress': 'Restablecer progreso',
+        'resetProgressDescription': 'Eliminar todo su progreso y comenzar de nuevo',
+        'resetProgressButton': 'Restablecer progreso',
+        'ResetProgressModalTitle': 'Restablecer progreso',
+        'ResetProgressModalDescription': '¿Estás seguro de que quieres restablecer todo tu progreso? Esta acción no se puede deshacer.',
+        'resetSuccessful': 'Restablecimiento exitoso',
+        'resetSuccessfulDescription': 'Su progreso se ha restablecido correctamente. ¡Ahora puede comenzar de nuevo!',
+        'cancel': 'Cancelar',
+        'ok': 'OK',
+        'saveChanges': 'Guardar cambios',
+        'upgradeToPro': 'Actualizar a Pro',
+        'subscriptionSince': 'Suscrito desde:',
+        'nextBillingDate': 'Fecha de facturación siguiente:',
+        'cancelSubscription': 'Cancelar suscripción',
+        'manageSubscription': 'Administrar suscripción',
+        'freeSubscription': 'Suscripción gratuita',
+        'proSubscription': 'Suscripción Pro',
+        'SubscriptionBenefits': 'Disfrute de acceso limitado a ejercicios diarios y historias. Actualice a Pro para acceso ilimitado y más funciones!',
+        'freeUser': 'GRATIS',
+        'ProUser': 'Pro',
+    }
+}
+
 // Load User Profile Information
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -17,13 +119,13 @@ async function populateSubLevelBadge(userData) {
     const subLevelBadge = document.getElementById('subLevelBadge');
     subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
     if (subLevel === 'Free') {
-        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.textContent = UIString[interfaceLanguage].freeUser;
         subLevelBadge.className = 'badge bg-secondary';
         subLevelBadge.onclick = function() {
             window.location.href = '/course_selection.html?upgrade=true';
         };
     } else {
-        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.textContent = UIString[interfaceLanguage].ProUser;
         subLevelBadge.className = 'badge bg-danger';
         subLevelBadge.onclick = null; // No action on click for PRO
     }
@@ -36,6 +138,15 @@ function loadUserProfile(user) {
     userRef.get().then((doc) => {
         if (doc.exists) {
             const userData = doc.data();
+            debugger;
+            const currentCourse = userData.currentCourse;
+            let knownLanguage = userData.currentCourse.split('-')[0];
+            // check if knownLanguage is in languageShorts
+            if (languageShorts[knownLanguage]) {
+                interfaceLanguage = knownLanguage;
+            }
+            modifyInterfaceLanguage();
+
             // Update subscription level
             const subLevel = userData.subLevel || 'Free';
             const currentPlan = userData.currentSubscription?.plan || '';
@@ -105,7 +216,7 @@ function updateSubscriptionCard(userData) {
 
     if (subLevel === 'Pro') {
         // Update Subscription Level:
-        subscriptionLevel.textContent = 'Pro';
+        subscriptionLevel.textContent = UIString[interfaceLanguage].proSubscription;
 
         // Update Benefits
         subscriptionBenefits.textContent = `You are subscribed to the ${currentPlan}. Enjoy unlimited access to all features!`;
@@ -141,10 +252,10 @@ function updateSubscriptionCard(userData) {
         subscriptionInfo.classList.remove('d-none');
     } else {
         // Update Subscription Level
-        subscriptionLevel.textContent = 'Free';
+        subscriptionLevel.textContent = UIString[interfaceLanguage].freeSubscription;
 
         // Update Benefits
-        subscriptionBenefits.textContent = 'Enjoy limited access to daily exercises and stories. Upgrade to Pro for unlimited access and more features!';
+        subscriptionBenefits.textContent = UIString[interfaceLanguage].subscriptionBenefits;
 
         // Show Upgrade Button
         upgradeButton.classList.remove('d-none');
@@ -379,4 +490,72 @@ function manageSubscription() {
 
 function upgradeSubscription() {
     window.location.href = '/course_selection.html?upgrade=true';
+}
+
+function localize(key, language, ...args) {
+    let template = UIString[language][key];
+    
+    if (!template) {
+      console.warn(`Missing translation for key: ${key} in language: ${language}`);
+      // Fallback to English if translation is missing
+      template = UIString['en'][key] || key;
+    }
+    
+    return template.replace(/{(\d+)}/g, (match, number) => {
+      return typeof args[number] !== 'undefined' ? args[number] : match;
+    });
+  }
+
+  function modifyInterfaceLanguage() {
+
+    if (UIString[interfaceLanguage]) {
+        const lang = UIString[interfaceLanguage];
+
+        // Update all elements with data-i18n attribute (text content)
+        $('[data-i18n]').each(function () {
+            const key = $(this).data('i18n');
+            if (key.includes('.')) {
+                // Handle nested keys e.g. 'RecommendationNames.Basics'
+                const keys = key.split('.');
+                let text = lang;
+                keys.forEach(k => {
+                    text = text[k] || '';
+                });
+                $(this).text(text);
+            } else {
+                // Direct key in the UIString
+                if (lang[key] !== undefined) {
+                    $(this).text(lang[key]);
+                }
+            }
+        });
+
+        // Update elements with data-i18n-alt (for alt attributes)
+        $('[data-i18n-alt]').each(function () {
+            const key = $(this).data('i18n-alt');
+            if (lang[key] !== undefined) {
+                $(this).attr('alt', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-title (for title attributes)
+        $('[data-i18n-title]').each(function () {
+            const key = $(this).data('i18n-title');
+            if (lang[key] !== undefined) {
+                $(this).attr('title', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-placeholder (for placeholders)
+        $('[data-i18n-placeholder]').each(function () {
+            const key = $(this).data('i18n-placeholder');
+            if (lang[key] !== undefined) {
+                $(this).attr('placeholder', lang[key]);
+            }
+        });
+
+
+
+
+    }
 }
