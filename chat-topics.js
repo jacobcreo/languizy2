@@ -8,6 +8,36 @@ let totalTopics = 0;
 let topicsData = []; // To store all topics
 let accessibleTopics = []; // To store topics accessible to the user
 
+const languageShorts = {
+  'en': {
+      'en': 'English',
+      'de': 'German',
+      'fr': 'French',
+      'it': 'Italian',
+      'es': 'Spanish',
+      'us': 'English',
+      'uk': 'English',
+      'ru': 'Russian',
+      'cn': 'Chinese',
+      'pt': 'Portuguese',
+      'nl': 'Dutch'
+  }, 'es' :
+  {
+      'en': 'Inglés',
+      'de': 'Alemán',
+      'fr': 'Francés',
+      'it': 'Italiano',
+      'es': 'Español',
+      'us': 'Inglés',
+      'uk': 'Inglés',
+      'ru': 'Ruso',
+      'cn': 'Chino',
+      'pt': 'Portugués',
+      'nl': 'Holandés'
+  }
+}
+
+
 const UIString = {
     'en': {
       'logout': 'Logout',
@@ -37,7 +67,7 @@ document.addEventListener('DOMContentLoaded', showLoadingGif);
 // Authentication state listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
-    modifyInterfaceLanguage();
+    
     loadUserAvatar(user);
     loadChatTopics(user);
   } else {
@@ -68,7 +98,14 @@ function loadUserAvatar(user) {
 
   userRef.get().then((doc) => {
     if (doc.exists) {
+      
       const userData = doc.data();
+      let knownLanguage = userData.currentCourse.split('-')[0];
+            // check if knownLanguage is in languageShorts
+            if (languageShorts[knownLanguage]) {
+                interfaceLanguage = knownLanguage;
+            }
+            modifyInterfaceLanguage();
       const photoURL = userData.photoURL;
       const displayName = userData.displayName || '';
       const email = userData.email || '';

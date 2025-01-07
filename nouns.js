@@ -788,6 +788,36 @@ const UIString = {
     // Add more languages as needed
 };
 
+const languageShorts = {
+    'en': {
+        'en': 'English',
+        'de': 'German',
+        'fr': 'French',
+        'it': 'Italian',
+        'es': 'Spanish',
+        'us': 'English',
+        'uk': 'English',
+        'ru': 'Russian',
+        'cn': 'Chinese',
+        'pt': 'Portuguese',
+        'nl': 'Dutch'
+    }, 'es' :
+    {
+        'en': 'Inglés',
+        'de': 'Alemán',
+        'fr': 'Francés',
+        'it': 'Italiano',
+        'es': 'Español',
+        'us': 'Inglés',
+        'uk': 'Inglés',
+        'ru': 'Ruso',
+        'cn': 'Chino',
+        'pt': 'Portugués',
+        'nl': 'Holandés'
+    }
+}
+
+
 const countryToLanguage = {
     cn: { languageCode: "cmn-CN", voice: "Zhiyu" },        // China
     in: { languageCode: "hi-IN", voice: "Aditi" },         // India
@@ -945,7 +975,7 @@ function updateFlagIcons(currentCourse = window.currentCourse) {
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
-        modifyInterfaceLanguage();
+        
         fetchOrAssignCoach(user).then(() => {
 
             fetchCurrentCourse(user).then((currentCourse) => {
@@ -3352,6 +3382,12 @@ async function fetchOrAssignCoach(user) {
     const userRef = db.collection('users').doc(user.uid);
     try {
         const userDoc = await userRef.get();
+        let knownLanguage = userDoc.data().currentCourse.split('-')[0];
+        // check if knownLanguage is in languageShorts
+        if (languageShorts[knownLanguage]) {
+            interfaceLanguage = knownLanguage;
+        }
+        modifyInterfaceLanguage();
         let coachId = userDoc.exists && userDoc.data().coach;
         if (!coachId) {
             coachId = "ntRoVcqi2KNo6tvljdQ2"; // Default coach ID

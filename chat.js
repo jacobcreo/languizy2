@@ -10,6 +10,36 @@ let chatElapsedTime = 0;
 // Array to hold the entire conversation history
 let conversationHistory = [];
 
+const languageShorts = {
+    'en': {
+        'en': 'English',
+        'de': 'German',
+        'fr': 'French',
+        'it': 'Italian',
+        'es': 'Spanish',
+        'us': 'English',
+        'uk': 'English',
+        'ru': 'Russian',
+        'cn': 'Chinese',
+        'pt': 'Portuguese',
+        'nl': 'Dutch'
+    }, 'es' :
+    {
+        'en': 'Inglés',
+        'de': 'Alemán',
+        'fr': 'Francés',
+        'it': 'Italiano',
+        'es': 'Español',
+        'us': 'Inglés',
+        'uk': 'Inglés',
+        'ru': 'Ruso',
+        'cn': 'Chino',
+        'pt': 'Portugués',
+        'nl': 'Holandés'
+    }
+}
+
+
 const initialLoadingMessages = { 'en':
     [
         'Initializing your language session...',
@@ -162,7 +192,7 @@ if (!tid) {
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
-        modifyInterfaceLanguage();
+        
         currentUser = user;
         
         await loadUserAvatar(user);
@@ -180,6 +210,12 @@ async function loadUserAvatar(user) {
     const userDoc = await userRef.get();
 
     if (userDoc.exists) {
+        let knownLanguage = userDoc.data().currentCourse.split('-')[0];
+            // check if knownLanguage is in languageShorts
+            if (languageShorts[knownLanguage]) {
+                interfaceLanguage = knownLanguage;
+            }
+            modifyInterfaceLanguage();
         populateSubLevelBadge(userDoc);
         const photoURL = userDoc.data().photoURL;
         const displayName = userDoc.data().displayName || '';

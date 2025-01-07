@@ -15,6 +15,36 @@ let knownLanguage = '';
 let startTime;
 let elapsedTime = 0;
 let uid;
+
+const languageShorts = {
+  'en': {
+      'en': 'English',
+      'de': 'German',
+      'fr': 'French',
+      'it': 'Italian',
+      'es': 'Spanish',
+      'us': 'English',
+      'uk': 'English',
+      'ru': 'Russian',
+      'cn': 'Chinese',
+      'pt': 'Portuguese',
+      'nl': 'Dutch'
+  }, 'es' :
+  {
+      'en': 'Inglés',
+      'de': 'Alemán',
+      'fr': 'Francés',
+      'it': 'Italiano',
+      'es': 'Español',
+      'us': 'Inglés',
+      'uk': 'Inglés',
+      'ru': 'Ruso',
+      'cn': 'Chino',
+      'pt': 'Portugués',
+      'nl': 'Holandés'
+  }
+}
+
 let UIString = {
     'en': {
         'logout': 'Logout',
@@ -130,11 +160,18 @@ function loadUserAvatar(user) {
   
   userRef.get().then((doc) => {
       if (doc.exists) {
-          populateSubLevelBadge(doc);
+          
           const userData = doc.data();
+          let knownLanguage = userData.currentCourse.split('-')[0];
+    // check if knownLanguage is in languageShorts
+    if (languageShorts[knownLanguage]) {
+        interfaceLanguage = knownLanguage;
+    }
+    modifyInterfaceLanguage();
           const photoURL = userData.photoURL;
           const displayName = userData.displayName || '';
           const email = userData.email || '';
+          populateSubLevelBadge(doc);
           
           // Get the avatar element in the navbar
           const userAvatar = document.getElementById('userAvatar');
@@ -437,11 +474,11 @@ async function populateSubLevelBadge(userDoc) {
 // Authentication listener to get the user
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
-    modifyInterfaceLanguage();
+    loadUserAvatar(user);
     currentUser = user;
     uid = user.uid;
     loadStory(); // Load the story when user is authenticated
-    loadUserAvatar(user);  // Load user avatar in the navbar
+    
 
   } else {
     window.location.href = '/';

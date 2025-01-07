@@ -18,6 +18,36 @@ let timeSpentChartInstance;
 // Initialize selectedCourse to 'all' for showing all course stats by default
 let selectedCourse = 'all';
 
+const languageShorts = {
+  'en': {
+      'en': 'English',
+      'de': 'German',
+      'fr': 'French',
+      'it': 'Italian',
+      'es': 'Spanish',
+      'us': 'English',
+      'uk': 'English',
+      'ru': 'Russian',
+      'cn': 'Chinese',
+      'pt': 'Portuguese',
+      'nl': 'Dutch'
+  }, 'es' :
+  {
+      'en': 'Inglés',
+      'de': 'Alemán',
+      'fr': 'Francés',
+      'it': 'Italiano',
+      'es': 'Español',
+      'us': 'Inglés',
+      'uk': 'Inglés',
+      'ru': 'Ruso',
+      'cn': 'Chino',
+      'pt': 'Portugués',
+      'nl': 'Holandés'
+  }
+}
+
+
 let interfaceLanguage = 'en';
 
 let UIString = {
@@ -133,7 +163,7 @@ let UIString = {
 // Authentication State Listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
-    modifyInterfaceLanguage();
+    
     loadStats(user); // Load stats for the authenticated user
     populateCourseSelector(user); // Populate course selector dynamically
     loadUserAvatar(user);  // Load user avatar in the navbar
@@ -193,7 +223,7 @@ async function loadStats(user) {
   try {
     const userDocRef = db.collection('users').doc(user.uid);
     const selectedTimeInterval = document.getElementById('timeIntervalSelector').value;
-    
+   
 
     // Display loading messages for each chart
     const chartIds = [
@@ -208,6 +238,13 @@ async function loadStats(user) {
       userDocRef.get(),
       userDocRef.collection('courses').get()
     ]);
+
+    let knownLanguage = userDoc.data().currentCourse.split('-')[0];
+    // check if knownLanguage is in languageShorts
+    if (languageShorts[knownLanguage]) {
+        interfaceLanguage = knownLanguage;
+    }
+    modifyInterfaceLanguage();
 
     populateSubLevelBadge(userDoc);
 

@@ -36,6 +36,36 @@ let currentLanguagePair;
 let previousQuestionId = null;
 let lessonName = ''; // Global variable to store the lesson name
 
+const languageShorts = {
+    'en': {
+        'en': 'English',
+        'de': 'German',
+        'fr': 'French',
+        'it': 'Italian',
+        'es': 'Spanish',
+        'us': 'English',
+        'uk': 'English',
+        'ru': 'Russian',
+        'cn': 'Chinese',
+        'pt': 'Portuguese',
+        'nl': 'Dutch'
+    }, 'es' :
+    {
+        'en': 'Inglés',
+        'de': 'Alemán',
+        'fr': 'Francés',
+        'it': 'Italiano',
+        'es': 'Español',
+        'us': 'Inglés',
+        'uk': 'Inglés',
+        'ru': 'Ruso',
+        'cn': 'Chino',
+        'pt': 'Portugués',
+        'nl': 'Holandés'
+    }
+  }
+  
+
 const UIString = {
     en: {
       // General
@@ -245,6 +275,8 @@ const UIString = {
     months: "months",
     year: "year",
     years: "years",
+    freeUser: "FREE",
+    ProUser: "Pro",
     },
   
     es: {
@@ -455,6 +487,8 @@ const UIString = {
     months: "meses",
     year: "año",
     years: "años",
+    freeUser: "GRATIS",
+    ProUser: "Pro",
     },
     // You can add more languages...
   };
@@ -559,60 +593,6 @@ const languageToSpecialChars = {
     pl: ['ą', 'ć', 'ę', 'ł']  // Polish
 };
 
-function modifyInterfaceLanguage() {
-
-    if (UIString[interfaceLanguage]) {
-        const lang = UIString[interfaceLanguage];
-
-        // Update all elements with data-i18n attribute (text content)
-        $('[data-i18n]').each(function () {
-            const key = $(this).data('i18n');
-            if (key.includes('.')) {
-                // Handle nested keys e.g. 'RecommendationNames.Basics'
-                const keys = key.split('.');
-                let text = lang;
-                keys.forEach(k => {
-                    text = text[k] || '';
-                });
-                $(this).text(text);
-            } else {
-                // Direct key in the UIString
-                if (lang[key] !== undefined) {
-                    $(this).text(lang[key]);
-                }
-            }
-        });
-
-        // Update elements with data-i18n-alt (for alt attributes)
-        $('[data-i18n-alt]').each(function () {
-            const key = $(this).data('i18n-alt');
-            if (lang[key] !== undefined) {
-                $(this).attr('alt', lang[key]);
-            }
-        });
-
-        // Update elements with data-i18n-title (for title attributes)
-        $('[data-i18n-title]').each(function () {
-            const key = $(this).data('i18n-title');
-            if (lang[key] !== undefined) {
-                $(this).attr('title', lang[key]);
-            }
-        });
-
-        // Update elements with data-i18n-placeholder (for placeholders)
-        $('[data-i18n-placeholder]').each(function () {
-            const key = $(this).data('i18n-placeholder');
-            if (lang[key] !== undefined) {
-                $(this).attr('placeholder', lang[key]);
-            }
-        });
-
-
-
-
-    }
-}
-
 // Load User Avatar or Initials into Navbar
 function loadUserAvatar(user) {
     const userRef = db.collection('users').doc(user.uid);
@@ -620,6 +600,7 @@ function loadUserAvatar(user) {
 
     userRef.get().then((doc) => {
         if (doc.exists) {
+            debugger;
             const userData = doc.data();
             const photoURL = userData.photoURL;
             const displayName = userData.displayName || '';
@@ -654,6 +635,12 @@ async function fetchOrAssignCoach(user) {
         // Get user document to find coach ID
         const userDoc = await userRef.get();
         let userData = userDoc.data();
+        let knownLanguage = userData.currentCourse.split('-')[0];
+        // check if knownLanguage is in languageShorts
+        if (languageShorts[knownLanguage]) {
+            interfaceLanguage = knownLanguage;
+        }
+        modifyInterfaceLanguage();
         showCoachFeedback = userData.CoachFeedback !== undefined ? userData.CoachFeedback : true;
         if (showCoachFeedback) {
             $('#coach-container').addClass('d-flex').removeClass('d-none');
@@ -823,7 +810,7 @@ function updateFlagIcons(currentLesson) {
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
-        modifyInterfaceLanguage();
+        
         fetchOrAssignCoach(user).then(() => {
             fetchCurrentLesson(user).then(async (currentLesson) => {
                 loadUserAvatar(user);
@@ -2578,14 +2565,14 @@ async function populateSubLevelBadge(userDoc) {
     const subLevelBadge = document.getElementById('subLevelBadge');
     subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
     if (subLevel === 'Free') {
-        subLevelBadge.textContent = 'FREE';
+        subLevelBadge.textContent = UIString[interfaceLanguage].freeUser;
         subLevelBadge.className = 'badge bg-secondary';
 
         subLevelBadge.onclick = function () {
             window.location.href = '/course_selection.html?upgrade=true';
         };
     } else {
-        subLevelBadge.textContent = 'PRO';
+        subLevelBadge.textContent = UIString[interfaceLanguage].ProUser;
         subLevelBadge.className = 'badge bg-danger';
         subLevelBadge.onclick = null; // No action on click for PRO
     }

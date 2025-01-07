@@ -38,6 +38,35 @@ let UIString = {
   }
 }
 
+const languageShorts = {
+  'en': {
+      'en': 'English',
+      'de': 'German',
+      'fr': 'French',
+      'it': 'Italian',
+      'es': 'Spanish',
+      'us': 'English',
+      'uk': 'English',
+      'ru': 'Russian',
+      'cn': 'Chinese',
+      'pt': 'Portuguese',
+      'nl': 'Dutch'
+  }, 'es' :
+  {
+      'en': 'Inglés',
+      'de': 'Alemán',
+      'fr': 'Francés',
+      'it': 'Italiano',
+      'es': 'Español',
+      'us': 'Inglés',
+      'uk': 'Inglés',
+      'ru': 'Ruso',
+      'cn': 'Chino',
+      'pt': 'Portugués',
+      'nl': 'Holandés'
+  }
+}
+
 let interfaceLanguage = 'en';
 
 // Load Stories for the user based on the current course
@@ -218,6 +247,12 @@ function loadUserAvatar(user) {
   userRef.get().then((doc) => {
     if (doc.exists) {
       const userData = doc.data();
+      let knownLanguage = userData.currentCourse.split('-')[0];
+      // check if knownLanguage is in languageShorts
+      if (languageShorts[knownLanguage]) {
+          interfaceLanguage = knownLanguage;
+      }
+      modifyInterfaceLanguage();
       const photoURL = userData.photoURL;
       const displayName = userData.displayName || '';
       const email = userData.email || '';
@@ -323,7 +358,7 @@ function filterStoriesByCourse() {
 // Authentication state listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
-    modifyInterfaceLanguage();
+    loadUserAvatar(user);
 const urlParams = new URLSearchParams(window.location.search);
 const courseId = urlParams.get('courseId');
 if (courseId) {
@@ -331,7 +366,6 @@ if (courseId) {
 }
     populateCourseSelector(user);
     loadStories(user);
-    loadUserAvatar(user);  // Load user avatar in the navbar
   } else {
     window.location.href = '/';
   }

@@ -24,6 +24,70 @@ const languageMap = {
     "pt": "Portuguese"
 };
 
+const languageShorts = {
+  'en': {
+      'en': 'English',
+      'de': 'German',
+      'fr': 'French',
+      'it': 'Italian',
+      'es': 'Spanish',
+      'us': 'English',
+      'uk': 'English',
+      'ru': 'Russian',
+      'cn': 'Chinese',
+      'pt': 'Portuguese',
+      'nl': 'Dutch'
+  }, 'es' :
+  {
+      'en': 'Inglés',
+      'de': 'Alemán',
+      'fr': 'Francés',
+      'it': 'Italiano',
+      'es': 'Español',
+      'us': 'Inglés',
+      'uk': 'Inglés',
+      'ru': 'Ruso',
+      'cn': 'Chino',
+      'pt': 'Portugués',
+      'nl': 'Holandés'
+  }
+}
+
+let UIString = {
+    'en': {
+        'word': 'Word',
+        'lastSeen': 'Last Seen',
+        'correct': 'Correct',
+        'incorrect': 'Incorrect',
+        'accuracy': 'Accuracy',
+        'logout': 'Logout',
+        'vocabulary': 'Vocabulary',
+        'selectACourse': 'Select a course',
+        'wordsSeen': 'Words Seen',
+        'wordsKnown': 'Words Known',
+        'familiarity': 'Familiarity',
+        'fluency': 'Fluency',
+        'languageFluency': '{0} Fluency',
+        'languageFamiliarity': '{0} Familiarity'
+    },
+    'es': {
+        'word': 'Palabra',
+        'lastSeen': 'Última Vez',
+        'correct': 'Correcto',
+        'incorrect': 'Incorrecto',
+        'accuracy': 'Precisión',
+        'logout': 'Cerrar sesión',
+        'vocabulary': 'Vocabulario',
+        'selectACourse': 'Selecciona un curso',
+        'wordsSeen': 'Palabras Vistas',
+        'wordsKnown': 'Palabras Conocidas',
+        'familiarity': 'Familiaridad',
+        'fluency': 'Fluidez',
+        'languageFluency': '{0} Fluidez',
+        'languageFamiliarity': 'Conocimiento del {0}'
+    }
+}
+
 // Global variables to store stats
 let vocabularyData = [];
 const TOTAL_WORDS = 10000; // Simulated total vocabulary size for Language Familiarity and Fluency calculations
@@ -65,8 +129,15 @@ function loadUserAvatar(user) {
   userRef.get().then((doc) => {
       if (doc.exists) {
         
-          populateSubLevelBadge(doc);
+          
           const userData = doc.data();
+          let knownLanguage = userData.currentCourse.split('-')[0];
+          // check if knownLanguage is in languageShorts
+          if (languageShorts[knownLanguage]) {
+              interfaceLanguage = knownLanguage;
+          }
+          modifyInterfaceLanguage();
+          populateSubLevelBadge(doc);
           const photoURL = userData.photoURL;
           const displayName = userData.displayName || '';
           const email = userData.email || '';
@@ -212,11 +283,12 @@ function updateStatsCards({ wordsSeen, wordsKnown, totalCorrect }) {
   
 
   function updateCardTitles(courseId) {
+
     const courseDropdown = document.getElementById('courseDropdown');
     const selectedText = courseDropdown.options[courseDropdown.selectedIndex].textContent;
 
     // Extract targetLanguage from the selected course
-    const targetLanguageCode = selectedText.split(' to ')[1]; // Extract the target language code
+    const targetLanguageCode = courseId.split('-')[1]; // Extract the target language code
     const targetLanguage = languageMap[targetLanguageCode] || targetLanguageCode;
 
     // Ensure the elements exist before modifying them
@@ -224,8 +296,10 @@ function updateStatsCards({ wordsSeen, wordsKnown, totalCorrect }) {
     const fluencyTitle = document.getElementById('fluencyTitle');
 
     if (familiarityTitle && fluencyTitle) {
-        familiarityTitle.textContent = `${targetLanguage} Familiarity`;
-        fluencyTitle.textContent = `${targetLanguage} Fluency`;
+        familiarityTitle.textContent = localize('languageFamiliarity', interfaceLanguage, languageShorts[interfaceLanguage][targetLanguageCode] || "Language")
+        
+        fluencyTitle.textContent = localize('languageFluency', interfaceLanguage, languageShorts[interfaceLanguage][targetLanguageCode] || "Language")
+        
     } else {
         console.error('Familiarity or Fluency title element not found');
     }
@@ -308,5 +382,82 @@ function createAccuracyBar(accuracyPercentage) {
 function logout() {
   firebase.auth().signOut().then(() => {
     window.location.href = '/';
+  });
+}
+
+function modifyInterfaceLanguage() {
+
+  if (UIString[interfaceLanguage]) {
+      const lang = UIString[interfaceLanguage];
+
+      // Update all elements with data-i18n attribute (text content)
+      $('[data-i18n]').each(function () {
+          const key = $(this).data('i18n');
+          if (key.includes('.')) {
+              // Handle nested keys e.g. 'RecommendationNames.Basics'
+              const keys = key.split('.');
+              let text = lang;
+              keys.forEach(k => {
+                  text = text[k] || '';
+              });
+              $(this).text(text);
+          } else {
+              // Direct key in the UIString
+              if (lang[key] !== undefined) {
+                  $(this).text(lang[key]);
+              }
+          }
+      });
+
+      // Update elements with data-i18n-alt (for alt attributes)
+      $('[data-i18n-alt]').each(function () {
+          const key = $(this).data('i18n-alt');
+          if (lang[key] !== undefined) {
+              $(this).attr('alt', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-title (for title attributes)
+      $('[data-i18n-title]').each(function () {
+          const key = $(this).data('i18n-title');
+          if (lang[key] !== undefined) {
+              $(this).attr('title', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-placeholder (for placeholders)
+      $('[data-i18n-placeholder]').each(function () {
+          const key = $(this).data('i18n-placeholder');
+          if (lang[key] !== undefined) {
+              $(this).attr('placeholder', lang[key]);
+          }
+      });
+
+
+
+
+  }
+}
+
+/**
+ * Retrieves and formats a localized string based on the key and language.
+ *
+ * @param {string} key - The key for the desired string in UIString.
+ * @param {string} language - The interface language code (e.g., 'en', 'es').
+ * @param {...any} args - Values to replace placeholders in the template.
+ * @returns {string} - The formatted, localized string.
+ */
+function localize(key, language, ...args) {
+  debugger;
+  let template = UIString[language][key];
+  
+  if (!template) {
+    console.warn(`Missing translation for key: "${key}" in language: "${language}". Falling back to English.`);
+    // Fallback to English if translation is missing
+    template = UIString['en'][key] || key;
+  }
+  
+  return template.replace(/{(\d+)}/g, (match, number) => {
+    return typeof args[number] !== 'undefined' ? args[number] : match;
   });
 }
