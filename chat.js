@@ -10,25 +10,44 @@ let chatElapsedTime = 0;
 // Array to hold the entire conversation history
 let conversationHistory = [];
 
-const initialLoadingMessages = [
-    'Initializing your language session...',
-    'Getting everything ready for you...',
-    'Setting up your learning environment...',
-    'Loading language resources...',
-    'Preparing your personalized dashboard...',
-    'Connecting to language servers...',
-    'Fetching the latest language updates...',
-    'Optimizing your learning path...',
-    'Calibrating language models...',
-    'Synchronizing with language databases...',
-    'Loading interactive features...',
-    'Preparing language exercises...',
-    'Gathering language insights...',
-    'Customizing your language experience...'
-];
+const initialLoadingMessages = { 'en':
+    [
+        'Initializing your language session...',
+        'Getting everything ready for you...',
+        'Setting up your learning environment...',
+        'Loading language resources...',
+        'Preparing your personalized dashboard...',
+        'Connecting to language servers...',
+        'Fetching the latest language updates...',
+        'Optimizing your learning path...',
+        'Calibrating language models...',
+        'Synchronizing with language databases...',
+        'Loading interactive features...',
+        'Preparing language exercises...',
+        'Gathering language insights...',
+        'Customizing your language experience...'
+    ], 'es':
+    [
+        'Inicializando tu sesión de idioma...',
+'Preparando todo para ti...',
+'Configurando tu entorno de aprendizaje...',
+'Cargando recursos de idioma...',
+'Preparando tu panel personalizado...',
+'Conectándote a servidores de idioma...',
+'Obteniendo las últimas actualizaciones de idioma...',
+'Optimizando tu ruta de aprendizaje...',
+'Calibrando modelos de idioma...',
+'Sincronizando con bases de datos de idioma...',
+'Cargando funciones interactivas...',
+'Preparando ejercicios de idioma...',
+'Recopilando información sobre el idioma...',
+'Personalizando tu experiencia de idioma...'
+    ]
+}
 
-const subsequentLoadingMessages = [
-    'Thinking of the best response...',
+const subsequentLoadingMessages = { 'en':
+    [
+        'Thinking of the best response...',
     'Coming up with a great idea...',
     'Analyzing your input...',
     'Formulating a thoughtful reply...',
@@ -36,32 +55,96 @@ const subsequentLoadingMessages = [
     'Crafting a personalized response...',
     'Gathering relevant information...',
     'Synthesizing the best answer...',
-    'Exploring creative solutions...',
-    'Reviewing the latest data...',
-    'Checking for the best insights...',
-    'Preparing a detailed response...'
-];
+        'Exploring creative solutions...',
+        'Reviewing the latest data...',
+        'Checking for the best insights...',
+        'Preparing a detailed response...'
+    ], 'es':
+    [
+        'Pensar en la mejor respuesta...',
+'Proponer una gran idea...',
+'Analizar su aporte...',
+'Formular una respuesta bien pensada...',
+'Consultar a los expertos en idiomas...',
+'Elaborar una respuesta personalizada...',
+'Recopilar información relevante...',
+'Sintetizar la mejor respuesta...',
+'Explorar soluciones creativas...',
+'Revisar los datos más recientes...',
+'Buscar las mejores ideas...',
+'Preparar una respuesta detallada...'
+    ]
+}
 
-const lastLoadingMessages = [
-    'Coming out with my final message...',
-    'Summarizing our conversation...',
-    'Reflecting on our chat...',
-    'Preparing to say goodbye...',
-    'Gathering my final thoughts...',
-    'Wrapping up our session...',
-    'Concluding our discussion...',
-    'Finalizing my response...',
-    'Bidding you farewell...',
-    'Expressing my gratitude...',
-    'Signing off with a smile...',
-    'Leaving you with a thought...',
-    'Ending on a positive note...',
-    'Wishing you all the best...',
-    'Hoping to chat again soon...'
-];
+const lastLoadingMessages = { 'en':
+    [
+        'Coming out with my final message...',
+        'Summarizing our conversation...',
+        'Reflecting on our chat...',
+        'Preparing to say goodbye...',
+        'Gathering my final thoughts...',
+        'Wrapping up our session...',
+        'Concluding our discussion...',
+        'Finalizing my response...',
+        'Bidding you farewell...',
+        'Expressing my gratitude...',
+        'Signing off with a smile...',
+        'Leaving you with a thought...',
+        'Ending on a positive note...',
+        'Wishing you all the best...',
+        'Hoping to chat again soon...'
+    ], 'es':
+    [
+        'Saliendo con mi mensaje final...',
+'Resumiendo nuestra conversación...',
+'Reflexionando sobre nuestra charla...',
+'Preparándome para decir adiós...',
+'Reuniendo mis pensamientos finales...',
+'Concluyendo nuestra sesión...',
+'Concluyendo nuestra discusión...',
+'Finalizando mi respuesta...',
+'Despidiéndome de usted...',
+'Expresando mi gratitud...',
+'Cerrando la sesión con una sonrisa...',
+'Dejándole con un pensamiento...',
+'Terminando con una nota positiva...',
+'Le deseo todo lo mejor...',
+'Espero poder charlar de nuevo pronto...'
+    ]
+}
+
+
+let UIString = {
+    'en': {
+        'logout': 'Logout',
+        'chatInputPlaceholder': 'Type your message...',
+        'chatSendButton': 'Send',
+        'showChatSummary': 'Show Chat Summary',
+        'conversationSummary': 'Conversation Summary',
+        'languageCorrections': 'Language Corrections',
+        'restartConversation': 'Restart Conversation',
+        'exitConversation': 'Exit',
+        'free_user': 'Free',
+        'pro_user': 'Pro',
+    },
+    'es': {
+        'logout': 'Cerrar sesión',
+        'chatInputPlaceholder': 'Escribe tu mensaje...',
+        'chatSendButton': 'Enviar',
+        'showChatSummary': 'Mostrar Resumen de la Conversación',
+        'conversationSummary': 'Resumen de la Conversación',
+        'languageCorrections': 'Correcciones de Idioma',
+        'restartConversation': 'Reiniciar Conversación',
+        'exitConversation': 'Salir',
+        'free_user': 'GRATIS',
+        'pro_user': 'PRO',
+    }
+};
 
 // Variable to track if it's the first loading
 let isFirstLoading = true;
+
+let interfaceLanguage = 'en';
 
 // Variable to store the interval ID for rotating loading messages
 let loadingIntervalId = null;
@@ -79,6 +162,7 @@ if (!tid) {
 // Firebase Authentication listener
 firebase.auth().onAuthStateChanged(async (user) => {
     if (user) {
+        modifyInterfaceLanguage();
         currentUser = user;
         
         await loadUserAvatar(user);
@@ -96,6 +180,7 @@ async function loadUserAvatar(user) {
     const userDoc = await userRef.get();
 
     if (userDoc.exists) {
+        populateSubLevelBadge(userDoc);
         const photoURL = userDoc.data().photoURL;
         const displayName = userDoc.data().displayName || '';
         const email = userDoc.data().email || '';
@@ -260,7 +345,7 @@ function addShowSummaryButton(summaryText, corrections) {
 
     const summaryButton = document.createElement('button');
     summaryButton.classList.add('btn', 'btn-secondary');
-    summaryButton.textContent = 'Show Chat Summary';
+    summaryButton.textContent = UIString[interfaceLanguage].showChatSummary;
 
     // Attach event listener to the button
     summaryButton.addEventListener('click', () => {
@@ -345,7 +430,7 @@ function showTypingIndicator() {
     const maxMessages = (subLevel === 'free' || subLevel === 'basic') ? 6 : 20;
 
     // Determine which loading messages array to use
-    const messagesToUse = (loadingMessageCounter >= maxMessages) ? lastLoadingMessages : (isFirstLoading ? initialLoadingMessages : subsequentLoadingMessages);
+    const messagesToUse = (loadingMessageCounter >= maxMessages) ? lastLoadingMessages[interfaceLanguage] : (isFirstLoading ? initialLoadingMessages[interfaceLanguage] : subsequentLoadingMessages[interfaceLanguage]);
 
     typingDiv.innerHTML = `
         <div class="chat-message bg-light p-3 rounded">
@@ -442,7 +527,7 @@ function showSummaryView(summaryText, corrections) {
 
     // Card content
     card.innerHTML = `
-        <h2 class="card-title text-center">Conversation Summary</h2>
+        <h2 class="card-title text-center">${UIString[interfaceLanguage].conversationSummary}</h2>
         <p class="card-text">${summaryText}</p>
     `;
     if (corrections) {
@@ -462,7 +547,7 @@ function showSummaryView(summaryText, corrections) {
         // Add a title
         const correctionsTitle = document.createElement('h3');
         correctionsTitle.classList.add('card-title', 'text-center', 'mt-4');
-        correctionsTitle.textContent = 'Language Corrections';
+        correctionsTitle.textContent = UIString[interfaceLanguage].languageCorrections;
         correctionsSection.appendChild(correctionsTitle);
 
         // Create a list to display corrections
@@ -493,8 +578,8 @@ function showSummaryView(summaryText, corrections) {
     const buttonContainer = document.createElement('div');
     buttonContainer.classList.add('d-flex', 'justify-content-center', 'mt-4');
     buttonContainer.innerHTML = `
-        <button class="btn btn-primary me-2" onclick="restartConversation()">Restart Conversation</button>
-        <button class="btn btn-secondary" onclick="exitConversation()">Exit</button>
+        <button class="btn btn-primary me-2" onclick="restartConversation()">${UIString[interfaceLanguage].restartConversation}</button>
+        <button class="btn btn-secondary" onclick="exitConversation()">${UIString[interfaceLanguage].exitConversation}</button>
     `;
     card.appendChild(buttonContainer);
 
@@ -570,3 +655,74 @@ async function updateChatStats() {
 function exitConversation() {
     window.location.href = '/course_selection.html';
 }
+
+function modifyInterfaceLanguage() {
+
+    if (UIString[interfaceLanguage]) {
+        const lang = UIString[interfaceLanguage];
+
+        // Update all elements with data-i18n attribute (text content)
+        $('[data-i18n]').each(function () {
+            const key = $(this).data('i18n');
+            if (key.includes('.')) {
+                // Handle nested keys e.g. 'RecommendationNames.Basics'
+                const keys = key.split('.');
+                let text = lang;
+                keys.forEach(k => {
+                    text = text[k] || '';
+                });
+                $(this).text(text);
+            } else {
+                // Direct key in the UIString
+                if (lang[key] !== undefined) {
+                    $(this).text(lang[key]);
+                }
+            }
+        });
+
+        // Update elements with data-i18n-alt (for alt attributes)
+        $('[data-i18n-alt]').each(function () {
+            const key = $(this).data('i18n-alt');
+            if (lang[key] !== undefined) {
+                $(this).attr('alt', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-title (for title attributes)
+        $('[data-i18n-title]').each(function () {
+            const key = $(this).data('i18n-title');
+            if (lang[key] !== undefined) {
+                $(this).attr('title', lang[key]);
+            }
+        });
+
+        // Update elements with data-i18n-placeholder (for placeholders)
+        $('[data-i18n-placeholder]').each(function () {
+            const key = $(this).data('i18n-placeholder');
+            if (lang[key] !== undefined) {
+                $(this).attr('placeholder', lang[key]);
+            }
+        });
+
+
+
+
+    }
+}
+
+async function populateSubLevelBadge(userDoc) {
+    const subLevel = userDoc.data().subLevel;
+    const subLevelBadge = document.getElementById('subLevelBadge');
+    subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
+    if (subLevel === 'Free') {
+      subLevelBadge.textContent = UIString[interfaceLanguage].free_user;
+      subLevelBadge.className = 'badge bg-secondary';
+      subLevelBadge.onclick = function() {
+        window.location.href = '/course_selection.html?upgrade=true';
+      };
+    } else {
+      subLevelBadge.textContent = UIString[interfaceLanguage].pro_user;
+      subLevelBadge.className = 'badge bg-danger';
+      subLevelBadge.onclick = null; // No action on click for PRO
+  }
+  }

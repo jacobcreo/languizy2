@@ -48,7 +48,8 @@
         </a>      
           <!-- Logout button and avatar -->
           <div class="d-flex align-items-center">
-            <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+            <div id="subLevelBadge" class="badge bg-secondary me-3"></div>
+            <button class="btn btn-outline-light me-3" data-i18n="logout" onclick="logout()">Logout</button>
             <div id="userAvatar" class="avatar"></div>
           </div>
         </div>
@@ -64,8 +65,8 @@
     <div class="fixed-bottom bg-white py-2 px-4 border-top" id="inputArea">
         <div class="container">
             <div class="input-group">
-                <input type="text" id="userInput" class="form-control" placeholder="Type your message...">
-                <button id="sendButton" class="btn btn-primary" onclick="sendMessage()">Send</button>
+                <input type="text" id="userInput" class="form-control" placeholder="Type your message..." data-i18n-placeholder="chatInputPlaceholder">
+                <button id="sendButton" class="btn btn-primary" onclick="sendMessage()" data-i18n="chatSendButton">Send</button>
             </div>
         </div>
     </div>

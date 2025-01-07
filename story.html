@@ -48,7 +48,7 @@
       <!-- Wrap the logout button and avatar inside a flex container -->
       <div class="d-flex align-items-center">
         <div id="subLevelBadge" class="badge bg-secondary me-3"></div>
-          <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+          <button data-i18n="logout" class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
           <div id="userAvatar" class="avatar"></div>
       </div>
   </div>
@@ -56,20 +56,20 @@
 
   <!-- Main Container -->
   <div class="container my-5">
-    <h2 id="storyTitle" class="text-center">Loading Story...</h2>
+    <h2 data-i18n="loading_story" data-i18n-loading_story="loading_story" id="storyTitle" class="text-center">Loading Story...</h2>
     <img id="storyImage" src="default_story_image.jpg" alt="Story Image" class="img-fluid mb-4 d-block mx-auto" style="max-height: 400px; width: 100%; object-fit: cover;">
 
     <div id="storyText" class="mb-4 text-center">
       <!-- Story text will be populated here -->
     </div>
     <div class="button-container single-button mb-4">
-        <button id="playStoryAudioBtn" class="btn btn-primary">Play Story Audio</button>
+        <button id="playStoryAudioBtn" class="btn btn-primary" data-i18n="play_story_audio" data-i18n-play_story_audio="play_story_audio">Play Story Audio</button>
     </div>
     
     
 
     <!-- Button to test knowledge -->
-    <button id="testYourKnowledgeBtn" class="btn btn-success btn-lg w-100">Test Your Knowledge</button>
+    <button id="testYourKnowledgeBtn" class="btn btn-success btn-lg w-100" data-i18n="test_your_knowledge">Test Your Knowledge</button>
 
     <!-- Test Questions Section (Hidden initially) -->
     <div id="testSection" class="my-4" style="display:none;">
@@ -80,8 +80,8 @@
       <!-- Feedback Section -->
       <div id="testFeedback" class="mt-3 text-center" style="display:none;">
         <p id="testResults" class="lead"></p>
-        <button id="retryTestBtn" class="btn btn-warning btn-lg w-100">Retry Test</button>
-        <a href="/stories.html" class="btn btn-secondary btn-lg w-100 mt-2">Return to Stories</a>
+        <button id="retryTestBtn" class="btn btn-warning btn-lg w-100" data-i18n="retry_test" data-i18n-retry_test="retry_test">Retry Test</button>
+        <a href="/stories.html" class="btn btn-secondary btn-lg w-100 mt-2" data-i18n="return_to_stories">Return to Stories</a>
       </div>
     </div>
   </div>

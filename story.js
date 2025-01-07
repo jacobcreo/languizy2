@@ -15,8 +15,40 @@ let knownLanguage = '';
 let startTime;
 let elapsedTime = 0;
 let uid;
+let UIString = {
+    'en': {
+        'logout': 'Logout',
+        'retry_test': 'Retry Test',
+        'return_to_stories': 'Return to Stories',
+        'loading_story': 'Loading Story...',
+        'play_story_audio': 'Play Story Audio',
+        'test_your_knowledge': 'Test Your Knowledge',    
+        'almost_there': 'Almost there!',
+        'you_answered': 'You answered',
+        'out_of': 'out of',
+        'correctly': 'correctly.',
+        'you_can_retry': 'You can retry the test or return to the Stories screen.',
+        'free_user': 'Free',
+        'pro_user': 'Pro'
+    },
+    'es': {
+        'logout': 'Cerrar sesión',
+        'retry_test': 'Reintentar Test',
+        'return_to_stories': 'Volver a Historias',
+        'loading_story': 'Cargando Historia...',
+        'play_story_audio': 'Reproducir Audio de la Historia',
+        'test_your_knowledge': 'Prueba tu Conocimiento',
+        'almost_there': '¡Casi!',
+        'you_answered': 'Respondiste',
+        'out_of': 'de',
+        'correctly': 'correctamente.',
+        'you_can_retry': 'Puedes reintentar el test o volver a la pantalla de Historias.',
+        'free_user': 'GRATIS',
+        'pro_user': 'PRO'
+    }
+};
 
-
+let interfaceLanguage = 'en';
 
 // Global variable to store the audio element
 let audioElement = new Audio(); 
@@ -285,8 +317,8 @@ function showTestFeedback() {
         updateUserProgress(true);
     } else {
         resultsMessage.innerHTML = `
-            <p><strong>Almost there!</strong> You answered ${correctAnswersCount} out of ${totalQuestions} correctly.</p>
-            <p>You can retry the test or return to the Stories screen.</p>
+            <p><strong>${UIString[interfaceLanguage].almost_there}</strong> ${UIString[interfaceLanguage].you_answered} ${correctAnswersCount} ${UIString[interfaceLanguage].out_of} ${totalQuestions} ${UIString[interfaceLanguage].correctly}.</p>
+            <p>${UIString[interfaceLanguage].you_can_retry} ${UIString[interfaceLanguage].or} ${UIString[interfaceLanguage].return_to_stories}.</p>
         `;
         updateUserProgress(false);
     }
@@ -390,13 +422,13 @@ async function populateSubLevelBadge(userDoc) {
   const subLevelBadge = document.getElementById('subLevelBadge');
   subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
   if (subLevel === 'Free') {
-    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.textContent = UIString[interfaceLanguage].free_user;
     subLevelBadge.className = 'badge bg-secondary';
     subLevelBadge.onclick = function() {
       window.location.href = '/course_selection.html?upgrade=true';
     };
   } else {
-    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.textContent = UIString[interfaceLanguage].pro_user;
     subLevelBadge.className = 'badge bg-danger';
     subLevelBadge.onclick = null; // No action on click for PRO
 }
@@ -405,6 +437,7 @@ async function populateSubLevelBadge(userDoc) {
 // Authentication listener to get the user
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
+    modifyInterfaceLanguage();
     currentUser = user;
     uid = user.uid;
     loadStory(); // Load the story when user is authenticated
@@ -527,4 +560,58 @@ function initializeAudioButton(storyData) {
     console.log(ssml);
     debugger;
     return ssml;
+}
+
+function modifyInterfaceLanguage() {
+
+  if (UIString[interfaceLanguage]) {
+      const lang = UIString[interfaceLanguage];
+
+      // Update all elements with data-i18n attribute (text content)
+      $('[data-i18n]').each(function () {
+          const key = $(this).data('i18n');
+          if (key.includes('.')) {
+              // Handle nested keys e.g. 'RecommendationNames.Basics'
+              const keys = key.split('.');
+              let text = lang;
+              keys.forEach(k => {
+                  text = text[k] || '';
+              });
+              $(this).text(text);
+          } else {
+              // Direct key in the UIString
+              if (lang[key] !== undefined) {
+                  $(this).text(lang[key]);
+              }
+          }
+      });
+
+      // Update elements with data-i18n-alt (for alt attributes)
+      $('[data-i18n-alt]').each(function () {
+          const key = $(this).data('i18n-alt');
+          if (lang[key] !== undefined) {
+              $(this).attr('alt', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-title (for title attributes)
+      $('[data-i18n-title]').each(function () {
+          const key = $(this).data('i18n-title');
+          if (lang[key] !== undefined) {
+              $(this).attr('title', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-placeholder (for placeholders)
+      $('[data-i18n-placeholder]').each(function () {
+          const key = $(this).data('i18n-placeholder');
+          if (lang[key] !== undefined) {
+              $(this).attr('placeholder', lang[key]);
+          }
+      });
+
+
+
+
+  }
 }

@@ -760,7 +760,7 @@ const languageToSpecialChars = {
 
 // various consts not shown for brevity
 
-let interfaceLanguage = 'es';
+let interfaceLanguage = 'en';
 
 
 // Initialize Firestore

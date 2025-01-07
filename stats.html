@@ -55,7 +55,7 @@
       <!-- Wrap the logout button and avatar inside a flex container -->
       <div class="d-flex align-items-center">
         <div id="subLevelBadge" class="badge bg-secondary me-3"></div>
-        <button class="btn btn-outline-light me-3" onclick="logout()">Logout</button>
+        <button class="btn btn-outline-light me-3" data-i18n="logout" onclick="logout()">Logout</button>
         <div id="userAvatar" class="avatar"></div>
       </div>
     </div>
@@ -64,17 +64,17 @@
   <div class="container mt-3 mb-5">
     <div class="row mb-4">
       <div class="col-12 col-md-6">
-        <h2>Your Statistics</h2>
+        <h2 data-i18n="your_statistics">Your Statistics</h2>
       </div>
       <div class="col-12 col-md-6 mb-3">
         <div class="d-flex flex-column flex-md-row">
           <select id="courseSelector" class="form-select mb-2 mb-md-0 me-md-2" onchange="filterByCourse()">
-            <option value="all">All Courses</option>
+            <option value="all" data-i18n="all_courses">All Courses</option>
             <!-- Options will be dynamically loaded here -->
           </select>
           <select id="timeIntervalSelector" class="form-select" onchange="filterByTimeInterval()">
-            <option value="all-time">All Time</option>
-            <option value="last-7-days">Last 7 Days</option>
+            <option value="all-time" data-i18n="all_time">All Time</option>
+            <option value="last-7-days" data-i18n="last_7_days">Last 7 Days</option>
           </select>
         </div>
       </div>
@@ -88,7 +88,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-calendar-day fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Day Joined</h5>
+              <h5 class="card-title" data-i18n="day_joined">Day Joined</h5>
               <p id="dayJoined" class="card-text">Loading...</p>
             </div>
           </div>
@@ -99,7 +99,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-user-clock fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Current Streak</h5>
+              <h5 class="card-title" data-i18n="current_streak">Current Streak</h5>
               <p id="currentStreak" class="card-text">Loading...</p>
             </div>
           </div>
@@ -110,7 +110,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-trophy fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Longest Streak</h5>
+              <h5 class="card-title" data-i18n="longest_streak">Longest Streak</h5>
               <p id="longestStreak" class="card-text">Loading...</p>
             </div>
           </div>
@@ -125,7 +125,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-calendar-check fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Total Days Practiced</h5>
+              <h5 class="card-title" data-i18n="total_days_practiced">Total Days Practiced</h5>
               <p id="totalDaysPracticed" class="card-text">Loading...</p>
             </div>
           </div>
@@ -136,7 +136,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-chart-line fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Average Score</h5>
+              <h5 class="card-title" data-i18n="average_score">Average Score</h5>
               <p id="averageScore" class="card-text">Loading...</p>
             </div>
           </div>
@@ -147,7 +147,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-clipboard-check fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Total Exercises Done</h5>
+              <h5 class="card-title" data-i18n="total_exercises_done">Total Exercises Done</h5>
               <p id="totalExercisesDone" class="card-text">Loading...</p>
             </div>
           </div>
@@ -163,7 +163,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-check-circle fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Correct Answers</h5>
+              <h5 class="card-title" data-i18n="correct_answers">Correct Answers</h5>
               <p id="correctAnswers" class="card-text">Loading...</p>
             </div>
           </div>
@@ -174,7 +174,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-exclamation-triangle fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Total Wrong Answers</h5>
+              <h5 class="card-title" data-i18n="total_wrong_answers">Total Wrong Answers</h5>
               <p id="totalWrongAnswers" class="card-text">Loading...</p>
             </div>
           </div>
@@ -185,7 +185,7 @@
           <div class="card-body d-flex align-items-center">
             <i class="fas fa-clock fa-3x me-3"></i>
             <div>
-              <h5 class="card-title">Time Spent Learning</h5>
+              <h5 class="card-title" data-i18n="time_spent_learning">Time Spent Learning</h5>
               <p id="timeSpentLearning" class="card-text">Loading...</p>
             </div>
           </div>
@@ -199,7 +199,7 @@
       <div class="col mb-4">
         <div class="card shadow-sm">
           <div class="card-body">
-            <h5 class="card-title">Time Spent on Activities</h5>
+            <h5 class="card-title" data-i18n="time_spent_on_activities">Time Spent on Activities</h5>
             <div id="timeSpentLoading">Loading...</div>
             <canvas id="timeSpentChart" style="display:none;"></canvas>
           </div>
@@ -212,7 +212,7 @@
       <div class="col-lg-6">
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Time Spent Distribution</h5>
+            <h5 class="card-title" data-i18n="time_spent_distribution">Time Spent Distribution</h5>
             <div id="timeSpentDistributionLoading">Loading...</div>
             <canvas id="timeSpentDistributionChart" style="display:none;"></canvas>
           </div>
@@ -220,14 +220,14 @@
         <!-- Heatmap Row -->
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Daily Practice Heatmap</h5>
+            <h5 class="card-title" data-i18n="daily_practice_heatmap">Daily Practice Heatmap</h5>
             <div id="heatmapContainer" class="d-flex flex-wrap"></div>
           </div>
         </div>
         <!-- Performance Over Time Chart -->
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Performance Over Time</h5>
+            <h5 class="card-title" data-i18n="performance_over_time">Performance Over Time</h5>
             <div id="performanceOverTimeLoading">Loading...</div>
             <canvas id="performanceOverTimeChart" style="display:none;"></canvas>
           </div>
@@ -235,7 +235,7 @@
         <!-- Speech Parts Breakdown Row -->
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Speech Parts Breakdown</h5>
+            <h5 class="card-title" data-i18n="speech_parts_breakdown">Speech Parts Breakdown</h5>
             <div id="speechPartBreakdownLoading">Loading...</div>
             <canvas id="speechPartBreakdownChart" style="display:none;"></canvas>
           </div>
@@ -243,7 +243,7 @@
         <!-- Vocabulary and Grammar Accuracy Chart -->
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Vocabulary and Grammar Accuracy</h5>
+            <h5 class="card-title" data-i18n="vocabulary_and_grammar_accuracy">Vocabulary and Grammar Accuracy</h5>
             <div id="vocabGrammarAccuracyLoading">Loading...</div>
             <canvas id="vocabGrammarAccuracyChart" style="display:none;"></canvas>
           </div>
@@ -253,7 +253,7 @@
       <div class="col-lg-6">
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Answers Over Time</h5>
+            <h5 class="card-title" data-i18n="answers_over_time">Answers Over Time</h5>
             <div id="answersOverTimeLoading">Loading...</div>
             <canvas id="answersOverTimeChart" style="display:none;"></canvas>
           </div>
@@ -262,14 +262,14 @@
 
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Cumulative Score Over Time</h5>
+            <h5 class="card-title" data-i18n="cumulative_score_over_time">Cumulative Score Over Time</h5>
             <div id="cumulativeScoreLoading">Loading...</div>
             <canvas id="cumulativeScoreChart" style="display:none;"></canvas>
           </div>
         </div>
         <div class="card shadow-sm mb-4">
           <div class="card-body">
-            <h5 class="card-title">Accuracy</h5>
+            <h5 class="card-title" data-i18n="accuracy">Accuracy</h5>
             <div id="accuracyLoading">Loading...</div>
             <canvas id="accuracyChart" style="display:none;"></canvas>
           </div>
@@ -277,7 +277,7 @@
         <!-- Daily Score Breakdown Chart -->
         <div class="card shadow-sm">
           <div class="card-body">
-            <h5 class="card-title">Daily Score Breakdown</h5>
+            <h5 class="card-title" data-i18n="daily_score_breakdown">Daily Score Breakdown</h5>
             <div id="dailyScoreBreakdownLoading">Loading...</div>
             <canvas id="dailyScoreBreakdownChart" style="display:none;"></canvas>
           </div>
@@ -295,7 +295,7 @@
         <div class="col-12">
           <div class="card shadow-sm">
             <div class="card-body">
-              <h5 class="card-title">Questions by Difficulty Level</h5>
+              <h5 class="card-title" data-i18n="questions_by_difficulty_level">Questions by Difficulty Level</h5>
               <div id="difficultyLevelLoading">Loading...</div>
               <canvas id="difficultyLevelChart" style="display:none;"></canvas>
             </div>
@@ -308,6 +308,8 @@
 
 
   <!-- Firebase and External Libraries -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>

@@ -8,12 +8,36 @@ let totalTopics = 0;
 let topicsData = []; // To store all topics
 let accessibleTopics = []; // To store topics accessible to the user
 
+const UIString = {
+    'en': {
+      'logout': 'Logout',
+      'yourChatTopics': 'Your Chat Topics',
+      'previous': 'Previous',
+      'next': 'Next',
+      'free_user': 'Free',
+      'pro_user': 'Pro',
+    },
+    'es': {
+      'logout': 'Cerrar sesión',
+      'yourChatTopics': 'Tus Temas de Chat',
+      'previous': 'Anterior',
+      'next': 'Siguiente',
+      'free_user': 'GRATIS',
+      'pro_user': 'PRO',
+    }
+};
+
+let interfaceLanguage = 'en';
+
+
+
 // Show loading GIF as soon as the page loads
 document.addEventListener('DOMContentLoaded', showLoadingGif);
 
 // Authentication state listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
+    modifyInterfaceLanguage();
     loadUserAvatar(user);
     loadChatTopics(user);
   } else {
@@ -26,13 +50,13 @@ async function populateSubLevelBadge(userDoc) {
   const subLevelBadge = document.getElementById('subLevelBadge');
   subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
   if (subLevel === 'Free') {
-    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.textContent = UIString[interfaceLanguage].free_user;
     subLevelBadge.className = 'badge bg-secondary';
     subLevelBadge.onclick = function() {
       window.location.href = '/course_selection.html?upgrade=true';
     };
   } else {
-    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.textContent = UIString[interfaceLanguage].pro_user;
     subLevelBadge.className = 'badge bg-danger';
     subLevelBadge.onclick = null; // No action on click for PRO
 }
@@ -240,7 +264,7 @@ function createTopicCard(topic) {
 
   const opacityClass = topic.isAccessible ? '' : 'disabled-card';
   const lockIcon = topic.isAccessible ? '' : '<i class="fas fa-lock lock-icon"></i>';
-  const action = topic.isAccessible ? `onclick="startChat('${topic.id}', '${topic.topic}')" ` : '';
+  const action = topic.isAccessible ? `onclick="startChat('${topic.id}', '${topic.topic[interfaceLanguage]}')" ` : '';
 
   // Determine the status icon and text
   let statusIcon = '';
@@ -265,7 +289,7 @@ function createTopicCard(topic) {
 
       </div>
       <div class="card-body">
-        <h5 class="card-title">${topic.topic}</h5>
+        <h5 class="card-title">${topic.topic[interfaceLanguage]}</h5>
         <p class="card-status mb-0">${statusIcon}${statusText}</p>
       </div>
     </div>
@@ -316,4 +340,57 @@ function logout() {
   }).catch((error) => {
     console.error("Logout failed: ", error);
   });
+}
+function modifyInterfaceLanguage() {
+
+  if (UIString[interfaceLanguage]) {
+      const lang = UIString[interfaceLanguage];
+
+      // Update all elements with data-i18n attribute (text content)
+      $('[data-i18n]').each(function () {
+          const key = $(this).data('i18n');
+          if (key.includes('.')) {
+              // Handle nested keys e.g. 'RecommendationNames.Basics'
+              const keys = key.split('.');
+              let text = lang;
+              keys.forEach(k => {
+                  text = text[k] || '';
+              });
+              $(this).text(text);
+          } else {
+              // Direct key in the UIString
+              if (lang[key] !== undefined) {
+                  $(this).text(lang[key]);
+              }
+          }
+      });
+
+      // Update elements with data-i18n-alt (for alt attributes)
+      $('[data-i18n-alt]').each(function () {
+          const key = $(this).data('i18n-alt');
+          if (lang[key] !== undefined) {
+              $(this).attr('alt', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-title (for title attributes)
+      $('[data-i18n-title]').each(function () {
+          const key = $(this).data('i18n-title');
+          if (lang[key] !== undefined) {
+              $(this).attr('title', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-placeholder (for placeholders)
+      $('[data-i18n-placeholder]').each(function () {
+          const key = $(this).data('i18n-placeholder');
+          if (lang[key] !== undefined) {
+              $(this).attr('placeholder', lang[key]);
+          }
+      });
+
+
+
+
+  }
 }

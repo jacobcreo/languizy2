@@ -3,6 +3,43 @@ const db = firebase.firestore();
 let selectedCourse = null;
 let maxFrequencySeen = 0;
 
+let UIString = {
+  'en': {
+    'all_courses': 'All Courses',
+    'practice_more_words': 'Practice More Words',
+    'practice': 'Practice',
+    'logout': 'Logout',
+    'your_stories': 'Your Stories',
+    'keep_practicing': 'Keep Practicing!',
+    'you_need': 'You need to practice',
+    'more_words': 'more words',
+    'to_unlock': 'to unlock',
+    'practice_morevocabulary': 'Practice more vocabulary',
+    'locked': 'Locked',
+    'read_story': 'Read Story',
+    'free_user': 'Free',
+    'pro_user': 'Pro',
+  },
+  'es': {
+    'all_courses': 'Todos los cursos',
+    'practice_more_words': 'Practica más palabras',
+    'practice': 'Practica',
+    'logout': 'Cerrar sesión',
+    'your_stories': 'Tus historias',
+    'keep_practicing': '¡Mantente practicando!',
+    'you_need': 'Necesitas practicar',
+    'more_words': 'más palabras',
+    'to_unlock': 'para desbloquear',
+    'practice_morevocabulary': 'Practica más vocabulario',
+    'locked': 'Bloqueado',
+    'read_story': 'Leer historia',
+    'free_user': 'GRATIS',
+    'pro_user': 'PRO',
+  }
+}
+
+let interfaceLanguage = 'en';
+
 // Load Stories for the user based on the current course
 
 async function populateSubLevelBadge(userDoc) {
@@ -10,13 +47,13 @@ async function populateSubLevelBadge(userDoc) {
   const subLevelBadge = document.getElementById('subLevelBadge');
   subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
   if (subLevel === 'Free') {
-    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.textContent = UIString[interfaceLanguage].free_user;
     subLevelBadge.className = 'badge bg-secondary';
     subLevelBadge.onclick = function() {
       window.location.href = '/course_selection.html?upgrade=true';
     };
   } else {
-    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.textContent = UIString[interfaceLanguage].pro_user;
     subLevelBadge.className = 'badge bg-danger';
     subLevelBadge.onclick = null; // No action on click for PRO
 }
@@ -130,8 +167,8 @@ async function loadStories(user) {
       const wordsNeeded = firstInaccessibleStory.storyData.wordsRequired - maxFrequencySeen;
       const alertHTML = `
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
-          <strong>Keep Practicing!</strong> You need ${wordsNeeded} more words to unlock "<strong>${firstInaccessibleStory.storyData.storyTitle}</strong>".
-          <a href="/practice.html" class="alert-link">Practice more vocabulary</a>.
+          <strong>${UIString[interfaceLanguage].keep_practicing}</strong> ${UIString[interfaceLanguage].you_need} ${wordsNeeded} ${UIString[interfaceLanguage].more_words} ${UIString[interfaceLanguage].to_unlock} "<strong>${firstInaccessibleStory.storyData.storyTitle}</strong>".
+          <a href="/practice.html" class="alert-link">${UIString[interfaceLanguage].practice_morevocabulary}</a>.
           <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
       `;
@@ -222,8 +259,8 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
 
   // If the story is not accessible, disable the Read Story button
   const readButton = isAccessible 
-    ? `<a href="/story.html?storyId=${storyId}" class="btn btn-primary">Read Story</a>`
-    : `<button class="btn btn-secondary" disabled>Locked</button>`;
+    ? `<a href="/story.html?storyId=${storyId}" class="btn btn-primary">${UIString[interfaceLanguage].read_story}</a>`
+    : `<button class="btn btn-secondary" disabled>${UIString[interfaceLanguage].locked}</button>`;
 
   let storyImg = 'https://languizy.com/myimages/stories/'+storyData.knownLanguage + '-' + storyData.language + '-' + storyId + '.png' + '/public';
 
@@ -233,7 +270,7 @@ function createStoryCard(storyData, storyId, isAccessible, isCompleted) {
       <div class="card-body">
         <h5 class="card-title">${storyData.storyTitle}${statusIcon}</h5>
         <p class="card-text">Words required: ${storyData.wordsRequired}</p>
-        <p class="card-text">storyId: ${storyId}</p> 
+        <!-- <p class="card-text">storyId: ${storyId}</p> -->
       </div>
       <div class="card-footer">
       ${readButton}
@@ -286,6 +323,7 @@ function filterStoriesByCourse() {
 // Authentication state listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
+    modifyInterfaceLanguage();
 const urlParams = new URLSearchParams(window.location.search);
 const courseId = urlParams.get('courseId');
 if (courseId) {
@@ -298,3 +336,58 @@ if (courseId) {
     window.location.href = '/';
   }
 });
+
+
+function modifyInterfaceLanguage() {
+
+  if (UIString[interfaceLanguage]) {
+      const lang = UIString[interfaceLanguage];
+
+      // Update all elements with data-i18n attribute (text content)
+      $('[data-i18n]').each(function () {
+          const key = $(this).data('i18n');
+          if (key.includes('.')) {
+              // Handle nested keys e.g. 'RecommendationNames.Basics'
+              const keys = key.split('.');
+              let text = lang;
+              keys.forEach(k => {
+                  text = text[k] || '';
+              });
+              $(this).text(text);
+          } else {
+              // Direct key in the UIString
+              if (lang[key] !== undefined) {
+                  $(this).text(lang[key]);
+              }
+          }
+      });
+
+      // Update elements with data-i18n-alt (for alt attributes)
+      $('[data-i18n-alt]').each(function () {
+          const key = $(this).data('i18n-alt');
+          if (lang[key] !== undefined) {
+              $(this).attr('alt', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-title (for title attributes)
+      $('[data-i18n-title]').each(function () {
+          const key = $(this).data('i18n-title');
+          if (lang[key] !== undefined) {
+              $(this).attr('title', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-placeholder (for placeholders)
+      $('[data-i18n-placeholder]').each(function () {
+          const key = $(this).data('i18n-placeholder');
+          if (lang[key] !== undefined) {
+              $(this).attr('placeholder', lang[key]);
+          }
+      });
+
+
+
+
+  }
+}

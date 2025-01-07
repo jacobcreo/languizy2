@@ -18,9 +18,122 @@ let timeSpentChartInstance;
 // Initialize selectedCourse to 'all' for showing all course stats by default
 let selectedCourse = 'all';
 
+let interfaceLanguage = 'en';
+
+let UIString = {
+  'en': {
+    'your_statistics': 'Your Statistics',
+    'all_courses': 'All Courses',
+    'all_time': 'All Time',
+    'last_7_days': 'Last 7 Days',
+    'day_joined': 'Day Joined',
+    'current_streak': 'Current Streak',
+    'longest_streak': 'Longest Streak',
+    'total_days_practiced': 'Total Days Practiced',
+    'average_score': 'Average Score',
+    'total_exercises_done': 'Total Exercises Done',
+    'correct_answers': 'Correct Answers',
+    'wrong_answers': 'Wrong Answers',
+    'total_wrong_answers': 'Total Wrong Answers',
+    'time_spent_learning': 'Time Spent Learning',
+    'time_spent_on_activities': 'Time Spent on Activities',
+    'time_spent_distribution': 'Time Spent Distribution',
+    'daily_practice_heatmap': 'Daily Practice Heatmap',
+    'performance_over_time': 'Performance Over Time',
+    'speech_parts_breakdown': 'Speech Parts Breakdown',
+    'vocabulary_and_grammar_accuracy': 'Vocabulary and Grammar Accuracy',
+    'answers_over_time': 'Answers Over Time',
+    'cumulative_score_over_time': 'Cumulative Score Over Time',
+    'accuracy': 'Accuracy',
+    'daily_score_breakdown': 'Daily Score Breakdown',
+    'questions_by_difficulty_level': 'Questions by Difficulty Level',
+    'logout': 'Logout',
+    'free_user': 'Free',
+    'pro_user': 'Pro',
+    'practice_more_to_unlock_daily_practice_heatmap': 'Practice More to Unlock Daily Practice Heatmap',
+    'total_wrong_answers': 'Total Wrong Answers',
+    'total_excerises_done': 'Total Exercises Done',
+    'correct_answers': 'Correct Answers',
+    'time_spent_learning': 'Time Spent Learning',
+    'vocabulary': 'Vocabulary',
+    'grammar': 'Grammar',
+    'stories': 'Stories',
+    'chat': 'Chat',
+    'basics': 'Basics',
+    'date': 'Date',
+    'time_spent': 'Time Spent (seconds)',
+    'number_of_answers': 'Number of Answers',
+    'speech_parts': 'Speech Parts',
+    'vocabulary_score': 'Vocabulary Score',
+    'grammar_score': 'Grammar Score',
+    'vocabulary_correct': 'Vocabulary Correct',
+    'vocabulary_wrong': 'Vocabulary Wrong',
+    'grammar_correct': 'Grammar Correct',
+    'grammar_wrong': 'Grammar Wrong',
+    'cumulative_score': 'Cumulative Score',
+    'difficulty_level': 'Difficulty Level',
+    'score': 'Score',
+    'number_of_questions': 'Number of Questions',
+  },
+  'es': {
+    'your_statistics': 'Tus Estadísticas',
+    'all_courses': 'Todos los Cursos',
+    'all_time': 'Todo el Tiempo',
+    'last_7_days': 'Últimos 7 Días',
+    'day_joined': 'Día de Inscripción',
+    'current_streak': 'Racha Actual',
+    'longest_streak': 'Racha Más Larga',
+    'total_days_practiced': 'Días Practicados',
+    'average_score': 'Promedio de Calificación',
+    'total_exercises_done': 'Total de Ejercicios Realizados',
+    'correct_answers': 'Respuestas Correctas',
+    'wrong_answers': 'Respuestas Incorrectas',
+    'total_wrong_answers': 'Total de Respuestas Incorrectas',
+    'time_spent_learning': 'Tiempo Practicado',
+    'time_spent_on_activities': 'Tiempo en Actividades',
+    'time_spent_distribution': 'Distribución del Tiempo',
+    'daily_practice_heatmap': 'Mapa de Práctica Diario',
+    'performance_over_time': 'Rendimiento a lo Largo del Tiempo',
+    'speech_parts_breakdown': 'Desglose por Partes de la Oración',
+    'vocabulary_and_grammar_accuracy': 'Precisión de Vocabulario y Gramática',
+    'answers_over_time': 'Respuestas a lo Largo del Tiempo',
+    'cumulative_score_over_time': 'Calificación Acumulada a lo Largo del Tiempo',
+    'accuracy': 'Precisión',
+    'daily_score_breakdown': 'Desglose de Calificación Diario',
+    'questions_by_difficulty_level': 'Preguntas por Nivel de Dificultad',
+    'logout': 'Cerrar Sesión',
+    'free_user': 'GRATIS',
+    'pro_user': 'PRO',
+    'practice_more_to_unlock_daily_practice_heatmap': 'Practica Más para Desbloquear el Mapa de Práctica Diario',
+    'total_excerises_done': 'Total de Ejercicios Realizados',
+    'correct_answers': 'Respuestas Correctas',
+    'time_spent_learning': 'Tiempo Practicado', 
+    'vocabulary': 'Vocabulario',
+    'grammar': 'Gramática',
+    'stories': 'Historias',
+    'chat': 'Chat',
+    'basics': 'Básicos',
+    'date': 'Fecha',
+    'time_spent': 'Tiempo Practicado (segundos)',
+    'number_of_answers': 'Número de Respuestas',
+    'speech_parts': 'Partes de la Oración',
+    'vocabulary_score': 'Calificación de Vocabulario',
+    'grammar_score': 'Calificación de Gramática',
+    'vocabulary_correct': 'Vocabulario Correcto',
+    'vocabulary_wrong': 'Vocabulario Incorrecto',
+    'grammar_correct': 'Gramática Correcta',
+    'grammar_wrong': 'Gramática Incorrecta',
+    'cumulative_score': 'Calificación Acumulada',
+    'difficulty_level': 'Nivel de Dificultad',
+    'score': 'Calificación',
+    'number_of_questions': 'Número de Preguntas',
+  }
+}
+
 // Authentication State Listener
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
+    modifyInterfaceLanguage();
     loadStats(user); // Load stats for the authenticated user
     populateCourseSelector(user); // Populate course selector dynamically
     loadUserAvatar(user);  // Load user avatar in the navbar
@@ -34,13 +147,13 @@ async function populateSubLevelBadge(userDoc) {
   const subLevelBadge = document.getElementById('subLevelBadge');
   subLevelBadge.textContent = subLevel;  // Set the badge based on userLevel
   if (subLevel === 'Free') {
-    subLevelBadge.textContent = 'FREE';
+    subLevelBadge.textContent = UIString[interfaceLanguage].free_user;
     subLevelBadge.className = 'badge bg-secondary';
     subLevelBadge.onclick = function() {
       window.location.href = '/course_selection.html?upgrade=true';
     };
   } else {
-    subLevelBadge.textContent = 'PRO';
+    subLevelBadge.textContent = UIString[interfaceLanguage].pro_user;
     subLevelBadge.className = 'badge bg-danger';
     subLevelBadge.onclick = null; // No action on click for PRO
 }
@@ -130,7 +243,7 @@ async function loadStats(user) {
 
 function displayDayJoined(dayJoined) {
   const formattedDayJoined = dayJoined ? dayJoined.toDate().toLocaleDateString() : 'N/A';
-  document.getElementById('dayJoined').innerText = `Day Joined: ${formattedDayJoined}`;
+  document.getElementById('dayJoined').innerText = UIString[interfaceLanguage].day_joined + ': ' + formattedDayJoined;
 }
 
 async function displayCharts(userDocRef, selectedCourse, statsData) {
@@ -155,7 +268,7 @@ async function displayCharts(userDocRef, selectedCourse, statsData) {
     heatmapContainer.innerHTML = `
       <div class="locked-message">
         <i class="fas fa-lock fa-3x mb-3"></i>
-        <h5 class="mb-0">Practice More to Unlock Daily Practice Heatmap</h5>
+        <h5 class="mb-0">${UIString[interfaceLanguage].practice_more_to_unlock_daily_practice_heatmap}</h5>
       </div>`;
     return; 
   }
@@ -328,16 +441,16 @@ function updateUIWithStats(statsData) {
   const totalDaysPracticed = datesSet.size;
   const averageScore = totalDaysPracticed > 0 ? (totalScore / totalDaysPracticed).toFixed(2) : 0;
 
-  document.getElementById('currentStreak').innerText = `Current Streak: ${currentStreak}`;
-  document.getElementById('longestStreak').innerText = `Longest Streak: ${longestStreak}`;
-  document.getElementById('totalDaysPracticed').innerText = `Total Days Practiced: ${totalDaysPracticed}`;
-  document.getElementById('averageScore').innerText = `Average Score: ${averageScore}`;
-  document.getElementById('totalWrongAnswers').innerText = `Total Wrong Answers: ${totalWrongAnswers}`;
+  document.getElementById('currentStreak').innerText = UIString[interfaceLanguage].current_streak + ': ' + currentStreak;
+  document.getElementById('longestStreak').innerText = UIString[interfaceLanguage].longest_streak + ': ' + longestStreak;
+  document.getElementById('totalDaysPracticed').innerText = UIString[interfaceLanguage].total_days_practiced + ': ' + totalDaysPracticed;
+  document.getElementById('averageScore').innerText = UIString[interfaceLanguage].average_score + ': ' + averageScore;
+  document.getElementById('totalWrongAnswers').innerText = UIString[interfaceLanguage].total_wrong_answers + ': ' + totalWrongAnswers;
 
   // NEW: Update the new data boxes
-  document.getElementById('totalExercisesDone').innerText = `Total Exercises Done: ${statsData.totalDrills}`;
-  document.getElementById('correctAnswers').innerText = `Correct Answers: ${totalCorrectAnswers}`;
-  document.getElementById('timeSpentLearning').innerText = `Time Spent Learning: ${formatTime(totalTimeSpent)}`;
+  document.getElementById('totalExercisesDone').innerText = UIString[interfaceLanguage].total_excerises_done + ': ' + statsData.totalDrills;
+  document.getElementById('correctAnswers').innerText = UIString[interfaceLanguage].correct_answers + ': ' + totalCorrectAnswers;
+  document.getElementById('timeSpentLearning').innerText = UIString[interfaceLanguage].time_spent_learning + ': ' + formatTime(totalTimeSpent);
 }
 
 /**
@@ -387,7 +500,7 @@ function clearLoadingState(chartId, loadingId) {
 async function populateCourseSelector(user) {
   const userDocRef = db.collection('users').doc(user.uid);
   const courseSelector = document.getElementById('courseSelector');
-  courseSelector.innerHTML = '<option value="all">All Courses</option>';
+  courseSelector.innerHTML = '<option value="all">' + UIString[interfaceLanguage].all_courses + '</option>';
 
   const coursesSnapshot = await userDocRef.collection('courses').get();
   coursesSnapshot.forEach(doc => {
@@ -448,14 +561,14 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
       labels: labels,
       datasets: [
         {
-          label: 'Correct Answers',
+          label: UIString[interfaceLanguage].correct_answers,
           data: correctData,
           backgroundColor: '#28a745',
           barPercentage: 0.7,
           categoryPercentage: 0.8
         },
         {
-          label: 'Wrong Answers',
+          label: UIString[interfaceLanguage].wrong_answers,
           data: wrongData,
           backgroundColor: '#dc3545',
           barPercentage: 0.7,
@@ -492,13 +605,13 @@ async function displaySpeechPartBreakdownChart(userDocRef, currentCourse) {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Number of Answers',
+            text: UIString[interfaceLanguage].number_of_answers,
           },
         },
         y: {
           title: {
             display: true,
-            text: 'Speech Parts',
+            text: UIString[interfaceLanguage].speech_parts,
           },
           ticks: {
             autoSkip: false,
@@ -617,7 +730,7 @@ function displayAnswersOverTimeChart(data) {
       labels: data.map(d => d.date),
       datasets: [
         {
-          label: 'Correct Answers',
+          label: UIString[interfaceLanguage].correct_answers,
           data: data.map(d => d.correctAnswers),
           borderColor: '#28a745',
           backgroundColor: 'rgba(40, 167, 69, 0.2)',
@@ -625,7 +738,7 @@ function displayAnswersOverTimeChart(data) {
           tension: 0.4
         },
         {
-          label: 'Wrong Answers',
+          label: UIString[interfaceLanguage].wrong_answers,
           data: data.map(d => d.wrongAnswers),
           borderColor: '#dc3545',
           backgroundColor: 'rgba(220, 53, 69, 0.2)',
@@ -655,14 +768,14 @@ function displayAnswersOverTimeChart(data) {
           display: true,
           title: {
             display: true,
-            text: 'Date'
+            text: UIString[interfaceLanguage].date
           }
         },
         y: {
           display: true,
           title: {
             display: true,
-            text: 'Number of Answers'
+            text: UIString[interfaceLanguage].number_of_answers
           },
           beginAtZero: true
         }
@@ -682,7 +795,7 @@ function displayAccuracyChart(totalCorrect, totalWrong) {
   accuracyChartInstance = new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: ['Correct Answers', 'Wrong Answers'],
+      labels: [UIString[interfaceLanguage].correct_answers, UIString[interfaceLanguage].wrong_answers],
       datasets: [{
         data: [totalCorrect, totalWrong],
         backgroundColor: ['#28a745', '#dc3545']
@@ -733,7 +846,7 @@ function displayCumulativeScoreChart(dailyStats) {
     data: {
       labels: cumulativeData.map(d => d.date),
       datasets: [{
-        label: 'Cumulative Score',
+        label: UIString[interfaceLanguage].cumulative_score,
         data: cumulativeData.map(d => d.score),
         borderColor: '#007bff',
         backgroundColor: 'rgba(0, 123, 255, 0.2)',
@@ -747,14 +860,14 @@ function displayCumulativeScoreChart(dailyStats) {
           display: true,
           title: {
             display: true,
-            text: 'Date'
+            text: UIString[interfaceLanguage].date
           }
         },
         y: {
           display: true,
           title: {
             display: true,
-            text: 'Cumulative Score'
+            text: UIString[interfaceLanguage].cumulative_score
           },
           beginAtZero: true
         }
@@ -854,13 +967,13 @@ async function displayDifficultyLevelChart(userDocRef, currentCourse) {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Number of Questions'
+            text: UIString[interfaceLanguage].number_of_questions
           }
         },
         x: {
           title: {
             display: true,
-            text: 'Difficulty Level'
+            text: UIString[interfaceLanguage].difficulty_level
           }
         }
       },
@@ -900,7 +1013,7 @@ function displayPerformanceOverTimeChart(data) {
       labels: data.map(d => d.date),
       datasets: [
         {
-          label: 'Vocabulary Score',
+          label: UIString[interfaceLanguage].vocabulary_score,
           data: data.map(d => d.vocabularyScore),
           borderColor: '#007bff',
           backgroundColor: 'rgba(0, 123, 255, 0.2)',
@@ -908,7 +1021,7 @@ function displayPerformanceOverTimeChart(data) {
           tension: 0.4
         },
         {
-          label: 'Grammar Score',
+          label: UIString[interfaceLanguage].grammar_score,
           data: data.map(d => d.grammarScore),
           borderColor: '#28a745',
           backgroundColor: 'rgba(40, 167, 69, 0.2)',
@@ -938,14 +1051,14 @@ function displayPerformanceOverTimeChart(data) {
           display: true,
           title: {
             display: true,
-            text: 'Date'
+            text: UIString[interfaceLanguage].date
           }
         },
         y: {
           display: true,
           title: {
             display: true,
-            text: 'Score'
+            text: UIString[interfaceLanguage].score
           },
           beginAtZero: true
         }
@@ -968,14 +1081,14 @@ function displayDailyScoreBreakdownChart(data) {
       labels: data.map(d => d.date),
       datasets: [
         {
-          label: 'Vocabulary Score',
+          label: UIString[interfaceLanguage].vocabulary_score,
           data: data.map(d => d.vocabularyScore),
           backgroundColor: '#007bff',
           barPercentage: 0.7,
           categoryPercentage: 0.8
         },
         {
-          label: 'Grammar Score',
+          label: UIString[interfaceLanguage].grammar_score,
           data: data.map(d => d.grammarScore),
           backgroundColor: '#28a745',
           barPercentage: 0.7,
@@ -990,13 +1103,13 @@ function displayDailyScoreBreakdownChart(data) {
           beginAtZero: true,
           title: {
             display: true,
-            text: 'Score'
+            text: UIString[interfaceLanguage].score
           }
         },
         x: {
           title: {
             display: true,
-            text: 'Date'
+            text: UIString[interfaceLanguage].date
           }
         }
       },
@@ -1021,7 +1134,7 @@ function displayVocabGrammarAccuracyChart(vocabCorrect, vocabWrong, grammarCorre
   vocabGrammarAccuracyChartInstance = new Chart(ctx, {
     type: 'pie',
     data: {
-      labels: ['Vocabulary Correct', 'Vocabulary Wrong', 'Grammar Correct', 'Grammar Wrong'],
+      labels: [UIString[interfaceLanguage].vocabulary_correct, UIString[interfaceLanguage].vocabulary_wrong, UIString[interfaceLanguage].grammar_correct, UIString[interfaceLanguage].grammar_wrong],
       datasets: [{
         data: [vocabCorrect, vocabWrong, grammarCorrect, grammarWrong],
         backgroundColor: ['#007bff', '#dc3545', '#28a745', '#ffc107']
@@ -1112,27 +1225,27 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
       labels: dates,
       datasets: [
         {
-          label: 'Vocabulary',
+          label: UIString[interfaceLanguage].vocabulary,
           data: vocabularyData,
           backgroundColor: '#007bff'
         },
         {
-          label: 'Grammar',
+          label: UIString[interfaceLanguage].grammar,
           data: grammarData,
           backgroundColor: '#28a745'
         },
         {
-          label: 'Stories',
+          label: UIString[interfaceLanguage].stories,
           data: storiesData,
           backgroundColor: '#ffc107'
         },
         {
-          label: 'Chat',
+          label: UIString[interfaceLanguage].chat,
           data: chatData,
           backgroundColor: '#dc3545'
         },
         {
-          label: 'Basics',
+          label: UIString[interfaceLanguage].basics,
           data: basicsData,
           backgroundColor: '#6c757d'
         }
@@ -1145,14 +1258,14 @@ async function displayTimeSpentChart(userDocRef, currentCourse, dateRange) {
           stacked: true,
           title: {
             display: true,
-            text: 'Date'
+            text: UIString[interfaceLanguage].date
           }
         },
         y: {
           stacked: true,
           title: {
             display: true,
-            text: 'Time Spent (seconds)'
+            text: UIString[interfaceLanguage].time_spent
           },
           beginAtZero: true
         }
@@ -1209,7 +1322,7 @@ async function displayTimeSpentDistributionChart(userDocRef, currentCourse, date
     });
   }
 
-  const labels = ['Vocabulary', 'Grammar', 'Stories', 'Chat', 'Basics'];
+  const labels = [UIString[interfaceLanguage].vocabulary, UIString[interfaceLanguage].grammar, UIString[interfaceLanguage].stories, UIString[interfaceLanguage].chat, UIString[interfaceLanguage].basics];
   const data = [
     totalTimeSpent.vocabulary,
     totalTimeSpent.grammar,
@@ -1277,5 +1390,58 @@ function displayLockedMessage(chartId, loadingId, chartName) {
 
     // Append the message after the loading element (or at end if no loading)
     parent.appendChild(messageDiv);
+  }
+}
+function modifyInterfaceLanguage() {
+
+  if (UIString[interfaceLanguage]) {
+      const lang = UIString[interfaceLanguage];
+
+      // Update all elements with data-i18n attribute (text content)
+      $('[data-i18n]').each(function () {
+          const key = $(this).data('i18n');
+          if (key.includes('.')) {
+              // Handle nested keys e.g. 'RecommendationNames.Basics'
+              const keys = key.split('.');
+              let text = lang;
+              keys.forEach(k => {
+                  text = text[k] || '';
+              });
+              $(this).text(text);
+          } else {
+              // Direct key in the UIString
+              if (lang[key] !== undefined) {
+                  $(this).text(lang[key]);
+              }
+          }
+      });
+
+      // Update elements with data-i18n-alt (for alt attributes)
+      $('[data-i18n-alt]').each(function () {
+          const key = $(this).data('i18n-alt');
+          if (lang[key] !== undefined) {
+              $(this).attr('alt', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-title (for title attributes)
+      $('[data-i18n-title]').each(function () {
+          const key = $(this).data('i18n-title');
+          if (lang[key] !== undefined) {
+              $(this).attr('title', lang[key]);
+          }
+      });
+
+      // Update elements with data-i18n-placeholder (for placeholders)
+      $('[data-i18n-placeholder]').each(function () {
+          const key = $(this).data('i18n-placeholder');
+          if (lang[key] !== undefined) {
+              $(this).attr('placeholder', lang[key]);
+          }
+      });
+
+
+
+
   }
 }
