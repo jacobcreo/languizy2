@@ -261,6 +261,9 @@ const UIString = {
       // Time Difference Templates
     shownLast: "shown last {0} {1} ago",
     newPhrase: "(new phrase)",
+    times: 'times',
+    seen: 'Seen',
+    once: 'once',
 
     // Time Units
     minute: "minute",
@@ -277,6 +280,8 @@ const UIString = {
     years: "years",
     freeUser: "FREE",
     ProUser: "Pro",
+    makeItHarder: "Make it harder",
+    makeItEasier: "Make it easier",
     },
   
     es: {
@@ -473,6 +478,9 @@ const UIString = {
       // Time Difference Templates
     shownLast: "mostrado hace {0} {1}",
     newPhrase: "(nueva frase)",
+    times: 'veces',
+    seen: 'Visto',
+    once: 'una vez',
 
       // Time Units
     minute: "minuto",
@@ -489,6 +497,8 @@ const UIString = {
     years: "años",
     freeUser: "GRATIS",
     ProUser: "Pro",
+    makeItHarder: "Hacerlo más difícil",
+    makeItEasier: "Hacerlo más fácil",
     },
     // You can add more languages...
   };
@@ -881,10 +891,10 @@ firebase.auth().onAuthStateChanged(function (user) {
 function initializeDefaultMode() {
     if (window.innerWidth < 768) { // Mobile devices
         isMultipleChoice = true; // Set to multiple-choice
-        $('#toggle-mode').text('Make it harder');
+        $('#toggle-mode').text(UIString[interfaceLanguage].makeItHarder);
     } else {
         isMultipleChoice = false; // Set to text input
-        $('#toggle-mode').text('Make it easier');
+        $('#toggle-mode').text(UIString[interfaceLanguage].makeItEasier);
     }
 
     // Add an event listener for the toggle button
@@ -894,11 +904,11 @@ function initializeDefaultMode() {
 // Function to toggle between modes
 function toggleMode() {
     isMultipleChoice = !isMultipleChoice; // Toggle the mode
-    $('#toggle-mode').text(isMultipleChoice ? 'Make it harder' : 'Make it easier');
+    $('#toggle-mode').text(isMultipleChoice ? UIString[interfaceLanguage].makeItHarder : UIString[interfaceLanguage].makeItEasier);
     gtag('event', 'Toggle Mode', {
         'question_type': 'Grammar',
         'user_id': uid,
-        'user_pressed': isMultipleChoice ? 'Make it easier' : 'Make it harder',
+        'user_pressed': isMultipleChoice ? UIString[interfaceLanguage].makeItEasier : UIString[interfaceLanguage].makeItHarder,
         'course': window.currentLanguagePair
     });
     // Reload the current question with the new mode
@@ -1440,18 +1450,32 @@ function displayQuestion(question, questionId, currentLesson) {
             var timesCorrect = progressData.timesCorrect || 0;
             var timesWrong = progressData.timesIncorrect || 0;
 
-            // Update HTML with the stats
-            $('#times-seen').text(timesSeen);
+
+            if (timesSeen==1){
+                $('#once').text(UIString[interfaceLanguage].once);
+                $('#once').removeClass('d-none');
+                $('#times-seen').addClass('d-none');
+                $('#times').addClass('d-none');
+            } else {
+                $('#once').addClass('d-none');  
+                $('#times-seen').text(timesSeen);
+                $('#times-seen').removeClass('d-none');
+                $('#times').removeClass('d-none');
+            }
             $('#times-correct').text(timesCorrect);
             $('#times-wrong').text(timesWrong);
             $('#question-stats').show(); // Show the stats section
         } else {
+            
             var timesSeen = 0;
             var timesCorrect = 0;
             var timesWrong = 0;
 
             // Update HTML with the stats
+            $('#once').addClass('d-none');  
             $('#times-seen').text(timesSeen);
+            $('#times-seen').removeClass('d-none');
+            $('#times').removeClass('d-none');
             $('#times-correct').text(timesCorrect);
             $('#times-wrong').text(timesWrong);
             $('#question-stats').show(); // Show the stats section
