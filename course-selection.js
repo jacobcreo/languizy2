@@ -759,15 +759,19 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
         if (userDoc.exists) {
             const userData = userDoc.data();
-            if (userData.currentCourse) {
             const currentCourse = userData.currentCourse;
+            if (currentCourse) {
             let knownLanguage = userData.currentCourse.split('-')[0];
             // check if knownLanguage is in languageShorts
             if (languageShorts[knownLanguage]) {
                 interfaceLanguage = knownLanguage;
             }
-            modifyInterfaceLanguage();
+            
+            } else {
+                interfaceLanguage = 'en';
             }
+            modifyInterfaceLanguage();
+
 
             checkUpgradeParameter(userData);
             populateModalCourses(user); // Populate modal with course options
