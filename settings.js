@@ -362,7 +362,7 @@ async function resetProgress() {
 // Function to recursively delete all sub-collections and their documents
 async function deleteAllSubCollections(docRef) {
     // List all known sub-collection names that could exist under the user document
-    const subCollectionNames = ['courses', 'progress', 'stats', 'stories']; // Add any other sub-collections here
+    const subCollectionNames = ['courses', 'progress', 'stats', 'stories', 'nouns', 'chat']; // Add any other sub-collections here
 
     for (const subCollectionName of subCollectionNames) {
         const subCollectionRef = docRef.collection(subCollectionName);
