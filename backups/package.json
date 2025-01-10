@@ -1,0 +1,22 @@
+{
+    "name": "languizy",
+    "version": "1.0.0",
+    "description": "A language learning application focusing on nouns practice.",
+    "scripts": {
+      "build": "node build.js",
+      "deploy": "npm run build"
+    },
+    "keywords": [
+      "language",
+      "learning",
+      "nouns",
+      "i18n",
+      "education"
+    ],
+    "author": "Koby Ofek",
+    "license": "MIT",
+    "dependencies": {
+      "terser": "^5.37.0"
+    }
+  }
+  
