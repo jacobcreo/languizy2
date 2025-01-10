@@ -1,5 +1,8 @@
 adminer/
 backupFiles/
+public/
+.vscode/
+backups/
 serviceAccountKey.json
 .DS_Store
 prd.md
