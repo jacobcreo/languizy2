@@ -74,10 +74,10 @@ const processFile = async (file) => {
                     drop_console: true,
                 },
                 format: {
-                    comments: false,
+                    comments: false, // Removes all comments
+                    beautify: true //  Add it under the `format` object
                 },
-                mangle: false,
-                beautify: true
+                mangle: false
             });
 
             if (result.error) {
