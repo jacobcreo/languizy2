@@ -836,7 +836,7 @@ const countryToLanguage = {
     sv: { languageCode: "sv-SE", voice: "Astrid" },        // Sweden
     no: { languageCode: "nb-NO", voice: "Liv" },           // Norway
     dk: { languageCode: "da-DK", voice: "Naja" },           // Denmark
-    cy: { languageCode: "cy-GB", voice: "Gwyneth" }           // Wales
+    cy: { languageCode: "en-GB-WLS", voice: "Geraint" }           // Wales
 };
 const languageToSpecialChars = {
     de: ['ä', 'ö', 'ü', 'ß'], // German
