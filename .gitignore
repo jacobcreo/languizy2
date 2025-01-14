@@ -6,3 +6,5 @@ backups/
 serviceAccountKey.json
 .DS_Store
 prd.md
+android/
+ios/

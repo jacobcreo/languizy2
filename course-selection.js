@@ -726,7 +726,8 @@ const languageShorts = {
         'ru': 'Russian',
         'cn': 'Chinese',
         'pt': 'Portuguese',
-        'nl': 'Dutch'
+        'nl': 'Dutch',
+        'cy': 'Welsh'
     }, 'es' :
     {
         'en': 'Inglés',
@@ -739,7 +740,8 @@ const languageShorts = {
         'ru': 'Ruso',
         'cn': 'Chino',
         'pt': 'Portugués',
-        'nl': 'Holandés'
+        'nl': 'Holandés',
+        'cy': 'Gales'
     }
 }
 

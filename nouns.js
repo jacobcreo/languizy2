@@ -835,7 +835,8 @@ const countryToLanguage = {
     nl: { languageCode: "nl-NL", voice: "Lotte" },         // Netherlands
     sv: { languageCode: "sv-SE", voice: "Astrid" },        // Sweden
     no: { languageCode: "nb-NO", voice: "Liv" },           // Norway
-    dk: { languageCode: "da-DK", voice: "Naja" }           // Denmark
+    dk: { languageCode: "da-DK", voice: "Naja" },           // Denmark
+    cy: { languageCode: "cy-GB", voice: "Gwyneth" }           // Wales
 };
 const languageToSpecialChars = {
     de: ['ä', 'ö', 'ü', 'ß'], // German
@@ -949,6 +950,7 @@ function updateFlagIcons(currentCourse = window.currentCourse) {
         'en-pt': ['assets/icons/en-flag.png', 'assets/icons/pt-flag.png'],
         'en-nl': ['assets/icons/en-flag.png', 'assets/icons/nl-flag.png'],
         'es-en': ['assets/icons/es-flag.png', 'assets/icons/en-flag.png'],
+        'en-cy': ['assets/icons/en-flag.png', 'assets/icons/cy-flag.png'],
         // Add more courses and their corresponding flags here
     };
 
