@@ -162,12 +162,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "deff6ae746474e20446d8e6adf50a979"
+        "md5": "dda42d701ef4d63f5ade761f2f3c80f2"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "9b360c2817a78b30b425ba65987400a2"
+        "md5": "638c0bb27d92b3c0f468f38b3a459289"
     },
     {
         "path": "how-grammar-patterns-differ-across-languages.html",
@@ -202,7 +202,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "48e3e770f70468aa7b95567506f22fc4"
+        "md5": "c61bfee58c29d950fc59ee20faa864be"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -885,6 +885,51 @@
         "md5": "a0924441e9efef53ebc8bac35a513ecd"
     },
     {
+        "path": "media/posts/24",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "media/posts/24/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/24/responsive/vocab-memory-2xl.png",
+        "type": "file",
+        "md5": "86d5425be539fcb566e397426bdb9994"
+    },
+    {
+        "path": "/media/posts/24/responsive/vocab-memory-lg.png",
+        "type": "file",
+        "md5": "86d5425be539fcb566e397426bdb9994"
+    },
+    {
+        "path": "/media/posts/24/responsive/vocab-memory-md.png",
+        "type": "file",
+        "md5": "86d5425be539fcb566e397426bdb9994"
+    },
+    {
+        "path": "/media/posts/24/responsive/vocab-memory-sm.png",
+        "type": "file",
+        "md5": "5d83094b04d83481a11d3a8c6747892e"
+    },
+    {
+        "path": "/media/posts/24/responsive/vocab-memory-xl.png",
+        "type": "file",
+        "md5": "86d5425be539fcb566e397426bdb9994"
+    },
+    {
+        "path": "/media/posts/24/responsive/vocab-memory-xs.png",
+        "type": "file",
+        "md5": "0a7b66f7f8e9ffbe4dd4eb4ae04a447f"
+    },
+    {
+        "path": "/media/posts/24/vocab-memory.png",
+        "type": "file",
+        "md5": "5c29927956e88be18760264265c684da"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1207,7 +1252,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "67208fe588dda5e35c96461a9aeb76a0"
+        "md5": "e93408a22fe18459b81a5b545640b5ef"
     },
     {
         "path": "sitemap.xsl",
@@ -1228,6 +1273,11 @@
         "path": "the-importance-of-pronunciation-in-language-learning.html",
         "type": "file",
         "md5": "bc73705cf206737a616d5e50a38ea786"
+    },
+    {
+        "path": "the-interplay-of-memory-systems-in-vocabulary-acquisition-and-retention.html",
+        "type": "file",
+        "md5": "6b3877aa9667b99d7dc77124af60106d"
     },
     {
         "path": "the-power-of-storytelling-in-language-learning.html",
