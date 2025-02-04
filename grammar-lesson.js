@@ -8,7 +8,7 @@ let correctAnswers = 0;
 let wrongAnswers = 0;
 let streakCorrect = 0;
 let streakWrong = 0;
-let lastFiveAnswers = [];
+let lastFiveAnswers = []; // array of last five answers
 let showCoachFeedback = true; // boolean to show coach feedback
 let questionsToIgnore = []; // array of question ids to ignore
 
