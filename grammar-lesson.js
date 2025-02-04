@@ -10,7 +10,7 @@ let streakCorrect = 0;
 let streakWrong = 0;
 let lastFiveAnswers = [];
 let showCoachFeedback = true;
-let questionsToIgnore = [];
+let questionsToIgnore = []; // array of question ids to ignore
 
 let interfaceLanguage = 'en';
 
