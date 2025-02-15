@@ -5,7 +5,7 @@ var db = firebase.firestore();
 // Add Firestore settings if needed (optional)
 db.settings({ timestampsInSnapshots: true });
 
-// Capture URL parameters and other relevant data from the URL
+// Capture URL parameters and other relevant data from the URL and save it to localStorage
 (async function() {
   let a='testosh';
   const queryParams = new URLSearchParams(window.location.search);
