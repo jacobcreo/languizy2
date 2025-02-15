@@ -5,7 +5,7 @@ var db = firebase.firestore();
 // Add Firestore settings if needed (optional)
 db.settings({ timestampsInSnapshots: true });
 
-// Capture URL parameters and other relevant data
+// Capture URL parameters and other relevant data from the URL
 (async function() {
   let a='testosh';
   const queryParams = new URLSearchParams(window.location.search);
