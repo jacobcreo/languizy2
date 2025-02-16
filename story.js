@@ -99,7 +99,8 @@ const countryToLanguage = {
     nl: { languageCode: "nl-NL", voice: "Lotte" },         // Netherlands
     sv: { languageCode: "sv-SE", voice: "Astrid" },        // Sweden
     no: { languageCode: "nb-NO", voice: "Liv" },           // Norway
-    dk: { languageCode: "da-DK", voice: "Naja" }           // Denmark
+    dk: { languageCode: "da-DK", voice: "Naja" },           // Denmark
+    pt: { languageCode: "pt-PT", voice: "Ines" }           // Portugal
 };
 
 // Call this function within your existing loadStory function after the story is loaded
