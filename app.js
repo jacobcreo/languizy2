@@ -224,6 +224,46 @@ function googleLogin() {
     });
 }
 
+function facebookLogin() {
+  // Optional analytics
+  gtag('event', 'registration_started', {
+    'method': 'facebook_login',
+    'source': 'homepage_button'
+  });
+
+  var fbProvider = new firebase.auth.FacebookAuthProvider();
+  fbProvider.addScope('email');
+  fbProvider.addScope('public_profile');
+
+  auth.signInWithPopup(fbProvider)
+    .then(function(result) {
+      console.log("Facebook sign in success:", result);
+      // Call your existing code that saves user data to Firestore
+      handleUserLogin(result.user);
+    })
+    .catch(function(error) {
+      console.error("Facebook sign in error:", error);
+
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        var email = error.email;
+        var pendingCred = error.credential;
+
+        // Check which provider is linked to that email
+        auth.fetchSignInMethodsForEmail(email).then(function(providers) {
+          if (providers.indexOf("google.com") !== -1) {
+            alert("An account already exists with this email via Google. Please sign in with Google to link your Facebook account.");
+            // Save the pending FB credential somewhere, or handle as needed
+            // e.g. window.pendingCred = pendingCred;
+          } else {
+            alert("An account already exists with the same email but different credentials. Please use your original login method.");
+          }
+        });
+      } else {
+        alert("Facebook login failed: " + error.message);
+      }
+    });
+}
+
 if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
   var email = window.localStorage.getItem('emailForSignIn');
   if (!email) {
