@@ -5,6 +5,9 @@ var db = firebase.firestore();
 // Add Firestore settings if needed (optional)
 db.settings({ timestampsInSnapshots: true });
 
+window.pendingFacebookCred = null;
+
+
 // Capture URL parameters and other relevant data from the URL and save it to localStorage
 (async function() {
   let a='testosh';
@@ -211,13 +214,31 @@ function googleLogin() {
     'method': 'google_login',
     'source': 'homepage_button'
   });
-  
+
   var provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider)
     .then(result => {
       console.log('Google Sign-In successful:', result.user);
-      
-      // Redirect handled after auth state changes, to avoid multiple save calls
+
+      // Check if we were waiting to link Facebook
+      if (window.pendingFacebookCred) {
+        // Link the pending FB cred to the newly signed in (Google) user
+        auth.currentUser.linkWithCredential(window.pendingFacebookCred)
+          .then(() => {
+            console.log('Successfully linked Facebook to this Google user.');
+            window.pendingFacebookCred = null;  // clear it
+
+            // Now the user can log in either with Google or Facebook
+            handleUserLogin(auth.currentUser);
+          })
+          .catch((linkErr) => {
+            console.error('Error linking Facebook credential:', linkErr);
+            alert("Failed to link Facebook: " + linkErr.message);
+          });
+      } else {
+        // Normal case: no pending Facebook credential
+        handleUserLogin(result.user);
+      }
     })
     .catch(error => {
       console.error('Google Sign-In error:', error);
@@ -225,7 +246,7 @@ function googleLogin() {
 }
 
 function facebookLogin() {
-  // Optional analytics
+  // (Optional) track analytics:
   gtag('event', 'registration_started', {
     'method': 'facebook_login',
     'source': 'homepage_button'
@@ -237,28 +258,52 @@ function facebookLogin() {
 
   auth.signInWithPopup(fbProvider)
     .then(function(result) {
-      console.log("Facebook sign in success:", result);
-      // Call your existing code that saves user data to Firestore
+      // SUCCESS: The user either:
+      // 1) Did not exist => brand-new user => handleUserLogin(result.user).
+      // 2) Already had a user doc => sign in => handleUserLogin(result.user).
+      // 3) Or user is currently logged in with something else => we can also do linkWithPopup, see below.
+
+      console.log("Facebook sign-in success:", result.user);
       handleUserLogin(result.user);
+
     })
     .catch(function(error) {
       console.error("Facebook sign in error:", error);
 
       if (error.code === 'auth/account-exists-with-different-credential') {
+        // => The same email is used by another provider (e.g. Google).
         var email = error.email;
-        var pendingCred = error.credential;
+        var fbCred = error.credential;  // This is the Facebook AuthCredential
 
-        // Check which provider is linked to that email
-        auth.fetchSignInMethodsForEmail(email).then(function(providers) {
-          if (providers.indexOf("google.com") !== -1) {
-            alert("An account already exists with this email via Google. Please sign in with Google to link your Facebook account.");
-            // Save the pending FB credential somewhere, or handle as needed
-            // e.g. window.pendingCred = pendingCred;
+        // We fetch what providers exist for this email
+        auth.fetchSignInMethodsForEmail(email).then(function(methods) {
+          if (methods.indexOf("google.com") !== -1) {
+            // The user’s email is tied to Google.
+            // Let’s store the FB credential so we can link after Google sign-in:
+            window.pendingFacebookCred = fbCred;
+
+            alert(
+              "An account already exists with this email via Google.\n" +
+              "Please sign in with Google so we can link Facebook to your existing account."
+            );
+            // Now the user can click “Sign in with Google” or do it automatically.
+
+          } else if (methods.indexOf("password") !== -1) {
+            // If user originally used Email/Password:
+            window.pendingFacebookCred = fbCred;
+            alert(
+              "This email is already registered with password auth.\n" +
+              "Please sign in with email so we can link your Facebook account."
+            );
+            // etc.
+
           } else {
-            alert("An account already exists with the same email but different credentials. Please use your original login method.");
+            // Some other provider or scenario
+            alert("Account already exists with a different credential: " + methods.join(", "));
           }
         });
       } else {
+        // Some other error
         alert("Facebook login failed: " + error.message);
       }
     });
