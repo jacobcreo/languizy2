@@ -273,6 +273,7 @@ function facebookLogin() {
       if (error.code === 'auth/account-exists-with-different-credential') {
         // => The same email is used by another provider (e.g. Google).
         var email = error.email;
+        alert("Error email: " + error.email + "\nError: " + error.message);
         var fbCred = error.credential;  // This is the Facebook AuthCredential
 
         // We fetch what providers exist for this email
