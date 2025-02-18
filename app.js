@@ -301,7 +301,7 @@ function facebookLogin() {
 
           } else {
             // Some other provider or scenario
-            // alert("Account already exists with a different credential: " + methods.join(", "));
+            // alert("Account already exists with a different credential: " + methods.join(", "));d
           }
         });
       } else {
