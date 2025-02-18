@@ -278,7 +278,7 @@ function facebookLogin() {
 
         // We fetch what providers exist for this email
         auth.fetchSignInMethodsForEmail(email).then(function(methods) {
-          alert("methods: " + JSON.stringify(methods));
+          // alert("methods: " + JSON.stringify(methods));
           if (methods.indexOf("google.com") !== -1) {
             // The user’s email is tied to Google.
             // Let’s store the FB credential so we can link after Google sign-in:
