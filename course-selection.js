@@ -727,7 +727,15 @@ const languageShorts = {
         'cn': 'Chinese',
         'pt': 'Portuguese',
         'nl': 'Dutch',
-        'cy': 'Welsh'
+        'cy': 'Welsh',
+        'no': 'Norwegian',
+        'da': 'Danish',
+        'se': 'Swedish',
+        'fi': 'Finnish',
+        'pl': 'Polish',
+        'ro': 'Romanian',
+        'hu': 'Hungarian',
+        
     }, 'es' :
     {
         'en': 'Inglés',
@@ -741,7 +749,13 @@ const languageShorts = {
         'cn': 'Chino',
         'pt': 'Portugués',
         'nl': 'Holandés',
-        'cy': 'Gales'
+        'cy': 'Gales',
+        'no': 'Noruego',
+        'da': 'Danés',
+        'se': 'Sueco',
+        'fi': 'Finlandés',
+        'pl': 'Polaco',
+        'ro': 'Rumano',
     }
 }
 
