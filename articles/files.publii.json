@@ -177,12 +177,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "2022291c4e569b0a118f7ba18c78d8c0"
+        "md5": "331ae734380732d1d1daa21385ba003a"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "dd4ce81d558289ca6d215ebaf17af269"
+        "md5": "81bd3cd866ca56eb87ce36ece0a7f128"
     },
     {
         "path": "how-grammar-patterns-differ-across-languages.html",
@@ -215,6 +215,11 @@
         "md5": "ff9f4178858e641bd90d24340df87ee4"
     },
     {
+        "path": "how-to-overcome-language-plateaus.html",
+        "type": "file",
+        "md5": "382c84ecfcf39e89e09c0ce7b8256393"
+    },
+    {
         "path": "how-to-practice-listening-to-a-foreign-language-without-getting-lost.html",
         "type": "file",
         "md5": "cfe2fd7a77edd6cfcf64ef4d8068feb6"
@@ -232,7 +237,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "5b7a0b48f542d1de4244f352e2e12483"
+        "md5": "811fce87766c9fcdbcb746cc74512d70"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1280,6 +1285,51 @@
         "md5": "3c2182d7360eaf7c9898568ee99f4f2c"
     },
     {
+        "path": "media/posts/32",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/32/language_learning_plateau.png",
+        "type": "file",
+        "md5": "5612e3bec93e844e6cd789e2e90cd182"
+    },
+    {
+        "path": "media/posts/32/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/32/responsive/language_learning_plateau-2xl.png",
+        "type": "file",
+        "md5": "5ca552705b3a1d3718427af45d95b10f"
+    },
+    {
+        "path": "/media/posts/32/responsive/language_learning_plateau-lg.png",
+        "type": "file",
+        "md5": "5ca552705b3a1d3718427af45d95b10f"
+    },
+    {
+        "path": "/media/posts/32/responsive/language_learning_plateau-md.png",
+        "type": "file",
+        "md5": "5ca552705b3a1d3718427af45d95b10f"
+    },
+    {
+        "path": "/media/posts/32/responsive/language_learning_plateau-sm.png",
+        "type": "file",
+        "md5": "24660383080eb66c99eac3a0292d3e21"
+    },
+    {
+        "path": "/media/posts/32/responsive/language_learning_plateau-xl.png",
+        "type": "file",
+        "md5": "5ca552705b3a1d3718427af45d95b10f"
+    },
+    {
+        "path": "/media/posts/32/responsive/language_learning_plateau-xs.png",
+        "type": "file",
+        "md5": "424082ff81b73ce0b6174aef0ed107c1"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1602,7 +1652,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "a0c803ab42392ee33df7b483e23f0331"
+        "md5": "8ca31879cb0dbfb37ce423e37f0fed3f"
     },
     {
         "path": "sitemap.xsl",
