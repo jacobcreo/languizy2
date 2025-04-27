@@ -8,3 +8,7 @@ serviceAccountKey.json
 prd.md
 android/
 ios/
+image_instructions.csv
+node_modules/
+.DS_Store
+.gitignore
