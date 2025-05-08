@@ -167,7 +167,17 @@
     {
         "path": "/authors/jacob/page/5/index.html",
         "type": "file",
-        "md5": "851b50fc8e5e2049e00ff0d71d2938ef"
+        "md5": "748228514841eb2c66335af09461110a"
+    },
+    {
+        "path": "authors/jacob/page/6",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/authors/jacob/page/6/index.html",
+        "type": "file",
+        "md5": "a36156c8fafeafdec1fcd284e98c4f1e"
     },
     {
         "path": "beyond-words-how-body-language-speaks-volumes-in-everyday-conversations.html",
@@ -177,12 +187,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "331ae734380732d1d1daa21385ba003a"
+        "md5": "d8e8ebadb66883b3a6525af9bca83256"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "81bd3cd866ca56eb87ce36ece0a7f128"
+        "md5": "7839fd6f02613748d181568adf71a019"
     },
     {
         "path": "how-grammar-patterns-differ-across-languages.html",
@@ -237,7 +247,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "dcb92973080e521614235e8dfd9a48e5"
+        "md5": "8a4a0dd2b9e1b37c9c3f3e1ccc5e2e52"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1330,6 +1340,51 @@
         "md5": "424082ff81b73ce0b6174aef0ed107c1"
     },
     {
+        "path": "media/posts/33",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/33/lolman.png",
+        "type": "file",
+        "md5": "3734698d49a686134714316fb672f77c"
+    },
+    {
+        "path": "media/posts/33/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/33/responsive/lolman-2xl.png",
+        "type": "file",
+        "md5": "067ff636b9748e8354a8caeaf919e4e7"
+    },
+    {
+        "path": "/media/posts/33/responsive/lolman-lg.png",
+        "type": "file",
+        "md5": "067ff636b9748e8354a8caeaf919e4e7"
+    },
+    {
+        "path": "/media/posts/33/responsive/lolman-md.png",
+        "type": "file",
+        "md5": "1696cdba6f853473bfc0af95f50d8aee"
+    },
+    {
+        "path": "/media/posts/33/responsive/lolman-sm.png",
+        "type": "file",
+        "md5": "0dc13f6ee1ccda9c15437130b7db07b1"
+    },
+    {
+        "path": "/media/posts/33/responsive/lolman-xl.png",
+        "type": "file",
+        "md5": "067ff636b9748e8354a8caeaf919e4e7"
+    },
+    {
+        "path": "/media/posts/33/responsive/lolman-xs.png",
+        "type": "file",
+        "md5": "8f6ac22b386d7bb0974eac091bdac195"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1652,7 +1707,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "8ca31879cb0dbfb37ce423e37f0fed3f"
+        "md5": "89fc33e78519b1bb4e699839b68101b2"
     },
     {
         "path": "sitemap.xsl",
@@ -1708,6 +1763,11 @@
         "path": "the-science-of-language-learning.html",
         "type": "file",
         "md5": "c2c57024ff21f45d6c924c8a314c643a"
+    },
+    {
+        "path": "unlocking-laughter-how-to-actually-get-the-joke-in-a-new-language.html",
+        "type": "file",
+        "md5": "00f9265cad3826579ca678a4ca9dd4f4"
     },
     {
         "path": "why-cognates-can-be-both-your-friend-and-your-enemy-in-language-learning.html",
