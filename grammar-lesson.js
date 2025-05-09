@@ -2093,10 +2093,10 @@ function displayQuestion(question, questionId, currentLesson) {
 
 
     // Common function to handle after answer submission
-    async function afterAnswerSubmission(isCorrect, selectedOption) { // Added async here
+    async function afterAnswerSubmission(isCorrect, selectedOption) { 
+        console.log(`[afterAnswerSubmission] Start for Q_ID: ${currentQuestionId}, isCorrect: ${isCorrect}`);
         $('#submit-answer').hide();
         $('#next-question').show();
-
         gtag('event', 'User Answered', {
             'question_type': 'Grammar',
             'user_id': uid,
@@ -2104,17 +2104,13 @@ function displayQuestion(question, questionId, currentLesson) {
             'course': window.currentLanguagePair,
             'mode': isMultipleChoice ? 'Multiple_Choice' : 'Cloze'
         });
-
         const questionEndTime = new Date();
         let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); 
         timeTaken = Math.min(timeTaken, 30); 
-
         $('#toggle-mode').prop('disabled', true);
-
         var answerToDisplay = `<span class="correct-answer">${currentQuestionData.missingWord}</span>`;
         var questionHTML = currentQuestionData.sentence.replace(/_{3,}/g, answerToDisplay);
         $('#sentence').html(questionHTML);
-
         if (isCorrect) {
             $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
         } else {
@@ -2124,8 +2120,9 @@ function displayQuestion(question, questionId, currentLesson) {
         updateVisualStats(isCorrect);
         
         try {
+            console.log(`[afterAnswerSubmission] About to call updateUserProgress for Q_ID: ${currentQuestionId}. Topic: ${currentQuestionData.topic}`);
             await updateUserProgress(currentQuestionId, isCorrect, currentQuestionData.topic, timeTaken); 
-            console.log("Individual question progress updated.");
+            console.log(`[afterAnswerSubmission] updateUserProgress for Q_ID: ${currentQuestionId} COMPLETED.`);
 
             const user = firebase.auth().currentUser;
             if (user && currentQuestionData && typeof currentQuestionData.topic !== 'undefined') {
@@ -2133,23 +2130,38 @@ function displayQuestion(question, questionId, currentLesson) {
                 const topicNumber = currentQuestionData.topic;
                 const language = currentQuestionData.language;
                 const knownLanguage = currentQuestionData.knownLanguage;
+                console.log(`[afterAnswerSubmission] Fetching topic stats for Topic: ${topicNumber}, Lang: ${language}, KnownLang: ${knownLanguage}`);
 
                 const progressData = await fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, knownLanguage);
+                console.log(`[afterAnswerSubmission] fetchTotalQuestionsAndCorrect returned:`, progressData);
+                
                 if (progressData) {
                     const { totalQuestions, correctQuestions: currentCorrectQuestionsForTopic } = progressData;
+                    console.log(`[afterAnswerSubmission] For Topic ${topicNumber}: TotalQ: ${totalQuestions}, CorrectQ_from_fetch: ${currentCorrectQuestionsForTopic}`);
+                    
                     const topicScore = totalQuestions > 0 ? (currentCorrectQuestionsForTopic / totalQuestions) * 100 : 0;
+                    console.log(`[afterAnswerSubmission] Calculated topicScore for UI: ${topicScore.toFixed(2)}%`);
 
-                    updateLessonKnowledgeScoreUI(topicScore); // <-- UPDATE UI HERE
+                    updateLessonKnowledgeScoreUI(topicScore); 
 
+                    console.log(`[afterAnswerSubmission] About to call updateTopicScore for Topic ${topicNumber} with CorrectQ: ${currentCorrectQuestionsForTopic}`);
                     await updateTopicScore(userDocRef, topicNumber, totalQuestions, currentCorrectQuestionsForTopic, language, knownLanguage);
+                    console.log(`[afterAnswerSubmission] updateTopicScore for Topic ${topicNumber} COMPLETED.`);
+
+                    console.log(`[afterAnswerSubmission] About to call updateMaxTopic for Topic ${topicNumber} with TopicScore: ${topicScore.toFixed(2)}%`);
                     await updateMaxTopic(userDocRef, topicNumber, topicScore, language, knownLanguage);
-                    console.log(`In-lesson check: Topic ${topicNumber} score: ${topicScore.toFixed(2)}%. MaxTopic update sequence completed.`);
+                    console.log(`[afterAnswerSubmission] updateMaxTopic for Topic ${topicNumber} COMPLETED.`);
+                    
+                    console.log(`[afterAnswerSubmission] Sequence for Topic ${topicNumber} score: ${topicScore.toFixed(2)}% fully completed.`);
                 } else {
-                    console.warn(`In-lesson check: Could not fetch progress data for topic ${topicNumber}.`);
+                    console.warn(`[afterAnswerSubmission] Could not fetch progress data for topic ${topicNumber}.`);
+                    updateLessonKnowledgeScoreUI(0); // Update UI to 0 if data fetch fails
                 }
+            } else {
+                console.warn("[afterAnswerSubmission] User or currentQuestionData or topic is undefined. Skipping topic mastery update.");
             }
         } catch (error) {
-            console.error("Error during post-answer progress updates:", error);
+            console.error("[afterAnswerSubmission] Error during post-answer progress updates:", error);
         }
 
         $('#toggle-mode').hide();
@@ -2159,6 +2171,7 @@ function displayQuestion(question, questionId, currentLesson) {
             var completeLessonText = currentQuestionData.sentence.replace(/_{3,}/g, currentQuestionData.missingWord);
             playAudio(currentQuestionId, completeLessonText, currentQuestionData.language); 
         });
+        console.log(`[afterAnswerSubmission] End for Q_ID: ${currentQuestionId}`);
     }
 
     if (isMultipleChoice) {
