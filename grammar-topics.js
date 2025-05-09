@@ -27,48 +27,48 @@ async function loadTopics(user) {
 
         if (!currentCourse) {
             console.error("No current course found for this user.");
+            hideLoadingGif();
             return;
         }
 
         console.log(`Current course: ${selectedCourse}`);
 
-        // Fetch scores and maxTopic from user's grammar document for the current course
+        // Fetch initial userMaxTopic from user's grammar document for the current course
         const userCourseRef = userDocRef.collection('grammar').doc(currentCourse);
         const userCourseDoc = await userCourseRef.get();
         const userCourseData = userCourseDoc.exists ? userCourseDoc.data() : {};
+        // Initialize global userMaxTopic. calculateMaxTopic will use this as a starting point
+        // and update it if a higher one is calculated.
+        userMaxTopic = userCourseData.maxTopic || 1; 
 
-        const scores = userCourseData.scores || [];
-        userMaxTopic = userCourseData.maxTopic || 1; // Default maxTopic to 1 if not present
-
-        // Check if no progress exists, and only allow the first topic to be active
-        if (userMaxTopic === 1 && scores.length === 0) {
-            console.log("No progress found. Setting maxTopic to 1 and allowing only Topic 1 to be active.");
-        }
-
-        // Fetch topics for the selected course
+        // Fetch raw topics for the selected course (e.g., all grammar topics for 'english-spanish')
         const grammarRef = db.collection('grammar')
             .where('language', '==', selectedCourse.split('-')[1])
             .where('knownLanguage', '==', selectedCourse.split('-')[0])
             .orderBy('topic', 'asc');
 
         const topicsSnapshot = await grammarRef.get();
-        topicsData = topicsSnapshot.docs.map((doc, index) => {
-            const topicData = doc.data();
+
+        // Recalculate maxTopic based on the user's detailed progress for all topics in topicsSnapshot.
+        // This function updates the global `userMaxTopic` if a new higher value is found,
+        // and saves the new `userMaxTopic` to Firestore.
+        // It returns an array of topic data with freshly calculated scores.
+        const freshTopicsDataWithScores = await calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot);
+        
+        // Now, use freshTopicsDataWithScores to build the topicsData array for the UI.
+        // The global userMaxTopic is now also guaranteed to be the most up-to-date.
+        topicsData = freshTopicsDataWithScores.map(topicData => {
             const topicNumber = topicData.topic;
-
-            // If no progress exists, only the first topic is unlocked
-            const isUnlocked = (userMaxTopic === 1 && scores.length === 0) ? index === 0 : topicNumber <= userMaxTopic;
-
-            topicData.score = scores[topicNumber] || 0; // Use the score from the scores array, default to 0 if not found
-            topicData.unlocked = isUnlocked;
-
+            // topicData from freshTopicsDataWithScores already contains the 'score' field.
+            // Determine 'unlocked' status using the (now potentially updated) global userMaxTopic.
+            topicData.unlocked = (topicNumber <= userMaxTopic);
             return topicData;
         });
 
         totalTopics = topicsData.length;
 
         // Now update the UI with topics for the current page
-        updateUIWithTopics();
+        updateUIWithTopics(); // This will use the newly populated and status-updated topicsData
 
     } catch (error) {
         console.error("Error loading topics:", error);
@@ -80,27 +80,31 @@ async function loadTopics(user) {
 
 // Calculate maxTopic based on user's progress and update Firestore
 async function calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot) {
-    let maxTopic = userMaxTopic; // Start with the current maxTopic stored in the user's document
+    // Starts with the global userMaxTopic, which was initialized from DB in loadTopics
+    let maxTopicCalculated = userMaxTopic; 
     let updatedTopics = [];
   
     for (const doc of topicsSnapshot.docs) {
-      const topicData = doc.data();
+      const topicData = doc.data(); // This is the raw topic data (name, topic number, etc.)
       const topicNumber = topicData.topic;
   
       // Fetch total questions for this topic from the "grammar_questions" collection.
       const totalQuestionsSnapshot = await db.collection('grammar_questions')
         .where('topic', '==', topicNumber)
+        // Add course matching if grammar_questions are course-specific
+        .where('language', '==', currentCourse.split('-')[1]) 
+        .where('knownLanguage', '==', currentCourse.split('-')[0])
         .get();
   
       const totalQuestions = totalQuestionsSnapshot.size;
   
-      // Fetch user's progress for this topic (correct questions).
+      // Fetch user's progress for this specific topic (correct questions).
       const correctQuestionsSnapshot = await userDocRef
         .collection('grammar')
-        .doc(currentCourse) // Use .doc to access the course document
-        .collection('questions')
+        .doc(currentCourse) 
+        .collection('questions') // This is where individual question progress is stored
         .where('topic', '==', topicNumber)
-        .where('timesCorrectInARow', '>', 0)
+        .where('timesCorrectInARow', '>', 0) // Assuming this means 'mastered' for this question
         .get();
   
       const correctQuestions = correctQuestionsSnapshot.size;
@@ -108,26 +112,28 @@ async function calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot) {
       // Calculate the score for the topic.
       const topicScore = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
   
-      // Update the topicData with the score for UI display.
-      topicData.score = topicScore;
+      // Add the calculated score to the topicData object (which will be part of updatedTopics).
+      topicData.score = topicScore; 
   
-      // Add the updated topic to the list of updated topics
+      // Add the topicData (now including its score) to the array to be returned.
       updatedTopics.push(topicData);
   
-      // Update maxTopic based on the calculated score.
+      // Update maxTopicCalculated based on the score for this topic.
       if (topicScore >= 75) {
-        maxTopic = Math.max(maxTopic, topicNumber + 1);
+        maxTopicCalculated = Math.max(maxTopicCalculated, topicNumber + 1);
       }
     }
   
-    // If the new maxTopic is greater than the stored one, update it in Firestore.
-    if (maxTopic > userMaxTopic) {
-      userMaxTopic = maxTopic;
-      const userCourseRef = userDocRef.collection('grammar').doc(currentCourse);
-      await userCourseRef.set({ maxTopic: userMaxTopic }, { merge: true }); // Merge to avoid overwriting other fields
+    // If the newly calculated maxTopic is greater than the one we started with (from DB or previous calculation),
+    // update the global userMaxTopic and save it to Firestore.
+    if (maxTopicCalculated > userMaxTopic) {
+      userMaxTopic = maxTopicCalculated; // Update global variable
+      const userCourseGrammarRef = userDocRef.collection('grammar').doc(currentCourse);
+      await userCourseGrammarRef.set({ maxTopic: userMaxTopic }, { merge: true }); 
+      console.log(`Updated userMaxTopic to ${userMaxTopic} for course ${currentCourse} in Firestore.`);
     }
   
-    return updatedTopics;
+    return updatedTopics; // Return the array of topics with their calculated scores
   }
 
   // Function to update the UI with the topics and their respective scores

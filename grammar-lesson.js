@@ -1039,7 +1039,7 @@ const loadingMessages = [
     "It's like brewing coffee, but with words. Hold on!",
     "Loading... our language squirrel is gathering all the nuts of knowledge!",
     "Meanwhile, in the Land of Verbs... your answer is being prepared.",
-    "Ever wonder how explanations are made? Well, you’re about to find out...",
+    "Ever wonder how explanations are made? Well, you're about to find out...",
     "Beep boop... translating grammar magic into human-readable form.",
     "The words are warming up... almost ready to jump onto your screen!",
     "We're making sure every comma and full stop is in tip-top shape...",
@@ -1062,7 +1062,7 @@ const loadingMessages = [
     "Crossing all the t's and dotting all the i's... literally.",
     "Finding just the right words... it's a very picky process.",
     "Patience, grasshopper. Your grammar lesson will be worth the wait!",
-    "We’re talking to a noun about your explanation... nouns talk slow.",
+    "We're talking to a noun about your explanation... nouns talk slow.",
     "We're fishing for some top-notch explanations... almost caught one!",
     "Balancing out the sentence structure... it's like word acrobatics!",
     "The missing word is shy... coaxing it out for you.",
@@ -2081,7 +2081,7 @@ function displayQuestion(question, questionId, currentLesson) {
 
 
     // Common function to handle after answer submission
-    function afterAnswerSubmission(isCorrect, selectedOption) {
+    async function afterAnswerSubmission(isCorrect, selectedOption) { // Added async here
         $('#submit-answer').hide();
         $('#next-question').show();
 
@@ -2093,39 +2093,61 @@ function displayQuestion(question, questionId, currentLesson) {
             'mode': isMultipleChoice ? 'Multiple_Choice' : 'Cloze'
         });
 
-        // Calculate the time taken to answer the question
         const questionEndTime = new Date();
-        let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); // Time in seconds
-        timeTaken = Math.min(timeTaken, 30); // Cap the time at 30 seconds
+        let timeTaken = Math.floor((questionEndTime - questionStartTime) / 1000); 
+        timeTaken = Math.min(timeTaken, 30); 
 
-        // Disable the toggle button after submission
         $('#toggle-mode').prop('disabled', true);
 
-        // Replace '_____' with the correct answer in the question and style it
-        var answerToDisplay = `<span class="correct-answer">${question.missingWord}</span>`;
-        var questionHTML = question.sentence.replace(/_{3,}/g, answerToDisplay);
+        var answerToDisplay = `<span class="correct-answer">${currentQuestionData.missingWord}</span>`;
+        var questionHTML = currentQuestionData.sentence.replace(/_{3,}/g, answerToDisplay);
         $('#sentence').html(questionHTML);
 
-        // Feedback to user
         if (isCorrect) {
             $('#feedback').text('Correct!').removeClass('text-danger').addClass('text-success visible').css('visibility', 'visible');
         } else {
-            $('#feedback').text(`Incorrect. The correct answer was "${question.missingWord}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
+            $('#feedback').text(`Incorrect. The correct answer was "${currentQuestionData.missingWord}".`).removeClass('text-success').addClass('text-danger visible').css('visibility', 'visible');
         }
 
-        // Update visual stats and progress
         updateVisualStats(isCorrect);
-        updateUserProgress(questionId, isCorrect, currentLesson, timeTaken);
+        
+        // Individual question progress update
+        try {
+            await updateUserProgress(currentQuestionId, isCorrect, currentQuestionData.topic, timeTaken); // Assuming updateUserProgress returns a Promise
+            console.log("Individual question progress updated.");
 
-        // Hide toggle-mode button and show explain-lesson button after answer is submitted
+            // Now, handle topic-level mastery and maxTopic update
+            const user = firebase.auth().currentUser;
+            if (user && currentQuestionData && typeof currentQuestionData.topic !== 'undefined') {
+                const userDocRef = db.collection('users').doc(user.uid);
+                const topicNumber = currentQuestionData.topic;
+                const language = currentQuestionData.language;
+                const knownLanguage = currentQuestionData.knownLanguage;
+
+                const progressData = await fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, knownLanguage);
+                if (progressData) {
+                    const { totalQuestions, correctQuestions: currentCorrectQuestionsForTopic } = progressData;
+                    const topicScore = totalQuestions > 0 ? (currentCorrectQuestionsForTopic / totalQuestions) * 100 : 0;
+
+                    await updateTopicScore(userDocRef, topicNumber, totalQuestions, currentCorrectQuestionsForTopic, language, knownLanguage);
+                    await updateMaxTopic(userDocRef, topicNumber, topicScore, language, knownLanguage);
+                    console.log(`In-lesson check: Topic ${topicNumber} score: ${topicScore.toFixed(2)}%. MaxTopic update sequence completed.`);
+                } else {
+                    console.warn(`In-lesson check: Could not fetch progress data for topic ${topicNumber}.`);
+                }
+            }
+        } catch (error) {
+            console.error("Error during post-answer progress updates:", error);
+        }
+
+
         $('#toggle-mode').hide();
         $('#explain-sentence-btn').show();
 
-        // Play feedback sound and audio
         playFeedbackSound(isCorrect, () => {
-            var completeLesson = question.sentence.replace(/_{3,}/g, question.missingWord);
-            var targetLanguage = question.targetLanguage;
-            playAudio(questionId, completeLesson, targetLanguage);
+            var completeLessonText = currentQuestionData.sentence.replace(/_{3,}/g, currentQuestionData.missingWord);
+            // targetLanguage for playAudio should be currentQuestionData.language
+            playAudio(currentQuestionId, completeLessonText, currentQuestionData.language); 
         });
     }
 
@@ -2822,88 +2844,83 @@ $('#explain-sentence-btn').off('click').on('click', async function () {
 });
 
 async function fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, knownLanguage) {
-    // Fetch total number of questions for this topic in the grammar_questions collection
-    let totalQuestionsSnapshot = await db.collection('grammar_questions')
-        .where('topic', '==', parseInt(topicNumber))
-        .where('language', '==', language)
-        .where('knownLanguage', '==', knownLanguage)
-        .get();
+    const courseId = `${knownLanguage}-${language}`;
+    try {
+        const allTopicQuestionsSnapshot = await db.collection('grammar_questions')
+            .where('topic', '==', topicNumber) // topicNumber is expected to be a number
+            .where('language', '==', language)
+            .where('knownLanguage', '==', knownLanguage)
+            .get();
+        const totalQuestions = allTopicQuestionsSnapshot.size;
 
-    const totalQuestions = totalQuestionsSnapshot.size;
+        if (totalQuestions === 0) {
+            console.warn(`No questions found for topic ${topicNumber} in ${courseId} in grammar_questions collection.`);
+            return { totalQuestions: 0, correctQuestions: 0 };
+        }
 
-    // Fetch user's correct answers for this topic
-    let correctQuestionsSnapshot = await userDocRef
-        .collection('grammar')
-        .doc(knownLanguage + "-" + language)
-        .collection('questions')
-        .where('topic', '==', parseInt(topicNumber))
-        .where('timesCorrectInARow', '>', 0)
-        .get();
+        const userCorrectQuestionsSnapshot = await userDocRef
+            .collection('grammar')
+            .doc(courseId)
+            .collection('questions') 
+            .where('topic', '==', topicNumber)
+            .where('timesCorrectInARow', '>', 0) 
+            .get();
+        const correctQuestions = userCorrectQuestionsSnapshot.size;
 
-    const correctQuestions = correctQuestionsSnapshot.size;
-
-    return { totalQuestions, correctQuestions };
+        return { totalQuestions, correctQuestions };
+    } catch (error) {
+        console.error(`Error fetching total/correct questions for topic ${topicNumber}, course ${courseId}:`, error);
+        return null; 
+    }
 }
 
-async function updateTopicScore(userDocRef, topicNumber, totalQuestions, correctQuestions) {
-    // Calculate the topic score as a percentage and saves it to the user's grammar collection,
-    // and updates the completed lessons array if the score is 100. This is saved even if score drops below 100 later.
-    debugger;
-    let topicScore = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
+async function updateTopicScore(userDocRef, topicNumber, totalQuestions, correctQuestions, language, knownLanguage) {
+    const courseId = `${knownLanguage}-${language}`;
+    const topicScore = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
+    try {
+        const topicProgressRef = userDocRef
+            .collection('grammar')
+            .doc(courseId)
+            .collection('topic_scores') 
+            .doc(String(topicNumber));
 
-    let scoreIs100 = false;
-
-    if (topicScore == 100) {
-        scoreIs100 = true;
-    }
-
-    // Update the scores
-    await userDocRef
-        .collection('grammar')
-        .doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language)
-        .set({
-            scores: { [topicNumber]: topicScore }
+        await topicProgressRef.set({
+            score: parseFloat(topicScore.toFixed(2)),
+            totalQuestions: totalQuestions,
+            correctlyAnswered: correctQuestions,
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-
-    if (scoreIs100) {
-        // Update the completed array
-        const grammarDoc = await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).get();
-        const completed = grammarDoc.exists && grammarDoc.data().completed ? grammarDoc.data().completed : [];
-
-        if (!completed.includes(topicNumber)) {
-            completed.push(topicNumber);
-            await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).update({
-                completed: completed
-            });
-        }
+        console.log(`Updated score for topic ${topicNumber} in course ${courseId} to ${topicScore.toFixed(2)}%`);
+    } catch (error) {
+        console.error(`Error updating score for topic ${topicNumber}, course ${courseId}:`, error);
     }
-
-    return topicScore;
 }
 
-async function adjustCorrectQuestions(isCorrect, wasPreviouslyCorrect, correctQuestions) {
-    if (isCorrect && !wasPreviouslyCorrect) {
-        // Answer was incorrect before but is correct now
-        correctQuestions++;
-    } else if (!isCorrect && wasPreviouslyCorrect) {
-        // Answer was correct before but is incorrect now
-        correctQuestions--;
-    }
+async function updateMaxTopic(userDocRef, currentTopicNumber, currentTopicScore, language, knownLanguage) {
+    const courseId = `${knownLanguage}-${language}`;
+    if (currentTopicScore >= 75) {
+        try {
+            const courseGrammarDocRef = userDocRef.collection('grammar').doc(courseId);
+            const courseGrammarDoc = await courseGrammarDocRef.get();
+            
+            let currentOverallMaxTopic = 1; 
+            if (courseGrammarDoc.exists && typeof courseGrammarDoc.data().maxTopic === 'number') {
+                currentOverallMaxTopic = courseGrammarDoc.data().maxTopic;
+            }
 
-    return correctQuestions;
-}
+            const potentialNewMaxTopic = currentTopicNumber + 1;
 
-async function updateMaxTopic(userDocRef, topicNumber, topicScore) {
-    // If score is above 75 and maxTopic is not defined or lower, update it
-    if (topicScore >= 75) {
-        const grammarDoc = await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).get();
-        const maxTopic = grammarDoc.exists && grammarDoc.data().maxTopic;
-
-        if (!maxTopic || maxTopic < topicNumber + 1) {
-            await userDocRef.collection('grammar').doc(currentQuestionData.knownLanguage + "-" + currentQuestionData.language).update({
-                maxTopic: topicNumber + 1
-            });
+            if (potentialNewMaxTopic > currentOverallMaxTopic) {
+                await courseGrammarDocRef.set({ maxTopic: potentialNewMaxTopic }, { merge: true });
+                console.log(`User's overall maxTopic for course ${courseId} updated to ${potentialNewMaxTopic}.`);
+            } else {
+                console.log(`Topic ${currentTopicNumber} mastered, but overall maxTopic ${currentOverallMaxTopic} for course ${courseId} is already >= ${potentialNewMaxTopic}. No update needed.`);
+            }
+        } catch (error) {
+            console.error(`Error updating overall maxTopic for course ${courseId} after mastering topic ${currentTopicNumber}:`, error);
         }
+    } else {
+        // console.log(`Topic ${currentTopicNumber} score is ${currentTopicScore.toFixed(2)}%, not >= 75%. MaxTopic not updated.`);
     }
 }
 
@@ -2927,10 +2944,10 @@ async function handleAnswerSubmission(user, isCorrect, questionId, topicNumber, 
     const updatedCorrectQuestions = await adjustCorrectQuestions(isCorrect, wasPreviouslyCorrect, initialCorrectQuestions);
 
     // Update the topic score
-    const topicScore = await updateTopicScore(userDocRef, topicNumber, totalQuestions, updatedCorrectQuestions);
+    const topicScore = await updateTopicScore(userDocRef, topicNumber, totalQuestions, updatedCorrectQuestions, language, knownLanguage);
 
     // Check and update maxTopic if applicable
-    await updateMaxTopic(userDocRef, topicNumber, topicScore);
+    await updateMaxTopic(userDocRef, topicNumber, topicScore, language, knownLanguage);
 
     // After updating progress, check if the user has achieved 100%
     if (updatedCorrectQuestions === totalQuestions && !hasShownCompletionModal && !startedAt100) {
@@ -3209,7 +3226,7 @@ async function fetchCurrentLevel(user, theCourse) {
   }
 
   function checkAndHandleLevelUps(allTimeData, dailyData) {
-    // 1) We need the user’s totalCorrectAnswers
+    // 1) We need the user's totalCorrectAnswers
     debugger;
     const totalCorrect = allTimeData.totalCorrectAnswers || 0;
   
@@ -3224,7 +3241,7 @@ async function fetchCurrentLevel(user, theCourse) {
       }
     }
   
-    // 3) Compare newLevel with the user’s old level
+    // 3) Compare newLevel with the user's old level
     const oldLevel = userCurrentLevel || 1;
     if (newLevel > oldLevel) {
       // user has advanced one or multiple levels
