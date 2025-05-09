@@ -2047,10 +2047,9 @@ function displayQuestion(question, questionId, currentLesson) {
     // Handle answer submission for text input mode
     function handleSubmit() {
         var userAnswer = $('#user-answer').val().trim();
-        var isCorrect = normalizeString(userAnswer) === normalizeString(question.missingWord);
-        handleAnswerSubmission(user, isCorrect, questionId,
-            currentQuestionData.topic, currentQuestionData.language, currentQuestionData.knownLanguage);
-        afterAnswerSubmission(isCorrect);
+        var isCorrect = normalizeString(userAnswer) === normalizeString(currentQuestionData.missingWord);
+        // Directly call afterAnswerSubmission, which now contains all logic including updateUserProgress and topic mastery checks.
+        afterAnswerSubmission(isCorrect); 
     }
 
     // Function to display expected answer translations
