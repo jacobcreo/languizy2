@@ -1,0 +1,67 @@
+<div class="container-fluid stats-bar sticky-top shadow-sm">
+    <div class="container">
+        <div class="row align-items-center">
+            <!-- Course Flags and Back Button -->
+            <div class="col-auto">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-link text-white me-2 d-lg-none" id="backToCourseSelectionMobile">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div id="flag-card" class="d-inline-block me-3">
+                        <!-- Flags will be populated by JS -->
+                    </div>
+                    <button class="btn btn-outline-light btn-sm d-none d-lg-inline-block" id="backToCourseSelectionDesktop" data-i18n="returnToCourseSelection">Return to Course Selection</button>
+                </div>
+            </div>
+
+            <!-- Spacer to push stats to the right -->
+            <div class="col"></div>
+
+            <!-- Stats Icons and Text -->
+            <div class="col-auto">
+                <div class="stats-flex-container d-flex align-items-center">
+                    <div id="topicNumBox" class="col-auto top-stats-item d-inline-flex align-items-center me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Lesson Number">
+                        <i class="fas fa-book-open me-2" style="color: #ffca2c;"></i>
+                        <span id="topicNum" class="fw-bold">0</span>
+                    </div>
+                    <div id="score-box" class="col-auto top-stats-item d-inline-flex align-items-center me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Daily Score">
+                        <i class="fas fa-star me-2" style="color: #ffca2c;"></i>
+                        <span id="score" class="fw-bold">0</span>
+                    </div>
+                    <div id="correct-box" class="col-auto top-stats-item d-inline-flex align-items-center me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Correct Answers">
+                        <i class="fas fa-check me-2" style="color: #4caf50;"></i>
+                        <span id="correct-count" class="fw-bold">0</span>
+                    </div>
+                    <div id="wrong-box" class="col-auto top-stats-item d-inline-flex align-items-center me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Incorrect Answers">
+                        <i class="fas fa-times me-2" style="color: #f44336;"></i>
+                        <span id="wrong-count" class="fw-bold">0</span>
+                    </div>
+                    
+                    <!-- NEW: Lesson Knowledge Score Box -->
+                    <div id="lessonKnowledgeScoreBox" 
+                         class="col-auto top-stats-item d-none d-lg-inline-flex align-items-center me-3" 
+                         data-bs-toggle="tooltip" 
+                         data-bs-placement="bottom" 
+                         title="Lesson Knowledge Score"> {/* Or use data-i18n-title if you set up UIString */}
+                        <i class="fas fa-graduation-cap me-2" style="color: #20c997;"></i> 
+                        <span id="lessonKnowledgeScoreValue" class="fw-bold">0.0%</span>
+                    </div>
+
+                    <div id="last-five-answers" class="col-auto d-none d-md-inline-flex align-items-center">
+                        <!-- Answer boxes will be populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Ensure Tooltips are initialized
+document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
+</script> 

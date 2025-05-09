@@ -785,6 +785,7 @@ const UIString = {
     ProUser: "Pro",
     makeItHarder: "Make it harder",
     makeItEasier: "Make it easier",
+    // lessonKnowledgeScoreTooltip: "Lesson Knowledge Score",
     },
   
     es: {
@@ -1002,6 +1003,7 @@ const UIString = {
     ProUser: "Pro",
     makeItHarder: "Hacerlo más difícil",
     makeItEasier: "Hacerlo más fácil",
+    // lessonKnowledgeScoreTooltip: "Puntuación de Conocimiento de la Lección",
     },
     // You can add more languages...
   };
@@ -1327,15 +1329,20 @@ firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
         
         fetchOrAssignCoach(user).then(() => {
-            fetchCurrentLesson(user).then(async (currentLesson) => {
+            fetchCurrentLesson(user).then(async (currentLessonNumber) => { // Renamed to currentLessonNumber for clarity
                 loadUserAvatar(user);
-                if (!currentLesson) {
-                    console.error('No valid current lesson found.');
+                if (!currentLessonNumber) {
+                    console.error('No valid current lesson found (topic number expected).');
                     window.location.href = 'course_selection.html';
                     return;
                 }
 
-                fetchLessonName(currentLesson).then(name => {
+                // currentLessonNumber is the topic number here
+                // currentLanguagePair should be set by fetchCurrentLesson or globally
+                const topicNumber = parseInt(currentLessonNumber); // Ensure it's a number
+                const [knownLanguage, language] = window.currentLanguagePair.split('-');
+
+                fetchLessonName(topicNumber).then(name => {
                     lessonName = name;
                     console.log(`Current Lesson Name: ${lessonName}`);
                     displayLessonName(lessonName);
@@ -1343,26 +1350,32 @@ firebase.auth().onAuthStateChanged(function (user) {
                     console.error('Error fetching lesson name:', error);
                 });
 
-                debugger;
-                const  knownLanguage = window.currentLanguagePair.split('-')[0];
-                const language = window.currentLanguagePair.split('-')[1];
-                
-                // Check if the user has completed the lesson before this session.
-                // In this case, no need to show the completion modal upon completion again.
                 const userDocRef = db.collection('users').doc(user.uid);
-                const { totalQuestions, correctQuestions } = await fetchTotalQuestionsAndCorrect(userDocRef, currentLesson, language, knownLanguage);
-                if (totalQuestions == correctQuestions) {
-                    startedAt100 = true;
+                
+                // Initial calculation for Lesson Knowledge Score
+                try {
+                    const initialProgressData = await fetchTotalQuestionsAndCorrect(userDocRef, topicNumber, language, knownLanguage);
+                    if (initialProgressData) {
+                        const { totalQuestions, correctQuestions } = initialProgressData;
+                        const initialTopicScore = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
+                        updateLessonKnowledgeScoreUI(initialTopicScore);
+                        if (totalQuestions === correctQuestions && totalQuestions > 0) { // Check totalQuestions > 0 to avoid 0/0 case being 100%
+                           startedAt100 = true;
+                        }
+                    } else {
+                         updateLessonKnowledgeScoreUI(0); // Default to 0 if no progress data
+                    }
+                } catch (error) {
+                    console.error("Error fetching initial topic score:", error);
+                    updateLessonKnowledgeScoreUI(0); // Default to 0 on error
                 }
 
-                // Initialize default mode and load question
                 initializeDefaultMode();
-                loadQuestion(user, currentLesson);
-                updateFlagIcons(currentLesson);
-                loadDailyScore(user, currentLesson);
+                loadQuestion(user, topicNumber); // Pass topicNumber to loadQuestion
+                updateFlagIcons(window.currentLanguagePair); // Use languagePair for flags
+                loadDailyScore(user, window.currentLanguagePair);
 
-                 // fetch user level from all-time doc once, store in window.userCurrentLevel
-                 fetchCurrentLevel(user, currentLesson)
+                 fetchCurrentLevel(user, window.currentLanguagePair) // Use languagePair for current course context
                  .then((lvl) => {
                      userCurrentLevel = lvl;
                      console.log("User current level is:", lvl);
@@ -1371,16 +1384,9 @@ firebase.auth().onAuthStateChanged(function (user) {
                      console.warn("Couldn't fetch user level, defaulting to 1:", err);
                      userCurrentLevel = 1;
                  });
-
-
                 
                 updateSpecialCharacters(language);
 
-                // After loading the initial question, check if started at 100%
-                // if (!startedAt100 && !hasShownCompletionModal) {
-                //     await showCompletionModal(currentLesson);
-                //     hasShownCompletionModal = true;
-                // }
             }).catch((error) => {
                 console.error('Error fetching current lesson:', error);
                 window.location.href = 'course_selection.html';
@@ -1559,15 +1565,15 @@ function loadDailyScore(user, currentCourse) {
 // 1) High-Level Function: loadQuestion
 //    Decides which question to show next
 // ==============================================
-async function loadQuestion(user, currentLesson) {
+async function loadQuestion(user, currentTopicNumber) { // currentLesson is actually topic number here
     try {
         showLoadingProgress();
         if (!user) {
             console.error("User is not authenticated.");
             return;
         }
-        if (!currentLesson) {
-            console.error("User has not selected a lesson.");
+        if (currentTopicNumber === null || typeof currentTopicNumber === 'undefined') { 
+            console.error("User has not selected a lesson (topic number missing).");
             window.location.href = 'course_selection.html';
             return;
         }
@@ -1579,24 +1585,24 @@ async function loadQuestion(user, currentLesson) {
         showEncouragementMessage();
 
         // 1) Fetch a due question
-        let questionDoc = await getDueQuestion(user, currentLesson);
+        let questionDoc = await getDueQuestion(user, currentTopicNumber);
 
         // 2) If no valid due question was found, try a new question
         if (!questionDoc) {
-            questionDoc = await getNewQuestion(user, currentLesson);
+            questionDoc = await getNewQuestion(user, currentTopicNumber);
         }
 
         // 3) If still no question, try next early question
         if (!questionDoc) {
-            questionDoc = await getNextEarlyQuestion(user, currentLesson);
+            questionDoc = await getNextEarlyQuestion(user, currentTopicNumber);
         }
 
         // 4) If we finally have a question, display it
         if (questionDoc) {
             previousQuestionId = questionDoc.id;
-            loadQuestionData(questionDoc.id, currentLesson);
+            loadQuestionData(questionDoc.id, currentTopicNumber);
         } else {
-            console.log('No questions found at all.');
+            console.log('No questions found at all for topic ' + currentTopicNumber);
             hideLoadingProgress(); // Make sure to hide if no question
             showErrorModal(); // Show error modal
         }
@@ -1612,7 +1618,7 @@ async function loadQuestion(user, currentLesson) {
 //    is nextDue <= now, matching currentLesson, 
 //    not in questionsToIgnore, not same as previousQ
 // ==============================================
-async function getDueQuestion(user, currentLesson) {
+async function getDueQuestion(user, currentTopicNumber) {
     try {
         const grammarRef = db.collection('users')
             .doc(user.uid)
@@ -1623,7 +1629,7 @@ async function getDueQuestion(user, currentLesson) {
         // Query up to some limit (like 5) 
         // so we can locally filter out repeats or ignore list
         const snapshot = await grammarRef
-            .where('topic', '==', parseInt(currentLesson))
+            .where('topic', '==', parseInt(currentTopicNumber))
             .where('nextDue', '<=', new Date())
             .orderBy('nextDue', 'asc')
             .limit(10)
@@ -1659,7 +1665,7 @@ async function getDueQuestion(user, currentLesson) {
 // 3) getNewQuestion: Return a question doc that 
 //    the user has never seen (unseen in progress).
 // ==============================================
-async function getNewQuestion(user, lessonId) {
+async function getNewQuestion(user, currentTopicNumber) {
     try {
         if (!window.currentLanguagePair) {
             console.error('Language pair not defined.');
@@ -1670,7 +1676,7 @@ async function getNewQuestion(user, lessonId) {
 
         // Query grammar_questions for this topic + language
         const allQsSnap = await db.collection('grammar_questions')
-            .where('topic', '==', parseInt(lessonId))
+            .where('topic', '==', parseInt(currentTopicNumber))
             .where('language', '==', language)
             .where('knownLanguage', '==', knownLanguage)
             .limit(100)
@@ -1718,7 +1724,7 @@ async function getNewQuestion(user, lessonId) {
 // 4) getNextEarlyQuestion: Return a question doc
 //    that is not due yet, but still available to practice
 // ==============================================
-async function getNextEarlyQuestion(user, lessonId) {
+async function getNextEarlyQuestion(user, currentTopicNumber) {
     try {
         if (!window.currentLanguagePair) {
             console.error('Language pair not defined.');
@@ -1733,7 +1739,7 @@ async function getNextEarlyQuestion(user, lessonId) {
 
         // Query a few docs in ascending order of nextDue
         const snapshot = await grammarRef
-            .where('topic', '==', parseInt(lessonId))
+            .where('topic', '==', parseInt(currentTopicNumber))
             .orderBy('nextDue', 'asc')
             .limit(10)
             .get();
@@ -1770,21 +1776,24 @@ async function getNextEarlyQuestion(user, lessonId) {
 // 5) loadQuestionData: We keep the same code as before
 //    to actually "display" the question and attach events
 // ==============================================
-function loadQuestionData(questionId, currentLesson) {
+function loadQuestionData(questionId, currentTopicNumber) {
     db.collection('grammar_questions').doc(questionId).get()
         .then(questionDoc => {
             if (questionDoc.exists) {
-                displayQuestion(questionDoc.data(), questionId, currentLesson);
+                // Ensure displayQuestion uses currentTopicNumber if needed, or that currentQuestionData.topic is set correctly
+                let questionData = questionDoc.data();
+                if (typeof questionData.topic === 'undefined') questionData.topic = currentTopicNumber; // Ensure topic is set
+                displayQuestion(questionData, questionId, currentTopicNumber); 
             } else {
                 console.error('Question doc not found:', questionId);
                 questionsToIgnore.push(questionId);
-                loadQuestion(firebase.auth().currentUser, currentLesson);
+                loadQuestion(firebase.auth().currentUser, currentTopicNumber);
             }
         })
         .catch(error => {
             console.error('Error in loadQuestionData:', error);
             questionsToIgnore.push(questionId);
-            loadQuestion(firebase.auth().currentUser, currentLesson);
+            loadQuestion(firebase.auth().currentUser, currentTopicNumber);
         });
 }
 
@@ -2110,12 +2119,10 @@ function displayQuestion(question, questionId, currentLesson) {
 
         updateVisualStats(isCorrect);
         
-        // Individual question progress update
         try {
-            await updateUserProgress(currentQuestionId, isCorrect, currentQuestionData.topic, timeTaken); // Assuming updateUserProgress returns a Promise
+            await updateUserProgress(currentQuestionId, isCorrect, currentQuestionData.topic, timeTaken); 
             console.log("Individual question progress updated.");
 
-            // Now, handle topic-level mastery and maxTopic update
             const user = firebase.auth().currentUser;
             if (user && currentQuestionData && typeof currentQuestionData.topic !== 'undefined') {
                 const userDocRef = db.collection('users').doc(user.uid);
@@ -2128,6 +2135,8 @@ function displayQuestion(question, questionId, currentLesson) {
                     const { totalQuestions, correctQuestions: currentCorrectQuestionsForTopic } = progressData;
                     const topicScore = totalQuestions > 0 ? (currentCorrectQuestionsForTopic / totalQuestions) * 100 : 0;
 
+                    updateLessonKnowledgeScoreUI(topicScore); // <-- UPDATE UI HERE
+
                     await updateTopicScore(userDocRef, topicNumber, totalQuestions, currentCorrectQuestionsForTopic, language, knownLanguage);
                     await updateMaxTopic(userDocRef, topicNumber, topicScore, language, knownLanguage);
                     console.log(`In-lesson check: Topic ${topicNumber} score: ${topicScore.toFixed(2)}%. MaxTopic update sequence completed.`);
@@ -2139,13 +2148,11 @@ function displayQuestion(question, questionId, currentLesson) {
             console.error("Error during post-answer progress updates:", error);
         }
 
-
         $('#toggle-mode').hide();
         $('#explain-sentence-btn').show();
 
         playFeedbackSound(isCorrect, () => {
             var completeLessonText = currentQuestionData.sentence.replace(/_{3,}/g, currentQuestionData.missingWord);
-            // targetLanguage for playAudio should be currentQuestionData.language
             playAudio(currentQuestionId, completeLessonText, currentQuestionData.language); 
         });
     }
@@ -2198,7 +2205,7 @@ function displayQuestion(question, questionId, currentLesson) {
 
     $('#next-question').off('click').on('click', function () {
         handleDebounce(() => {
-            loadQuestion(user, currentLesson);
+            loadQuestion(user, currentTopicNumber);
             $('#explain-sentence-btn').hide(); // Hide the button for the next question
             $('#toggle-mode').show(); // Show the toggle button back
         });
@@ -3361,3 +3368,15 @@ function localize(key, language, ...args) {
       return typeof args[number] !== 'undefined' ? args[number] : match;
     });
   }
+
+// Function to update the Lesson Knowledge Score display
+function updateLessonKnowledgeScoreUI(score) {
+    const scoreValueElement = document.getElementById('lessonKnowledgeScoreValue');
+    const scoreBoxElement = document.getElementById('lessonKnowledgeScoreBox');
+
+    if (scoreValueElement) {
+        scoreValueElement.textContent = `${score.toFixed(1)}%`;
+    }
+    // Make sure the box is visible on desktop. The d-none d-lg-inline-flex classes handle responsiveness.
+    // No specific JS needed here if HTML classes are set correctly.
+}
