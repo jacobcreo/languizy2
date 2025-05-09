@@ -2208,17 +2208,28 @@ function displayQuestion(question, questionId, currentLesson) {
     }
 
     $('#next-question').off('click').on('click', function () {
+        const user = firebase.auth().currentUser; // Ensure user is defined in this scope
+        if (!user) {
+            console.error("User not authenticated for next question.");
+            return;
+        }
+        if (!currentQuestionData || typeof currentQuestionData.topic === 'undefined') {
+            console.error("Current question data or topic is undefined for next question.");
+            // Optionally, redirect or show an error modal
+            // window.location.href = 'course_selection.html'; 
+            return;
+        }
         handleDebounce(() => {
-            loadQuestion(user, currentTopicNumber);
-            $('#explain-sentence-btn').hide(); // Hide the button for the next question
-            $('#toggle-mode').show(); // Show the toggle button back
+            loadQuestion(user, currentQuestionData.topic); // Use currentQuestionData.topic
+            $('#explain-sentence-btn').hide(); 
+            $('#toggle-mode').show(); 
         });
     });
 
     // Event listener for Enter key to move to the next question
-    $(document).off('keypress').on('keypress', function (e) {
-        if (e.which === 13 && $('#next-question').is(':visible')) { // Enter key pressed and next button visible
-            e.preventDefault(); // Prevent default behavior
+    $(document).off('keypress.nextQuestion').on('keypress.nextQuestion', function (e) { // Added namespace for clarity
+        if (e.which === 13 && $('#next-question').is(':visible')) { 
+            e.preventDefault(); 
             handleDebounce(() => $('#next-question').click());
         }
     });
