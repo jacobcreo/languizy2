@@ -131,15 +131,13 @@
             <span id="wrong-count">0</span>
             <span id="wrongTooltip" class="tooltiptext"></span>
           </span>
-          <!-- NEW: Lesson Knowledge Score Box -->
-      <div id="lessonKnowledgeScoreBox" 
-      class="col-auto top-stats-item d-none d-lg-inline-flex align-items-center me-3" 
-      data-bs-toggle="tooltip" 
-      data-bs-placement="bottom" 
-      title="Lesson Knowledge Score">
-     <i class="fas fa-graduation-cap me-2" style="color: #20c997;"></i> 
-     <span id="lessonKnowledgeScoreValue" class="fw-bold">0.0%</span>
- </div>
+          <!-- MODIFIED: Lesson Knowledge Score Box (now a span) -->
+          <span id="lessonKnowledgeScoreBox" 
+               class="col-auto top-stats-item d-none d-lg-inline-flex align-items-center me-3 lesson-knowledge-score-box">
+             <i class="fas fa-graduation-cap me-2" style="color: #20c997;"></i> 
+             <span id="lessonKnowledgeScoreValue" class="fw-bold">0.0%</span>
+             <span id="lessonKnowledgeScoreTooltip" class="tooltiptext"></span>
+          </span>
         </div>
       </div>
 
