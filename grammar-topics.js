@@ -80,60 +80,95 @@ async function loadTopics(user) {
 
 // Calculate maxTopic based on user's progress and update Firestore
 async function calculateMaxTopic(userDocRef, currentCourse, topicsSnapshot) {
-    // Starts with the global userMaxTopic, which was initialized from DB in loadTopics
-    let maxTopicCalculated = userMaxTopic; 
+    const maxTopicFromDB = userMaxTopic; // Store the initial value from DB (global userMaxTopic)
+    let newlyCalculatedSequentialMaxTopic = 1; 
     let updatedTopics = [];
+
+    const knownLanguage = currentCourse.split('-')[0];
+    const language = currentCourse.split('-')[1];
+
+    const correctCountsByTopic = {};
+    try {
+        const allCorrectUserQuestionsSnapshot = await userDocRef
+            .collection('grammar')
+            .doc(currentCourse)
+            .collection('questions')
+            .where('timesCorrectInARow', '>', 0)
+            .get();
+
+        allCorrectUserQuestionsSnapshot.forEach(doc => {
+            const questionData = doc.data();
+            if (questionData.topic) {
+                const topicNum = parseInt(questionData.topic);
+                correctCountsByTopic[topicNum] = (correctCountsByTopic[topicNum] || 0) + 1;
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching all correct user questions for course:", error);
+    }
   
     for (const doc of topicsSnapshot.docs) {
-      const topicData = doc.data(); // This is the raw topic data (name, topic number, etc.)
-      const topicNumber = topicData.topic;
-  
-      // Fetch total questions for this topic from the "grammar_questions" collection.
-      const totalQuestionsSnapshot = await db.collection('grammar_questions')
-        .where('topic', '==', topicNumber)
-        // Add course matching if grammar_questions are course-specific
-        .where('language', '==', currentCourse.split('-')[1]) 
-        .where('knownLanguage', '==', currentCourse.split('-')[0])
-        .get();
-  
-      const totalQuestions = totalQuestionsSnapshot.size;
-  
-      // Fetch user's progress for this specific topic (correct questions).
-      const correctQuestionsSnapshot = await userDocRef
-        .collection('grammar')
-        .doc(currentCourse) 
-        .collection('questions') // This is where individual question progress is stored
-        .where('topic', '==', topicNumber)
-        .where('timesCorrectInARow', '>', 0) // Assuming this means 'mastered' for this question
-        .get();
-  
-      const correctQuestions = correctQuestionsSnapshot.size;
-  
-      // Calculate the score for the topic.
-      const topicScore = totalQuestions > 0 ? (correctQuestions / totalQuestions) * 100 : 0;
-  
-      // Add the calculated score to the topicData object (which will be part of updatedTopics).
-      topicData.score = topicScore; 
-  
-      // Add the topicData (now including its score) to the array to be returned.
+      const topicData = doc.data(); 
+      const topicNumber = parseInt(topicData.topic);
+      
+      const correctQuestions = correctCountsByTopic[topicNumber] || 0;
+      let topicScore = 0;
+      let totalQuestions = 0; // Initialize totalQuestions
+
+      // Determine if we need to query for totalQuestions
+      let shouldQueryTotalQuestions = false;
+      if (topicNumber === newlyCalculatedSequentialMaxTopic || correctQuestions > 0) {
+        shouldQueryTotalQuestions = true;
+      }
+
+      if (shouldQueryTotalQuestions) {
+        try {
+            const totalQuestionsSnapshot = await db.collection('grammar_questions')
+              .where('topic', '==', topicNumber)
+              .where('language', '==', language) 
+              .where('knownLanguage', '==', knownLanguage)
+              .get();
+            totalQuestions = totalQuestionsSnapshot.size;
+            if (totalQuestions > 0) {
+                topicScore = (correctQuestions / totalQuestions) * 100;
+            } else if (correctQuestions > 0 && totalQuestions === 0) {
+                // User has correct answers for a topic with no defined questions in grammar_questions
+                // This is an inconsistency; log it. Score remains 0 or could be set to a special marker.
+                console.warn(`Data inconsistency: User has ${correctQuestions} correct answers for topic ${topicNumber} which has 0 defined questions in grammar_questions.`);
+                topicScore = 0; // Or handle as a partial score if desired, though problematic.
+            } else {
+                topicScore = 0; // No total questions, no correct questions for this topic.
+            }
+        } catch (error) {
+            console.error(`Error fetching total questions for topic ${topicNumber}:`, error);
+            topicScore = 0; // Default score to 0 on error
+        }
+      } else {
+        // No need to query totalQuestions, correctQuestions is 0, so score is 0.
+        topicScore = 0;
+      }
+        
+      topicData.score = parseFloat(topicScore.toFixed(1));
       updatedTopics.push(topicData);
   
-      // Update maxTopicCalculated based on the score for this topic.
-      if (topicScore >= 75) {
-        maxTopicCalculated = Math.max(maxTopicCalculated, topicNumber + 1);
+      // Update sequential max topic advancement
+      if (topicNumber === newlyCalculatedSequentialMaxTopic && topicScore >= 75) {
+        newlyCalculatedSequentialMaxTopic = topicNumber + 1;
       }
     }
   
-    // If the newly calculated maxTopic is greater than the one we started with (from DB or previous calculation),
-    // update the global userMaxTopic and save it to Firestore.
-    if (maxTopicCalculated > userMaxTopic) {
-      userMaxTopic = maxTopicCalculated; // Update global variable
+    // After loop, compare the true sequential max topic with the one from DB
+    if (newlyCalculatedSequentialMaxTopic !== maxTopicFromDB) {
+      userMaxTopic = newlyCalculatedSequentialMaxTopic; // Update global for current session UI consistency
       const userCourseGrammarRef = userDocRef.collection('grammar').doc(currentCourse);
       await userCourseGrammarRef.set({ maxTopic: userMaxTopic }, { merge: true }); 
-      console.log(`Updated userMaxTopic to ${userMaxTopic} for course ${currentCourse} in Firestore.`);
+      console.log(`Updated userMaxTopic to ${userMaxTopic} for course ${currentCourse} in Firestore (was ${maxTopicFromDB}).`);
+    } else {
+      // Ensure global userMaxTopic is aligned if no change was made but it was read from DB
+      userMaxTopic = maxTopicFromDB; 
     }
   
-    return updatedTopics; // Return the array of topics with their calculated scores
+    return updatedTopics; 
   }
 
   // Function to update the UI with the topics and their respective scores
