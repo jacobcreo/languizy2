@@ -785,7 +785,7 @@ const UIString = {
     ProUser: "Pro",
     makeItHarder: "Make it harder",
     makeItEasier: "Make it easier",
-    // lessonKnowledgeScoreTooltip: "Lesson Knowledge Score",
+    lessonKnowledgeScoreTooltip: "Lesson Knowledge Score",
     },
   
     es: {
@@ -1003,7 +1003,7 @@ const UIString = {
     ProUser: "Pro",
     makeItHarder: "Hacerlo más difícil",
     makeItEasier: "Hacerlo más fácil",
-    // lessonKnowledgeScoreTooltip: "Puntuación de Conocimiento de la Lección",
+    lessonKnowledgeScoreTooltip: "Puntuación de Conocimiento de la Lección",
     },
     // You can add more languages...
   };
@@ -3349,9 +3349,29 @@ async function fetchCurrentLevel(user, theCourse) {
             }
         });
 
+        // Update custom tooltips directly
+        const scoreTooltipEl = document.getElementById('scoreTooltip');
+        if (scoreTooltipEl && lang.scoreTooltip) {
+            scoreTooltipEl.textContent = lang.scoreTooltip + (document.getElementById('score')?.textContent || '0');
+        }
+        const correctTooltipEl = document.getElementById('correctTooltip');
+        if (correctTooltipEl && lang.correctTooltip) {
+            correctTooltipEl.textContent = lang.correctTooltip + (document.getElementById('correct-count')?.textContent || '0');
+        }
+        const wrongTooltipEl = document.getElementById('wrongTooltip');
+        if (wrongTooltipEl && lang.wrongTooltip) {
+            wrongTooltipEl.textContent = lang.wrongTooltip + (document.getElementById('wrong-count')?.textContent || '0');
+        }
+        const topicTooltipEl = document.getElementById('topicTooltip');
+        if (topicTooltipEl && lang.lessonNumber) { // Assuming lang.lessonNumber is the tooltip for topicNum
+            topicTooltipEl.textContent = lang.lessonNumber + ' ' + (document.getElementById('topicNum')?.textContent || '0');
+        }
 
-
-
+        // **** NEW: Update Lesson Knowledge Score Tooltip ****
+        const lessonKnowledgeScoreTooltipEl = document.getElementById('lessonKnowledgeScoreTooltip');
+        if (lessonKnowledgeScoreTooltipEl && lang.lessonKnowledgeScoreTooltip) {
+            lessonKnowledgeScoreTooltipEl.textContent = lang.lessonKnowledgeScoreTooltip;
+        }
     }
 }
 
@@ -3369,14 +3389,12 @@ function localize(key, language, ...args) {
     });
   }
 
-// Function to update the Lesson Knowledge Score display
+// Function to update the Lesson Knowledge Score display (value only)
 function updateLessonKnowledgeScoreUI(score) {
     const scoreValueElement = document.getElementById('lessonKnowledgeScoreValue');
-    const scoreBoxElement = document.getElementById('lessonKnowledgeScoreBox');
+    // const scoreBoxElement = document.getElementById('lessonKnowledgeScoreBox'); // Box visibility handled by CSS
 
     if (scoreValueElement) {
         scoreValueElement.textContent = `${score.toFixed(1)}%`;
     }
-    // Make sure the box is visible on desktop. The d-none d-lg-inline-flex classes handle responsiveness.
-    // No specific JS needed here if HTML classes are set correctly.
 }
