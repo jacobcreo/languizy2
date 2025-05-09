@@ -786,6 +786,8 @@ const UIString = {
     makeItHarder: "Make it harder",
     makeItEasier: "Make it easier",
     lessonKnowledgeScoreTooltip: "Lesson Knowledge Score",
+    lessonKnowledgeScoreLabel: "Knowledge Score", // Base label
+    lessonNumberLabel: "Lesson Number", // For topicTooltip
     },
   
     es: {
@@ -1004,6 +1006,8 @@ const UIString = {
     makeItHarder: "Hacerlo más difícil",
     makeItEasier: "Hacerlo más fácil",
     lessonKnowledgeScoreTooltip: "Puntuación de Conocimiento de la Lección",
+    lessonKnowledgeScoreLabel: "Puntuación de Conocimiento", // Base label
+    lessonNumberLabel: "Número de Lección", // For topicTooltip
     },
     // You can add more languages...
   };
@@ -2530,8 +2534,18 @@ function updateVisualStats(isCorrect) {
     // Update UI for correct/wrong counts
     $('#correct-count').text(correctAnswers);
     $('#wrong-count').text(wrongAnswers);
-    $('#correctTooltip').text(UIString[interfaceLanguage].correctTooltip + ': ' + correctAnswers); // Display the current daily score
-    $('#wrongTooltip').text(UIString[interfaceLanguage].wrongTooltip + ': ' + wrongAnswers); // Display the current daily score
+    
+    if (UIString[interfaceLanguage]) {
+        const lang = UIString[interfaceLanguage];
+        const correctTooltipEl = document.getElementById('correctTooltip');
+        if (correctTooltipEl && lang.correctTooltip) {
+            correctTooltipEl.textContent = lang.correctTooltip + ": " + correctAnswers;
+        }
+        const wrongTooltipEl = document.getElementById('wrongTooltip');
+        if (wrongTooltipEl && lang.wrongTooltip) {
+            wrongTooltipEl.textContent = lang.wrongTooltip + ": " + wrongAnswers;
+        }
+    }
 
     // Update last 5 answers (display boxes)
     updateLastFiveAnswers();
@@ -3351,26 +3365,33 @@ async function fetchCurrentLevel(user, theCourse) {
 
         // Update custom tooltips directly
         const scoreTooltipEl = document.getElementById('scoreTooltip');
-        if (scoreTooltipEl && lang.scoreTooltip) {
-            scoreTooltipEl.textContent = lang.scoreTooltip + (document.getElementById('score')?.textContent || '0');
+        if (scoreTooltipEl && lang.scoreTooltip) { // scoreTooltip is likely the base label e.g., "Daily Score"
+            scoreTooltipEl.textContent = lang.scoreTooltip + ": " + (document.getElementById('score')?.textContent || '0');
         }
         const correctTooltipEl = document.getElementById('correctTooltip');
-        if (correctTooltipEl && lang.correctTooltip) {
-            correctTooltipEl.textContent = lang.correctTooltip + (document.getElementById('correct-count')?.textContent || '0');
+        if (correctTooltipEl && lang.correctTooltip) { // correctTooltip is likely "Correct Answers"
+            correctTooltipEl.textContent = lang.correctTooltip + ": " + (document.getElementById('correct-count')?.textContent || '0');
         }
         const wrongTooltipEl = document.getElementById('wrongTooltip');
-        if (wrongTooltipEl && lang.wrongTooltip) {
-            wrongTooltipEl.textContent = lang.wrongTooltip + (document.getElementById('wrong-count')?.textContent || '0');
+        if (wrongTooltipEl && lang.wrongTooltip) { // wrongTooltip is likely "Incorrect Answers"
+            wrongTooltipEl.textContent = lang.wrongTooltip + ": " + (document.getElementById('wrong-count')?.textContent || '0');
         }
+        
+        // **** Revised: Update Topic Number Tooltip ****
         const topicTooltipEl = document.getElementById('topicTooltip');
-        if (topicTooltipEl && lang.lessonNumber) { // Assuming lang.lessonNumber is the tooltip for topicNum
-            topicTooltipEl.textContent = lang.lessonNumber + ' ' + (document.getElementById('topicNum')?.textContent || '0');
+        const topicNumVal = document.getElementById('topicNum')?.textContent || 'N/A';
+        if (topicTooltipEl && lang.lessonNumberLabel) { // Use lessonNumberLabel for the base text
+            topicTooltipEl.textContent = `${lang.lessonNumberLabel}: ${topicNumVal}`;
         }
 
-        // **** NEW: Update Lesson Knowledge Score Tooltip ****
+        // **** Revised: Update Lesson Knowledge Score Tooltip (called by updateLessonKnowledgeScoreUI) ****
+        // We ensure the base text is set here if not already, but score is appended by updateLessonKnowledgeScoreUI
         const lessonKnowledgeScoreTooltipEl = document.getElementById('lessonKnowledgeScoreTooltip');
-        if (lessonKnowledgeScoreTooltipEl && lang.lessonKnowledgeScoreTooltip) {
-            lessonKnowledgeScoreTooltipEl.textContent = lang.lessonKnowledgeScoreTooltip;
+        if (lessonKnowledgeScoreTooltipEl && lang.lessonKnowledgeScoreLabel) {
+            // Initial text or when language changes - score will be appended by updateLessonKnowledgeScoreUI
+            const currentScoreText = document.getElementById('lessonKnowledgeScoreValue')?.textContent || '0.0%';
+            const currentScoreValue = parseFloat(currentScoreText) || 0;
+            lessonKnowledgeScoreTooltipEl.textContent = `${lang.lessonKnowledgeScoreLabel}: ${currentScoreValue.toFixed(1)}%`;
         }
     }
 }
@@ -3389,12 +3410,15 @@ function localize(key, language, ...args) {
     });
   }
 
-// Function to update the Lesson Knowledge Score display (value only)
+// Function to update the Lesson Knowledge Score display (value AND tooltip text)
 function updateLessonKnowledgeScoreUI(score) {
     const scoreValueElement = document.getElementById('lessonKnowledgeScoreValue');
-    // const scoreBoxElement = document.getElementById('lessonKnowledgeScoreBox'); // Box visibility handled by CSS
+    const tooltipElement = document.getElementById('lessonKnowledgeScoreTooltip');
 
     if (scoreValueElement) {
         scoreValueElement.textContent = `${score.toFixed(1)}%`;
+    }
+    if (tooltipElement && UIString[interfaceLanguage] && UIString[interfaceLanguage].lessonKnowledgeScoreLabel) {
+        tooltipElement.textContent = `${UIString[interfaceLanguage].lessonKnowledgeScoreLabel}: ${score.toFixed(1)}%`;
     }
 }
