@@ -110,6 +110,12 @@
       <div class="free-version-text">
         🤫 Yes, There is a Free Version
       </div>
+      <!-- App Store Badge -->
+      <div id="iosAppStoreBadgeContainer" class="text-center" style="display: none; margin-top: 20px;">
+        <a href="https://apps.apple.com/us/app/languizy/id6742076410" target="_blank" rel="noopener noreferrer" aria-label="Download Languizy on the App Store">
+          <img src="assets/images/lp/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" style="height: 50px;">
+        </a>
+      </div>
     </div>
   </section>
   
@@ -536,6 +542,20 @@
     e.preventDefault();
     var email = $('#emailInput').val();
     sendSignInLink(email);
+  });
+  </script>
+  <script>
+  // Show App Store badge for iOS users
+  document.addEventListener('DOMContentLoaded', function() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const badgeContainer = document.getElementById('iosAppStoreBadgeContainer');
+
+    // Check for iOS devices (iPhone, iPad, iPod)
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    
+    if (badgeContainer && isIOS) {
+      badgeContainer.style.display = 'block'; // Show the badge on iOS devices
+    }
   });
   </script>
 </body>
