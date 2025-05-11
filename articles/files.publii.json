@@ -187,12 +187,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "d8e8ebadb66883b3a6525af9bca83256"
+        "md5": "43e9182768de9a0ec28eec36c335cf6a"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "7839fd6f02613748d181568adf71a019"
+        "md5": "720f423ee3d1430ec159b410ee6e78b9"
     },
     {
         "path": "how-grammar-patterns-differ-across-languages.html",
@@ -247,7 +247,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "8a4a0dd2b9e1b37c9c3f3e1ccc5e2e52"
+        "md5": "58aa37ee929b141c883e68f4d4f3ab91"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1385,6 +1385,51 @@
         "md5": "8f6ac22b386d7bb0974eac091bdac195"
     },
     {
+        "path": "media/posts/34",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "media/posts/34/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/34/responsive/spanish-history-2xl.png",
+        "type": "file",
+        "md5": "2cd0b12776e255b5f12e70772e9eb00f"
+    },
+    {
+        "path": "/media/posts/34/responsive/spanish-history-lg.png",
+        "type": "file",
+        "md5": "309d5968332c6d08f36f2729f5ab8c0d"
+    },
+    {
+        "path": "/media/posts/34/responsive/spanish-history-md.png",
+        "type": "file",
+        "md5": "7288d67b9a495ded4ec64cf1eb8e533e"
+    },
+    {
+        "path": "/media/posts/34/responsive/spanish-history-sm.png",
+        "type": "file",
+        "md5": "e1bbc0139beb5763309672b675cd49e0"
+    },
+    {
+        "path": "/media/posts/34/responsive/spanish-history-xl.png",
+        "type": "file",
+        "md5": "2cd0b12776e255b5f12e70772e9eb00f"
+    },
+    {
+        "path": "/media/posts/34/responsive/spanish-history-xs.png",
+        "type": "file",
+        "md5": "a6a8d22e99b49e3c74c9bbfdd158139e"
+    },
+    {
+        "path": "/media/posts/34/spanish-history.png",
+        "type": "file",
+        "md5": "e1529e8e7fe0369155954f2337d8a8cd"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1707,7 +1752,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "89fc33e78519b1bb4e699839b68101b2"
+        "md5": "96129d4d51b71ce856c78792b72c96d0"
     },
     {
         "path": "sitemap.xsl",
@@ -1723,6 +1768,11 @@
         "path": "/tags/index.html",
         "type": "file",
         "md5": "b136e87445b3e3eaada2419365d4ca17"
+    },
+    {
+        "path": "the-epic-history-of-the-spanish-language-origins-evolution-and-modern-day-reach.html",
+        "type": "file",
+        "md5": "acbdde0411443e00f322ef13acb54dd9"
     },
     {
         "path": "the-impact-of-accent-reduction-on-fluency-what-really-matters.html",
