@@ -401,3 +401,7 @@ button i {
         font-size: 0.75rem;
     }
 }
+
+#currentCourseTitle {
+    font-weight: 700;
+}
