@@ -1,0 +1,17 @@
+[debug] [2025-05-20T10:34:13.315Z] ----------------------------------------------------------------------
+[debug] [2025-05-20T10:34:13.317Z] Command:       /Users/kobyofek/.nvm/versions/node/v22.3.0/bin/node /Users/kobyofek/.nvm/versions/node/v22.3.0/bin/firebase hosting:sites:get by-th
+[debug] [2025-05-20T10:34:13.317Z] CLI Version:   14.2.0
+[debug] [2025-05-20T10:34:13.317Z] Platform:      darwin
+[debug] [2025-05-20T10:34:13.318Z] Node Version:  v22.3.0
+[debug] [2025-05-20T10:34:13.318Z] Time:          Tue May 20 2025 13:34:13 GMT+0300 (Israel Daylight Time)
+[debug] [2025-05-20T10:34:13.318Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-05-20T10:34:13.319Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2025-05-20T10:34:13.428Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-05-20T10:34:13.428Z] > authorizing via signed-in user (kobyof@gmail.com)
+[debug] [2025-05-20T10:34:13.428Z] [iam] checking project by-the-book-65c73 for permissions ["firebase.projects.get","firebasehosting.sites.get"]
+[debug] [2025-05-20T10:34:13.428Z] Checked if tokens are valid: false, expires at: 1747563148047
+[debug] [2025-05-20T10:34:13.428Z] Checked if tokens are valid: false, expires at: 1747563148047
+[debug] [2025-05-20T10:34:13.429Z] > refreshing access token with scopes: []
+[debug] [2025-05-20T10:34:13.429Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2025-05-20T10:34:13.429Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
