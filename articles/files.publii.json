@@ -187,12 +187,17 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "43e9182768de9a0ec28eec36c335cf6a"
+        "md5": "2d6b308b5e43f9aadaffc43c86dfb6b2"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "720f423ee3d1430ec159b410ee6e78b9"
+        "md5": "83b067a1b8a70cc0574317aea91f35b1"
+    },
+    {
+        "path": "flashcards-for-language-learning-how-to-turn-tiny-cards-into-a-giant-leap-toward-fluency.html",
+        "type": "file",
+        "md5": "55f0584d6ee73daf07efb4ea1eaceee2"
     },
     {
         "path": "how-grammar-patterns-differ-across-languages.html",
@@ -247,7 +252,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "58aa37ee929b141c883e68f4d4f3ab91"
+        "md5": "3a808d26453bb02a444e60bd64670142"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1430,6 +1435,51 @@
         "md5": "e1529e8e7fe0369155954f2337d8a8cd"
     },
     {
+        "path": "media/posts/35",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "media/posts/35/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/35/responsive/woman_holding_flashcard-2xl.png",
+        "type": "file",
+        "md5": "4251a6b9c4d9abeea36c8cb7017d16b5"
+    },
+    {
+        "path": "/media/posts/35/responsive/woman_holding_flashcard-lg.png",
+        "type": "file",
+        "md5": "4251a6b9c4d9abeea36c8cb7017d16b5"
+    },
+    {
+        "path": "/media/posts/35/responsive/woman_holding_flashcard-md.png",
+        "type": "file",
+        "md5": "4251a6b9c4d9abeea36c8cb7017d16b5"
+    },
+    {
+        "path": "/media/posts/35/responsive/woman_holding_flashcard-sm.png",
+        "type": "file",
+        "md5": "085087e5af2569ac3614b3ac221c3eb6"
+    },
+    {
+        "path": "/media/posts/35/responsive/woman_holding_flashcard-xl.png",
+        "type": "file",
+        "md5": "4251a6b9c4d9abeea36c8cb7017d16b5"
+    },
+    {
+        "path": "/media/posts/35/responsive/woman_holding_flashcard-xs.png",
+        "type": "file",
+        "md5": "8006ab7d998a3bdf3d424752e86c0e76"
+    },
+    {
+        "path": "/media/posts/35/woman_holding_flashcard.png",
+        "type": "file",
+        "md5": "f57ed958cd152695dc1d804525a22d44"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1752,7 +1802,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "96129d4d51b71ce856c78792b72c96d0"
+        "md5": "9fa23fa0ea81fd9d383df27cd600c6bf"
     },
     {
         "path": "sitemap.xsl",
