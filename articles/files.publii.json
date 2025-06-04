@@ -187,12 +187,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "2d6b308b5e43f9aadaffc43c86dfb6b2"
+        "md5": "9aa72fd4522696c111cd9b6d246b1259"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "83b067a1b8a70cc0574317aea91f35b1"
+        "md5": "c58d93e53020e343a62425ca45ea3a91"
     },
     {
         "path": "flashcards-for-language-learning-how-to-turn-tiny-cards-into-a-giant-leap-toward-fluency.html",
@@ -252,7 +252,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "3a808d26453bb02a444e60bd64670142"
+        "md5": "6d1af035dc3131d99c7ee1ada16541f2"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1480,6 +1480,51 @@
         "md5": "f57ed958cd152695dc1d804525a22d44"
     },
     {
+        "path": "media/posts/36",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/36/lingerin.png",
+        "type": "file",
+        "md5": "d8a5b4d3d6e41209ec03ae731e478386"
+    },
+    {
+        "path": "media/posts/36/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/36/responsive/lingerin-2xl.png",
+        "type": "file",
+        "md5": "9e27f194e1ec39d468b728cd060755f9"
+    },
+    {
+        "path": "/media/posts/36/responsive/lingerin-lg.png",
+        "type": "file",
+        "md5": "9e27f194e1ec39d468b728cd060755f9"
+    },
+    {
+        "path": "/media/posts/36/responsive/lingerin-md.png",
+        "type": "file",
+        "md5": "31cdd47cb7dc3d0662564ff11eb611b4"
+    },
+    {
+        "path": "/media/posts/36/responsive/lingerin-sm.png",
+        "type": "file",
+        "md5": "b5a7b1e6d7d8d2dbdd9762a5699d140c"
+    },
+    {
+        "path": "/media/posts/36/responsive/lingerin-xl.png",
+        "type": "file",
+        "md5": "9e27f194e1ec39d468b728cd060755f9"
+    },
+    {
+        "path": "/media/posts/36/responsive/lingerin-xs.png",
+        "type": "file",
+        "md5": "e5649f060a8d430c14332b854779ca0e"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1802,7 +1847,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "9fa23fa0ea81fd9d383df27cd600c6bf"
+        "md5": "ea30e5c19d2f1cbb00f686211badf269"
     },
     {
         "path": "sitemap.xsl",
@@ -1878,5 +1923,10 @@
         "path": "why-learning-a-language-without-culture-is-like-eating-pasta-without-sauce.html",
         "type": "file",
         "md5": "5b5ddae3a6460b97080590f62b605f6f"
+    },
+    {
+        "path": "why-some-words-have-no-direct-translation-in-different-languages.html",
+        "type": "file",
+        "md5": "4d9a4112ff18a8c674e416d1abf150b8"
     }
 ]
