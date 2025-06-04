@@ -3,7 +3,7 @@
     <title>Languizy</title>
     <link href="https://languizy.com/articles/feed.xml" rel="self" />
     <link href="https://languizy.com/articles" />
-    <updated>2025-06-04T12:53:23+03:00</updated>
+    <updated>2025-06-04T13:26:41+03:00</updated>
     <author>
         <name>Jacob</name>
     </author>
@@ -167,11 +167,10 @@
 </tbody>
 </table>
 </div>
-<div class="table-footer hide-from-message-actions ng-star-inserted"><button class="mdc-button mat-mdc-button-base mat-mdc-button mat-unthemed"><span class="mdc-button__label"><span class="export-sheets-button">Export to Sheets</span></span></button></div>
+<div class="table-footer hide-from-message-actions ng-star-inserted"><span style="color: var(--headings-color); font-family: var(--font-base); font-size: 1.60181em; font-weight: var(--font-weight-bold); letter-spacing: var(--letter-spacing);">More Than Just Words: How Language </span><em style="color: var(--headings-color); font-family: var(--font-base); font-size: 1.60181em; font-weight: var(--font-weight-bold); letter-spacing: var(--letter-spacing);">Might</em><span style="color: var(--headings-color); font-family: var(--font-base); font-size: 1.60181em; font-weight: var(--font-weight-bold); letter-spacing: var(--letter-spacing);"> Shape Our World(view)</span></div>
 </div>
 </div>
 </div>
-<h2 data-sourcepos="100:1-100:67">More Than Just Words: How Language <em>Might</em> Shape Our World(view)</h2>
 <p data-sourcepos="102:1-102:222">A fascinating question arises: does the language spoken actually shape how one thinks or sees the world? It's a captivating idea in linguistics known as the Sapir-Whorf hypothesis, or more generally, linguistic relativity.</p>
 <p data-sourcepos="104:1-104:543">The "strong" version of this idea, suggesting language completely <em>determines</em> thoughts and locks one into a certain way of seeing things, is mostly out of fashion among linguists. It’s a bit too extreme. But the "weak" version – the idea that language can <em>influence</em>, <em>nudge</em>, or <em>frame</em> perception and how experiences are categorized – has more agreement. Language might not build the entire house of thoughts, but it might influence the room colors or furniture arrangement. It provides certain pathways of thought that are easier to take.</p>
 <p data-sourcepos="106:1-106:372">Recall the Inuit languages having numerous words for snow. If snow is a massively important part of daily life and survival, the language will likely develop more precise and varied ways to talk about it. This linguistic precision might, in turn, make one more attuned to noticing and distinguishing between those different types of snow. The words provide the categories.</p>

@@ -187,12 +187,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "9aa72fd4522696c111cd9b6d246b1259"
+        "md5": "f9ffc82e5ccdff0f836af25122829e5b"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "c58d93e53020e343a62425ca45ea3a91"
+        "md5": "8fe467a1d92d5377373f6eb1d61b7c76"
     },
     {
         "path": "flashcards-for-language-learning-how-to-turn-tiny-cards-into-a-giant-leap-toward-fluency.html",
@@ -1847,7 +1847,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "ea30e5c19d2f1cbb00f686211badf269"
+        "md5": "032f81dee91cf63ed4531de1dc34f14d"
     },
     {
         "path": "sitemap.xsl",
@@ -1927,6 +1927,6 @@
     {
         "path": "why-some-words-have-no-direct-translation-in-different-languages.html",
         "type": "file",
-        "md5": "4d9a4112ff18a8c674e416d1abf150b8"
+        "md5": "017a096e6b53fe808cc80c6d79ff5f67"
     }
 ]
