@@ -187,12 +187,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "f9ffc82e5ccdff0f836af25122829e5b"
+        "md5": "b8d8c41b1ca6ab240b41aff687f22060"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "8fe467a1d92d5377373f6eb1d61b7c76"
+        "md5": "33f18b5978c28c8fe7f38b6c45ee1967"
     },
     {
         "path": "flashcards-for-language-learning-how-to-turn-tiny-cards-into-a-giant-leap-toward-fluency.html",
@@ -245,6 +245,11 @@
         "md5": "19439a606436efc25a4cf323ec237c02"
     },
     {
+        "path": "how-to-understand-regional-dialects-and-variations-a-travelers-guide-to-the-many-voices-of-a-language.html",
+        "type": "file",
+        "md5": "57c9c7e474f9ce1fb85d25ed94e3d02f"
+    },
+    {
         "path": "immersive-learning-tips-for-language-learning-while-traveling.html",
         "type": "file",
         "md5": "c072855eebfbdb84073b0c3139bfb95f"
@@ -252,7 +257,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "6d1af035dc3131d99c7ee1ada16541f2"
+        "md5": "2ad51038690d2f7069fa5f58245a26f3"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1525,6 +1530,51 @@
         "md5": "e5649f060a8d430c14332b854779ca0e"
     },
     {
+        "path": "media/posts/37",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/37/pain_au_chocolat.png",
+        "type": "file",
+        "md5": "372ccb1305932146a6306d47e4dc6fc5"
+    },
+    {
+        "path": "media/posts/37/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/37/responsive/pain_au_chocolat-2xl.png",
+        "type": "file",
+        "md5": "243f13110a48d3b89e7e907aed9b2ebe"
+    },
+    {
+        "path": "/media/posts/37/responsive/pain_au_chocolat-lg.png",
+        "type": "file",
+        "md5": "243f13110a48d3b89e7e907aed9b2ebe"
+    },
+    {
+        "path": "/media/posts/37/responsive/pain_au_chocolat-md.png",
+        "type": "file",
+        "md5": "0bb442af22d48aa4cceb883621b1c8ae"
+    },
+    {
+        "path": "/media/posts/37/responsive/pain_au_chocolat-sm.png",
+        "type": "file",
+        "md5": "f0b19659f41bec0db121ebef079e2d9e"
+    },
+    {
+        "path": "/media/posts/37/responsive/pain_au_chocolat-xl.png",
+        "type": "file",
+        "md5": "243f13110a48d3b89e7e907aed9b2ebe"
+    },
+    {
+        "path": "/media/posts/37/responsive/pain_au_chocolat-xs.png",
+        "type": "file",
+        "md5": "73d1023f28f14d78ffc554c0e82fd943"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1847,7 +1897,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "032f81dee91cf63ed4531de1dc34f14d"
+        "md5": "ba14f86d288e8a697d2d2d5f428f5441"
     },
     {
         "path": "sitemap.xsl",
