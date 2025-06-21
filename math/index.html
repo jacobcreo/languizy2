@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגילי חשבון לכיתה א'</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>בואו נתרגל חשבון!</h1>
+        <div class="exercise-wrapper">
+            <div class="exercise-container">
+                <span id="num1"></span>
+                <span id="operator"></span>
+                <span id="num2"></span>
+                <span>=</span>
+                <span id="num3"></span>
+            </div>
+        </div>
+        <div class="answer-container">
+            <label for="answer">מה הערך של 🤖?</label>
+            <input type="number" id="answer" autofocus>
+            <button id="submitBtn">בדיקה</button>
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <button id="hintBtn">רמז</button>
+        <div id="hint-container" class="hint-container">
+            <div class="number-line-wrapper">
+                <div id="point-labels-container"></div>
+                <div id="length-labels-container"></div>
+                <div id="number-line" class="number-line"></div>
+                <div id="segment1" class="segment"></div>
+                <div id="segment2" class="segment"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
