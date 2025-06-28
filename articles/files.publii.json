@@ -177,7 +177,17 @@
     {
         "path": "/authors/jacob/page/6/index.html",
         "type": "file",
-        "md5": "a36156c8fafeafdec1fcd284e98c4f1e"
+        "md5": "17ef529d1327b6fc0a7f53a68baff99d"
+    },
+    {
+        "path": "authors/jacob/page/7",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/authors/jacob/page/7/index.html",
+        "type": "file",
+        "md5": "8c2e6bfec0940a611df88eda884d3640"
     },
     {
         "path": "beyond-words-how-body-language-speaks-volumes-in-everyday-conversations.html",
@@ -187,12 +197,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "b8d8c41b1ca6ab240b41aff687f22060"
+        "md5": "5bd507cdd74f0b30101370bbe2657994"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "33f18b5978c28c8fe7f38b6c45ee1967"
+        "md5": "eaa9a86b87864b146a5218d9042f21ac"
     },
     {
         "path": "flashcards-for-language-learning-how-to-turn-tiny-cards-into-a-giant-leap-toward-fluency.html",
@@ -257,7 +267,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "2ad51038690d2f7069fa5f58245a26f3"
+        "md5": "6f99a39d4dc61c23b0e853cca340039f"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1575,6 +1585,51 @@
         "md5": "73d1023f28f14d78ffc554c0e82fd943"
     },
     {
+        "path": "media/posts/38",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "media/posts/38/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/38/responsive/speed-reading-2xl.png",
+        "type": "file",
+        "md5": "3c3fdd8930d768721c148e84847c2098"
+    },
+    {
+        "path": "/media/posts/38/responsive/speed-reading-lg.png",
+        "type": "file",
+        "md5": "3c3fdd8930d768721c148e84847c2098"
+    },
+    {
+        "path": "/media/posts/38/responsive/speed-reading-md.png",
+        "type": "file",
+        "md5": "2c013e66bb43e2f805ca6426a3882c76"
+    },
+    {
+        "path": "/media/posts/38/responsive/speed-reading-sm.png",
+        "type": "file",
+        "md5": "126f1de35424b03d9f05e7253711ec6b"
+    },
+    {
+        "path": "/media/posts/38/responsive/speed-reading-xl.png",
+        "type": "file",
+        "md5": "3c3fdd8930d768721c148e84847c2098"
+    },
+    {
+        "path": "/media/posts/38/responsive/speed-reading-xs.png",
+        "type": "file",
+        "md5": "524d55758549e3151489d32fe5115cde"
+    },
+    {
+        "path": "/media/posts/38/speed-reading.png",
+        "type": "file",
+        "md5": "7c8b3f466240d42e3295f76220e25c6e"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1897,7 +1952,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "ba14f86d288e8a697d2d2d5f428f5441"
+        "md5": "fb04ee164c49f982cf607c30c59e9cd2"
     },
     {
         "path": "sitemap.xsl",
@@ -1913,6 +1968,11 @@
         "path": "/tags/index.html",
         "type": "file",
         "md5": "b136e87445b3e3eaada2419365d4ca17"
+    },
+    {
+        "path": "techniques-for-speed-reading-in-a-foreign-language.html",
+        "type": "file",
+        "md5": "866548323302896df86422f8ed7e4674"
     },
     {
         "path": "the-epic-history-of-the-spanish-language-origins-evolution-and-modern-day-reach.html",
