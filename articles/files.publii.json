@@ -197,12 +197,12 @@
     {
         "path": "feed.json",
         "type": "file",
-        "md5": "5bd507cdd74f0b30101370bbe2657994"
+        "md5": "2072d2b77105a04c555a3d3f06bf2686"
     },
     {
         "path": "feed.xml",
         "type": "file",
-        "md5": "eaa9a86b87864b146a5218d9042f21ac"
+        "md5": "23ab1db2afb9f731c748c7cca8185633"
     },
     {
         "path": "flashcards-for-language-learning-how-to-turn-tiny-cards-into-a-giant-leap-toward-fluency.html",
@@ -260,6 +260,11 @@
         "md5": "57c9c7e474f9ce1fb85d25ed94e3d02f"
     },
     {
+        "path": "how-to-write-emails-in-your-target-language-without-breaking-a-sweat-or-a-friendship.html",
+        "type": "file",
+        "md5": "8ded55f40477217dbbd7e31187d69593"
+    },
+    {
         "path": "immersive-learning-tips-for-language-learning-while-traveling.html",
         "type": "file",
         "md5": "c072855eebfbdb84073b0c3139bfb95f"
@@ -267,7 +272,7 @@
     {
         "path": "index.html",
         "type": "file",
-        "md5": "6f99a39d4dc61c23b0e853cca340039f"
+        "md5": "0761b1e58010e3714977c86bd9d0a6f7"
     },
     {
         "path": "language-learning-in-the-digital-age-the-pros-and-cons-of-online-tutors.html",
@@ -1630,6 +1635,51 @@
         "md5": "7c8b3f466240d42e3295f76220e25c6e"
     },
     {
+        "path": "media/posts/39",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "media/posts/39/responsive",
+        "type": "directory",
+        "md5": false
+    },
+    {
+        "path": "/media/posts/39/responsive/writing-emails-2xl.png",
+        "type": "file",
+        "md5": "acc076a20c00c5213047ff0852c67b20"
+    },
+    {
+        "path": "/media/posts/39/responsive/writing-emails-lg.png",
+        "type": "file",
+        "md5": "acc076a20c00c5213047ff0852c67b20"
+    },
+    {
+        "path": "/media/posts/39/responsive/writing-emails-md.png",
+        "type": "file",
+        "md5": "692ccccc561dc18e90db8e3bc8640fe7"
+    },
+    {
+        "path": "/media/posts/39/responsive/writing-emails-sm.png",
+        "type": "file",
+        "md5": "7f47743e2a73231fca49ab5aba0df09d"
+    },
+    {
+        "path": "/media/posts/39/responsive/writing-emails-xl.png",
+        "type": "file",
+        "md5": "acc076a20c00c5213047ff0852c67b20"
+    },
+    {
+        "path": "/media/posts/39/responsive/writing-emails-xs.png",
+        "type": "file",
+        "md5": "1062ab21945b9fbdb655e714ef71f4c0"
+    },
+    {
+        "path": "/media/posts/39/writing-emails.png",
+        "type": "file",
+        "md5": "0c77a167fc664d1ccf9bfaa58d56bb1f"
+    },
+    {
         "path": "media/posts/4",
         "type": "directory",
         "md5": false
@@ -1952,7 +2002,7 @@
     {
         "path": "sitemap.xml",
         "type": "file",
-        "md5": "fb04ee164c49f982cf607c30c59e9cd2"
+        "md5": "fa4b1f173ba5bafdc23cb504c4492c3a"
     },
     {
         "path": "sitemap.xsl",
